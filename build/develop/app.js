@@ -592,7 +592,7 @@
 			/**
 			 * Set crops, total and content size.
 			 *
-			 * @param {Object} metrics
+			 * @param {Object} metrics screen params specific to resolution
 			 */
 			app.setScreen = function ( metrics ) {
 				var link;
@@ -625,7 +625,10 @@
 			
 			/**
 			 * The load event is fired when a resource and its dependent resources have finished loading.
+			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/load
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('load', function globalEventListenerLoad ( event ) {
 				var path;
@@ -667,7 +670,10 @@
 			
 			/**
 			 * The unload event is fired when the document or a child resource is being unloaded.
+			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/unload
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('unload', function globalEventListenerUnload ( event ) {
 				debug.event(event);
@@ -712,7 +718,10 @@
 			
 			/**
 			 * The error event is fired when a resource failed to load.
+			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/error
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('error', function globalEventListenerError ( event ) {
 				debug.event(event);
@@ -729,12 +738,14 @@
 			 *   3. Application.
 			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keydown
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('keydown', function globalEventListenerKeydown ( event ) {
 				var page = router.current;
 			
 				// filter phantoms
-				if ( event.keyCode === 0 ) { return false; }
+				if ( event.keyCode === 0 ) { return; }
 			
 				// combined key code
 				event.code = event.keyCode;
@@ -769,7 +780,10 @@
 			
 			/**
 			 * The click event is fired when a pointing device button (usually a mouse button) is pressed and released on a single element.
+			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/click
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('click', function globalEventListenerClick ( event ) {
 				debug.event(event);
@@ -780,7 +794,10 @@
 			 * The contextmenu event is fired when the right button of the mouse is clicked (before the context menu is displayed),
 			 * or when the context menu key is pressed (in which case the context menu is displayed at the bottom left of the focused
 			 * element, unless the element is a tree, in which case the context menu is displayed at the bottom left of the current row).
+			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/contextmenu
+			 *
+			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('contextmenu', function globalEventListenerContextmenu ( event ) {
 				debug.event(event);
@@ -937,7 +954,9 @@
 			/**
 			 * Extract the page name and data from url hash.
 			 *
-			 * @return {{name: string, data: string[]}}
+			 * @param {string} hash address hash part to parse
+			 *
+			 * @return {{name: string, data: string[]}} parsed data
 			 *
 			 * @example
 			 * router.parse('#main/some/additional/data');
@@ -951,11 +970,10 @@
 				};
 			
 				// get and decode all parts
-				hash = hash.split('/').map(decodeURIComponent);
+				page.data = hash.split('/').map(decodeURIComponent);
 				// the first part is a page id
-				page.name = hash.shift().slice(1);
 				// everything else is optional path
-				page.data = hash;
+				page.name = page.data.shift().slice(1);
 			
 				return page;
 			};
@@ -993,8 +1011,8 @@
 			 * Make the given inactive/hidden page active/visible.
 			 * Pass some data to the page and trigger the corresponding event.
 			 *
-			 * @param {Page} page
-			 * @param {*} [data]
+			 * @param {Page} page item to show
+			 * @param {*} [data] data to send to page
 			 *
 			 * @return {boolean} operation status
 			 */
@@ -1022,7 +1040,7 @@
 			/**
 			 * Make the given active/visible page inactive/hidden and trigger the corresponding event.
 			 *
-			 * @param {Page} page
+			 * @param {Page} page item to hide
 			 *
 			 * @return {boolean} operation status
 			 */
@@ -1060,8 +1078,6 @@
 				var pageFrom = this.current,
 					pageTo   = this.ids[name];
 			
-				debug.log('router.navigate: ' + name, pageTo ? (pageTo === pageFrom ? 'grey' : 'green') : 'red');
-			
 				// @ifdef DEBUG
 				if ( !pageTo || typeof pageTo !== 'object' ) { throw 'wrong pageTo type'; }
 				if ( !('active' in pageTo) ) { throw 'missing field "active" in pageTo'; }
@@ -1069,6 +1085,8 @@
 			
 				// valid not already active page
 				if ( pageTo && !pageTo.active ) {
+					debug.log('router.navigate: ' + name, pageTo === pageFrom ? 'grey' : 'green');
+			
 					// update url
 					location.hash = this.stringify(name, data);
 			
@@ -1084,6 +1102,8 @@
 			
 					return true;
 				}
+			
+				debug.log('router.navigate: ' + name, 'red');
 			
 				// nothing was done
 				return false;
@@ -1107,7 +1127,7 @@
 					pageFrom = this.history.pop();
 			
 					// new tail
-					pageTo = this.history[this.history.length-1];
+					pageTo = this.history[this.history.length - 1];
 			
 					// valid not already active page
 					if ( pageTo && !pageTo.active ) {
@@ -4159,7 +4179,8 @@
 			 * Check an attribute existence.
 			 *
 			 * @param {string} name attribute
-			 * @return {boolean}
+			 *
+			 * @return {boolean} attribute exists or not
 			 */
 			Model.prototype.has = function ( name ) {
 				// @ifdef DEBUG
@@ -4175,7 +4196,8 @@
 			 * Get the model attribute by name.
 			 *
 			 * @param {string} name attribute
-			 * @return {*}
+			 *
+			 * @return {*} associated value
 			 */
 			Model.prototype.get = function ( name ) {
 				// @ifdef DEBUG
@@ -4202,7 +4224,7 @@
 			 * Update or create a model attribute.
 			 *
 			 * @param {string} name attribute
-			 * @param {*} value
+			 * @param {*} value associated value
 			 * @return {boolean} operation status (true - attribute value was changed/created)
 			 *
 			 * @fires Model#change
