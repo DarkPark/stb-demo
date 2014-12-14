@@ -2,13 +2,14 @@
  * Main application entry point.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
- * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
+require('stb/shims');
 
 var router = require('stb/router'),
+	keys   = require('stb/keys'),
 	app    = require('stb/app');
 
 
@@ -21,8 +22,19 @@ app.addListeners({
 	load: function load () {
 		// set pages
 		router.init([
-			require('./pages/init')
+			require('./pages/init'),
+			require('./pages/base'),
+			require('./pages/grid'),
+			require('./pages/help'),
+			require('./pages/button')
 		]);
+	},
+
+	// event
+	keydown: function keydown ( event ) {
+		if ( event.code === keys.back ) {
+			router.back();
+		}
 	}
 });
 
