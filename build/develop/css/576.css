@@ -1,0 +1,287 @@
+html,
+body {
+  width: 720px;
+  height: 576px;
+  overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  font-family: Ubuntu, sans-serif;
+  font-size: 18px;
+  -webkit-user-select: none;
+}
+table {
+  border: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+table td {
+  padding: 0;
+}
+.maxh {
+  height: 100%;
+}
+.maxw {
+  width: 100%;
+}
+a {
+  text-decoration: none;
+}
+#pageInit {
+  text-align: center;
+}
+#pageInit .main {
+  margin-top: 36px;
+  line-height: 456px;
+  font-size: 150%;
+}
+#pageInit .version {
+  padding-right: 18px;
+  line-height: 36px;
+  text-align: right;
+  font-size: 80%;
+}
+#pageInit .version .value {
+  color: grey;
+}
+.component {
+  /*&.list {
+		background-color: #222;
+		table-layout: fixed;
+		width: 100%;
+		//min-height: 250px;
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			//display: table;
+
+			> .item {
+				cursor: pointer;
+				vertical-align: middle;
+				//display: table-cell;
+				padding: 10px;
+
+				&.focus {
+					background-color: #8b7f0c;
+				}
+			}
+		}
+
+		//> .body {
+			//display : table-column;
+
+
+		//}
+
+		&.horizontal {
+			display: table;
+			//table-layout: fixed;
+			//width: 100%;
+			//min-height: 50px;
+
+			ul {
+				list-style: none;
+				display: table-row;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+
+				> .item {
+					//float: left;
+					display        : table-cell;
+					text-align     : center;
+					vertical-align : middle;
+					padding: 10px;
+				}
+			}
+
+			//> .body {
+			//display : table-row;
+
+
+			//}
+		}
+	}*/
+}
+.component.page {
+  width: 638px;
+  height: 528px;
+  padding: 24px 28px 24px 54px;
+  position: absolute;
+  visibility: hidden;
+}
+.component.page.active {
+  visibility: visible;
+}
+.component.modal {
+  width: 720px;
+  height: 576px;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: black;
+  opacity: 0.6;
+}
+.component.modalBox {
+  width: 720px;
+  height: 576px;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: black;
+  opacity: 0.6;
+  display: table;
+}
+.component.modalBox > div.cell {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.component.modalBox > div.cell > div.content {
+  display: inline-block;
+  background-color: #333;
+  min-width: 20%;
+  min-height: 10%;
+}
+.component.modalMessage {
+  width: 720px;
+  height: 576px;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: black;
+  opacity: 0.6;
+  display: table;
+}
+.component.modalMessage > div.cell {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.component.modalMessage > div.cell > div.content {
+  display: inline-block;
+  background-color: #333;
+  min-width: 20%;
+  min-height: 10%;
+}
+.component.panel {
+  padding: 1%;
+}
+.component.button {
+  background-color: #002042;
+  outline: 2px solid grey;
+  outline-offset: -2px;
+  display: inline-block;
+  padding: 1%;
+  cursor: pointer;
+}
+.component.button.icon {
+  padding-left: 4.5%;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+.component.button:hover {
+  background-color: #005b9c;
+}
+.component.button.focus {
+  background-color: #005b9c;
+  outline: 2px solid red;
+}
+.component.button.click {
+  background-color: #0073c4;
+}
+.component.checkBox {
+  display: inline-block;
+  width: 20px;
+  height: 24px;
+  border: 3px solid #005b9c;
+  background-color: #333;
+}
+.component.checkBox.checked {
+  background-color: orange;
+}
+.component.grid {
+  background-color: #333;
+}
+.component.grid table {
+  width: 100%;
+  table-layout: fixed;
+}
+.component.grid table td.cell {
+  padding: 1%;
+  vertical-align: middle;
+  text-align: center;
+}
+.component.grid table td.cell.focus {
+  background-color: orange;
+}
+.component.list {
+  background-color: #222;
+  width: 100%;
+}
+.component.list > .item {
+  cursor: pointer;
+  padding: 0 10px;
+  vertical-align: middle;
+  height: 38.4px;
+  line-height: 38.4px;
+}
+.component.list > .item.focus {
+  background-color: orange;
+}
+.component.list.horizontal {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.component.list.horizontal > .item {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+.component.progressBar {
+  height: 24px;
+  background-color: grey;
+}
+.component.progressBar > .value {
+  height: 24px;
+  background-color: orange;
+}
+html {
+  background-color: transparent;
+  overflow: auto;
+}
+body {
+  outline: 1px solid #333;
+  outline-offset: -1px;
+}
+div.develop canvas {
+  cursor: none;
+  visibility: hidden;
+  position: absolute;
+  width: 720px;
+  height: 576px;
+}
+div.develop canvas.active {
+  visibility: visible;
+  z-index: 1000;
+}
+.component {
+  outline: 1px dashed #005000;
+  outline-offset: -1px;
+}
+.component.focus {
+  outline: 1px dashed red;
+}
+.component.list > .item {
+  outline: 1px dashed #000000;
+  outline-offset: -1px;
+}
+.component.grid td.cell {
+  outline: 1px dashed #000000;
+  outline-offset: -1px;
+}
