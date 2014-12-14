@@ -3387,8 +3387,9 @@
 			
 			// additional top-level key handler
 			window.addEventListener('load', function developEventListenerLoad () {
-				// export to globals
-				window.$develop = document.querySelector('body > div.develop');
+				// export to globals div for develop HTML elements
+				window.$develop = document.body.appendChild(document.createElement('div'));
+				window.$develop.className = 'develop';
 			
 				grid.init();
 			
@@ -3592,7 +3593,7 @@
 				init: function () {
 					var self = this;
 			
-					this.$canvas = window.$develop.querySelector('canvas');
+					this.$canvas = window.$develop.appendChild(document.createElement('canvas'));
 					this.ctx = this.$canvas.getContext('2d');
 			
 					// apply size
