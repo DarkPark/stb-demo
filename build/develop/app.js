@@ -2620,10 +2620,13 @@
 			/**
 			 * Application geometry options for js/less.
 			 *
-			 * @namespace
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
+			
+			'use strict';
+			
+			// public export
 			module.exports = {
 				480 : {
 					// screen base dimension
@@ -5573,10 +5576,13 @@
 			/**
 			 * WebSocket logging server configuration.
 			 *
-			 * @namespace
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
+			
+			'use strict';
+			
+			// public export
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -5596,10 +5602,13 @@
 			/**
 			 * Code-proxy server configuration.
 			 *
-			 * @namespace
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
+			
+			'use strict';
+			
+			// public export
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -5637,10 +5646,13 @@
 			/**
 			 * HTTP static server configuration.
 			 *
-			 * @namespace
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
+			
+			'use strict';
+			
+			// public export
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -5670,10 +5682,13 @@
 			/**
 			 * WEb INspector REmote debugger server configuration.
 			 *
-			 * @namespace
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
+			
+			'use strict';
+			
+			// public export
 			module.exports = {
 				// turn on/off server
 				active: true,
