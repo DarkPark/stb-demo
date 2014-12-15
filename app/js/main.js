@@ -6,15 +6,9 @@
 
 'use strict';
 
-require('stb/shims');
-
-var router = require('stb/router'),
-	keys   = require('stb/keys'),
-	app    = require('stb/app');
-
-
-// apply screen size, position and margins
-//app.setScreen(require('../../config/metrics')[screen.height]);
+var app    = require('stb/app'),
+	router = require('stb/router'),
+	keys   = require('stb/keys');
 
 
 app.addListeners({

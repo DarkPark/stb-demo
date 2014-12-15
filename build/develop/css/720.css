@@ -33,7 +33,7 @@ a {
 }
 #pageInit .main {
   margin-top: 44px;
-  line-height: 572px;
+  line-height: 612px;
   font-size: 150%;
 }
 #pageInit .version {
@@ -45,72 +45,10 @@ a {
 #pageInit .version .value {
   color: grey;
 }
-.component {
-  /*&.list {
-		background-color: #222;
-		table-layout: fixed;
-		width: 100%;
-		//min-height: 250px;
-
-		ul {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			//display: table;
-
-			> .item {
-				cursor: pointer;
-				vertical-align: middle;
-				//display: table-cell;
-				padding: 10px;
-
-				&.focus {
-					background-color: #8b7f0c;
-				}
-			}
-		}
-
-		//> .body {
-			//display : table-column;
-
-
-		//}
-
-		&.horizontal {
-			display: table;
-			//table-layout: fixed;
-			//width: 100%;
-			//min-height: 50px;
-
-			ul {
-				list-style: none;
-				display: table-row;
-				margin: 0;
-				padding: 0;
-				width: 100%;
-
-				> .item {
-					//float: left;
-					display        : table-cell;
-					text-align     : center;
-					vertical-align : middle;
-					padding: 10px;
-				}
-			}
-
-			//> .body {
-			//display : table-row;
-
-
-			//}
-		}
-	}*/
-}
 .component.page {
-  width: 1200px;
-  height: 660px;
-  padding: 30px 40px 30px 40px;
+  width: 1260px;
+  height: 700px;
+  padding: 10px 10px 10px 10px;
   position: absolute;
   visibility: hidden;
 }
@@ -169,20 +107,23 @@ a {
   min-height: 10%;
 }
 .component.panel {
-  padding: 1%;
+  padding: 10px 10px;
 }
 .component.button {
   background-color: #002042;
   outline: 2px solid grey;
   outline-offset: -2px;
   display: inline-block;
-  padding: 1%;
+  padding: 6px 12px;
+  height: 36px;
+  line-height: 36px;
+  vertical-align: middle;
   cursor: pointer;
 }
 .component.button.icon {
-  padding-left: 4.5%;
+  padding-left: 48px;
   background-repeat: no-repeat;
-  background-position: 10px center;
+  background-position: 12px center;
 }
 .component.button:hover {
   background-color: #005b9c;
@@ -198,6 +139,7 @@ a {
   display: inline-block;
   width: 28px;
   height: 28px;
+  line-height: 28px;
   border: 3px solid #005b9c;
   background-color: #333;
 }
@@ -212,7 +154,7 @@ a {
   table-layout: fixed;
 }
 .component.grid table td.cell {
-  padding: 1%;
+  padding: 4px 8px;
   vertical-align: middle;
   text-align: center;
 }
@@ -225,7 +167,7 @@ a {
 }
 .component.list > .item {
   cursor: pointer;
-  padding: 0 10px;
+  padding: 4px 8px;
   vertical-align: middle;
   height: 48px;
   line-height: 48px;

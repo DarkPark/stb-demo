@@ -58,7 +58,7 @@
 			
 			var app     = __webpack_require__(/*! ../app */ 3),
 				storage = __webpack_require__(/*! ./storage */ 7),
-				metrics = __webpack_require__(/*! ../../../config/metrics */ 15);
+				metrics = __webpack_require__(/*! metrics */ 12);
 			
 			
 			// export to globals for easy debugging
@@ -74,10 +74,10 @@
 			// platform?
 			if ( app.data.host ) {
 				// web inspector
-				__webpack_require__(/*! ./weinre */ 21);
+				__webpack_require__(/*! ./weinre */ 20);
 			}
 			
-			// apply screen size, position and margins
+			// apply screen size, position, margins and styles
 			app.setScreen(
 				metrics[storage.get('screen.height')] ||
 				metrics[screen.height] ||
@@ -86,10 +86,10 @@
 			
 			
 			// additional dev modules
-			__webpack_require__(/*! ./static */ 20);
-			__webpack_require__(/*! ./proxy */ 19);
-			__webpack_require__(/*! ./events */ 17);
-			__webpack_require__(/*! ./debug */ 16);
+			__webpack_require__(/*! ./static */ 19);
+			__webpack_require__(/*! ./proxy */ 18);
+			__webpack_require__(/*! ./events */ 16);
+			__webpack_require__(/*! ./debug */ 15);
 			
 			// the application itself
 			__webpack_require__(/*! app/main */ 38);
@@ -531,12 +531,12 @@
 			
 			'use strict';
 			
-			var Model  = __webpack_require__(/*! ./model */ 22),
+			var Model  = __webpack_require__(/*! ./model */ 21),
 				router = __webpack_require__(/*! ./router */ 4),
-				app;
+				app, linkCSS;
 			
 			
-			__webpack_require__(/*! stb/shims */ 12);
+			__webpack_require__(/*! stb/shims */ 23);
 			
 			
 			/**
@@ -590,37 +590,38 @@
 			
 			
 			/**
-			 * Set crops, total and content size.
+			 * Set crops, total, content size and link the corresponding CSS file.
 			 *
 			 * @param {Object} metrics screen params specific to resolution
 			 */
 			app.setScreen = function ( metrics ) {
-				var link;
+				// calculate and extend
+				metrics.availHeight = metrics.height - (metrics.availTop  + metrics.availBottom);
+				metrics.availWidth  = metrics.width  - (metrics.availLeft + metrics.availRight);
 			
-				// init can be done only once with correct metrics
-				if ( !this.data.screen && metrics ) {
-					// calculate and extend
-					metrics.availHeight = metrics.height - (metrics.availTop  + metrics.availBottom);
-					metrics.availWidth  = metrics.width  - (metrics.availLeft + metrics.availRight);
+				// set max browser window size
+				window.moveTo(0, 0);
+				window.resizeTo(metrics.width, metrics.height);
 			
-					// set max browser window size
-					window.moveTo(0, 0);
-					window.resizeTo(metrics.width, metrics.height);
-			
-					// load CSS file base on resolution
-					link = document.createElement('link');
-					link.rel  = 'stylesheet';
-					link.href = 'css/' + metrics.height + '.css';
-					document.head.appendChild(link);
-			
-					// provide global access
-					this.data.screen = metrics;
+				// already was initialized
+				if ( linkCSS ) {
+					// remove all current CSS styles
+					document.head.removeChild(linkCSS);
 				}
+			
+				// load CSS file base on resolution
+				linkCSS = document.createElement('link');
+				linkCSS.rel  = 'stylesheet';
+				linkCSS.href = 'css/' + metrics.height + '.css';
+				document.head.appendChild(linkCSS);
+			
+				// provide global access
+				this.data.screen = metrics;
 			};
 			
 			
 			// apply screen size, position and margins
-			app.setScreen(__webpack_require__(/*! ../../config/metrics */ 15)[screen.height]);
+			app.setScreen(__webpack_require__(/*! metrics */ 12)[screen.height]);
 			
 			
 			/**
@@ -2432,78 +2433,66 @@
 
 /***/ },
 /* 12 */
-/*!*************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/shims.js ***!
-  \*************************************************/
+/*!***************************!*\
+  !*** ./config/metrics.js ***!
+  \***************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
+			 * Application geometry options for js/less.
+			 *
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
+			// public export
+			module.exports = {
+				480 : {
+					// screen base dimension
+					height: 480,
+					width : 720,
+					// safe zone margins
+					availTop   : 24,
+					availBottom: 24,
+					availRight : 32,
+					availLeft  : 48
+				},
 			
-			if ( !('classList' in document.documentElement) ) {
-				var prototype = Array.prototype,
-					indexOf = prototype.indexOf,
-					slice = prototype.slice,
-					push = prototype.push,
-					splice = prototype.splice,
-					join = prototype.join;
+				576 : {
+					// screen base dimension
+					height: 576,
+					width : 720,
+					// safe zone margins
+					availTop   : 24,
+					availBottom: 24,
+					availRight : 28,
+					availLeft  : 54
+				},
 			
-				window.DOMTokenList = function ( el ) {
-					this._element = el;
-					if (el.className !== this._classCache) {
-						this._classCache = el.className;
-						if (!this._classCache) { return; }
-						var classes = this._classCache.replace(/^\s+|\s+$/g,'').split(/\s+/),
-							i;
-						for (i = 0; i < classes.length; i++) {
-							push.call(this, classes[i]);
-						}
-					}
-				};
-				window.DOMTokenList.prototype = {
-					add: function ( token ) {
-						if(this.contains(token)) { return; }
-						push.call(this, token);
-						this._element.className = slice.call(this, 0).join(' ');
-					},
-					contains: function ( token ) {
-						return indexOf.call(this, token) !== -1;
-					},
-					item: function ( index ) {
-						return this[index] || null;
-					},
-					remove: function ( token ) {
-						var i = indexOf.call(this, token);
-						if (i === -1) {
-							return;
-						}
-						splice.call(this, i, 1);
-						this._element.className = slice.call(this, 0).join(' ');
-					},
-					toString: function () {
-						return join.call(this, ' ');
-					},
-					toggle: function ( token ) {
-						if (!this.contains(token)) {
-							this.add(token);
-						} else {
-							this.remove(token);
-						}
-						return this.contains(token);
-					}
-				};
+				720 : {
+					// screen base dimension
+					height: 720,
+					width : 1280,
+					// safe zone margins
+					availTop   : 10,
+					availBottom: 10,
+					availRight : 10,
+					availLeft  : 10
+				},
 			
-				Object.defineProperty(Element.prototype, 'classList',{
-					get: function () {
-						return new window.DOMTokenList(this);
-					}
-				});
-			}
+				1080: {
+					// screen base dimension
+					height: 1080,
+					width : 1920,
+					// safe zone margins
+					availTop   : 15,
+					availBottom: 15,
+					availRight : 15,
+					availLeft  : 15
+				}
+			};
 
 
 /***/ },
@@ -2612,70 +2601,6 @@
 
 /***/ },
 /* 15 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/config/metrics.js ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Application geometry options for js/less.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public export
-			module.exports = {
-				480 : {
-					// screen base dimension
-					height: 480,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 32,
-					availLeft  : 48
-				},
-			
-				576 : {
-					// screen base dimension
-					height: 576,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 28,
-					availLeft  : 54
-				},
-			
-				720 : {
-					// screen base dimension
-					height: 720,
-					width : 1280,
-					// safe zone margins
-					availTop   : 30,
-					availBottom: 30,
-					availRight : 40,
-					availLeft  : 40
-				},
-			
-				1080: {
-					// screen base dimension
-					height: 1080,
-					width : 1920,
-					// safe zone margins
-					availTop   : 40,
-					availBottom: 40,
-					availRight : 50,
-					availLeft  : 50
-				}
-			};
-
-
-/***/ },
-/* 16 */
 /*!*********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/debug.js ***!
   \*********************************************************/
@@ -2903,7 +2828,7 @@
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/events.js ***!
   \**********************************************************/
@@ -2918,11 +2843,11 @@
 			
 			'use strict';
 			
-			var request = __webpack_require__(/*! stb/request */ 23),
+			var util    = __webpack_require__(/*! util */ 10),
+				app     = __webpack_require__(/*! stb/app */ 3),
+				request = __webpack_require__(/*! stb/request */ 22),
 				dom     = __webpack_require__(/*! stb/dom */ 5),
-				data    = __webpack_require__(/*! stb/app */ 3).data,
-				util    = __webpack_require__(/*! util */ 10),
-				grid    = __webpack_require__(/*! ./grid */ 18),
+				grid    = __webpack_require__(/*! ./grid */ 17),
 				storage = __webpack_require__(/*! ./storage */ 7);
 			
 			
@@ -2949,7 +2874,8 @@
 				switch ( event.keyCode ) {
 					// numpad 0
 					case 96:
-						changeScreenDimension(data.screen.width, data.screen.height);
+						debug.log('full document reload', 'red');
+						location.reload();
 						break;
 			
 					// numpad 1
@@ -2991,14 +2917,14 @@
 					// numpad 6
 					case 102:
 						// stress-testing for emulation
-						if ( !data.host ) {
+						if ( !app.data.host ) {
 							window.horde.unleash({nb: 500});
 						}
 						break;
 			
 					// numpad 7
 					case 103:
-						if ( !data.host ) {
+						if ( !app.data.host ) {
 							debug.log('SpyJS in this mode is available only on STB devices.', 'red');
 						} else {
 							// SpyJS enable/disable
@@ -3061,25 +2987,38 @@
 			
 			
 			/**
-			 * Apply the given screen geometry and reload the page
-			 * @param {number} width
-			 * @param {number} height
+			 * Apply the given screen geometry and reload the page.
+			 *
+			 * @param {number} width screen param
+			 * @param {number} height screen param
 			 */
 			function changeScreenDimension ( width, height ) {
-				debug.log(util.format('switch to %sx%s and reload', width, height), 'red');
+				// check if it's necessary
+				if ( Number(storage.get('screen.height')) !== height ) {
+					// yes
+					debug.log(util.format('switch to %sx%s', width, height), 'red');
 			
-				// save
-				storage.set('screen.height', height);
-				storage.set('screen.width',  width);
+					// save in case of document reload
+					storage.set('screen.height', height);
+					storage.set('screen.width',  width);
 			
-				// clear screen to indicate reload
-				document.body.innerHTML = null;
-				window.location.reload(true);
+					// hide content to avoid raw HTML blinking
+					document.body.style.display = 'none';
+			
+					// apply new metrics
+					app.setScreen(__webpack_require__(/*! metrics */ 12)[height]);
+			
+					// restore visibility
+					document.body.style.display = '';
+				} else {
+					// not really
+					debug.log('no resolution change: new and current values are identical', 'red');
+				}
 			}
 
 
 /***/ },
-/* 18 */
+/* 17 */
 /*!********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/grid.js ***!
   \********************************************************/
@@ -3376,7 +3315,7 @@
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /*!*********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/proxy.js ***!
   \*********************************************************/
@@ -3499,7 +3438,7 @@
 
 
 /***/ },
-/* 20 */
+/* 19 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/static.js ***!
   \**********************************************************/
@@ -3529,7 +3468,7 @@
 
 
 /***/ },
-/* 21 */
+/* 20 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/weinre.js ***!
   \**********************************************************/
@@ -3561,7 +3500,7 @@
 
 
 /***/ },
-/* 22 */
+/* 21 */
 /*!*************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/model.js ***!
   \*************************************************/
@@ -3898,7 +3837,7 @@
 
 
 /***/ },
-/* 23 */
+/* 22 */
 /*!***************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/request.js ***!
   \***************************************************/
@@ -4023,6 +3962,82 @@
 			
 			// public export
 			module.exports = request;
+
+
+/***/ },
+/* 23 */
+/*!*************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/shims.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			
+			if ( !('classList' in document.documentElement) ) {
+				var prototype = Array.prototype,
+					indexOf = prototype.indexOf,
+					slice = prototype.slice,
+					push = prototype.push,
+					splice = prototype.splice,
+					join = prototype.join;
+			
+				window.DOMTokenList = function ( el ) {
+					this._element = el;
+					if (el.className !== this._classCache) {
+						this._classCache = el.className;
+						if (!this._classCache) { return; }
+						var classes = this._classCache.replace(/^\s+|\s+$/g,'').split(/\s+/),
+							i;
+						for (i = 0; i < classes.length; i++) {
+							push.call(this, classes[i]);
+						}
+					}
+				};
+				window.DOMTokenList.prototype = {
+					add: function ( token ) {
+						if(this.contains(token)) { return; }
+						push.call(this, token);
+						this._element.className = slice.call(this, 0).join(' ');
+					},
+					contains: function ( token ) {
+						return indexOf.call(this, token) !== -1;
+					},
+					item: function ( index ) {
+						return this[index] || null;
+					},
+					remove: function ( token ) {
+						var i = indexOf.call(this, token);
+						if (i === -1) {
+							return;
+						}
+						splice.call(this, i, 1);
+						this._element.className = slice.call(this, 0).join(' ');
+					},
+					toString: function () {
+						return join.call(this, ' ');
+					},
+					toggle: function ( token ) {
+						if (!this.contains(token)) {
+							this.add(token);
+						} else {
+							this.remove(token);
+						}
+						return this.contains(token);
+					}
+				};
+			
+				Object.defineProperty(Element.prototype, 'classList',{
+					get: function () {
+						return new window.DOMTokenList(this);
+					}
+				});
+			}
 
 
 /***/ },
@@ -5684,15 +5699,9 @@
 			
 			'use strict';
 			
-			__webpack_require__(/*! stb/shims */ 12);
-			
-			var router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2),
-				app    = __webpack_require__(/*! stb/app */ 3);
-			
-			
-			// apply screen size, position and margins
-			//app.setScreen(require('../../config/metrics')[screen.height]);
+			var app    = __webpack_require__(/*! stb/app */ 3),
+				router = __webpack_require__(/*! stb/router */ 4),
+				keys   = __webpack_require__(/*! stb/keys */ 2);
 			
 			
 			app.addListeners({
