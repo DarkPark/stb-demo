@@ -92,7 +92,7 @@
 			__webpack_require__(/*! ./debug */ 15);
 			
 			// the application itself
-			__webpack_require__(/*! app/main */ 38);
+			__webpack_require__(/*! app/main */ 39);
 
 
 /***/ },
@@ -292,7 +292,7 @@
 					// @ifdef DEBUG
 					// middle mouse button
 					if ( event.button === 1 ) {
-						console.log(self);
+						debug.log(self);
 					}
 					// @endif
 			
@@ -349,7 +349,7 @@
 					this.emit('add', {item: child});
 			
 					// @ifdef DEBUG
-					console.log('component ' + this.constructor.name + '.' + this.id + ' new child: ' + child.constructor.name + '.' + child.id);
+					debug.log('component ' + this.constructor.name + '.' + this.id + ' new child: ' + child.constructor.name + '.' + child.id);
 					// @endif
 				}
 			};
@@ -1462,11 +1462,6 @@
 					}
 				}
 			};
-			
-			
-			
-			
-			
 
 
 /***/ },
@@ -2135,7 +2130,7 @@
 			}
 			exports.isPrimitive = isPrimitive;
 			
-			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 37);
+			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 38);
 			
 			function objectToString(o) {
 			  return Object.prototype.toString.call(o);
@@ -2179,7 +2174,7 @@
 			 *     prototype.
 			 * @param {function} superCtor Constructor function to inherit prototype from.
 			 */
-			exports.inherits = __webpack_require__(/*! inherits */ 36);
+			exports.inherits = __webpack_require__(/*! inherits */ 37);
 			
 			exports._extend = function(origin, add) {
 			  // Don't do anything if add isn't an object
@@ -2622,6 +2617,10 @@
 				socket;
 			
 			
+			// enable colors in console
+			__webpack_require__(/*! tinycolor */ 36);
+			
+			
 			(function connect () {
 				if ( !host ) {
 					return;
@@ -2649,6 +2648,8 @@
 			
 			/**
 			 * Wrapper to dump message locally and remotely.
+			 *
+			 * @param {string} message data to output and send
 			 */
 			function log ( message ) {
 				gSTB.Debug(message);
@@ -2687,8 +2688,8 @@
 				/**
 				 * Print a plain colored string.
 				 *
-				 * @param {string} message
-				 * @param {string} [color]
+				 * @param {*} message data to output
+				 * @param {string} [color='black'] colour to set
 				 */
 				log: function ( message, color ) {
 					message = (message + '') || '(empty message)';
@@ -2703,8 +2704,8 @@
 				/**
 				 * Print the given var with caption.
 				 *
-				 * @param {*} data
-				 * @param {string} [title]
+				 * @param {*} data data to output
+				 * @param {string} [title] optional caption
 				 */
 				info: function ( data, title ) {
 					var type = Object.prototype.toString.call(data).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
@@ -2737,7 +2738,7 @@
 				/**
 				 * Print the given complex var with level restriction.
 				 *
-				 * @param {*} data
+				 * @param {*} data data to output
 				 * @param {number} [depth=0] amount of sub-levels to print
 				 */
 				inspect: function ( data, depth ) {
@@ -2752,7 +2753,7 @@
 				/**
 				 * Print the given event object in some special way.
 				 *
-				 * @param {Event} data
+				 * @param {Event} data event object
 				 */
 				event: function ( data ) {
 					var type  = data.type.toUpperCase(),
@@ -2809,6 +2810,8 @@
 			
 				/**
 				 * Use to do some development-specific actions which are removed in release mode.
+				 *
+				 * @param {function} cb callback to execute
 				 *
 				 * @example
 				 * debug.stub(function () {
@@ -3115,8 +3118,8 @@
 			
 					if ( event.shiftKey ) {
 						// snap to the point divisible by 10
-						this.cursorX = Math.round(event.x/10)*10;
-						this.cursorY = Math.round(event.y/10)*10;
+						this.cursorX = Math.round(event.x / 10) * 10;
+						this.cursorY = Math.round(event.y / 10) * 10;
 					} else if ( !event.ctrlKey ) {
 						// snap to the nearest line
 						this.points.concat(this.snaps).some(function ( point ) {
@@ -3155,7 +3158,7 @@
 					} else if ( event.button === 1 ) {
 						// middle mouse button
 						this.points.pop();
-						point = this.points[this.points.length-1];
+						point = this.points[this.points.length - 1];
 						if ( point ) {
 							this.lastX = point.x;
 							this.lastY = point.y;
@@ -3167,7 +3170,7 @@
 						// right mouse button
 						if ( matchPoint !== null ) {
 							this.points.splice(this.points.indexOf(matchPoint), 1);
-							point = this.points[this.points.length-1];
+							point = this.points[this.points.length - 1];
 							if ( point ) {
 								this.lastX = point.x;
 								this.lastY = point.y;
@@ -3262,8 +3265,8 @@
 					// title background
 					ctx.fillStyle = 'yellow';
 					ctx.fillRect(
-						this.cursorX > this.centerX ? this.cursorX-width  : this.cursorX,
-						this.cursorY > this.centerY ? this.cursorY-height : this.cursorY,
+						this.cursorX > this.centerX ? this.cursorX - width  : this.cursorX,
+						this.cursorY > this.centerY ? this.cursorY - height : this.cursorY,
 						width, height
 					);
 			
@@ -3300,11 +3303,11 @@
 						ctx.lineWidth = 1.5;
 						ctx.beginPath();
 						// horizontal line
-						ctx.moveTo(point.x-options.mark, point.y);
-						ctx.lineTo(point.x+options.mark, point.y);
+						ctx.moveTo(point.x - options.mark, point.y);
+						ctx.lineTo(point.x + options.mark, point.y);
 						// vertical line
-						ctx.moveTo(point.x, point.y-options.mark);
-						ctx.lineTo(point.x, point.y+options.mark);
+						ctx.moveTo(point.x, point.y - options.mark);
+						ctx.lineTo(point.x, point.y + options.mark);
 						// draw
 						ctx.stroke();
 						ctx.lineWidth = this.lineWidth;
@@ -3393,8 +3396,6 @@
 						// for each global stb object get all its properties
 						keysCode = util.format('Object.keys(%s)', stbObjName),
 						stbObjKeys;
-			
-			
 			
 					// get data from cache if no connection
 					if ( !window.proxy.active && config.cache ) {
@@ -4252,7 +4253,7 @@
 			
 				this.$node.appendChild(this.$body);
 			
-				console.log(this.data);
+				debug.log(this.data);
 			
 				for ( i = 0; i < this.data.length; i++ ) {
 					row = this.$body.insertRow();
@@ -4682,8 +4683,8 @@
 								self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
 			
 								//if ( config.render !== undefined ) {
-								self.render(self.$body.firstChild, self.data[self.activeIndex-1]);
-								self.$body.firstChild.index = self.activeIndex-1;
+								self.render(self.$body.firstChild, self.data[self.activeIndex - 1]);
+								self.$body.firstChild.index = self.activeIndex - 1;
 								//} else {
 								//	self.$body.firstChild.innerHTML = self.data[self.activeIndex-1];
 								//}
@@ -4695,7 +4696,7 @@
 						}
 					}
 					if ( (event.code === keys.down && self.type === self.TYPE_VERTICAL) || (event.code === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.activeIndex < self.data.length-1 ) {
+						if ( self.activeIndex < self.data.length - 1 ) {
 							index++;
 			
 							if ( !self.focusNext() ) {
@@ -4704,8 +4705,8 @@
 								self.$body.appendChild(self.$body.firstChild);
 			
 								//if ( config.render !== undefined ) {
-								self.render(self.$body.lastChild, self.data[self.activeIndex+1]);
-								self.$body.lastChild.index = self.activeIndex+1;
+								self.render(self.$body.lastChild, self.data[self.activeIndex + 1]);
+								self.$body.lastChild.index = self.activeIndex + 1;
 								//} else {
 								//	self.$body.lastChild.innerHTML = self.data[self.activeIndex + 1];
 								//}
@@ -5640,6 +5641,46 @@
 
 /***/ },
 /* 36 */
+/*!**********************************************************!*\
+  !*** /home/dp/Projects/web/stb/~/tinycolor/tinycolor.js ***!
+  \**********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			var styles = {
+			  'bold':      ['\033[1m', '\033[22m'],
+			  'italic':    ['\033[3m', '\033[23m'],
+			  'underline': ['\033[4m', '\033[24m'],
+			  'inverse':   ['\033[7m', '\033[27m'],
+			  'black':     ['\033[30m', '\033[39m'],
+			  'red':       ['\033[31m', '\033[39m'],
+			  'green':     ['\033[32m', '\033[39m'],
+			  'yellow':    ['\033[33m', '\033[39m'],
+			  'blue':      ['\033[34m', '\033[39m'],
+			  'magenta':   ['\033[35m', '\033[39m'],
+			  'cyan':      ['\033[36m', '\033[39m'],
+			  'white':     ['\033[37m', '\033[39m'],
+			  'default':   ['\033[39m', '\033[39m'],
+			  'grey':      ['\033[90m', '\033[39m'],
+			  'bgBlack':   ['\033[40m', '\033[49m'],
+			  'bgRed':     ['\033[41m', '\033[49m'],
+			  'bgGreen':   ['\033[42m', '\033[49m'],
+			  'bgYellow':  ['\033[43m', '\033[49m'],
+			  'bgBlue':    ['\033[44m', '\033[49m'],
+			  'bgMagenta': ['\033[45m', '\033[49m'],
+			  'bgCyan':    ['\033[46m', '\033[49m'],
+			  'bgWhite':   ['\033[47m', '\033[49m'],
+			  'bgDefault': ['\033[49m', '\033[49m']
+			}
+			Object.keys(styles).forEach(function(style) {
+			  Object.defineProperty(String.prototype, style, {
+			    get: function() { return styles[style][0] + this + styles[style][1]; },
+			    enumerable: false
+			  });
+			});
+
+
+/***/ },
+/* 37 */
 /*!***************************************************************************!*\
   !*** (webpack)/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
   \***************************************************************************/
@@ -5671,7 +5712,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /*!***********************************************************************!*\
   !*** (webpack)/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
   \***********************************************************************/
@@ -5685,7 +5726,7 @@
 			}
 
 /***/ },
-/* 38 */
+/* 39 */
 /*!************************!*\
   !*** ./app/js/main.js ***!
   \************************/
@@ -5709,11 +5750,11 @@
 				load: function load () {
 					// set pages
 					router.init([
-						__webpack_require__(/*! ./pages/init */ 43),
-						__webpack_require__(/*! ./pages/base */ 39),
-						__webpack_require__(/*! ./pages/grid */ 41),
-						__webpack_require__(/*! ./pages/help */ 42),
-						__webpack_require__(/*! ./pages/button */ 40)
+						__webpack_require__(/*! ./pages/init */ 44),
+						__webpack_require__(/*! ./pages/base */ 40),
+						__webpack_require__(/*! ./pages/grid */ 42),
+						__webpack_require__(/*! ./pages/help */ 43),
+						__webpack_require__(/*! ./pages/button */ 41)
 					]);
 				},
 			
@@ -5732,7 +5773,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /*!******************************!*\
   !*** ./app/js/pages/base.js ***!
   \******************************/
@@ -5913,7 +5954,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /*!********************************!*\
   !*** ./app/js/pages/button.js ***!
   \********************************/
@@ -5980,7 +6021,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /*!******************************!*\
   !*** ./app/js/pages/grid.js ***!
   \******************************/
@@ -6067,7 +6108,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /*!******************************!*\
   !*** ./app/js/pages/help.js ***!
   \******************************/
@@ -6134,7 +6175,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /*!******************************!*\
   !*** ./app/js/pages/init.js ***!
   \******************************/
