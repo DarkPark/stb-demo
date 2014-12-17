@@ -12,7 +12,7 @@ var app    = require('stb/app'),
 
 
 app.addListeners({
-	// event
+	// all resources are loaded
 	load: function load () {
 		// set pages
 		router.init([
@@ -22,6 +22,12 @@ app.addListeners({
 			require('./pages/help'),
 			require('./pages/button')
 		]);
+	},
+
+	// everything is ready
+	done: function done () {
+		// go to the main page
+		router.navigate('pageMain');
 	},
 
 	// event
