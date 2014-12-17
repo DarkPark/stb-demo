@@ -17,7 +17,7 @@ app.addListeners({
 		// set pages
 		router.init([
 			require('./pages/init'),
-			require('./pages/base'),
+			require('./pages/main'),
 			require('./pages/grid'),
 			require('./pages/help'),
 			require('./pages/button')

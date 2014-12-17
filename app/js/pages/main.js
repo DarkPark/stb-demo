@@ -6,7 +6,7 @@
 
 'use strict';
 
-var id    = 'pageBase',
+var id    = 'pageMain',
 	node  = document.getElementById(id),
 	Modal = require('stb/ui/modal'),
 	ModalBox     = require('stb/ui/modal.box'),

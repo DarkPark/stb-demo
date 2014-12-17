@@ -28,7 +28,7 @@ page.addListener('load', function load () {
 			value: 'page Base',
 			events: {
 				click: function () {
-					router.navigate('pageBase');
+					router.navigate('pageMain');
 				}
 			}
 		})
