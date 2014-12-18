@@ -18,9 +18,14 @@ var id     = 'pageGrid',
 
 
 page.addListener('load', function load () {
-	var header, button, body, grid;
+	var body = new Panel(),
+		header, button, main, grid;
 
-	page.add(header = new Panel());
+	page.add(body);
+
+	body.add(new Panel({$node: document.getElementById('pageGridTitle')}));
+
+	body.add(header = new Panel());
 
 	header.add(
 		button = new Button({
@@ -36,9 +41,9 @@ page.addListener('load', function load () {
 
 	button.focus();
 
-	page.add(body = new Panel());
+	body.add(main = new Panel());
 
-	body.add(grid = new Grid({
+	main.add(grid = new Grid({
 		//height: 2,
 		//width: 5,
 		data: [

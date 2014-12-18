@@ -17,9 +17,14 @@ var id     = 'pageHelp',
 
 
 page.addListener('load', function load () {
-	var header, button;
+	var body = new Panel(),
+		header, button;
 
-	page.add(header = new Panel());
+	page.add(body);
+
+	body.add(new Panel({$node: document.getElementById('pageHelpTitle')}));
+
+	body.add(header = new Panel());
 
 	header.add(
 		button = new Button({

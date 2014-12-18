@@ -24,9 +24,14 @@ var id    = 'pageMain',
 
 page.addListener('load', function load () {
 	var a2 = new Panel({content:'a2'}),
+		body = new Panel(),
 		m, b1, btnShowHelp, btnShowButton, header, list, pb;
 
-	page.add(header = new Panel());
+	page.add(body);
+
+	body.add(new Panel({$node: document.getElementById('pageMainTitle')}));
+
+	body.add(header = new Panel());
 
 	header.add(
 		new Button({
@@ -72,14 +77,14 @@ page.addListener('load', function load () {
 
 	//btnShowHelp.focus();
 
-	page.add(a2);
+	body.add(a2);
 
 	//page.add(new Panel({content:'a3'}));
 
-	page.add(b1 = new Button({content:'b1', value: 'Show modal'}));
+	body.add(b1 = new Button({content:'b1', value: 'Show modal'}));
 	b1.addListener('click', function () {
 		debug.log('click: Show modal');
-		page.add(b1 = new Button({icon:'small', value: 'Show modal'}));
+		body.add(b1 = new Button({icon:'small', value: 'Show modal'}));
 	});
 
 	b1.focus();
@@ -88,19 +93,19 @@ page.addListener('load', function load () {
 		if ( event.code === 49 ) {
 			debug.log('Modal');
 			m = new Modal();
-			page.add(m);
+			body.add(m);
 			m.focus();
 		}
 		if ( event.code === 50 ) {
 			debug.log('ModalBox');
 			m = new ModalBox();
-			page.add(m);
+			body.add(m);
 			m.focus();
 		}
 		if ( event.code === 51 ) {
 			debug.log('ModalMessage');
 			m = new ModalMessage();
-			page.add(m);
+			body.add(m);
 			m.focus();
 		}
 
@@ -109,7 +114,7 @@ page.addListener('load', function load () {
 			debug.log('modal open');
 
 			m = new ModalMessage();
-			page.add(m);
+			body.add(m);
 			m.focus();
 			m.addListener('keydown', function ( event ) {
 				if ( event.code === 27 ) {
@@ -127,7 +132,7 @@ page.addListener('load', function load () {
 	a2.add(new CheckBox());
 	a2.add(new CheckBox({value:true}));
 
-	page.add(header = new Panel());
+	body.add(header = new Panel());
 	header.add(list = new List({
 		data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55/**/],
 		render: function ( $item, data ) {
@@ -136,14 +141,14 @@ page.addListener('load', function load () {
 	}));
 	list.focus();
 
-	page.add(header = new Panel());
+	body.add(header = new Panel());
 	header.add(list = new List({
 		data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
 		type: List.prototype.TYPE_HORIZONTAL
 	}));
 	//list.focus();
 
-	page.add(header = new Panel());
+	body.add(header = new Panel());
 	header.add(pb = new ProgressBar({
 		value: 50,
 		events: {
