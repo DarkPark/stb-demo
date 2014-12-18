@@ -29,9 +29,9 @@ a {
   text-decoration: none;
 }
 .component.page {
-  width: 1890px;
-  height: 1050px;
-  padding: 15px 15px 15px 15px;
+  width: 1920px;
+  height: 1080px;
+  padding: 0;
   position: absolute;
   visibility: hidden;
 }
