@@ -28,23 +28,6 @@ table td {
 a {
   text-decoration: none;
 }
-#pageInit {
-  text-align: center;
-}
-#pageInit .main {
-  margin-top: 66px;
-  line-height: 918px;
-  font-size: 150%;
-}
-#pageInit .version {
-  padding-right: 33px;
-  line-height: 66px;
-  text-align: right;
-  font-size: 80%;
-}
-#pageInit .version .value {
-  color: grey;
-}
 .component.page {
   width: 1890px;
   height: 1050px;
@@ -226,4 +209,21 @@ div.develop canvas.active {
 .component.grid td.cell {
   outline: 1px dashed #000000;
   outline-offset: -1px;
+}
+#pageInit {
+  text-align: center;
+}
+#pageInit .main {
+  margin-top: 66px;
+  line-height: 918px;
+  font-size: 150%;
+}
+#pageInit .version {
+  padding-right: 33px;
+  line-height: 66px;
+  text-align: right;
+  font-size: 80%;
+}
+#pageInit .version .value {
+  color: grey;
 }

@@ -92,7 +92,7 @@
 			__webpack_require__(/*! ./debug */ 15);
 			
 			// the application itself
-			__webpack_require__(/*! app/main */ 39);
+			__webpack_require__(/*! app/main */ 40);
 
 
 /***/ },
@@ -1605,7 +1605,7 @@
   \****************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-			// Copyright Joyent, Inc. and other Node contributors.
+			/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
 			//
 			// Permission is hereby granted, free of charge, to any person obtaining a
 			// copy of this software and associated documentation files (the
@@ -2191,7 +2191,8 @@
 			function hasOwnProperty(obj, prop) {
 			  return Object.prototype.hasOwnProperty.call(obj, prop);
 			}
-
+			
+			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 36)))
 
 /***/ },
 /* 11 */
@@ -2618,7 +2619,7 @@
 			
 			
 			// enable colors in console
-			__webpack_require__(/*! tinycolor */ 36);
+			__webpack_require__(/*! tty-colors */ 39);
 			
 			
 			(function connect () {
@@ -3916,7 +3917,7 @@
 					// callbacks
 					if ( options.onload && typeof options.onload === 'function' ) {
 						client.onload = function onload () {
-							options.onload.call(this, this.response, this.status);
+							options.onload.call(this, this.response || this.responseText, this.status);
 						};
 					}
 					client.onerror   = options.onerror;
@@ -4655,9 +4656,10 @@
 			
 						item.addEventListener('click', function () {
 							self.activeIndex = this.index;
-							self.activeItem.classList.remove('focus');
-							self.activeItem = this;
-							self.activeItem.classList.add('focus');
+							self.focusItem(this);
+							//self.activeItem.classList.remove('focus');
+							//self.activeItem = this;
+							//self.activeItem.classList.add('focus');
 						});
 					}
 					//this.items.push(this.$body.appendChild(item));
@@ -4789,7 +4791,7 @@
 			
 			/**
 			 * Highlight the given DOM element as focused.
-			 * Remove focus from the previously focused item.
+			 * Remove focus from the previously focused item and generate associated event.
 			 *
 			 * @param {Node} $item element to focus
 			 *
@@ -5119,7 +5121,7 @@
 			// public export
 			module.exports = {
 				// turn on/off server
-				active: true,
+				active: false,
 			
 				// listening port
 				port: 8010
@@ -5642,41 +5644,96 @@
 /***/ },
 /* 36 */
 /*!**********************************************************!*\
-  !*** /home/dp/Projects/web/stb/~/tinycolor/tinycolor.js ***!
+  !*** (webpack)/~/node-libs-browser/~/process/browser.js ***!
   \**********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-			var styles = {
-			  'bold':      ['\033[1m', '\033[22m'],
-			  'italic':    ['\033[3m', '\033[23m'],
-			  'underline': ['\033[4m', '\033[24m'],
-			  'inverse':   ['\033[7m', '\033[27m'],
-			  'black':     ['\033[30m', '\033[39m'],
-			  'red':       ['\033[31m', '\033[39m'],
-			  'green':     ['\033[32m', '\033[39m'],
-			  'yellow':    ['\033[33m', '\033[39m'],
-			  'blue':      ['\033[34m', '\033[39m'],
-			  'magenta':   ['\033[35m', '\033[39m'],
-			  'cyan':      ['\033[36m', '\033[39m'],
-			  'white':     ['\033[37m', '\033[39m'],
-			  'default':   ['\033[39m', '\033[39m'],
-			  'grey':      ['\033[90m', '\033[39m'],
-			  'bgBlack':   ['\033[40m', '\033[49m'],
-			  'bgRed':     ['\033[41m', '\033[49m'],
-			  'bgGreen':   ['\033[42m', '\033[49m'],
-			  'bgYellow':  ['\033[43m', '\033[49m'],
-			  'bgBlue':    ['\033[44m', '\033[49m'],
-			  'bgMagenta': ['\033[45m', '\033[49m'],
-			  'bgCyan':    ['\033[46m', '\033[49m'],
-			  'bgWhite':   ['\033[47m', '\033[49m'],
-			  'bgDefault': ['\033[49m', '\033[49m']
-			}
-			Object.keys(styles).forEach(function(style) {
-			  Object.defineProperty(String.prototype, style, {
-			    get: function() { return styles[style][0] + this + styles[style][1]; },
-			    enumerable: false
-			  });
-			});
+			// shim for using process in browser
+			
+			var process = module.exports = {};
+			
+			process.nextTick = (function () {
+			    var canSetImmediate = typeof window !== 'undefined'
+			    && window.setImmediate;
+			    var canMutationObserver = typeof window !== 'undefined'
+			    && window.MutationObserver;
+			    var canPost = typeof window !== 'undefined'
+			    && window.postMessage && window.addEventListener
+			    ;
+			
+			    if (canSetImmediate) {
+			        return function (f) { return window.setImmediate(f) };
+			    }
+			
+			    var queue = [];
+			
+			    if (canMutationObserver) {
+			        var hiddenDiv = document.createElement("div");
+			        var observer = new MutationObserver(function () {
+			            var queueList = queue.slice();
+			            queue.length = 0;
+			            queueList.forEach(function (fn) {
+			                fn();
+			            });
+			        });
+			
+			        observer.observe(hiddenDiv, { attributes: true });
+			
+			        return function nextTick(fn) {
+			            if (!queue.length) {
+			                hiddenDiv.setAttribute('yes', 'no');
+			            }
+			            queue.push(fn);
+			        };
+			    }
+			
+			    if (canPost) {
+			        window.addEventListener('message', function (ev) {
+			            var source = ev.source;
+			            if ((source === window || source === null) && ev.data === 'process-tick') {
+			                ev.stopPropagation();
+			                if (queue.length > 0) {
+			                    var fn = queue.shift();
+			                    fn();
+			                }
+			            }
+			        }, true);
+			
+			        return function nextTick(fn) {
+			            queue.push(fn);
+			            window.postMessage('process-tick', '*');
+			        };
+			    }
+			
+			    return function nextTick(fn) {
+			        setTimeout(fn, 0);
+			    };
+			})();
+			
+			process.title = 'browser';
+			process.browser = true;
+			process.env = {};
+			process.argv = [];
+			
+			function noop() {}
+			
+			process.on = noop;
+			process.addListener = noop;
+			process.once = noop;
+			process.off = noop;
+			process.removeListener = noop;
+			process.removeAllListeners = noop;
+			process.emit = noop;
+			
+			process.binding = function (name) {
+			    throw new Error('process.binding is not supported');
+			};
+			
+			// TODO(shtylman)
+			process.cwd = function () { return '/' };
+			process.chdir = function (dir) {
+			    throw new Error('process.chdir is not supported');
+			};
 
 
 /***/ },
@@ -5727,6 +5784,70 @@
 
 /***/ },
 /* 39 */
+/*!*******************************************************!*\
+  !*** /home/dp/Projects/web/stb/~/tty-colors/index.js ***!
+  \*******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Extend strings with ANSI escape codes for styling strings in the terminal.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var styles = {
+					reset:         [0,   0],
+					bold:          [1,  22],
+					dim:           [2,  22],
+					italic:        [3,  23],
+					underline:     [4,  24],
+					inverse:       [7,  27],
+					hidden:        [8,  28],
+					strikethrough: [9,  29],
+					black:         [30, 39],
+					red:           [31, 39],
+					green:         [32, 39],
+					yellow:        [33, 39],
+					blue:          [34, 39],
+					magenta:       [35, 39],
+					cyan:          [36, 39],
+					white:         [37, 39],
+					grey:          [90, 39],
+					bgBlack:       [40, 49],
+					bgRed:         [41, 49],
+					bgGreen:       [42, 49],
+					bgYellow:      [43, 49],
+					bgBlue:        [44, 49],
+					bgMagenta:     [45, 49],
+					bgCyan:        [46, 49],
+					bgWhite:       [47, 49]
+				};
+			
+			
+			// apply all styles to String prototype
+			Object.keys(styles).forEach(function ( name ) {
+				// rework values to avoid unnecessary concatenations
+				styles[name][0] = '\u001b[' + styles[name][0] + 'm';
+				styles[name][1] = '\u001b[' + styles[name][1] + 'm';
+			
+				// add getter by style name
+				Object.defineProperty(String.prototype, name, {
+					get: function () {
+						return styles[name][0] + this + styles[name][1];
+					},
+					// hide from iteration
+					enumerable: false,
+					// allow to change or remove this property
+					configurable: true
+				});
+			});
+
+
+/***/ },
+/* 40 */
 /*!************************!*\
   !*** ./app/js/main.js ***!
   \************************/
@@ -5746,16 +5867,22 @@
 			
 			
 			app.addListeners({
-				// event
+				// all resources are loaded
 				load: function load () {
 					// set pages
 					router.init([
 						__webpack_require__(/*! ./pages/init */ 44),
-						__webpack_require__(/*! ./pages/base */ 40),
+						__webpack_require__(/*! ./pages/main */ 45),
 						__webpack_require__(/*! ./pages/grid */ 42),
 						__webpack_require__(/*! ./pages/help */ 43),
 						__webpack_require__(/*! ./pages/button */ 41)
 					]);
+				},
+			
+				// everything is ready
+				done: function done () {
+					// go to the main page
+					router.navigate('pageMain');
 				},
 			
 				// event
@@ -5773,9 +5900,76 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
+/*!********************************!*\
+  !*** ./app/js/pages/button.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var id     = 'pageButton',
+				node   = document.getElementById(id),
+				Page   = __webpack_require__(/*! stb/ui/page */ 6),
+				Button = __webpack_require__(/*! stb/ui/button */ 8),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
+				page   = new Page({$node: node}),
+				router = __webpack_require__(/*! stb/router */ 4),
+				keys   = __webpack_require__(/*! stb/keys */ 2);
+			
+			
+			page.addListener('load', function load () {
+				var header, button;
+			
+				page.add(header = new Panel());
+			
+				header.add(
+					button = new Button({
+						icon: 'back',
+						value: 'page Base',
+						events: {
+							click: function () {
+								router.navigate('pageMain');
+							}
+						}
+					})
+				);
+			
+				button.focus();
+			});
+			
+			
+			page.addListener('show', function show ( event ) {
+				debug.info(event.data);
+			});
+			
+			
+			page.addListener('keydown', function keydown ( event ) {
+			//	switch ( event.code ) {
+			//		case keys.ok:
+			//			require('./base').show();
+			//			break;
+			//		case keys.exit:
+			//			page.hide();
+			//			break;
+			//	}
+			});
+			
+			
+			// public export
+			module.exports = page;
+
+
+/***/ },
+/* 42 */
 /*!******************************!*\
-  !*** ./app/js/pages/base.js ***!
+  !*** ./app/js/pages/grid.js ***!
   \******************************/
 /***/ function(module, exports, __webpack_require__) {
 
@@ -5787,7 +5981,186 @@
 			
 			'use strict';
 			
-			var id    = 'pageBase',
+			var id     = 'pageGrid',
+				node   = document.getElementById(id),
+				Page   = __webpack_require__(/*! stb/ui/page */ 6),
+				Button = __webpack_require__(/*! stb/ui/button */ 8),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
+				Grid   = __webpack_require__(/*! stb/ui/grid */ 25),
+				page   = new Page({$node: node}),
+				router = __webpack_require__(/*! stb/router */ 4),
+				keys   = __webpack_require__(/*! stb/keys */ 2);
+			
+			
+			page.addListener('load', function load () {
+				var header, button, body, grid;
+			
+				page.add(header = new Panel());
+			
+				header.add(
+					button = new Button({
+						icon: 'back',
+						value: 'page Base',
+						events: {
+							click: function () {
+								router.navigate('pageMain');
+							}
+						}
+					})
+				);
+			
+				button.focus();
+			
+				page.add(body = new Panel());
+			
+				body.add(grid = new Grid({
+					//height: 2,
+					//width: 5,
+					data: [
+						[1, 2, 3, 4, 5],
+						[6, {value: '789', colSpan: 3}, 10],
+						[{value: '11<br>21', rowSpan: 2}, 12, 13, 14, {value: '15<br>25', rowSpan: 2}],
+						[22, 23, 24],
+						[{value: '26-30', colSpan: 5}]
+					],
+					render: function ( $item, data ) {
+						$item.innerHTML = '[' + (data) + ']';
+					}
+				}));
+			
+				grid.focus();
+			});
+			
+			
+			page.addListener('show', function show ( event ) {
+				debug.info(event.data);
+			});
+			
+			
+			page.addListener('keydown', function keydown ( event ) {
+			//	switch ( event.code ) {
+			//		case keys.ok:
+			//			require('./base').show();
+			//			break;
+			//		case keys.exit:
+			//			page.hide();
+			//			break;
+			//	}
+			});
+			
+			
+			// public export
+			module.exports = page;
+
+
+/***/ },
+/* 43 */
+/*!******************************!*\
+  !*** ./app/js/pages/help.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var id     = 'pageHelp',
+				node   = document.getElementById(id),
+				Page   = __webpack_require__(/*! stb/ui/page */ 6),
+				Button = __webpack_require__(/*! stb/ui/button */ 8),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
+				page   = new Page({$node: node}),
+				router = __webpack_require__(/*! stb/router */ 4),
+				keys   = __webpack_require__(/*! stb/keys */ 2);
+			
+			
+			page.addListener('load', function load () {
+				var header, button;
+			
+				page.add(header = new Panel());
+			
+				header.add(
+					button = new Button({
+						icon: 'back',
+						value: 'page Base',
+						events: {
+							click: function () {
+								router.navigate('pageMain');
+							}
+						}
+					})
+				);
+			
+				button.focus();
+			});
+			
+			
+			page.addListener('show', function show ( event ) {
+				debug.info(event.data);
+			});
+			
+			
+			page.addListener('keydown', function keydown ( event ) {
+			//	switch ( event.code ) {
+			//		case keys.ok:
+			//			require('./base').show();
+			//			break;
+			//		case keys.exit:
+			//			page.hide();
+			//			break;
+			//	}
+			});
+			
+			
+			// public export
+			module.exports = page;
+
+
+/***/ },
+/* 44 */
+/*!******************************!*\
+  !*** ./app/js/pages/init.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Loading page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var id   = 'pageInit',
+				Page = __webpack_require__(/*! stb/ui/page */ 6),
+				page = new Page({$node: document.getElementById(id)});
+			
+			
+			// public export
+			module.exports = page;
+
+
+/***/ },
+/* 45 */
+/*!******************************!*\
+  !*** ./app/js/pages/main.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var id    = 'pageMain',
 				node  = document.getElementById(id),
 				Modal = __webpack_require__(/*! stb/ui/modal */ 14),
 				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 13),
@@ -5947,254 +6320,6 @@
 			//			break;
 			//	}
 			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 41 */
-/*!********************************!*\
-  !*** ./app/js/pages/button.js ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageButton',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
-			
-			
-			page.addListener('load', function load () {
-				var header, button;
-			
-				page.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
-						events: {
-							click: function () {
-								router.navigate('pageBase');
-							}
-						}
-					})
-				);
-			
-				button.focus();
-			});
-			
-			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
-			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 42 */
-/*!******************************!*\
-  !*** ./app/js/pages/grid.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageGrid',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				Grid   = __webpack_require__(/*! stb/ui/grid */ 25),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
-			
-			
-			page.addListener('load', function load () {
-				var header, button, body, grid;
-			
-				page.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
-						events: {
-							click: function () {
-								router.navigate('pageBase');
-							}
-						}
-					})
-				);
-			
-				button.focus();
-			
-				page.add(body = new Panel());
-			
-				body.add(grid = new Grid({
-					//height: 2,
-					//width: 5,
-					data: [
-						[1, 2, 3, 4, 5],
-						[6, {value: '789', colSpan: 3}, 10],
-						[{value: '11<br>21', rowSpan: 2}, 12, 13, 14, {value: '15<br>25', rowSpan: 2}],
-						[22, 23, 24],
-						[{value: '26-30', colSpan: 5}]
-					],
-					render: function ( $item, data ) {
-						$item.innerHTML = '[' + (data) + ']';
-					}
-				}));
-			
-				grid.focus();
-			});
-			
-			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
-			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 43 */
-/*!******************************!*\
-  !*** ./app/js/pages/help.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageHelp',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
-			
-			
-			page.addListener('load', function load () {
-				var header, button;
-			
-				page.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
-						events: {
-							click: function () {
-								router.navigate('pageBase');
-							}
-						}
-					})
-				);
-			
-				button.focus();
-			});
-			
-			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
-			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 44 */
-/*!******************************!*\
-  !*** ./app/js/pages/init.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Loading page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var id   = 'pageInit',
-				Page = __webpack_require__(/*! stb/ui/page */ 6),
-				page = new Page({
-					$node: document.getElementById(id)
-				});
 			
 			
 			// public export
