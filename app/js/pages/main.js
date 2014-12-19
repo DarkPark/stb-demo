@@ -29,38 +29,37 @@ page.addListener('load', function load () {
 
 	page.add(body);
 
-	body.add(new Panel({$node: document.getElementById('pageMainTitle')}));
-
-	body.add(header = new Panel());
-
-	header.add(
-		new Button({
-			icon: 'menu',
-			value: 'page Button',
-			events: {
-				click: function () {
-					router.navigate('pageButton');
+	body.add(
+		new Panel({$node: document.getElementById('pageMainTitle')}),
+		header = new Panel({children: [
+			new Button({
+				icon: 'menu',
+				value: 'page Button',
+				events: {
+					click: function () {
+						router.navigate('pageButton');
+					}
 				}
-			}
-		}),
-		new Button({
-			icon: 'menu',
-			value: 'page Grid',
-			events: {
-				click: function () {
-					router.navigate('pageGrid');
+			}),
+			new Button({
+				icon: 'menu',
+				value: 'page Grid',
+				events: {
+					click: function () {
+						router.navigate('pageGrid');
+					}
 				}
-			}
-		}),
-		new Button({
-			icon: 'menu',
-			value: 'page Help',
-			events: {
-				click: function () {
-					router.navigate('pageHelp');
+			}),
+			new Button({
+				icon: 'menu',
+				value: 'page Help',
+				events: {
+					click: function () {
+						router.navigate('pageHelp');
+					}
 				}
-			}
-		})
+			})
+		]})
 	);
 
 	//header.add(btnShowHelp = new Button({icon: 'exit', value: 'Show page Help'}));
@@ -134,7 +133,7 @@ page.addListener('load', function load () {
 
 	body.add(header = new Panel());
 	header.add(list = new List({
-		data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55/**/],
+		data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
 		render: function ( $item, data ) {
 			$item.innerHTML = '[' + (data) + ']';
 		}
@@ -143,18 +142,27 @@ page.addListener('load', function load () {
 
 	body.add(header = new Panel());
 	header.add(list = new List({
-		data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+		data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+		//visible: false,
 		type: List.prototype.TYPE_HORIZONTAL
 	}));
 	//list.focus();
 
 	body.add(header = new Panel());
 	header.add(pb = new ProgressBar({
-		value: 50,
+		min: -50,
+		max: 50,
+		value: 0,
 		events: {
 			keydown: function ( event ) {
 				if ( event.code === keys.right ) { pb.set(pb.value + 1); }
 				if ( event.code === keys.left  ) { pb.set(pb.value - 1); }
+			},
+			done: function () {
+				debug.log('ProgressBar: done');
+			},
+			change: function ( data ) {
+				debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
 			}
 		}
 	}));
