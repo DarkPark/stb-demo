@@ -31,35 +31,37 @@ page.addListener('load', function load () {
 
 	body.add(
 		new Panel({$node: document.getElementById('pageMainTitle')}),
-		header = new Panel({children: [
-			new Button({
-				icon: 'menu',
-				value: 'page Button',
-				events: {
-					click: function () {
-						router.navigate('pageButton');
-					}
+		header = new Panel({children: []})
+	);
+
+	header.add(
+		new Button({
+			icon: 'menu',
+			value: 'page Button',
+			events: {
+				click: function () {
+					router.navigate('pageButton');
 				}
-			}),
-			new Button({
-				icon: 'menu',
-				value: 'page Grid',
-				events: {
-					click: function () {
-						router.navigate('pageGrid');
-					}
+			}
+		}),
+		new Button({
+			icon: 'menu',
+			value: 'page Grid',
+			events: {
+				click: function () {
+					router.navigate('pageGrid');
 				}
-			}),
-			new Button({
-				icon: 'menu',
-				value: 'page Help',
-				events: {
-					click: function () {
-						router.navigate('pageHelp');
-					}
+			}
+		}),
+		new Button({
+			icon: 'menu',
+			value: 'page Help',
+			events: {
+				click: function () {
+					router.navigate('pageHelp');
 				}
-			})
-		]})
+			}
+		})
 	);
 
 	//header.add(btnShowHelp = new Button({icon: 'exit', value: 'Show page Help'}));
