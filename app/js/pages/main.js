@@ -138,6 +138,16 @@ page.addListener('load', function load () {
 		data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
 		render: function ( $item, data ) {
 			$item.innerHTML = '[' + (data) + ']';
+		},
+		events: {
+			click: function ( data ) {
+				console.log('click');
+				//debug.inspect(data, 1);
+			},
+			focus: function ( data ) {
+				console.log('focus');
+				//debug.inspect(data, 1);
+			}
 		}
 	}));
 	list.focus();
