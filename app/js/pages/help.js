@@ -16,20 +16,19 @@ var id     = 'pageHelp',
 	keys   = require('stb/keys');
 
 
+page.addListener('show', function load () {
+	// initial active component
+	//page.back.focus();
+});
+
+
 page.addListener('load', function load () {
 	var body = new Panel(),
 		header, button;
 
-	page.add(body);
-
-	body.add(new Panel({$node: document.getElementById('pageHelpTitle')}));
-
-	body.add(header = new Panel());
-
-	header.add(
-		button = new Button({
-			icon: 'back',
-			value: 'page Base',
+	page.add(
+		page.back = new Button({
+			value: 'go back',
 			events: {
 				click: function () {
 					router.navigate('pageMain');
@@ -38,13 +37,23 @@ page.addListener('load', function load () {
 		})
 	);
 
+	return;
+
+	page.add(body);
+
+	body.add(new Panel({$node: document.getElementById('pageHelpTitle')}));
+
+	body.add(header = new Panel());
+
+
+
 	button.focus();
 });
 
 
-page.addListener('show', function show ( event ) {
-	debug.info(event.data);
-});
+//page.addListener('show', function show ( event ) {
+//	debug.info(event.data);
+//});
 
 
 page.addListener('keydown', function keydown ( event ) {

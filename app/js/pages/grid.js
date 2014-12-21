@@ -21,6 +21,8 @@ page.addListener('load', function load () {
 	var body = new Panel(),
 		header, button, main, grid;
 
+	return;
+
 	page.add(body);
 
 	body.add(new Panel({$node: document.getElementById('pageGridTitle')}));

@@ -23,3 +23,67 @@
 		}
 	}
 }
+
+#pageMain {
+	> table {
+		width: 100%;
+		height: 100%;
+	}
+
+	td.menu {
+		//height: unit(@height - @availTop - @availBottom, px);
+		width: 20%;
+		vertical-align: top;
+		//float: left;
+		background-color: #222;
+		padding: unit(@availTop, px) unit(min(@fontSize, @availRight), px) unit(@availBottom, px) unit(@availLeft, px);
+		//display: inline-block;
+	}
+
+	td.body {
+		padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
+		vertical-align: top;
+		//height: 100%;
+		//display: inline-block;
+		> div {
+			height: unit(@height - @availTop - @availBottom, px);
+
+			.component {
+				&.panel {
+					padding : unit(@panelPaddingY, px) unit(@panelPaddingX, px);
+					background-color: #222;
+					margin-bottom: unit(@panelPaddingY, px);
+
+					.component.panel {
+						//margin-top: unit(@panelPaddingY, px);
+						background-color: #111;
+					}
+
+					.component.progressBar {
+						//margin-top: unit(@panelPaddingY, px);
+					}
+				}
+				&.panel:last-child {
+					margin-bottom: 0;
+				}
+				&.grid {
+					td.cell {
+						padding: unit(@gridItemPaddingY*2, px) unit(@gridItemPaddingX*2, px);
+					}
+				}
+			}
+		}
+		#pageMainTabGridSimple {
+			width: 50%;
+		}
+		#pageMainTabListSimple, #pageMainTabListCustom {
+			display: inline-block;
+			width: 40%;
+		}
+	}
+}
+
+#pageHelp {
+	text-align: center;
+	line-height: unit(@height, px);
+}

@@ -20,6 +20,8 @@ page.addListener('load', function load () {
 	var body = new Panel(),
 		header, button;
 
+	return;
+
 	page.add(body);
 
 	body.add(new Panel({$node: document.getElementById('pageButtonTitle')}));
