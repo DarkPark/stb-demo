@@ -75,7 +75,7 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
-			size: 9,
+			size: 8,
 			render: function ( $item, data ) {
 				$item.textContent = data.value;
 			},
