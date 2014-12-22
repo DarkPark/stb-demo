@@ -18,9 +18,7 @@ app.addListeners({
 		router.init([
 			require('./pages/init'),
 			require('./pages/main'),
-			require('./pages/grid'),
-			require('./pages/help'),
-			require('./pages/button')
+			require('./pages/help')
 		]);
 	},
 
