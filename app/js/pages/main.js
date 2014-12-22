@@ -6,28 +6,19 @@
 
 'use strict';
 
-var id    = 'pageMain',
-	node  = document.getElementById(id),
-	Modal = require('stb/ui/modal'),
+var id           = 'pageMain',
+	Modal        = require('stb/ui/modal'),
 	ModalBox     = require('stb/ui/modal.box'),
 	ModalMessage = require('stb/ui/modal.message'),
-	Panel  = require('stb/ui/panel'),
-	Button = require('stb/ui/button'),
-	CheckBox = require('stb/ui/check.box'),
-	ProgressBar = require('stb/ui/progress.bar'),
-	List   = require('stb/ui/list'),
-	Page   = require('stb/ui/page'),
-	page   = new Page({$node: node}),
-	router = require('stb/router'),
-	keys   = require('stb/keys');
-
-
-page.addListener('show', function load () {
-	// initial active component
-	if ( !page.activeComponent ) {
-		page.menu.focus();
-	}
-});
+	Panel        = require('stb/ui/panel'),
+	Button       = require('stb/ui/button'),
+	CheckBox     = require('stb/ui/check.box'),
+	ProgressBar  = require('stb/ui/progress.bar'),
+	List         = require('stb/ui/list'),
+	Page         = require('stb/ui/page'),
+	router       = require('stb/router'),
+	keys         = require('stb/keys'),
+	page         = new Page({$node: document.getElementById(id)});
 
 
 page.addListener('load', function load () {
@@ -41,6 +32,10 @@ page.addListener('load', function load () {
 			value: 'Panel',
 			panel: require('../tabs/main.panel')
 		},
+		//{
+		//	value: 'InfoPanel',
+		//	panel: require('../tabs/main.info.panel')
+		//},
 		{
 			value: 'Button',
 			panel: require('../tabs/main.button')
@@ -80,34 +75,34 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
-			size: 8,
+			size: 9,
 			render: function ( $item, data ) {
 				$item.textContent = data.value;
 			},
 			events: {
 				click: function ( data ) {
-					console.log('click');
+					//console.log('click');
 					//data.event.stop = true;
 					//debug.inspect(data, 1);
 				},
 				focus: function ( data ) {
-					console.log('focus');
+					//console.log('focus');
 					//debug.inspect(data, 1);
 				},
 				'click:item': function ( data ) {
-					console.log('click:item');
+					//console.log('click:item');
 					//debug.inspect(data, 1);
 				},
 				'focus:item': function ( data ) {
-					console.log('focus:item');
-					debug.inspect(data, 1);
+					//console.log('focus:item');
+					//debug.inspect(data, 1);
 					if ( data.$prev ) {
 						data.$prev.data.panel.hide();
 					}
 					data.$curr.data.panel.show();
 				},
 				'blur:item': function ( data ) {
-					console.log('blur:item');
+					//console.log('blur:item');
 					//debug.inspect(data, 1);
 				}
 			}
@@ -360,15 +355,11 @@ page.addListener('load', function load () {
 });
 
 
-page.addListener('keydown', function keydown ( event ) {
-//	switch ( event.code ) {
-//		case keys.ok:
-//			router.navigate('pageHelp')
-//			break;
-//		case 32:
-//			//
-//			break;
-//	}
+page.addListener('show', function load () {
+	// initial active component
+	if ( !page.activeComponent ) {
+		page.menu.focus();
+	}
 });
 
 

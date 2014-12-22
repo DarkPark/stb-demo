@@ -27,24 +27,24 @@ panel.add(
 				//},
 				events: {
 					click: function ( data ) {
-						console.log('click');
+						//console.log('click');
 						//data.event.stop = true;
 						//debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
-						console.log('focus');
+						//console.log('focus');
 						//debug.inspect(data, 1);
 					},
 					'click:item': function ( data ) {
-						console.log('click:item');
+						//console.log('click:item');
 						//debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
-						console.log('focus:item');
+						//console.log('focus:item');
 						//debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
-						console.log('blur:item');
+						//console.log('blur:item');
 						//debug.inspect(data, 1);
 					}
 				}
@@ -63,24 +63,24 @@ panel.add(
 				},
 				events: {
 					click: function ( data ) {
-						console.log('click');
+						//console.log('click');
 						//data.event.stop = true;
 						//debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
-						console.log('focus');
+						//console.log('focus');
 						//debug.inspect(data, 1);
 					},
 					'click:item': function ( data ) {
-						console.log('click:item');
+						//console.log('click:item');
 						//debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
-						console.log('focus:item');
+						//console.log('focus:item');
 						//debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
-						console.log('blur:item');
+						//console.log('blur:item');
 						//debug.inspect(data, 1);
 					}
 				}

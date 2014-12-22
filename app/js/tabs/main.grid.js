@@ -20,9 +20,9 @@ panel.add(
 		children: [
 			new Grid({
 				data: [
-					[ 1,  2,  3,  4],
-					[ 5,  6,  7,  8],
-					[ 9, 10, 11, 12],
+					[1,   2,  3,  4],
+					[5,   6,  7,  8],
+					[9,  10, 11, 12],
 					[13, 14, 15, 16]
 				],
 				render: function ( $item, data ) {
@@ -38,10 +38,10 @@ panel.add(
 			new Grid({
 				data: [
 					[1, 2, 3, 4, 5],
-					[6, {value: '789', colSpan: 3}, 10],
-					[{value: '11<br>21', rowSpan: 2}, 12, 13, 14, {value: '15<br>25', rowSpan: 2}],
+					[6, {value: '7 ... 9', colSpan: 3}, 10],
+					[{value: '11\n21', rowSpan: 2}, 12, 13, 14, {value: '15\n25', rowSpan: 2}],
 					[22, 23, 24],
-					[{value: '26-30', colSpan: 5}]
+					[{value: '26 ... 30', colSpan: 5}]
 				],
 				render: function ( $item, data ) {
 					$item.innerHTML = '[' + (data) + ']';

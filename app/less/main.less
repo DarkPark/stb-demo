@@ -48,11 +48,12 @@
 		> div {
 			height: unit(@height - @availTop - @availBottom, px);
 			padding: 0;
+			background-color: black;
 
 			.component {
 				&.panel {
 					//padding : unit(@panelPaddingY, px) unit(@panelPaddingX, px);
-					background-color: #222;
+					//background-color: #222;
 					margin-bottom: unit(@panelPaddingY, px);
 
 					.component.panel {
@@ -67,6 +68,17 @@
 				&.panel:last-child {
 					margin-bottom: 0;
 				}
+
+//				&.infoPanel {
+//					margin-bottom: unit(@panelPaddingY, px);
+//					.component.panel {
+//						background-color: #111;
+//					}
+//				}
+//				&.infoPanel:last-child {
+//					margin-bottom: 0;
+//				}
+
 				&.grid {
 					td.cell {
 						padding: unit(@gridItemPaddingY*2, px) unit(@gridItemPaddingX*2, px);
