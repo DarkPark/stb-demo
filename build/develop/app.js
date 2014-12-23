@@ -50,6 +50,7 @@
 			/**
 			 * Main module to setup development environment.
 			 *
+			 * @module stb/develop/main
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -57,8 +58,8 @@
 			'use strict';
 			
 			var app     = __webpack_require__(/*! ../app */ 3),
-				storage = __webpack_require__(/*! ./storage */ 7),
-				metrics = __webpack_require__(/*! metrics */ 12);
+				storage = __webpack_require__(/*! ./storage */ 8),
+				metrics = __webpack_require__(/*! metrics */ 13);
 			
 			
 			// export to globals for easy debugging
@@ -74,7 +75,7 @@
 			// platform?
 			if ( app.data.host ) {
 				// web inspector
-				__webpack_require__(/*! ./weinre */ 20);
+				__webpack_require__(/*! ./weinre */ 23);
 			}
 			
 			// apply screen size, position, margins and styles
@@ -86,10 +87,10 @@
 			
 			
 			// additional dev modules
-			__webpack_require__(/*! ./static */ 19);
-			__webpack_require__(/*! ./proxy */ 18);
-			__webpack_require__(/*! ./events */ 16);
-			__webpack_require__(/*! ./debug */ 15);
+			__webpack_require__(/*! ./static */ 22);
+			__webpack_require__(/*! ./proxy */ 21);
+			__webpack_require__(/*! ./events */ 19);
+			__webpack_require__(/*! ./debug */ 18);
 			
 			// the application itself
 			__webpack_require__(/*! app/main */ 40);
@@ -97,6 +98,77 @@
 
 /***/ },
 /* 1 */
+/*!****************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/panel.js ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/panel
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2);
+			
+			
+			/**
+			 * Base panel implementation.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 *
+			 * @example
+			 * var Panel = require('stb/ui/panel'),
+			 *     panel = new Panel({
+			 *         $node: document.getElementById('someId'),
+			 *         children: [
+			 *             new Panel({
+			 *                 $node: document.getElementById('anotherId')
+			 *             })
+			 *         ]
+			 *     });
+			 *
+			 * panel.add(
+			 *     new Button(),
+			 *     new Button(),
+			 *     new Button()
+			 * );
+			 *
+			 * page.add(panel);
+			 */
+			function Panel ( config ) {
+				// sanitize
+				config = config || {};
+			
+				// can't accept focus
+				if ( config.focusable === undefined ) {
+					config.focusable = false;
+				}
+			
+				// parent init
+				Component.call(this, config);
+			
+				// correct CSS class names
+				this.$node.classList.add('panel');
+			}
+			
+			
+			// inheritance
+			Panel.prototype = Object.create(Component.prototype);
+			Panel.prototype.constructor = Panel;
+			
+			
+			// public export
+			module.exports = Panel;
+
+
+/***/ },
+/* 2 */
 /*!*****************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/component.js ***!
   \*****************************************************/
@@ -110,7 +182,8 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 11),
+			var Emitter = __webpack_require__(/*! ./emitter */ 10),
+				router  = __webpack_require__(/*! ./router */ 4),
 				counter = 0;
 			
 			
@@ -123,24 +196,27 @@
 			 * Each component has a unique ID given either from $node.id or from data.id. If not given will generate automatically.
 			 *
 			 * @constructor
+			 * @extends Emitter
 			 *
 			 * @param {Object} [config={}] init parameters
-			 * @param {Node} config.id component unique identifier
-			 * @param {Node} config.$node DOM element/fragment to be a component outer container
-			 * @param {Node} config.$body DOM element/fragment to be a component inner container (by default is the same as $node)
-			 * @param {Node} config.$content DOM element/fragment to be appended to the $body
-			 * @param {Component} config.parent link to the parent component which has this component as a child
-			 * @param {Array.<Component>} config.children list of components in this component
-			 * @param {Object.<string, function>} config.events list of event callbacks
-			 * @param {string} config.class CSS class name
+			 * @param {Node} [config.id] component unique identifier (generated if not set)
+			 * @param {Node} [config.$node] DOM element/fragment to be a component outer container
+			 * @param {Node} [config.$body] DOM element/fragment to be a component inner container (by default is the same as $node)
+			 * @param {Node} [config.$content] DOM element/fragment to be appended to the $body
+			 * @param {Component} [config.parent] link to the parent component which has this component as a child
+			 * @param {Array.<Component>} [config.children=[]] list of components in this component
+			 * @param {Object.<string, function>} [config.events={}] list of event callbacks
+			 * @param {boolean} [config.visible=true] component initial visibility state flag
+			 * @param {boolean} [config.focusable=true] component can accept focus or not
+			 *
+			 * @fires module:stb/component~Component#click
 			 *
 			 * @example
 			 * var component = new Component({
 			 *     $node: document.getElementById(id),
 			 *     events: {
 			 *         click: function () { ... }
-			 *     },
-			 *     class: 'modern'
+			 *     }
 			 * });
 			 * component.add( ... );
 			 * component.focus();
@@ -148,8 +224,23 @@
 			 * @todo find a solution to solve missing page link
 			 */
 			function Component ( config ) {
-				var self = this,
-					i, len;
+				// current execution context
+				var self = this;
+			
+				/**
+				 * Component visibility state flag.
+				 *
+				 * @readonly
+				 * @type {boolean}
+				 */
+				this.visible = true;
+			
+				/**
+				 * Component can accept focus or not.
+				 *
+				 * @type {boolean}
+				 */
+				this.focusable = true;
 			
 				/**
 				 * DOM outer handle.
@@ -166,13 +257,16 @@
 				 */
 				this.$body = null;
 			
+				// @ifdef DEBUG
 				/**
 				 * Link to the page owner component.
 				 * It can differ from the direct parent.
+				 * Should be used only in debug.
 				 *
 				 * @type {Page}
 				 */
 				this.page = null;
+				// @endif
 			
 				/**
 				 * Link to the parent component which has this component as a child.
@@ -184,7 +278,7 @@
 				/**
 				 * List of all children components.
 				 *
-				 * @type {Collection}
+				 * @type {Component[]}
 				 */
 				this.children = [];
 			
@@ -234,15 +328,6 @@
 				// correct CSS class names
 				this.$node.classList.add('component');
 			
-				// apply additional CSS class name
-				if ( config['class'] !== undefined ) {
-					// @ifdef DEBUG
-					if ( typeof config['class'] !== 'string' || config['class'].length === 0 ) { throw 'wrong config.class type or empty value'; }
-					// @endif
-			
-					this.$node.classList.add(config['class']);
-				}
-			
 				// apply hierarchy
 				if ( config.parent !== undefined ) {
 					// @ifdef DEBUG
@@ -253,12 +338,23 @@
 				}
 			
 				// set link to the page owner component
-				if ( config.page !== undefined ) {
-					// @ifdef DEBUG
-					if ( !(config.page instanceof Component) ) { throw 'wrong config.page type'; }
-					// @endif
+				//if ( config.page !== undefined ) {
+				//	// @ifdef DEBUG
+				//	if ( !(config.page instanceof Component) ) { throw 'wrong config.page type'; }
+				//	// @endif
+			    //
+				//	this.page = config.page;
+				//}
 			
-					this.page = config.page;
+				// apply given visibility
+				if ( config.visible === false ) {
+					// default state is visible
+					this.hide();
+				}
+			
+				// can't accept focus
+				if ( config.focusable === false ) {
+					this.focusable = false;
 				}
 			
 				// apply given events
@@ -276,23 +372,37 @@
 					if ( !Array.isArray(config.children) ) { throw 'wrong config.children type'; }
 					// @endif
 			
-					for ( i = 0, len = config.children.length; i < len; i++ ) {
-						this.add(config.children[i]);
-					}
+					this.add.apply(this, config.children);
 				}
 			
 				// component activation by mouse
 				this.$node.addEventListener('click', function ( event ) {
 					// left mouse button
 					if ( event.button === 0 ) {
+						// activate if possible
 						self.focus();
-						self.emit('click');
+			
+						/**
+						 * Mouse click event.
+						 *
+						 * @event module:stb/component~Component#click
+						 *
+						 * @type {Object}
+						 * @property {Event} event click event data
+						 */
+						self.emit('click', {event: event});
+			
+						// not prevented
+						//if ( !event.stop ) {
+						//	// activate if possible
+						//	self.focus();
+						//}
 					}
 			
 					// @ifdef DEBUG
 					// middle mouse button
 					if ( event.button === 1 ) {
-						debug.log(self);
+						debug.inspect(self);
 					}
 					// @endif
 			
@@ -318,6 +428,8 @@
 			 *
 			 * @param {...Component} [child] variable number of elements to append
 			 *
+			 * @files Component#add
+			 *
 			 * @example
 			 * panel.add(
 			 *     new Button( ... ),
@@ -338,14 +450,25 @@
 					// apply
 					this.children.push(child);
 					child.parent = this;
-					child.page   = this.page;
+			
+					// @ifdef DEBUG
+					// apply page for this and all children recursively
+					child.setPage(this.page);
+					// @endif
 			
 					// correct DOM parent/child connection if necessary
 					if ( child.$node !== undefined && child.$node.parentNode === null ) {
 						this.$body.appendChild(child.$node);
 					}
 			
-					// notify listeners
+					/**
+					 * A child component is added.
+					 *
+					 * @event module:stb/component~Component#add
+					 *
+					 * @type {Object}
+					 * @property {Component} child new component added
+					 */
 					this.emit('add', {item: child});
 			
 					// @ifdef DEBUG
@@ -355,27 +478,56 @@
 			};
 			
 			
+			// @ifdef DEBUG
+			Component.prototype.setPage = function ( page ) {
+				this.page = page;
+			
+				this.children.forEach(function ( child ) {
+					child.setPage(page);
+				});
+			};
+			// @endif
+			
+			
 			/**
 			 * Delete this component and clear all associated events.
 			 *
-			 * @todo add recursive removal of all children
+			 * @fires module:stb/component~Component#remove
 			 */
 			Component.prototype.remove = function () {
-				// inserted somewhere
+				var page = router.current;
+			
+				// really inserted somewhere
 				if ( this.parent ) {
+					// @ifdef DEBUG
+					if ( !(this.parent instanceof Component) ) { throw 'wrong this.parent type'; }
+					// @endif
+			
 					// active at the moment
-					if ( this.page.activeComponent === this ) {
+					if ( page.activeComponent === this ) {
 						this.blur();
 						this.parent.focus();
 					}
 					this.parent.children.splice(this.parent.children.indexOf(this), 1);
 				}
-				// clear
-				this.clear();
+			
+				// remove all children
+				this.children.forEach(function ( child ) {
+					// @ifdef DEBUG
+					if ( !(child instanceof Component) ) { throw 'wrong child type'; }
+					// @endif
+			
+					child.remove();
+				});
+			
 				this.removeAllListeners();
 				this.$node.parentNode.removeChild(this.$node);
 			
-				// notify listeners
+				/**
+				 * Delete this component.
+				 *
+				 * @event module:stb/component~Component#remove
+				 */
 				this.emit('remove');
 			
 				debug.log('component ' + this.constructor.name + '.' + this.id + ' remove', 'red');
@@ -387,28 +539,43 @@
 			 * Notify the owner-page and apply CSS class.
 			 *
 			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/component~Component#focus
 			 */
 			Component.prototype.focus = function () {
-				var current = this.page.activeComponent;
+				var activePage = router.current,
+					activeItem = activePage.activeComponent;
+			
+				// @ifdef DEBUG
+				if ( this.page !== activePage ) {
+					console.log(this, this.page, activePage);
+					throw 'attempt to focus an invisible component';
+				}
+				// @endif
 			
 				// this is a visual component on a page
-				// and not already focused
-				if ( this.page && this !== current ) {
+				// not already focused and can accept focus
+				if ( this.focusable && this !== activeItem ) {
 					// notify the current active component
-					if ( current ) { current.blur(); }
+					if ( activeItem ) { activeItem.blur(); }
 			
 					// apply
-					this.page.activeComponent = current = this;
-					current.$node.classList.add('focus');
+					activePage.activeComponent = activeItem = this;
+					activeItem.$node.classList.add('focus');
 			
-					// notify listeners
-					current.emit('focus');
+					/**
+					 * Make this component focused.
+					 *
+					 * @event module:stb/component~Component#focus
+					 */
+					activeItem.emit('focus');
 			
 					debug.log('component ' + this.constructor.name + '.' + this.id + ' focus');
 			
 					return true;
 				}
 			
+				// nothing was done
 				return false;
 			};
 			
@@ -418,14 +585,23 @@
 			 * Change page.activeComponent and notify subscribers.
 			 *
 			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/component~Component#blur
 			 */
 			Component.prototype.blur = function () {
-				// this is the active component
-				if ( this.page && this === this.page.activeComponent ) {
-					this.$node.classList.remove('focus');
-					this.page.activeComponent = null;
+				var activePage = router.current,
+					activeItem = activePage.activeComponent;
 			
-					// notify listeners
+				// this is the active component
+				if ( this === activeItem ) {
+					this.$node.classList.remove('focus');
+					activePage.activeComponent = null;
+			
+					/**
+					 * Remove focus from this component.
+					 *
+					 * @event module:stb/component~Component#blur
+					 */
 					this.emit('blur');
 			
 					debug.log('component ' + this.constructor.name + '.' + this.id + ' blur', 'grey');
@@ -433,87 +609,73 @@
 					return true;
 				}
 			
+				// nothing was done
 				return false;
+			};
+			
+			
+			/**
+			 * Make the component visible and notify subscribers.
+			 *
+			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/component~Component#show
+			 */
+			Component.prototype.show = function () {
+				// is it hidden
+				if ( !this.visible ) {
+					// correct style
+					this.$node.classList.remove('hidden');
+					// flag
+					this.visible = true;
+			
+					/**
+					 * Make the component visible.
+					 *
+					 * @event module:stb/component~Component#show
+					 */
+					this.emit('show');
+			
+					return true;
+				}
+			
+				// nothing was done
+				return true;
+			};
+			
+			
+			/**
+			 * Make the component hidden and notify subscribers.
+			 *
+			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/component~Component#hide
+			 */
+			Component.prototype.hide = function () {
+				// is it visible
+				if ( this.visible ) {
+					// correct style
+					this.$node.classList.add('hidden');
+					// flag
+					this.visible = false;
+			
+					/**
+					 * Make the component hidden.
+					 *
+					 * @event module:stb/component~Component#hide
+					 */
+					this.emit('hide');
+			
+					return true;
+				}
+			
+				// nothing was done
+				return true;
 			};
 			
 			
 			// public export
 			module.exports = Component;
-
-
-/***/ },
-/* 2 */
-/*!************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Global list of key codes
-			 * with shift key pressed +1000
-			 * with alt key pressed +2000
-			 *
-			 * @namespace
-			 */
-			
-			'use strict';
-			
-			
-			// public export
-			module.exports = {
-				back         : 8,  // Backspace
-				num1         : 49,
-				num2         : 50,
-				num3         : 51,
-				num4         : 52,
-				num5         : 53,
-				num6         : 54,
-				num7         : 55,
-				num8         : 56,
-				num9         : 57,
-				num0         : 48,
-				'delete'     : 46,
-				channelPrev  : 1009, // Shift+Tab
-				channelNext  : 9,    // Tab
-				ok           : 13,   // Enter
-				exit         : 27,   // Esc
-				up           : 38,   // UP ARROW
-				down         : 40,   // DOWN ARROW
-				left         : 37,   // LEFT ARROW
-				right        : 39,   // RIGHT ARROW
-				pageUp       : 33,   // Page Up
-				pageDown     : 34,   // Page Down
-				end          : 35,
-				home         : 36,
-				volumeUp     : 107,  // NUMPAD +
-				volumeDown   : 109,  // NUMPAD -
-				f1           : 112,  // F1
-				f2           : 113,  // F2
-				f3           : 114,  // F3
-				f4           : 115,  // F4
-				refresh      : 116,  // F5
-				frame        : 117,  // F6
-				phone        : 119,  // F8
-				set          : 120,  // F9
-				tv           : 121,  // F10
-				menu         : 122,  // F11
-				web          : 123,  // F12
-				mic          : 2032,
-				rewind       : 2066, // Alt+B
-				forward      : 2070, // Alt+F
-				app          : 2076, // Alt+L
-				usbMounted   : 2080, // Alt+P
-				usbUnmounted : 2081, // Alt+Q
-				playPause    : 2082, // Alt+R
-				stop         : 2083, // Alt+S
-				power        : 2085, // Alt+U
-				record       : 2087, // Alt+W
-				info         : 2089, // Alt+Y
-				mute         : 2192,
-				clock        : 2032,
-				audio        : 2071, // Alt+G
-				keyboard     : 2076  // Alt+L
-			};
 
 
 /***/ },
@@ -531,12 +693,12 @@
 			
 			'use strict';
 			
-			var Model  = __webpack_require__(/*! ./model */ 21),
+			var Model  = __webpack_require__(/*! ./model */ 24),
 				router = __webpack_require__(/*! ./router */ 4),
 				app, linkCSS;
 			
 			
-			__webpack_require__(/*! stb/shims */ 23);
+			__webpack_require__(/*! stb/shims */ 26);
 			
 			
 			/**
@@ -593,35 +755,44 @@
 			 * Set crops, total, content size and link the corresponding CSS file.
 			 *
 			 * @param {Object} metrics screen params specific to resolution
+			 *
+			 * @return {boolean} operation status
 			 */
 			app.setScreen = function ( metrics ) {
-				// calculate and extend
-				metrics.availHeight = metrics.height - (metrics.availTop  + metrics.availBottom);
-				metrics.availWidth  = metrics.width  - (metrics.availLeft + metrics.availRight);
+				if ( metrics ) {
+					// calculate and extend
+					metrics.availHeight = metrics.height - (metrics.availTop  + metrics.availBottom);
+					metrics.availWidth  = metrics.width  - (metrics.availLeft + metrics.availRight);
 			
-				// set max browser window size
-				window.moveTo(0, 0);
-				window.resizeTo(metrics.width, metrics.height);
+					// set max browser window size
+					window.moveTo(0, 0);
+					window.resizeTo(metrics.width, metrics.height);
 			
-				// already was initialized
-				if ( linkCSS ) {
-					// remove all current CSS styles
-					document.head.removeChild(linkCSS);
+					// already was initialized
+					if ( linkCSS && linkCSS instanceof Node ) {
+						// remove all current CSS styles
+						document.head.removeChild(linkCSS);
+					}
+			
+					// load CSS file base on resolution
+					linkCSS = document.createElement('link');
+					linkCSS.rel  = 'stylesheet';
+					linkCSS.href = 'css/' + metrics.height + '.css';
+					document.head.appendChild(linkCSS);
+			
+					// provide global access
+					this.data.screen = metrics;
+			
+					return true;
 				}
 			
-				// load CSS file base on resolution
-				linkCSS = document.createElement('link');
-				linkCSS.rel  = 'stylesheet';
-				linkCSS.href = 'css/' + metrics.height + '.css';
-				document.head.appendChild(linkCSS);
-			
-				// provide global access
-				this.data.screen = metrics;
+				// nothing has applied
+				return false;
 			};
 			
 			
 			// apply screen size, position and margins
-			app.setScreen(__webpack_require__(/*! metrics */ 12)[screen.height]);
+			app.setScreen(__webpack_require__(/*! metrics */ 13)[screen.height]);
 			
 			
 			/**
@@ -846,6 +1017,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
+			 * Page navigation with history.
+			 *
 			 * @module stb/router
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
@@ -853,7 +1026,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 11),
+			var Emitter = __webpack_require__(/*! ./emitter */ 10),
 				router;
 			
 			
@@ -903,7 +1076,7 @@
 			/**
 			 * Set router data event.
 			 *
-			 * @event router#init
+			 * @event module:stb/router#init
 			 *
 			 * @type {Object}
 			 * @property {Page[]} pages new page list
@@ -915,7 +1088,7 @@
 			 * @param {Page[]} pages list of pages to add
 			 * @return {boolean} operation status
 			 *
-			 * @fires router#init
+			 * @fires module:stb/router#init
 			 */
 			router.init = function ( pages ) {
 				var i, l, item;
@@ -1163,6 +1336,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
+			 * HTML elements low-level handling.
+			 *
 			 * @module stb/dom
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
@@ -1340,53 +1515,122 @@
 
 /***/ },
 /* 6 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/page.js ***!
-  \***************************************************/
+/*!************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
+  \************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * @module stb/ui/page
+			 * Global list of key codes.
+			 *
+			 *  Value | Description
+			 * -------|-------------
+			 *  +1000 | shift key pressed
+			 *  +2000 | alt key pressed
+			 *
+			 * @module stb/keys
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
-			var Component = __webpack_require__(/*! ../component */ 1);
+			
+			// public export
+			module.exports = {
+				back         : 8,  // Backspace
+				num1         : 49,
+				num2         : 50,
+				num3         : 51,
+				num4         : 52,
+				num5         : 53,
+				num6         : 54,
+				num7         : 55,
+				num8         : 56,
+				num9         : 57,
+				num0         : 48,
+				'delete'     : 46,
+				channelPrev  : 1009, // Shift+Tab
+				channelNext  : 9,    // Tab
+				ok           : 13,   // Enter
+				exit         : 27,   // Esc
+				up           : 38,   // UP ARROW
+				down         : 40,   // DOWN ARROW
+				left         : 37,   // LEFT ARROW
+				right        : 39,   // RIGHT ARROW
+				pageUp       : 33,   // Page Up
+				pageDown     : 34,   // Page Down
+				end          : 35,
+				home         : 36,
+				volumeUp     : 107,  // NUMPAD +
+				volumeDown   : 109,  // NUMPAD -
+				f1           : 112,  // F1
+				f2           : 113,  // F2
+				f3           : 114,  // F3
+				f4           : 115,  // F4
+				refresh      : 116,  // F5
+				frame        : 117,  // F6
+				phone        : 119,  // F8
+				set          : 120,  // F9
+				tv           : 121,  // F10
+				menu         : 122,  // F11
+				web          : 123,  // F12
+				mic          : 2032,
+				rewind       : 2066, // Alt+B
+				forward      : 2070, // Alt+F
+				app          : 2076, // Alt+L
+				usbMounted   : 2080, // Alt+P
+				usbUnmounted : 2081, // Alt+Q
+				playPause    : 2082, // Alt+R
+				stop         : 2083, // Alt+S
+				power        : 2085, // Alt+U
+				record       : 2087, // Alt+W
+				info         : 2089, // Alt+Y
+				mute         : 2192,
+				clock        : 2032,
+				audio        : 2071, // Alt+G
+				keyboard     : 2076  // Alt+L
+			};
+
+
+/***/ },
+/* 7 */
+/*!*****************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/button.js ***!
+  \*****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/button
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2);
 			
 			
 			/**
-			 * Base page implementation.
-			 *
-			 * A full-screen top-level layer that can operate as an independent separate entity.
-			 * It is added to the document body on creation if not already linked.
+			 * Base button implementation.
 			 *
 			 * @constructor
+			 * @extends Component
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 * @param {string} [config.value] button caption text (generated if not set)
+			 * @param {string} [config.icon] button icon name
 			 *
 			 * @example
-			 * var page = new Page({
-			 *     $node: document.getElementById(id)
-			 * });
+			 * var Button = require('stb/ui/button'),
+			 *     button = new Button({
+			 *         $node: document.getElementById(id),
+			 *         value: 'Apply changes'
+			 *     });
 			 */
-			function Page ( config ) {
-				/**
-				 * Page visibility/active state flag.
-				 *
-				 * @readonly
-				 * @type {boolean}
-				 */
-				this.active = false;
-			
-				/**
-				 * Link to the currently active component with focus.
-				 *
-				 * @readonly
-				 * @type {Component}
-				 */
-				this.activeComponent = null;
+			function Button ( config ) {
+				// current execution context
+				var self = this;
 			
 				// sanitize
 				config = config || {};
@@ -1395,32 +1639,55 @@
 				Component.call(this, config);
 			
 				// correct CSS class names
-				this.$node.classList.add('page');
+				this.$node.classList.add('button');
 			
-				// state flag
-				this.active = this.$node.classList.contains('active');
-			
-				// correct DOM parent/child connection if necessary
-				if ( this.$node.parentNode === null ) {
-					document.body.appendChild(this.$node);
+				// set title
+				if ( config.value !== undefined ) {
+					this.$body.innerText = config.value;
+				} else {
+					this.$body.innerText = this.constructor.name + '.' + this.id;
 				}
 			
-				// always itself
-				this.page = this;
+				if ( config.icon ) {
+					self.$node.classList.add('icon');
+					self.$node.classList.add('icon-' + config.icon);
+				}
+			
+				this.addListener('keydown', function ( event ) {
+					if ( event.code === 13 ) {
+						/**
+						 * Mouse click event emulation.
+						 *
+						 * @event module:stb/ui/button~Button#click
+						 *
+						 * @type {Object}
+						 * @property {Event} event click event data
+						 */
+						self.emit('click', {event: event});
+					}
+				});
+			
+				this.addListener('click', function () {
+					//console.log(this);
+					self.$node.classList.add('click');
+					setTimeout(function () {
+						self.$node.classList.remove('click');
+					}, 200);
+				});
 			}
 			
 			
 			// inheritance
-			Page.prototype = Object.create(Component.prototype);
-			Page.prototype.constructor = Page;
+			Button.prototype = Object.create(Component.prototype);
+			Button.prototype.constructor = Button;
 			
 			
 			// public export
-			module.exports = Page;
+			module.exports = Button;
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /*!***********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/storage.js ***!
   \***********************************************************/
@@ -1429,6 +1696,7 @@
 			/**
 			 * Save/restore data depending on the execution device.
 			 *
+			 * @module stb/develop/storage
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -1465,141 +1733,7 @@
 
 
 /***/ },
-/* 8 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/button.js ***!
-  \*****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/button
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 1);
-			
-			
-			/**
-			 * Base button implementation.
-			 *
-			 * @constructor
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {string} config.value button caption text
-			 * @param {string} config.icon button icon name
-			 *
-			 * @example
-			 * var btn1 = new Button({
-			 *     $node: document.getElementById(id),
-			 *     value: 'Apply changes'
-			 * });
-			 */
-			function Button ( config ) {
-				var self = this;
-			
-				// sanitize
-				config = config || {};
-			
-				// parent init
-				Component.call(this, config);
-			
-				// correct CSS class names
-				this.$node.classList.add('button');
-			
-				// set title
-				this.$body.innerHTML = config.value || this.constructor.name + '.' + this.id;
-			
-				if ( config.icon ) {
-					self.$node.classList.add('icon');
-					self.$node.classList.add('icon-' + config.icon);
-				}
-			
-				this.addListener('keydown', function ( event ) {
-					//debug.info(event);
-					if ( event.code === 13 ) {
-						self.emit('click');
-					}
-				});
-			
-				this.addListener('click', function () {
-					//console.log(this);
-					self.$node.classList.add('click');
-					setTimeout(function () {
-						self.$node.classList.remove('click');
-					}, 200);
-				});
-			}
-			
-			
-			// inheritance
-			Button.prototype = Object.create(Component.prototype);
-			Button.prototype.constructor = Button;
-			
-			
-			// public export
-			module.exports = Button;
-
-
-/***/ },
 /* 9 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/panel.js ***!
-  \****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/panel
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 1);
-			
-			
-			/**
-			 * Base panel implementation.
-			 *
-			 * @constructor
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 *
-			 * @example
-			 * var header = new Panel();
-			 * page.add(header);
-			 * header.add(
-			 *     new Button(),
-			 *     new Button(),
-			 *     new Button()
-			 * );
-			 */
-			function Panel ( config ) {
-				// sanitize
-				config = config || {};
-			
-				// parent init
-				Component.call(this, config);
-			
-				// correct CSS class names
-				this.$node.classList.add('panel');
-			}
-			
-			
-			// inheritance
-			Panel.prototype = Object.create(Component.prototype);
-			Panel.prototype.constructor = Panel;
-			
-			
-			// public export
-			module.exports = Panel;
-
-
-/***/ },
-/* 10 */
 /*!****************************************************!*\
   !*** (webpack)/~/node-libs-browser/~/util/util.js ***!
   \****************************************************/
@@ -2195,7 +2329,7 @@
 			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 36)))
 
 /***/ },
-/* 11 */
+/* 10 */
 /*!***************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/emitter.js ***!
   \***************************************************/
@@ -2277,6 +2411,7 @@
 				 * @param {function} callback function to call on this event
 				 */
 				once: function ( name, callback ) {
+					// current execution context
 					var self = this;
 			
 					// @ifdef DEBUG
@@ -2428,7 +2563,141 @@
 
 
 /***/ },
+/* 11 */
+/*!****************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/modal.js ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/modal
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2);
+			
+			
+			/**
+			 * Base modal window implementation.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 */
+			function Modal ( config ) {
+				// sanitize
+				config = config || {};
+			
+				// parent init
+				Component.call(this, config);
+			
+				// correct CSS class names
+				this.$node.classList.add('modal');
+			}
+			
+			
+			// inheritance
+			Modal.prototype = Object.create(Component.prototype);
+			Modal.prototype.constructor = Modal;
+			
+			
+			// public export
+			module.exports = Modal;
+
+
+/***/ },
 /* 12 */
+/*!***************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/page.js ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/page
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2);
+			
+			
+			/**
+			 * Base page implementation.
+			 *
+			 * A full-screen top-level layer that can operate as an independent separate entity.
+			 * It is added to the document body on creation if not already linked.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 *
+			 * @example
+			 * var Page = require('stb/ui/page'),
+			 *     page = new Page({
+			 *         $node: document.getElementById(id)
+			 *     });
+			 *
+			 * page.addListener('show', function show () {
+			 *     // page is visible now
+			 * });
+			 */
+			function Page ( config ) {
+				/**
+				 * Page visibility/active state flag.
+				 *
+				 * @readonly
+				 * @type {boolean}
+				 */
+				this.active = false;
+			
+				/**
+				 * Link to the currently active component with focus.
+				 *
+				 * @readonly
+				 * @type {Component}
+				 */
+				this.activeComponent = null;
+			
+				// sanitize
+				config = config || {};
+			
+				// parent init
+				Component.call(this, config);
+			
+				// correct CSS class names
+				this.$node.classList.add('page');
+			
+				// state flag
+				this.active = this.$node.classList.contains('active');
+			
+				// correct DOM parent/child connection if necessary
+				if ( this.$node.parentNode === null ) {
+					document.body.appendChild(this.$node);
+				}
+			
+				// always itself
+				this.page = this;
+			}
+			
+			
+			// inheritance
+			Page.prototype = Object.create(Component.prototype);
+			Page.prototype.constructor = Page;
+			
+			
+			// public export
+			module.exports = Page;
+
+
+/***/ },
+/* 13 */
 /*!***************************!*\
   !*** ./config/metrics.js ***!
   \***************************/
@@ -2492,7 +2761,608 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
+/*!********************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/check.box.js ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/check.box
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2),
+				keys      = __webpack_require__(/*! ../keys */ 6),
+				groups    = {};
+			
+			
+			/**
+			 * Base check box implementation.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 * @param {boolean} [config.value=false] initial state
+			 * @param {string} [config.group] group name to work synchronously with other checkboxes
+			 *
+			 * @example
+			 * var CheckBox = require('stb/ui/check.box'),
+			 *     checkBox = new CheckBox({
+			 *         value: true,
+			 *         group: 'lang'
+			 *     });
+			 */
+			function CheckBox ( config ) {
+				// current execution context
+				var self = this;
+			
+				// sanitize
+				config = config || {};
+			
+				/**
+				 * Initial state.
+				 *
+				 * @type {boolean}
+				 */
+				this.value = !!config.value;
+			
+				/**
+				 * Group name to work synchronously with other checkboxes.
+				 *
+				 * @type {string}
+				 */
+				this.group = null;
+			
+				// parent init
+				Component.call(this, config);
+			
+				// correct CSS class names
+				this.$node.classList.add('checkBox');
+			
+				// correct init styles
+				if ( this.value ) {
+					this.$node.classList.add('checked');
+				}
+			
+				// apply hierarchy
+				if ( config.group !== undefined ) {
+					// @ifdef DEBUG
+					if ( typeof config.group !== 'string' || config.group.length === 0 ) { throw 'wrong or empty config.group'; }
+					// @endif
+			
+					// save
+					this.group = config.group;
+			
+					// fill groups data
+					if ( groups[config.group] === undefined ) {
+						groups[config.group] = [this];
+					} else {
+						groups[config.group].push(this);
+					}
+				}
+			
+				// invert on mouse click or enter
+				this.addListeners({
+					click: function () {
+						self.set(!self.value);
+					},
+					keydown: function ( event ) {
+						if ( event.code === keys.ok ) {
+							self.set(!self.value);
+						}
+					}
+				});
+			}
+			
+			
+			// inheritance
+			CheckBox.prototype = Object.create(Component.prototype);
+			CheckBox.prototype.constructor = CheckBox;
+			
+			
+			/**
+			 * Set the given state.
+			 * Does nothing in case the value is already as necessary.
+			 *
+			 * @param {boolean} value new value to set
+			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/ui/check.box~CheckBox#change
+			 */
+			CheckBox.prototype.set = function ( value ) {
+				var i, l;
+			
+				if ( this.value !== value ) {
+					// going to be turned on and assigned to some group
+					if ( !this.value && this.group !== null ) {
+						// unset all checkboxes in this group
+						for ( i = 0, l = groups[this.group].length; i < l; i++ ) {
+							groups[this.group][i].set(false);
+						}
+					}
+			
+					// set new value
+					this.value = !this.value;
+			
+					// set visible changes
+					this.$node.classList.toggle('checked');
+			
+					/**
+					 * Update progress value.
+					 *
+					 * @event module:stb/ui/check.box~CheckBox#change
+					 *
+					 * @type {Object}
+					 * @property {boolean} value current check state
+					 */
+					this.emit('change', {value: this.value});
+			
+					return true;
+				}
+			
+				return false;
+			};
+			
+			
+			// public export
+			module.exports = CheckBox;
+
+
+/***/ },
+/* 15 */
+/*!***************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/list.js ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/list
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2),
+				keys      = __webpack_require__(/*! ../keys */ 6);
+			
+			
+			/**
+			 * Mouse click event.
+			 *
+			 * @event module:stb/ui/list~List#click:item
+			 *
+			 * @type {Object}
+			 * @property {Node} $item clicked HTML item
+			 * @property {Event} event click event data
+			 */
+			
+			/**
+			 * Base list implementation.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 * @param {Array}  [config.data=[]] component data to visualize
+			 * @param {number} [config.size=5] amount of visible items on a page
+			 *
+			 * @fires module:stb/ui/list~List#click:item
+			 */
+			function List ( config ) {
+				var self = this,  // current execution context
+					//index = 0,
+					i, item;
+			
+				/**
+				 * List of DOM elements representing the component lines.
+				 *
+				 * @type {Node[]}
+				 */
+				//this.items = [];
+			
+				/**
+				 * Link to the currently focused DOM element.
+				 *
+				 * @type {Node}
+				 */
+				this.$focusItem = null;
+			
+				//this.activeIndex = 0;
+			
+				/**
+				 * Component data to visualize.
+				 *
+				 * @type {Array}
+				 */
+				this.data = [];
+			
+				this.type = this.TYPE_VERTICAL;
+			
+				/**
+				 * Amount of visible items on a page.
+				 *
+				 * @type {number}
+				 */
+				this.size = 5;
+			
+				/**
+				 * Method the build each list item content.
+				 * Can be redefined to provide custom rendering.
+				 *
+				 * @type {function}
+				 */
+				this.render = this.defaultRender;
+			
+				// sanitize
+				config = config || {};
+			
+				// parent init
+				Component.call(this, config);
+			
+				// horizontal or vertical
+				if ( config.type !== undefined ) {
+					// @ifdef DEBUG
+					if ( Number(config.type) !== config.type ) { throw 'config.type must be a number'; }
+					// @endif
+			
+					this.type = config.type;
+				}
+			
+				// correct CSS class names
+				this.$node.classList.add('list');
+			
+				if ( this.type === this.TYPE_HORIZONTAL ) {
+					this.$node.classList.add('horizontal');
+				}
+			
+				//this.$body = document.createElement('ul');
+				////this.$body.className = 'body';
+				//this.$node.appendChild(this.$body);
+			
+				// component setup
+				this.init(config);
+			
+				//if ( this.$focusItem === null ) {
+				//	this.$focusItem = this.$body.firstChild;
+				//	//this.activeIndex = 0;
+				//	this.$focusItem.classList.add('focus');
+				//}
+			
+				this.addListener('keydown', function ( event ) {
+					//var tmp;
+			
+					if ( event.code === keys.ok ) {
+						// notify
+						self.emit('click:item', {$item: self.$focusItem, event: event});
+					}
+			
+					if ( (event.code === keys.up && self.type === self.TYPE_VERTICAL) || (event.code === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
+						if ( self.$focusItem.index > 0 ) {
+							//index--;
+			
+							if ( !self.focusPrev() ) {
+								// move the last item to the begging
+								//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
+								self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
+			
+								//if ( config.render !== undefined ) {
+								self.render(self.$body.firstChild, self.data[self.$focusItem.index - 1]);
+								self.$body.firstChild.index = self.$focusItem.index - 1;
+								//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+								//} else {
+								//	self.$body.firstChild.innerText = self.data[self.activeIndex-1];
+								//}
+			
+								//self.items.unshift(self.items.pop());
+								//self.activeIndex++;
+								self.focusPrev();
+							}
+						}
+					}
+					if ( (event.code === keys.down && self.type === self.TYPE_VERTICAL) || (event.code === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
+						if ( self.$focusItem.index < self.data.length - 1 ) {
+							//index++;
+			
+							if ( !self.focusNext() ) {
+								// move the first item to the end
+								//self.$body.appendChild(self.items[0]);
+								self.$body.appendChild(self.$body.firstChild);
+			
+								//if ( config.render !== undefined ) {
+								self.render(self.$body.lastChild, self.data[self.$focusItem.index + 1]);
+								self.$body.lastChild.index = self.$focusItem.index + 1;
+								//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+								//} else {
+								//	self.$body.lastChild.innerText = self.data[self.activeIndex + 1];
+								//}
+			
+								//self.items.push(self.items.shift());
+								//self.activeIndex--;
+								self.focusNext();
+							}
+						}
+					}
+			
+					if ( event.code === keys.pageUp ) {
+						//self.activeIndex = self.activeIndex - self.size - 1;
+						//self.focusFirst();
+						self.focusItem(self.$body.firstChild);
+						//self.$focusItem.index = self.$focusItem.index;
+					}
+					if ( event.code === keys.pageDown ) {
+						//self.activeIndex = self.activeIndex + self.size - 1;
+			
+						//self.focusLast();
+						self.focusItem(self.$body.lastChild);
+						//self.$focusItem.index = self.$focusItem.index;
+			
+						//for ( i = 0; i < self.size; i++ ) {
+							//self.render()
+						//}
+					}
+			
+					// swap edge items
+					//tmp = self.items[0];
+					//self.items[0] = self.items[self.items.length-1];
+					//self.items[self.items.length-1] = tmp;
+			
+					//for ( i = 0; i < self.size; i++ ) {
+						//self.items[i].innerText = self.data[i+index];
+					//}
+					//self.$focusItem.classList.remove('focus');
+					//self.$focusItem = self.items[Math.abs(index % self.items.length)];
+					//self.$focusItem.classList.add('focus');
+				});
+			
+				this.$body.addEventListener('mousewheel', function ( event ) {
+					var direction = event.wheelDeltaY > 0;
+			
+					debug.event(event);
+			
+					self.emit('keydown', {code: direction ? keys.up : keys.down});
+				});
+			}
+			
+			
+			// inheritance
+			List.prototype = Object.create(Component.prototype);
+			List.prototype.constructor = List;
+			
+			
+			List.prototype.TYPE_VERTICAL   = 1;
+			List.prototype.TYPE_HORIZONTAL = 2;
+			
+			
+			/**
+			 * Fill the given cell with data.
+			 *
+			 * @param {Node} $item item DOM link
+			 * @param {*} data associated with this item data
+			 */
+			List.prototype.defaultRender = function ( $item, data ) {
+				$item.innerText = data;
+			};
+			
+			
+			/**
+			 * Init or re-init of the component inner structures and HTML.
+			 *
+			 * @param {Object} [config={}] init parameters (subset of constructor config params)
+			 */
+			List.prototype.init = function ( config ) {
+				var self     = this,
+					currSize = this.$body.children.length,
+					onClick  = function ( event ) {
+						if ( this.data !== undefined ) {
+							self.focusItem(this);
+							// notify
+							self.emit('click:item', {$item: this, event: event});
+						}
+						//self.$focusItem.index = this.index;
+						//event.stopPropagation();
+						//self.$focusItem.classList.remove('focus');
+						//self.$focusItem = this;
+						//self.$focusItem.classList.add('focus');
+					},
+					item, i;
+			
+				// apply list of items
+				if ( config.data !== undefined ) {
+					// @ifdef DEBUG
+					if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
+					// @endif
+			
+					this.data = config.data;
+				}
+			
+				// custom render method
+				if ( config.render !== undefined ) {
+					// @ifdef DEBUG
+					if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
+					// @endif
+			
+					this.render = config.render;
+				}
+			
+				// list items amount on page
+				if ( config.size !== undefined ) {
+					// @ifdef DEBUG
+					if ( Number(config.size) !== config.size ) { throw 'config.size must be a number'; }
+					if ( config.size <= 0 ) { throw 'config.size should be positive'; }
+					// @endif
+			
+					this.size = config.size;
+				}
+			
+				// geometry has changed or initial draw
+				if ( this.size !== currSize ) {
+					// non-empty list
+					if ( currSize > 0 ) {
+						// clear old items
+						this.$body.innerText = null;
+					}
+			
+					// create new items
+					for ( i = 0; i < this.size; i++ ) {
+						//item = document.createElement('li');
+						item = document.createElement('div');
+						item.index = i;
+						item.className = 'item';
+						//item.innerText = this.data[i];
+						//if ( this.data[i] !== undefined ) {
+							//this.render(item, this.data[i]);
+			
+						item.addEventListener('click', onClick);
+						//}
+						//this.items.push(this.$body.appendChild(item));
+						this.$body.appendChild(item);
+					}
+				}
+			
+				this.renderPage();
+			};
+			
+			List.prototype.moveNext = function () {
+			
+			};
+			
+			
+			List.prototype.movePrev = function () {
+			
+			};
+			
+			
+			List.prototype.renderPage = function () {
+				var $item, i;
+			
+				for ( i = 0; i < this.size; i++ ) {
+					$item = this.$body.children[i];
+					if ( $item.index !== undefined && this.data[$item.index] !== undefined ) {
+						$item.data = this.data[$item.index];
+						this.render($item, this.data[$item.index]);
+					}
+				}
+			};
+			
+			
+			/**
+			 * Highlight the given DOM element as focused.
+			 * Remove focus from the previously focused item and generate associated event.
+			 *
+			 * @param {Node} $item element to focus
+			 *
+			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/ui/list~List#focus:item
+			 */
+			List.prototype.focusItem = function ( $item ) {
+				var $prev = this.$focusItem;
+			
+				// different element
+				if ( $item !== undefined && $prev !== $item ) {
+					// @ifdef DEBUG
+					if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
+					if ( $item.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
+					// @endif
+			
+					// some item is focused already
+					if ( $prev !== null ) {
+						// @ifdef DEBUG
+						if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
+						// @endif
+			
+						// style
+						$prev.classList.remove('focus');
+			
+						// notify
+						this.emit('blur:item', {$item: $prev});
+					}
+					// reassign
+					this.$focusItem = $item;
+			
+					this.$focusItem.data = this.data[this.$focusItem.index];
+			
+					// correct CSS
+					$item.classList.add('focus');
+			
+					/**
+					 * Set focus to an element.
+					 *
+					 * @event module:stb/ui/list~List#focus:item
+					 *
+					 * @type {Object}
+					 * @property {*} [$prev] old/previous focused HTML element
+					 * @property {*} [$curr] new/current focused HTML element
+					 */
+					this.emit('focus:item', {$prev: $prev, $curr: $item});
+			
+					return true;
+				}
+			
+				// nothing was done
+				return false;
+			};
+			
+			
+			List.prototype.focusNext = function () {
+				//if ( this.activeIndex < this.size - 1 ) {
+				if ( this.$focusItem !== this.$body.lastChild ) {
+					//this.activeIndex++;
+					//console.log(this.activeIndex);
+					//this.$focusItem.classList.remove('focus');
+					////this.$focusItem = this.items[this.activeIndex];
+					//this.$focusItem = this.$focusItem.nextSibling;
+					//this.$focusItem.classList.add('focus');
+			
+					return this.focusItem(this.$focusItem.nextSibling);
+				}
+				return false;
+			};
+			
+			
+			List.prototype.focusPrev = function () {
+				//if ( this.activeIndex > 0 ) {
+				if ( this.$focusItem !== this.$body.firstChild ) {
+					//this.activeIndex--;
+					//console.log(this.activeIndex);
+					//this.$focusItem.classList.remove('focus');
+					////this.$focusItem = this.items[this.activeIndex];
+					//this.$focusItem = this.$focusItem.previousSibling;
+					//this.$focusItem.classList.add('focus');
+			
+					return this.focusItem(this.$focusItem.previousSibling);
+				}
+				return false;
+			};
+			
+			
+			//List.prototype.focusFirst = function () {
+			//	this.$focusItem.classList.remove('focus');
+			//	this.$focusItem = this.$body.firstChild;
+			//	this.$focusItem.classList.add('focus');
+			//	this.activeIndex = this.$focusItem.index;
+			//};
+			
+			//List.prototype.focusLast = function () {
+			//	this.$focusItem.classList.remove('focus');
+			//	this.$focusItem = this.$body.lastChild;
+			//	this.$focusItem.classList.add('focus');
+			//	this.activeIndex = this.$focusItem.index;
+			//};
+			
+			
+			// public export
+			module.exports = List;
+
+
+/***/ },
+/* 16 */
 /*!********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/ui/modal.box.js ***!
   \********************************************************/
@@ -2506,7 +3376,7 @@
 			
 			'use strict';
 			
-			var Modal = __webpack_require__(/*! ./modal */ 14),
+			var Modal = __webpack_require__(/*! ./modal */ 11),
 				dom   = __webpack_require__(/*! ../dom */ 5);
 			
 			
@@ -2514,6 +3384,7 @@
 			 * Base modal window implementation.
 			 *
 			 * @constructor
+			 * @extends Modal
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 */
@@ -2550,53 +3421,211 @@
 
 
 /***/ },
-/* 14 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/modal.js ***!
-  \****************************************************/
+/* 17 */
+/*!***********************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/progress.bar.js ***!
+  \***********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * @module stb/ui/modal
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @module stb/ui/progress.bar
+			 * @author Igor Zaporozhets <deadbyelpy@gmail.com>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
-			var Component = __webpack_require__(/*! ../component */ 1);
+			var Component = __webpack_require__(/*! ../component */ 2);
 			
 			
 			/**
-			 * Base modal window implementation.
+			 * Base progress bar implementation.
 			 *
 			 * @constructor
+			 * @extends Component
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 * @param {number} [config.value=0] initial value
+			 * @param {number} [config.max=100] max progress value
+			 * @param {number} [config.min=0] min progress value
+			 *
+			 * @example
+			 * var ProgressBar = require('stb/ui/progress.bar'),
+			 *     progressBar = new ProgressBar({
+			 *         min: -100,
+			 *         max:  200,
+			 *         events: {
+			 *             done: function () {
+			 *                 debug.log('ProgressBar: done');
+			 *             },
+			 *             change: function ( data ) {
+			 *                 debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+			 *             }
+			 *         }
+			 *     });
 			 */
-			function Modal ( config ) {
+			function ProgressBar ( config ) {
 				// sanitize
 				config = config || {};
+			
+				/**
+				 * Max progress value.
+				 *
+				 * @type {number}
+				 */
+				this.max = 100;
+			
+				/**
+				 * Min progress value.
+				 *
+				 * @type {number}
+				 */
+				this.min = 0;
+			
+				/**
+				 * Initial progress position.
+				 *
+				 * @type {number}
+				 */
+				this.value = 0;
+			
+				/**
+				 * Value of the one percent step
+				 *
+				 * @type {number}
+				 */
+				this.step = 1;
+			
+				// can't accept focus
+				if ( config.focusable === undefined ) { config.focusable = false; }
 			
 				// parent init
 				Component.call(this, config);
 			
+				// create $body if not provided
+				if ( this.$node === this.$body ) {
+					// insert bar line
+					this.$body = this.$node.appendChild(document.createElement('div'));
+				}
+			
 				// correct CSS class names
-				this.$node.classList.add('modal');
+				this.$node.classList.add('progressBar');
+				this.$body.classList.add('value');
+			
+				// component setup
+				this.init(config);
 			}
 			
 			
 			// inheritance
-			Modal.prototype = Object.create(Component.prototype);
-			Modal.prototype.constructor = Modal;
+			ProgressBar.prototype = Object.create(Component.prototype);
+			ProgressBar.prototype.constructor = ProgressBar;
+			
+			
+			/**
+			 * Set position of the given value.
+			 * Does nothing in case when progress is end and passed value is more than max value.
+			 *
+			 * @param {number} value new value to set
+			 * @return {boolean} operation result
+			 *
+			 * @fires module:stb/ui/progress.bar~ProgressBar#done
+			 * @fires module:stb/ui/progress.bar~ProgressBar#change
+			 */
+			ProgressBar.prototype.set = function ( value ) {
+				var prevValue = this.value;
+			
+				// value changed but in the given range
+				if ( this.value !== value && value <= this.max && value >= this.min ) {
+					// @ifdef DEBUG
+					if ( Number(value) !== value ) { throw 'value must be a number'; }
+					// @endif
+			
+					// set new value
+					this.value = value;
+			
+					// get value in percents
+					value = Math.abs(this.value - this.min) / this.step;
+			
+					if ( value === 100 ) {
+						/**
+						 * Set progress to its maximum value.
+						 *
+						 * @event module:stb/ui/progress.bar~ProgressBar#done
+						 */
+						this.emit('done');
+					}
+			
+					// set progress bar width
+					this.$body.style.width = value + '%';
+			
+					/**
+					 * Update progress value.
+					 *
+					 * @event module:stb/ui/progress.bar~ProgressBar#change
+					 *
+					 * @type {Object}
+					 * @property {number} prev old/previous progress value
+					 * @property {number} curr new/current progress value
+					 */
+					this.emit('change', {curr: this.value, prev: prevValue});
+			
+					return true;
+				}
+			
+				return false;
+			};
+			
+			
+			/**
+			 * Init or re-init current max or/and min or/and value.
+			 *
+			 * @param {Object} [config={}] init parameters
+			 * @param {number} [config.value=0] initial value
+			 * @param {number} [config.max=100] max progress value
+			 * @param {number} [config.min=0] min progress value
+			 */
+			ProgressBar.prototype.init = function ( config ) {
+				// assignment of configuration parameters if they were transferred
+				if ( config.max !== undefined ) {
+					// @ifdef DEBUG
+					if ( Number(config.max) !== config.max ) { throw 'config.max value must be a number'; }
+					// @endif
+			
+					this.max = config.max;
+				}
+			
+				if ( config.min !== undefined ) {
+					// @ifdef DEBUG
+					if ( Number(config.min) !== config.min ) { throw 'config.min value must be a number'; }
+					// @endif
+			
+					this.min = config.min;
+				}
+			
+				if ( config.value !== undefined ) {
+					// @ifdef DEBUG
+					if ( Number(config.value) !== config.value ) { throw 'config.value must be a number'; }
+					if ( config.value > this.max ) { throw 'config.value more than config.maximum'; }
+					if ( config.value < this.min ) { throw 'config.value less than config.minimum'; }
+					// @endif
+			
+					this.value = config.value;
+				}
+			
+				this.step = Math.abs(this.max - this.min) / 100;
+			
+				// init bar size, (this.min - this.value) - calculate distance from start
+				this.$body.style.width = (Math.abs(this.min - this.value) / this.step) + '%';
+			};
 			
 			
 			// public export
-			module.exports = Modal;
+			module.exports = ProgressBar;
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /*!*********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/debug.js ***!
   \*********************************************************/
@@ -2605,6 +3634,7 @@
 			/**
 			 * Logger.
 			 *
+			 * @module stb/develop/debug
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -2613,7 +3643,7 @@
 			
 			var host   = __webpack_require__(/*! stb/app */ 3).data.host,
 				config = __webpack_require__(/*! ../../../config/logger */ 29),
-				util   = __webpack_require__(/*! util */ 10),
+				util   = __webpack_require__(/*! util */ 9),
 				buffer = [],
 				socket;
 			
@@ -2832,7 +3862,7 @@
 
 
 /***/ },
-/* 16 */
+/* 19 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/events.js ***!
   \**********************************************************/
@@ -2841,18 +3871,19 @@
 			/**
 			 * Additional dev events.
 			 *
+			 * @module stb/develop/events
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
-			var util    = __webpack_require__(/*! util */ 10),
+			var util    = __webpack_require__(/*! util */ 9),
 				app     = __webpack_require__(/*! stb/app */ 3),
-				request = __webpack_require__(/*! stb/request */ 22),
+				request = __webpack_require__(/*! stb/request */ 25),
 				dom     = __webpack_require__(/*! stb/dom */ 5),
-				grid    = __webpack_require__(/*! ./grid */ 17),
-				storage = __webpack_require__(/*! ./storage */ 7);
+				grid    = __webpack_require__(/*! ./grid */ 20),
+				storage = __webpack_require__(/*! ./storage */ 8);
 			
 			
 			// additional top-level key handler
@@ -3010,7 +4041,7 @@
 					document.body.style.display = 'none';
 			
 					// apply new metrics
-					app.setScreen(__webpack_require__(/*! metrics */ 12)[height]);
+					app.setScreen(__webpack_require__(/*! metrics */ 13)[height]);
 			
 					// restore visibility
 					document.body.style.display = '';
@@ -3022,7 +4053,7 @@
 
 
 /***/ },
-/* 17 */
+/* 20 */
 /*!********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/grid.js ***!
   \********************************************************/
@@ -3031,6 +4062,7 @@
 			/**
 			 * Visual grid with cursor.
 			 *
+			 * @module stb/develop/grid
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -3038,7 +4070,7 @@
 			'use strict';
 			
 			var data    = __webpack_require__(/*! stb/app */ 3).data,
-				storage = __webpack_require__(/*! ./storage */ 7);
+				storage = __webpack_require__(/*! ./storage */ 8);
 			
 			
 			// public export
@@ -3075,6 +4107,7 @@
 			
 			
 				init: function () {
+					// current execution context
 					var self = this;
 			
 					this.$canvas = window.$develop.appendChild(document.createElement('canvas'));
@@ -3110,6 +4143,7 @@
 			
 			
 				mousemove: function ( event ) {
+					// current execution context
 					var self = this;
 			
 					this.cursorX = event.x;
@@ -3139,7 +4173,7 @@
 			
 				mousedown: function ( event ) {
 					var matchPoint = null,
-						self       = this,
+						self       = this,  // current execution context
 						point;
 			
 					// all clicked crosses
@@ -3205,7 +4239,7 @@
 			
 				repaint: function () {
 					var ctx  = this.ctx,
-						self = this;
+						self = this;  // current execution context
 			
 					// remove all
 					ctx.clearRect(0, 0, data.screen.width, data.screen.height);
@@ -3319,7 +4353,7 @@
 
 
 /***/ },
-/* 18 */
+/* 21 */
 /*!*********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/proxy.js ***!
   \*********************************************************/
@@ -3328,6 +4362,7 @@
 			/**
 			 * STB calls relay.
 			 *
+			 * @module stb/develop/proxy
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -3335,7 +4370,7 @@
 			'use strict';
 			
 			var host   = __webpack_require__(/*! stb/app */ 3).data.host,
-				util   = __webpack_require__(/*! util */ 10),
+				util   = __webpack_require__(/*! util */ 9),
 				config = __webpack_require__(/*! ../../../config/proxy */ 30);
 			
 			
@@ -3440,7 +4475,7 @@
 
 
 /***/ },
-/* 19 */
+/* 22 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/static.js ***!
   \**********************************************************/
@@ -3449,6 +4484,7 @@
 			/**
 			 * Static files reload on change.
 			 *
+			 * @module stb/develop/static
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -3470,7 +4506,7 @@
 
 
 /***/ },
-/* 20 */
+/* 23 */
 /*!**********************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/develop/weinre.js ***!
   \**********************************************************/
@@ -3479,6 +4515,7 @@
 			/**
 			 * Web Inspector Remote.
 			 *
+			 * @module stb/develop/weinre
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -3486,8 +4523,8 @@
 			'use strict';
 			
 			var dom     = __webpack_require__(/*! stb/dom */ 5),
-				util    = __webpack_require__(/*! util */ 10),
-				storage = __webpack_require__(/*! ./storage */ 7),
+				util    = __webpack_require__(/*! util */ 9),
+				storage = __webpack_require__(/*! ./storage */ 8),
 				config  = __webpack_require__(/*! ../../../config/weinre */ 32);
 			
 			
@@ -3502,7 +4539,7 @@
 
 
 /***/ },
-/* 21 */
+/* 24 */
 /*!*************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/model.js ***!
   \*************************************************/
@@ -3516,7 +4553,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 11);
+			var Emitter = __webpack_require__(/*! ./emitter */ 10);
 			
 			
 			/**
@@ -3527,6 +4564,7 @@
 			 * Holds information, but don’t handle behaviour and don’t format information or influence how data appears.
 			 *
 			 * @constructor
+			 * @extends Emitter
 			 *
 			 * @param {Object} [data={}] init attributes
 			 */
@@ -3559,7 +4597,7 @@
 			/**
 			 * Remove all attributes from the model event.
 			 *
-			 * @event Model#clear
+			 * @event module:stb/model~Model#clear
 			 *
 			 * @type {Object}
 			 * @property {Object} data old model attributes
@@ -3571,7 +4609,7 @@
 			 *
 			 * @return {boolean} operation status
 			 *
-			 * @fires Model#clear
+			 * @fires module:stb/model~Model#clear
 			 */
 			Model.prototype.clear = function () {
 				var data = this.data;
@@ -3598,7 +4636,7 @@
 			/**
 			 * Set model data event.
 			 *
-			 * @event Model#init
+			 * @event module:stb/model~Model#init
 			 *
 			 * @type {Object}
 			 * @property {Object} data new model attributes
@@ -3611,8 +4649,8 @@
 			 * @param {Object} data attributes
 			 * @return {boolean} operation status
 			 *
-			 * @fires Model#clear
-			 * @fires Model#init
+			 * @fires module:stb/model~Model#clear
+			 * @fires module:stb/model~Model#init
 			 */
 			Model.prototype.init = function ( data ) {
 				// @ifdef DEBUG
@@ -3673,7 +4711,7 @@
 			/**
 			 * Update or create a model attribute event.
 			 *
-			 * @event Model#change
+			 * @event module:stb/model~Model#change
 			 *
 			 * @type {Object}
 			 * @property {string} name attribute name
@@ -3689,7 +4727,7 @@
 			 * @param {*} value associated value
 			 * @return {boolean} operation status (true - attribute value was changed/created)
 			 *
-			 * @fires Model#change
+			 * @fires module:stb/model~Model#change
 			 */
 			Model.prototype.set = function ( name, value ) {
 				var isAttrSet = name in this.data,
@@ -3731,7 +4769,7 @@
 			 * @param {string} name attribute
 			 * @return {boolean} operation status (true - attribute was deleted)
 			 *
-			 * @fires Model#change
+			 * @fires module:stb/model~Model#change
 			 */
 			Model.prototype.unset = function ( name ) {
 				var isAttrSet = name in this.data,
@@ -3839,7 +4877,7 @@
 
 
 /***/ },
-/* 22 */
+/* 25 */
 /*!***************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/request.js ***!
   \***************************************************/
@@ -3967,7 +5005,7 @@
 
 
 /***/ },
-/* 23 */
+/* 26 */
 /*!*************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/shims.js ***!
   \*************************************************/
@@ -4043,109 +5081,7 @@
 
 
 /***/ },
-/* 24 */
-/*!********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/check.box.js ***!
-  \********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/check.box
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 2);
-			
-			
-			/**
-			 * Base check box implementation.
-			 *
-			 * @constructor
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {string} config.value initial state
-			 *
-			 * @example
-			 * var cb = new CheckBox({value:true});
-			 */
-			function CheckBox ( config ) {
-				var self = this;
-			
-				// sanitize
-				config = config || {};
-			
-				/**
-				 * Initial state.
-				 *
-				 * @type {boolean}
-				 */
-				this.value = !!config.value;
-			
-				// parent init
-				Component.call(this, config);
-			
-				// correct CSS class names
-				this.$node.classList.add('checkBox');
-			
-				// correct init styles
-				if ( this.value ) {
-					this.$node.classList.add('checked');
-				}
-			
-				// invert on mouse click or enter
-				this.addListeners({
-					click: function () {
-						self.check(!self.value);
-					},
-					keydown: function ( event ) {
-						if ( event.code === keys.ok ) {
-							self.check(!self.value);
-						}
-					}
-				});
-			}
-			
-			
-			// inheritance
-			CheckBox.prototype = Object.create(Component.prototype);
-			CheckBox.prototype.constructor = CheckBox;
-			
-			
-			/**
-			 * Set the given state.
-			 * Does nothing in case the value is already as necessary.
-			 *
-			 * @param {boolean} value new value to set
-			 * @return {boolean} operation status
-			 */
-			CheckBox.prototype.check = function ( value ) {
-				if ( this.value !== value ) {
-					// set new value
-					this.value = !this.value;
-			
-					// set visible changes
-					this.$node.classList.toggle('checked');
-			
-					// notify
-					this.emit('check', {value: this.value});
-			
-					return true;
-				}
-			
-				return false;
-			};
-			
-			
-			// public export
-			module.exports = CheckBox;
-
-
-/***/ },
-/* 25 */
+/* 27 */
 /*!***************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/ui/grid.js ***!
   \***************************************************/
@@ -4159,64 +5095,87 @@
 			
 			'use strict';
 			
-			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 2);
+			var Component = __webpack_require__(/*! ../component */ 2),
+				keys      = __webpack_require__(/*! ../keys */ 6);
 			
 			
 			/**
 			 * Base list implementation.
 			 *
 			 * @constructor
+			 * @extends Component
 			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {number} config.size amount of visible items on a page
+			 * @param {Object}   [config={}] init parameters (all inherited from the parent)
+			 * @param {Array[]}  [config.data=[]] component data to visualize
+			 * @param {function} [config.render] method to build each grid cell content
+			 * @param {boolean}  [config.cycleX=true] allow or not to jump to the opposite side of line when there is nowhere to go next
+			 * @param {boolean}  [config.cycleY=true] allow or not to jump to the opposite side of column when there is nowhere to go next
+			 *
+			 * @example
+			 * var Grid = require('stb/ui/grid'),
+			 *     grid = new Grid({
+			 *         data: [
+			 *             [1,   2,  3,  4],
+			 *             [5,   6,  7,  8],
+			 *             [9,  10, 11, 12],
+			 *             [13, 14, 15, 16]
+			 *         ],
+			 *         render: function ( $cell, data ) {
+			 *             $cell.innerHTML = '<div>' + (data.value) + '</div>';
+			 *         }
+			 *     });
 			 */
 			function Grid ( config ) {
-				var self = this,
-					index = 0,
-					i, j, row, item;
+				// current execution context
+				var self = this;
 			
 				/**
-				 * List of DOM elements representing the component lines.
+				 * List of DOM elements representing the component cells.
+				 * Necessary for navigation calculations.
 				 *
-				 * @type {Node[]}
+				 * @type {Node[][]}
 				 */
-				//this.items = [];
+				this.cells = [];
 			
 				/**
 				 * Link to the currently focused DOM element.
 				 *
 				 * @type {Node}
 				 */
-				this.activeItem = null;
-			
-				this.activeIndex = 0;
-			
-				this.data = [];
-			
-				this.type = 0;
+				this.$focusItem = null;
 			
 				/**
-				 * Amount of visible items on a page.
+				 * Component data to visualize.
 				 *
-				 * @type {number}
+				 * @type {Array[]}
 				 */
-				this.size = 5;
+				this.data = [];
 			
+				/**
+				 * Method to build each grid cell content.
+				 * Can be redefined to provide custom rendering.
+				 *
+				 * @type {function}
+				 */
 				this.render = this.defaultRender;
+			
+				/**
+				 * Allow or not to jump to the opposite side of line when there is nowhere to go next.
+				 *
+				 * @type {boolean}
+				 */
+				this.cycleX = true;
+			
+				/**
+				 * Allow or not to jump to the opposite side of column when there is nowhere to go next.
+				 *
+				 * @type {boolean}
+				 */
+				this.cycleY = true;
 			
 			
 				// sanitize
 				config = config || {};
-			
-				//this.height = config.height || 3;
-			
-				//this.width  = config.width  || 5;
-			
-				// list items amount on page
-				//this.size = config.size || this.size;
-			
-				//this.type = config.type || this.TYPE_VERTICAL;
 			
 				// parent init
 				Component.call(this, config);
@@ -4224,7 +5183,85 @@
 				// correct CSS class names
 				this.$node.classList.add('grid');
 			
-				// apply hierarchy
+				// component setup
+				this.init(config);
+			
+				// navigation by keyboard
+				this.addListener('keydown', function ( event ) {
+					switch ( event.code ) {
+						case keys.up:
+						case keys.down:
+						case keys.right:
+						case keys.left:
+							// cursor move only on arrow keys
+							self.move(event.code);
+							break;
+						case keys.ok:
+							// notify
+							self.emit('click:item', {$item: self.$focusItem, event: event});
+							break;
+					}
+				});
+			
+				// navigation by mouse
+				this.$body.addEventListener('mousewheel', function ( event ) {
+					// scrolling by Y axis
+					if ( event.wheelDeltaY ) {
+						self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+					}
+			
+					// scrolling by X axis
+					if ( event.wheelDeltaX ) {
+						self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+					}
+				});
+			}
+			
+			
+			// inheritance
+			Grid.prototype = Object.create(Component.prototype);
+			Grid.prototype.constructor = Grid;
+			
+			
+			/**
+			 * Fill the given cell with data.
+			 * $cell.data can contain the old data (from the previous render).
+			 *
+			 * @param {Node} $cell item DOM link
+			 * @param {*} data associated with this item data
+			 */
+			Grid.prototype.defaultRender = function ( $cell, data ) {
+				$cell.innerText = data.value;
+			};
+			
+			
+			/**
+			 * Init or re-init of the component inner structures and HTML.
+			 *
+			 * @param {Object} [config={}] init parameters (subset of constructor config params)
+			 */
+			Grid.prototype.init = function ( config ) {
+				var self = this,
+					i, j,
+					$row, $cell, $table, $tbody, $focusItem,
+					cellData,
+					onClick = function ( event ) {
+						// visualize
+						self.focusItem(this);
+			
+						// notify
+						self.emit('click:item', {$item: this, event: event});
+					};
+			
+				// @ifdef DEBUG
+				if ( typeof config !== 'object' ) { throw 'wrong config type'; }
+				// @endif
+			
+				// apply cycle behaviour
+				if ( config.cycleX !== undefined ) { this.cycleX = config.cycleX; }
+				if ( config.cycleY !== undefined ) { this.cycleY = config.cycleY; }
+			
+				// apply data
 				if ( config.data !== undefined ) {
 					// @ifdef DEBUG
 					if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
@@ -4242,193 +5279,155 @@
 					this.render = config.render;
 				}
 			
-				//if ( this.type === this.TYPE_HORIZONTAL ) {
-				//	this.$node.classList.add('horizontal');
-				//}
+				// @ifdef DEBUG
+				if ( !Array.isArray(this.data) || !Array.isArray(this.data[0]) ) { throw 'wrong this.data'; }
+				// @endif
 			
-				//this.$body = document.createElement('ul');
-				////this.$body.className = 'body';
-				//this.$node.appendChild(this.$body);
+				$table = document.createElement('table');
+				$tbody = document.createElement('tbody');
 			
-				this.$body = document.createElement('table');
+				$table.appendChild($tbody);
 			
-				this.$node.appendChild(this.$body);
-			
-				debug.log(this.data);
-			
-				for ( i = 0; i < this.data.length; i++ ) {
-					row = this.$body.insertRow();
-					for ( j = 0; j < this.data[i].length; j++ ) {
-						item = row.insertCell(-1);
-						item.x = j;
-						item.y = i;
-						item.className = 'cell';
-						//console.log(i, j);
-						//console.log(this.data[i][j]);
-						var itemData = this.data[i][j];
-						if ( typeof itemData === 'object' ) {
-							item.innerHTML = itemData.value;
-							item.colSpan = itemData.colSpan || 1;
-							item.rowSpan = itemData.rowSpan || 1;
-						} else {
-							item.innerHTML = itemData;
-						}
-						//if ( this.data[i] !== undefined ) {
-						//	this.render(item, this.data[i]);
-						//
-						//	item.addEventListener('click', function () {
-						//		self.activeIndex = this.index;
-						//		self.activeItem.classList.remove('focus');
-						//		self.activeItem = this;
-						//		self.activeItem.classList.add('focus');
-						//	});
-						//}
-					}
-					this.$body.appendChild(row);
-			
-					//this.items.push(this.$body.appendChild(item));
-					//this.$body.appendChild(item);
+				// reset if necessary
+				if ( this.cells.length > 0 ) {
+					this.cells = [];
+					this.$body.innerText = '';
 				}
 			
+				// rows
+				for ( i = 0; i < this.data.length; i++ ) {
+					// dom
+					$row = $tbody.insertRow();
+					// navigation map filling
+					this.cells.push([]);
 			
-				this.activeItem = this.$body.rows[0].cells[0];
-				this.$body.rows[0].cells[0].classList.add('focus');
+					// cols
+					for ( j = 0; j < this.data[i].length; j++ ) {
+						// dom
+						$cell = $row.insertCell(-1);
+						// additional params
+						$cell.x = j;
+						$cell.y = i;
+						$cell.className = 'cell';
 			
-				//if ( this.activeItem === null ) {
-				//	this.activeItem = this.$body.firstChild;
-				//	//this.activeIndex = 0;
-				//	this.activeItem.classList.add('focus');
-				//}
+						// shortcut
+						cellData = this.data[i][j];
 			
-				this.addListener('keydown', function ( event ) {
-					//var tmp;
+						// cell data type
+						if ( typeof cellData === 'object' ) {
+							// merge columns
+							if ( cellData.colSpan !== undefined ) {
+								// @ifdef DEBUG
+								if ( Number(cellData.colSpan) !== cellData.colSpan ) { throw 'cellData.colSpan must be a number'; }
+								if ( cellData.colSpan <= 0 ) { throw 'cellData.colSpan should be positive'; }
+								// @endif
 			
-					switch ( event.code ) {
-						case keys.up:
-			
-							break;
-						case keys.down:
-			
-							break;
-						case keys.right:
-							self.focusItem(self.activeItem.nextSibling);
-							break;
-						case keys.left:
-							self.focusItem(self.activeItem.previousSibling);
-							break;
-					}
-			
-					/*if ( (event.code === keys.up && self.type === self.TYPE_VERTICAL) || (event.code === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.activeIndex > 0 ) {
-							index--;
-			
-							if ( !self.focusPrev() ) {
-								// move the last item to the begging
-								//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
-								self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
-			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.firstChild, self.data[self.activeIndex-1]);
-								self.$body.firstChild.index = self.activeIndex-1;
-								//} else {
-								//	self.$body.firstChild.innerHTML = self.data[self.activeIndex-1];
-								//}
-			
-								//self.items.unshift(self.items.pop());
-								//self.activeIndex++;
-								self.focusPrev();
+								// apply and clean
+								$cell.colSpan = cellData.colSpan;
+								delete cellData.colSpan;
 							}
-						}
-					}
-					if ( (event.code === keys.down && self.type === self.TYPE_VERTICAL) || (event.code === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.activeIndex < self.data.length-1 ) {
-							index++;
 			
-							if ( !self.focusNext() ) {
-								// move the first item to the end
-								//self.$body.appendChild(self.items[0]);
-								self.$body.appendChild(self.$body.firstChild);
+							// merge rows
+							if ( cellData.rowSpan !== undefined ) {
+								// @ifdef DEBUG
+								if ( Number(cellData.rowSpan) !== cellData.rowSpan ) { throw 'cellData.rowSpan must be a number'; }
+								if ( cellData.rowSpan <= 0 ) { throw 'cellData.rowSpan should be positive'; }
+								// @endif
 			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.lastChild, self.data[self.activeIndex+1]);
-								self.$body.lastChild.index = self.activeIndex+1;
-								//} else {
-								//	self.$body.lastChild.innerHTML = self.data[self.activeIndex + 1];
-								//}
-			
-								//self.items.push(self.items.shift());
-								//self.activeIndex--;
-								self.focusNext();
+								// apply and clean
+								$cell.rowSpan = cellData.rowSpan;
+								delete cellData.rowSpan;
 							}
+			
+							// merge rows
+							if ( cellData.focus !== undefined ) {
+								// store and clean
+								$focusItem = $cell;
+								delete cellData.focus;
+							}
+						} else {
+							// wrap value
+							cellData = this.data[i][j] = {
+								value: this.data[i][j]
+							};
 						}
-					}*/
 			
-					if ( event.code === keys.pageUp ) {
-						//self.activeIndex = self.activeIndex - self.size - 1;
-						//self.focusFirst();
-						self.focusItem(self.$body.firstChild);
-						self.activeIndex = self.activeItem.index;
+						// visualize
+						this.render($cell, cellData);
+			
+						// save data link
+						$cell.data = cellData;
+			
+						// navigation map filling
+						this.cells[i][j] = $cell;
+			
+						$cell.addEventListener('click', onClick);
 					}
-					if ( event.code === keys.pageDown ) {
-						//self.activeIndex = self.activeIndex + self.size - 1;
+					// row is ready
+					$tbody.appendChild($row);
+				}
 			
-						//self.focusLast();
-						self.focusItem(self.$body.lastChild);
-						self.activeIndex = self.activeItem.index;
+				// everything is ready
+				this.$body.appendChild($table);
 			
-						//for ( i = 0; i < self.size; i++ ) {
-						//self.render()
-						//}
-					}
-			
-					// swap edge items
-					//tmp = self.items[0];
-					//self.items[0] = self.items[self.items.length-1];
-					//self.items[self.items.length-1] = tmp;
-			
-					//for ( i = 0; i < self.size; i++ ) {
-					//self.items[i].innerHTML = self.data[i+index];
-					//}
-					//self.activeItem.classList.remove('focus');
-					//self.activeItem = self.items[Math.abs(index % self.items.length)];
-					//self.activeItem.classList.add('focus');
-				});
-			
-				this.$body.addEventListener('mousewheel', function ( event ) {
-					var direction = event.wheelDeltaY > 0;
-			
-					debug.event(event);
-			
-					self.emit('keydown', {code: direction ? keys.up : keys.down});
-				});
-			}
-			
-			
-			// inheritance
-			Grid.prototype = Object.create(Component.prototype);
-			Grid.prototype.constructor = Grid;
-			
-			
-			Grid.prototype.TYPE_VERTICAL   = 1;
-			Grid.prototype.TYPE_HORIZONTAL = 2;
-			
-			
-			Grid.prototype.moveNext = function () {
-			
+				// apply focus
+				if ( $focusItem !== undefined ) {
+					// focus item was given in data
+					this.focusItem($focusItem);
+				} else {
+					// just the first cell
+					this.focusItem(this.cells[0][0]);
+				}
 			};
 			
 			
-			Grid.prototype.movePrev = function () {
+			/**
+			 * Move focus to the given direction.
+			 *
+			 * @param {number} direction arrow key code
+			 */
+			Grid.prototype.move = function ( direction ) {
+				var x = this.$focusItem.x,
+					y = this.$focusItem.y;
 			
-			};
-			
-			
-			Grid.prototype.renderPage = function () {
-			
-			};
-			
-			Grid.prototype.defaultRender = function ( $item, data ) {
-				$item.innerHTML = data;
+				switch ( direction ) {
+					case keys.up:
+						if ( this.cells[y - 1] ) {
+							// can go one step up
+							this.focusItem(this.cells[y - 1][x]);
+						} else if ( this.cycleY ) {
+							// jump to the last row
+							this.focusItem(this.cells[this.cells.length - 1][x]);
+						}
+						break;
+					case keys.down:
+						if ( this.cells[y + 1] ) {
+							// can go one step down
+							this.focusItem(this.cells[y + 1][x]);
+						} else if ( this.cycleY ) {
+							// jump to the first row
+							this.focusItem(this.cells[0][x]);
+						}
+						break;
+					case keys.right:
+						if ( this.cells[y][x + 1] ) {
+							// can go one step right
+							this.focusItem(this.cells[y][x + 1]);
+						} else if ( this.cycleX ) {
+							// jump to the first column
+							this.focusItem(this.cells[y][0]);
+						}
+						break;
+					case keys.left:
+						if ( this.cells[y][x - 1] ) {
+							// can go one step left
+							this.focusItem(this.cells[y][x - 1]);
+						} else if ( this.cycleX ) {
+							// jump to the last column
+							this.focusItem(this.cells[y][this.cells[y].length - 1]);
+						}
+						break;
+				}
 			};
 			
 			
@@ -4441,30 +5440,45 @@
 			 * @return {boolean} operation status
 			 */
 			Grid.prototype.focusItem = function ( $item ) {
-				var $prev = this.activeItem;
+				var $prev = this.$focusItem;
 			
 				// different element
 				if ( $item !== undefined && $prev !== $item ) {
 					// @ifdef DEBUG
 					if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
+					if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
 					// @endif
 			
 					// some item is focused already
-					if ( $prev !== undefined ) {
+					if ( $prev !== null ) {
 						// @ifdef DEBUG
 						if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
 						// @endif
 			
+						// style
 						$prev.classList.remove('focus');
+			
+						// notify
+						this.emit('blur:item', {$item: $prev});
 					}
 					// reassign
-					this.activeItem = $item;
+					this.$focusItem = $item;
+			
+					this.$focusItem.data = this.data[$item.y][$item.x];
 			
 					// correct CSS
 					$item.classList.add('focus');
 			
-					// notify listeners
-					this.emit('move', {prev: $prev, curr: $item});
+					/**
+					 * Set focus to an element.
+					 *
+					 * @event module:stb/ui/grid~Grid#focus:item
+					 *
+					 * @type {Object}
+					 * @property {*} [$prev] old/previous focused HTML element
+					 * @property {*} [$curr] new/current focused HTML element
+					 */
+					this.emit('focus:item', {$prev: $prev, $curr: $item});
 			
 					return true;
 				}
@@ -4472,53 +5486,6 @@
 				// nothing was done
 				return false;
 			};
-			
-			
-			Grid.prototype.focusNext = function () {
-				//if ( this.activeIndex < this.size - 1 ) {
-				if ( this.activeItem !== this.$body.lastChild ) {
-					this.activeIndex++;
-					//console.log(this.activeIndex);
-					//this.activeItem.classList.remove('focus');
-					////this.activeItem = this.items[this.activeIndex];
-					//this.activeItem = this.activeItem.nextSibling;
-					//this.activeItem.classList.add('focus');
-			
-					return this.focusItem(this.activeItem.nextSibling);
-				}
-				return false;
-			};
-			
-			
-			Grid.prototype.focusPrev = function () {
-				//if ( this.activeIndex > 0 ) {
-				if ( this.activeItem !== this.$body.firstChild ) {
-					this.activeIndex--;
-					//console.log(this.activeIndex);
-					//this.activeItem.classList.remove('focus');
-					////this.activeItem = this.items[this.activeIndex];
-					//this.activeItem = this.activeItem.previousSibling;
-					//this.activeItem.classList.add('focus');
-			
-					return this.focusItem(this.activeItem.previousSibling);
-				}
-				return false;
-			};
-			
-			
-			//Grid.prototype.focusFirst = function () {
-			//	this.activeItem.classList.remove('focus');
-			//	this.activeItem = this.$body.firstChild;
-			//	this.activeItem.classList.add('focus');
-			//	this.activeIndex = this.activeItem.index;
-			//};
-			
-			//Grid.prototype.focusLast = function () {
-			//	this.activeItem.classList.remove('focus');
-			//	this.activeItem = this.$body.lastChild;
-			//	this.activeItem.classList.add('focus');
-			//	this.activeIndex = this.activeItem.index;
-			//};
 			
 			
 			// public export
@@ -4526,364 +5493,7 @@
 
 
 /***/ },
-/* 26 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/list.js ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/list
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 2);
-			
-			
-			/**
-			 * Base list implementation.
-			 *
-			 * @constructor
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {number} config.size amount of visible items on a page
-			 */
-			function List ( config ) {
-				var self = this,
-					index = 0,
-					i, item;
-			
-				/**
-				 * List of DOM elements representing the component lines.
-				 *
-				 * @type {Node[]}
-				 */
-				//this.items = [];
-			
-				/**
-				 * Link to the currently focused DOM element.
-				 *
-				 * @type {Node}
-				 */
-				this.activeItem = null;
-			
-				this.activeIndex = 0;
-			
-				this.data = [];
-			
-				this.type = this.TYPE_VERTICAL;
-			
-				/**
-				 * Amount of visible items on a page.
-				 *
-				 * @type {number}
-				 */
-				this.size = 5;
-			
-				/**
-				 * Method the build each list item content.
-				 * Can be redefined to provide custom rendering.
-				 *
-				 * @type {function}
-				 */
-				this.render = this.defaultRender;
-			
-				// sanitize
-				config = config || {};
-			
-				// parent init
-				Component.call(this, config);
-			
-				// list items amount on page
-				if ( config.size !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.size) !== config.size ) { throw 'config.size must be a number'; }
-					// @endif
-			
-					this.size = config.size;
-				}
-			
-				// horizontal or vertical
-				if ( config.type !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.type) !== config.type ) { throw 'config.type must be a number'; }
-					// @endif
-			
-					this.type = config.type;
-				}
-			
-				// correct CSS class names
-				this.$node.classList.add('list');
-			
-				// apply list of items
-				if ( config.data !== undefined ) {
-					// @ifdef DEBUG
-					if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
-					// @endif
-			
-					this.data = config.data;
-				}
-			
-				// custom render method
-				if ( config.render !== undefined ) {
-					// @ifdef DEBUG
-					if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
-					// @endif
-			
-					this.render = config.render;
-				}
-			
-				if ( this.type === this.TYPE_HORIZONTAL ) {
-					this.$node.classList.add('horizontal');
-				}
-			
-				//this.$body = document.createElement('ul');
-				////this.$body.className = 'body';
-				//this.$node.appendChild(this.$body);
-			
-				for ( i = 0; i < this.size; i++ ) {
-					//item = document.createElement('li');
-					item = document.createElement('div');
-					item.index = i;
-					item.className = 'item';
-					//item.innerHTML = this.data[i];
-					if ( this.data[i] !== undefined ) {
-						this.render(item, this.data[i]);
-			
-						item.addEventListener('click', function () {
-							self.activeIndex = this.index;
-							self.focusItem(this);
-							//self.activeItem.classList.remove('focus');
-							//self.activeItem = this;
-							//self.activeItem.classList.add('focus');
-						});
-					}
-					//this.items.push(this.$body.appendChild(item));
-					this.$body.appendChild(item);
-				}
-			
-				if ( this.activeItem === null ) {
-					this.activeItem = this.$body.firstChild;
-					//this.activeIndex = 0;
-					this.activeItem.classList.add('focus');
-				}
-			
-				this.addListener('keydown', function ( event ) {
-					//var tmp;
-			
-					if ( (event.code === keys.up && self.type === self.TYPE_VERTICAL) || (event.code === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.activeIndex > 0 ) {
-							index--;
-			
-							if ( !self.focusPrev() ) {
-								// move the last item to the begging
-								//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
-								self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
-			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.firstChild, self.data[self.activeIndex - 1]);
-								self.$body.firstChild.index = self.activeIndex - 1;
-								//} else {
-								//	self.$body.firstChild.innerHTML = self.data[self.activeIndex-1];
-								//}
-			
-								//self.items.unshift(self.items.pop());
-								//self.activeIndex++;
-								self.focusPrev();
-							}
-						}
-					}
-					if ( (event.code === keys.down && self.type === self.TYPE_VERTICAL) || (event.code === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.activeIndex < self.data.length - 1 ) {
-							index++;
-			
-							if ( !self.focusNext() ) {
-								// move the first item to the end
-								//self.$body.appendChild(self.items[0]);
-								self.$body.appendChild(self.$body.firstChild);
-			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.lastChild, self.data[self.activeIndex + 1]);
-								self.$body.lastChild.index = self.activeIndex + 1;
-								//} else {
-								//	self.$body.lastChild.innerHTML = self.data[self.activeIndex + 1];
-								//}
-			
-								//self.items.push(self.items.shift());
-								//self.activeIndex--;
-								self.focusNext();
-							}
-						}
-					}
-			
-					if ( event.code === keys.pageUp ) {
-						//self.activeIndex = self.activeIndex - self.size - 1;
-						//self.focusFirst();
-						self.focusItem(self.$body.firstChild);
-						self.activeIndex = self.activeItem.index;
-					}
-					if ( event.code === keys.pageDown ) {
-						//self.activeIndex = self.activeIndex + self.size - 1;
-			
-						//self.focusLast();
-						self.focusItem(self.$body.lastChild);
-						self.activeIndex = self.activeItem.index;
-			
-						//for ( i = 0; i < self.size; i++ ) {
-							//self.render()
-						//}
-					}
-			
-					// swap edge items
-					//tmp = self.items[0];
-					//self.items[0] = self.items[self.items.length-1];
-					//self.items[self.items.length-1] = tmp;
-			
-					//for ( i = 0; i < self.size; i++ ) {
-						//self.items[i].innerHTML = self.data[i+index];
-					//}
-					//self.activeItem.classList.remove('focus');
-					//self.activeItem = self.items[Math.abs(index % self.items.length)];
-					//self.activeItem.classList.add('focus');
-				});
-			
-				this.$body.addEventListener('mousewheel', function ( event ) {
-					var direction = event.wheelDeltaY > 0;
-			
-					debug.event(event);
-			
-					self.emit('keydown', {code: direction ? keys.up : keys.down});
-				});
-			}
-			
-			
-			// inheritance
-			List.prototype = Object.create(Component.prototype);
-			List.prototype.constructor = List;
-			
-			
-			List.prototype.TYPE_VERTICAL   = 1;
-			List.prototype.TYPE_HORIZONTAL = 2;
-			
-			
-			List.prototype.moveNext = function () {
-			
-			};
-			
-			
-			List.prototype.movePrev = function () {
-			
-			};
-			
-			
-			List.prototype.renderPage = function () {
-			
-			};
-			
-			List.prototype.defaultRender = function ( $item, data ) {
-				$item.innerHTML = data;
-			};
-			
-			
-			/**
-			 * Highlight the given DOM element as focused.
-			 * Remove focus from the previously focused item and generate associated event.
-			 *
-			 * @param {Node} $item element to focus
-			 *
-			 * @return {boolean} operation status
-			 */
-			List.prototype.focusItem = function ( $item ) {
-				var $prev = this.activeItem;
-			
-				// different element
-				if ( $item !== undefined && $prev !== $item ) {
-					// @ifdef DEBUG
-					if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
-					// @endif
-			
-					// some item is focused already
-					if ( $prev !== undefined ) {
-						// @ifdef DEBUG
-						if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
-						// @endif
-			
-						$prev.classList.remove('focus');
-					}
-					// reassign
-					this.activeItem = $item;
-			
-					// correct CSS
-					$item.classList.add('focus');
-			
-					// notify listeners
-					this.emit('move', {prev: $prev, curr: $item});
-			
-					return true;
-				}
-			
-				// nothing was done
-				return false;
-			};
-			
-			
-			List.prototype.focusNext = function () {
-				//if ( this.activeIndex < this.size - 1 ) {
-				if ( this.activeItem !== this.$body.lastChild ) {
-					this.activeIndex++;
-					//console.log(this.activeIndex);
-					//this.activeItem.classList.remove('focus');
-					////this.activeItem = this.items[this.activeIndex];
-					//this.activeItem = this.activeItem.nextSibling;
-					//this.activeItem.classList.add('focus');
-			
-					return this.focusItem(this.activeItem.nextSibling);
-				}
-				return false;
-			};
-			
-			
-			List.prototype.focusPrev = function () {
-				//if ( this.activeIndex > 0 ) {
-				if ( this.activeItem !== this.$body.firstChild ) {
-					this.activeIndex--;
-					//console.log(this.activeIndex);
-					//this.activeItem.classList.remove('focus');
-					////this.activeItem = this.items[this.activeIndex];
-					//this.activeItem = this.activeItem.previousSibling;
-					//this.activeItem.classList.add('focus');
-			
-					return this.focusItem(this.activeItem.previousSibling);
-				}
-				return false;
-			};
-			
-			
-			//List.prototype.focusFirst = function () {
-			//	this.activeItem.classList.remove('focus');
-			//	this.activeItem = this.$body.firstChild;
-			//	this.activeItem.classList.add('focus');
-			//	this.activeIndex = this.activeItem.index;
-			//};
-			
-			//List.prototype.focusLast = function () {
-			//	this.activeItem.classList.remove('focus');
-			//	this.activeItem = this.$body.lastChild;
-			//	this.activeItem.classList.add('focus');
-			//	this.activeIndex = this.activeItem.index;
-			//};
-			
-			
-			// public export
-			module.exports = List;
-
-
-/***/ },
-/* 27 */
+/* 28 */
 /*!************************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/ui/modal.message.js ***!
   \************************************************************/
@@ -4897,7 +5507,7 @@
 			
 			'use strict';
 			
-			var ModalBox = __webpack_require__(/*! ./modal.box.js */ 13),
+			var ModalBox = __webpack_require__(/*! ./modal.box.js */ 16),
 				dom      = __webpack_require__(/*! ../dom */ 5);
 			
 			
@@ -4905,6 +5515,7 @@
 			 * Base modal window implementation.
 			 *
 			 * @constructor
+			 * @extends ModalBox
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 */
@@ -4935,171 +5546,6 @@
 			
 			// public export
 			module.exports = ModalMessage;
-
-
-/***/ },
-/* 28 */
-/*!***********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/progress.bar.js ***!
-  \***********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/progress.bar
-			 * @author Igor Zaporozhets <deadbyelpy@gmail.com>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 1);
-			
-			
-			/**
-			 * Base progress bar implementation.
-			 *
-			 * @constructor
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {number} config.value initial value
-			 * @param {number} config.max max progress value
-			 * @param {number} config.min min progress value
-			 *
-			 * @example
-			 * var pb = new ProgressBar({value:0, max: 200});
-			 */
-			function ProgressBar ( config ) {
-				// sanitize
-				config = config || {};
-			
-				/**
-				 * Max progress value.
-				 *
-				 * @type {number}
-				 */
-				this.max = 100;
-			
-				/**
-				 * Min progress value.
-				 *
-				 * @type {number}
-				 */
-				this.min = 0;
-			
-				/**
-				 * Initial progress position.
-				 *
-				 * @type {number}
-				 */
-				this.value = 0;
-			
-				/**
-				 * Value of the one percent step
-				 *
-				 * @type {number}
-				 */
-				this.step = 1;
-			
-				// assignment of configuration parameters if they were transferred
-				if ( config.max !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.max) !== config.max ) { throw 'config.max value must be a number'; }
-					// @endif
-			
-					this.max = config.max;
-				}
-			
-				if ( config.min !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.min) !== config.min ) { throw 'config.min value must be a number'; }
-					// @endif
-			
-					this.min = config.min;
-				}
-			
-				if ( config.value !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.value) !== config.value ) { throw 'config.value must be a number'; }
-					if ( config.value > this.max ) { throw 'config.value more than config.maximum'; }
-					if ( config.value < this.min ) { throw 'config.value less than config.minimum'; }
-					// @endif
-			
-					this.value = config.value;
-				}
-			
-				// create $body if not passed
-				if ( config.$body === undefined ) {
-					config.$body = document.createElement('div');
-				}
-			
-				this.step = Math.abs(this.max - this.min) / 100;
-			
-				// parent init
-				Component.call(this, config);
-			
-				// correct CSS class names
-				this.$node.classList.add('progressBar');
-				this.$body.className = 'value';
-			
-				// insert bar line
-				this.$node.appendChild(this.$body);
-			
-				// init bar size, (this.min - this.value) - calculate distance from start
-				this.$body.style.width = (Math.abs(this.min - this.value) / this.step) + '%';
-			}
-			
-			
-			// inheritance
-			ProgressBar.prototype = Object.create(Component.prototype);
-			ProgressBar.prototype.constructor = ProgressBar;
-			
-			
-			/**
-			 * Set position of the given value.
-			 * Does nothing in case when progress is end and passed value is more than max value.
-			 *
-			 * @param {number} value new value to set
-			 * @return {boolean} operation result
-			 */
-			ProgressBar.prototype.set = function ( value ) {
-				var prevValue = this.value;
-			
-				if ( this.value !== value && value <= this.max && value >= this.min ) {
-					// @ifdef DEBUG
-					if ( Number(value) !== value ) { throw 'value must be a number'; }
-					// @endif
-			
-					// set new value
-					this.value = value;
-			
-					// get step in percents
-					value = Math.abs(this.min - this.value) / this.step;
-			
-					// check going beyond
-					if ( value >= 100 ) {
-						value = 100;
-						this.value = this.max;
-						this.emit('complete', {value: this.value});
-					} else if ( value < 0 ) {
-						value = 0;
-						this.value = this.min;
-					}
-			
-					// set progress bar width
-					this.$body.style.width = value + '%';
-			
-					// notify
-					this.emit('change', {value: this.value, prevValue: prevValue});
-			
-					return true;
-				}
-			
-				return false;
-			};
-			
-			
-			// public export
-			module.exports = ProgressBar;
 
 
 /***/ },
@@ -5863,7 +6309,7 @@
 			
 			var app    = __webpack_require__(/*! stb/app */ 3),
 				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
+				keys   = __webpack_require__(/*! stb/keys */ 6);
 			
 			
 			app.addListeners({
@@ -5871,11 +6317,9 @@
 				load: function load () {
 					// set pages
 					router.init([
-						__webpack_require__(/*! ./pages/init */ 44),
-						__webpack_require__(/*! ./pages/main */ 45),
-						__webpack_require__(/*! ./pages/grid */ 42),
-						__webpack_require__(/*! ./pages/help */ 43),
-						__webpack_require__(/*! ./pages/button */ 41)
+						__webpack_require__(/*! ./pages/init */ 42),
+						__webpack_require__(/*! ./pages/main */ 43),
+						__webpack_require__(/*! ./pages/help */ 41)
 					]);
 				},
 			
@@ -5901,170 +6345,6 @@
 
 /***/ },
 /* 41 */
-/*!********************************!*\
-  !*** ./app/js/pages/button.js ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageButton',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
-			
-			
-			page.addListener('load', function load () {
-				var body = new Panel(),
-					header, button;
-			
-				page.add(body);
-			
-				body.add(new Panel({$node: document.getElementById('pageButtonTitle')}));
-			
-				body.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
-						events: {
-							click: function () {
-								router.navigate('pageMain');
-							}
-						}
-					})
-				);
-			
-				button.focus();
-			});
-			
-			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
-			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 42 */
-/*!******************************!*\
-  !*** ./app/js/pages/grid.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageGrid',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				Grid   = __webpack_require__(/*! stb/ui/grid */ 25),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
-			
-			
-			page.addListener('load', function load () {
-				var body = new Panel(),
-					header, button, main, grid;
-			
-				page.add(body);
-			
-				body.add(new Panel({$node: document.getElementById('pageGridTitle')}));
-			
-				body.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
-						events: {
-							click: function () {
-								router.navigate('pageMain');
-							}
-						}
-					})
-				);
-			
-				button.focus();
-			
-				body.add(main = new Panel());
-			
-				main.add(grid = new Grid({
-					//height: 2,
-					//width: 5,
-					data: [
-						[1, 2, 3, 4, 5],
-						[6, {value: '789', colSpan: 3}, 10],
-						[{value: '11<br>21', rowSpan: 2}, 12, 13, 14, {value: '15<br>25', rowSpan: 2}],
-						[22, 23, 24],
-						[{value: '26-30', colSpan: 5}]
-					],
-					render: function ( $item, data ) {
-						$item.innerHTML = '[' + (data) + ']';
-					}
-				}));
-			
-				grid.focus();
-			});
-			
-			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
-			});
-			
-			
-			// public export
-			module.exports = page;
-
-
-/***/ },
-/* 43 */
 /*!******************************!*\
   !*** ./app/js/pages/help.js ***!
   \******************************/
@@ -6079,29 +6359,16 @@
 			'use strict';
 			
 			var id     = 'pageHelp',
-				node   = document.getElementById(id),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				page   = new Page({$node: node}),
+				Page   = __webpack_require__(/*! stb/ui/page */ 12),
+				Button = __webpack_require__(/*! stb/ui/button */ 7),
 				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
+				page   = new Page({$node: document.getElementById(id)});
 			
 			
 			page.addListener('load', function load () {
-				var body = new Panel(),
-					header, button;
-			
-				page.add(body);
-			
-				body.add(new Panel({$node: document.getElementById('pageHelpTitle')}));
-			
-				body.add(header = new Panel());
-			
-				header.add(
-					button = new Button({
-						icon: 'back',
-						value: 'page Base',
+				page.add(
+					page.back = new Button({
+						value: 'go back',
 						events: {
 							click: function () {
 								router.navigate('pageMain');
@@ -6109,25 +6376,12 @@
 						}
 					})
 				);
-			
-				button.focus();
 			});
 			
 			
-			page.addListener('show', function show ( event ) {
-				debug.info(event.data);
-			});
-			
-			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			require('./base').show();
-			//			break;
-			//		case keys.exit:
-			//			page.hide();
-			//			break;
-			//	}
+			page.addListener('show', function show () {
+				// initial active component
+				page.back.focus();
 			});
 			
 			
@@ -6136,7 +6390,7 @@
 
 
 /***/ },
-/* 44 */
+/* 42 */
 /*!******************************!*\
   !*** ./app/js/pages/init.js ***!
   \******************************/
@@ -6152,7 +6406,7 @@
 			'use strict';
 			
 			var id   = 'pageInit',
-				Page = __webpack_require__(/*! stb/ui/page */ 6),
+				Page = __webpack_require__(/*! stb/ui/page */ 12),
 				page = new Page({$node: document.getElementById(id)});
 			
 			
@@ -6161,7 +6415,7 @@
 
 
 /***/ },
-/* 45 */
+/* 43 */
 /*!******************************!*\
   !*** ./app/js/pages/main.js ***!
   \******************************/
@@ -6175,32 +6429,127 @@
 			
 			'use strict';
 			
-			var id    = 'pageMain',
-				node  = document.getElementById(id),
-				Modal = __webpack_require__(/*! stb/ui/modal */ 14),
-				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 13),
-				ModalMessage = __webpack_require__(/*! stb/ui/modal.message */ 27),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 9),
-				Button = __webpack_require__(/*! stb/ui/button */ 8),
-				CheckBox = __webpack_require__(/*! stb/ui/check.box */ 24),
-				ProgressBar = __webpack_require__(/*! stb/ui/progress.bar */ 28),
-				List   = __webpack_require__(/*! stb/ui/list */ 26),
-				Page   = __webpack_require__(/*! stb/ui/page */ 6),
-				page   = new Page({$node: node}),
-				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 2);
+			var id           = 'pageMain',
+				Modal        = __webpack_require__(/*! stb/ui/modal */ 11),
+				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 16),
+				ModalMessage = __webpack_require__(/*! stb/ui/modal.message */ 28),
+				Panel        = __webpack_require__(/*! stb/ui/panel */ 1),
+				Button       = __webpack_require__(/*! stb/ui/button */ 7),
+				CheckBox     = __webpack_require__(/*! stb/ui/check.box */ 14),
+				ProgressBar  = __webpack_require__(/*! stb/ui/progress.bar */ 17),
+				List         = __webpack_require__(/*! stb/ui/list */ 15),
+				Page         = __webpack_require__(/*! stb/ui/page */ 12),
+				router       = __webpack_require__(/*! stb/router */ 4),
+				keys         = __webpack_require__(/*! stb/keys */ 6),
+				page         = new Page({$node: document.getElementById(id)});
 			
 			
 			page.addListener('load', function load () {
 				var a2 = new Panel({content:'a2'}),
 					body = new Panel(),
-					m, b1, btnShowHelp, btnShowButton, header, list, pb;
+					m, b1, btnShowHelp, btnShowButton, header, listV, listH, pb,
+					menuData;
+			
+				menuData = [
+					{
+						value: 'Panel',
+						panel: __webpack_require__(/*! ../tabs/main.panel */ 50)
+					},
+					//{
+					//	value: 'InfoPanel',
+					//	panel: require('../tabs/main.info.panel')
+					//},
+					{
+						value: 'Button',
+						panel: __webpack_require__(/*! ../tabs/main.button */ 44)
+					},
+					{
+						value: 'CheckBox',
+						panel: __webpack_require__(/*! ../tabs/main.check.box */ 45)
+					},
+					{
+						value: 'Grid',
+						panel: __webpack_require__(/*! ../tabs/main.grid */ 46)
+					},
+					{
+						value: 'List',
+						panel: __webpack_require__(/*! ../tabs/main.list */ 47)
+					},
+					{
+						value: 'ProgressBar',
+						panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 51)
+					},
+					{
+						value: 'Page',
+						panel: __webpack_require__(/*! ../tabs/main.page */ 49)
+					},
+					{
+						value: 'Modal',
+						panel: __webpack_require__(/*! ../tabs/main.modal */ 48)
+					}
+				];
+			
+				// attach to page
+				menuData.forEach(function ( item ) {
+					page.add(item.panel);
+				});
+			
+				page.add(
+					page.menu = new List({
+						$node: document.getElementById('pageMainMenu'),
+						data: menuData,
+						size: 8,
+						render: function ( $item, data ) {
+							$item.textContent = data.value;
+						},
+						events: {
+							click: function ( data ) {
+								//console.log('click');
+								//data.event.stop = true;
+								//debug.inspect(data, 1);
+							},
+							focus: function ( data ) {
+								//console.log('focus');
+								//debug.inspect(data, 1);
+							},
+							'click:item': function ( data ) {
+								//console.log('click:item');
+								//debug.inspect(data, 1);
+							},
+							'focus:item': function ( data ) {
+								//console.log('focus:item');
+								//debug.inspect(data, 1);
+								if ( data.$prev ) {
+									data.$prev.data.panel.hide();
+								}
+								data.$curr.data.panel.show();
+							},
+							'blur:item': function ( data ) {
+								//console.log('blur:item');
+								//debug.inspect(data, 1);
+							}
+						}
+					})
+					//page.body = new Panel({$node: document.getElementById('pageMainBody')})
+				);
+			
+				page.menu.focusItem(page.menu.$body.firstChild);
+			
+			
+				page.focusable = false;
+				//page.addListener('click', function ( data ) {
+				//	data.event.stop = true;
+				//});
+			
+			
+				return;
 			
 				page.add(body);
 			
-				body.add(new Panel({$node: document.getElementById('pageMainTitle')}));
-			
-				body.add(header = new Panel());
+				body.add(
+					new Panel({$node: document.getElementById('pageMainTitle')}),
+					header = new Panel({children: []})
+				);
 			
 				header.add(
 					new Button({
@@ -6298,52 +6647,605 @@
 					}
 				});
 			
-				a2.add(new CheckBox());
-				a2.add(new CheckBox({value:true}));
+				a2.add(new CheckBox({group: 'main', value: false}));
+				a2.add(new CheckBox({group: 'main', value: true}));
+				a2.add(new CheckBox({group: 'main', value: false}));
+				a2.add(new CheckBox({group: 'main', value: false}));
 			
 				body.add(header = new Panel());
-				header.add(list = new List({
-					data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55/**/],
+				header.add(listV = new List({
+					//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+					data: [1,2,3],
+					size: 4,
 					render: function ( $item, data ) {
 						$item.innerHTML = '[' + (data) + ']';
+					},
+					events: {
+						click: function ( data ) {
+							console.log('click');
+							//data.event.stop = true;
+							//debug.inspect(data, 1);
+						},
+						focus: function ( data ) {
+							console.log('focus');
+							//debug.inspect(data, 1);
+						},
+						'click:item': function ( data ) {
+							console.log('click:item');
+							//debug.inspect(data, 1);
+						},
+						'focus:item': function ( data ) {
+							console.log('focus:item');
+							//debug.inspect(data, 1);
+						},
+						'blur:item': function ( data ) {
+							console.log('blur:item');
+							//debug.inspect(data, 1);
+						}
 					}
 				}));
-				list.focus();
+				listV.focus();
+				window.list = listV;
 			
 				body.add(header = new Panel());
-				header.add(list = new List({
-					data: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+				header.add(listH = new List({
+					data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+					//visible: false,
 					type: List.prototype.TYPE_HORIZONTAL
 				}));
-				//list.focus();
+				//listH.focus();
 			
 				body.add(header = new Panel());
 				header.add(pb = new ProgressBar({
-					value: 50,
+					min: -50,
+					max: 50,
+					value: 0,
 					events: {
 						keydown: function ( event ) {
 							if ( event.code === keys.right ) { pb.set(pb.value + 1); }
 							if ( event.code === keys.left  ) { pb.set(pb.value - 1); }
+						},
+						done: function () {
+							debug.log('ProgressBar: done');
+						},
+						change: function ( data ) {
+							debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
 						}
 					}
 				}));
+			
+			
+				window.test2 = function () {
+					var i;
+			
+					for ( i = 0; i < listV.size; i++ ) {
+						console.log(listV.$body.children[i].index);
+					}
+				};
+			
+				window.test1 = function () {
+					var $first = listV.$body.firstChild,
+						$last  = listV.$body.lastChild,
+						count  = 1000000,
+						rows = 6,
+						i, j, tmp;
+			
+					//console.log(listV.$body.children);
+					for ( i = 0; i < count; i++ ) {
+						for ( j = 0; j < listV.size; j++) {
+							//console.log(listV.$body.children[i]);
+							listV.defaultRender(listV.$body.children[j], j);
+							//listV.$body.children[i].innerText = i;
+						}
+					}
+			
+					/*for ( i = 0; i < count; i++ ) {
+						//listV.$body.insertBefore(listV.$body.lastChild, listV.$body.firstChild);
+						tmp = listV.$body.firstChild;
+						listV.$body.appendChild(tmp);
+						listV.defaultRender(tmp, i);
+			
+					}*/
+			
+					//console.time('time');
+					//for ( i = 0; i < count; i++ ) {
+					//	//setTimeout(function () {
+					//		//listV.focusItem($last);
+					//		//listV.focusNext();
+			        //
+					//	for ( j = 0; j < listV.size; j++ ) {
+					//		listV.emit('keydown', {code: keys.down});
+					//		//tmp = listV.activeItem.getComputedStyle();
+					//		listV.$body.offsetHeight;
+					//	}
+			        //
+					//	for ( j = 0; j < listV.size; j++ ) {
+					//		listV.emit('keydown', {code: keys.up});
+					//		//tmp = listV.activeItem.getComputedStyle();
+					//		listV.$body.offsetHeight;
+					//	}
+			        //
+					//		//setTimeout(function () {
+			        //
+					//		//});
+					//		//listV.focusItem($first);
+					//		//listV.focusPrev();
+			        //
+					//	//});
+					//}
+					//console.timeEnd('time');
+				};
 			});
 			
 			
-			page.addListener('keydown', function keydown ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.ok:
-			//			router.navigate('pageHelp')
-			//			break;
-			//		case 32:
-			//			//
-			//			break;
-			//	}
+			page.addListener('show', function show () {
+				// initial active component
+				if ( !page.activeComponent ) {
+					page.menu.focus();
+				}
 			});
 			
 			
 			// public export
 			module.exports = page;
+
+
+/***/ },
+/* 44 */
+/*!************************************!*\
+  !*** ./app/js/tabs/main.button.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabButton'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabButtonSimple'),
+					children: [
+						new Button({
+							value: 'press me'
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabButtonIcon'),
+					children: [
+						new Button({
+							icon: 'menu',
+							value: 'press me'
+						})
+					]
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 45 */
+/*!***************************************!*\
+  !*** ./app/js/tabs/main.check.box.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Panel    = __webpack_require__(/*! stb/ui/panel */ 1),
+				CheckBox = __webpack_require__(/*! stb/ui/check.box */ 14),
+				panel    = new Panel({
+					$node: document.getElementById('pageMainTabCheckBox'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabCheckBoxSimple'),
+					children: [
+						new CheckBox()
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabCheckBoxGroup'),
+					children: [
+						new CheckBox({group: 'main', value: false}),
+						new CheckBox({group: 'main', value: true}),
+						new CheckBox({group: 'main', value: false}),
+						new CheckBox({group: 'main', value: false})
+					]
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 46 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.grid.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Panel = __webpack_require__(/*! stb/ui/panel */ 1),
+				Grid  = __webpack_require__(/*! stb/ui/grid */ 27),
+				panel = new Panel({
+					$node: document.getElementById('pageMainTabGrid'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabGridSimple'),
+					children: [
+						new Grid({
+							data: [
+								[1,   2,  3,  4],
+								[5,   6,  7,  8],
+								[9,  10, 11, 12],
+								[13, 14, 15, {value: 16, focus: true}]
+							],
+							render: function ( $cell, data ) {
+								$cell.innerHTML = '<div>' + (data.value) + '</div>';
+							}
+						})
+					]
+				}),
+			
+				new Panel({
+					$node: document.getElementById('pageMainTabGridJoin'),
+					children: [
+						new Grid({
+							data: [
+								[1, 2, 3, 4, 5],
+								[6, {value: '7 ... 9', colSpan: 3}, 10],
+								[{value: '11\n21', rowSpan: 2}, 12, 13, 14, {value: '15\n25', rowSpan: 2}],
+								[22, 23, 24],
+								[{value: '26 ... 30', colSpan: 5}]
+							]
+						})
+					]
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 47 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.list.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Panel = __webpack_require__(/*! stb/ui/panel */ 1),
+				List  = __webpack_require__(/*! stb/ui/list */ 15),
+				panel = new Panel({
+					$node: document.getElementById('pageMainTabList'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabListSimple'),
+					children: [
+						new List({
+							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+							//data: [1,2,3],
+							size: 5,
+							//render: function ( $item, data ) {
+							//	$item.innerHTML = '[' + (data) + ']';
+							//},
+							events: {
+								click: function ( data ) {
+									//console.log('click');
+									//data.event.stop = true;
+									//debug.inspect(data, 1);
+								},
+								focus: function ( data ) {
+									//console.log('focus');
+									//debug.inspect(data, 1);
+								},
+								'click:item': function ( data ) {
+									//console.log('click:item');
+									//debug.inspect(data, 1);
+								},
+								'focus:item': function ( data ) {
+									//console.log('focus:item');
+									//debug.inspect(data, 1);
+								},
+								'blur:item': function ( data ) {
+									//console.log('blur:item');
+									//debug.inspect(data, 1);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabListCustom'),
+					children: [
+						new List({
+							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+							//data: [1,2,3],
+							size: 5,
+							render: function ( $item, data ) {
+								$item.innerHTML = '[' + (data) + ']';
+							},
+							events: {
+								click: function ( data ) {
+									//console.log('click');
+									//data.event.stop = true;
+									//debug.inspect(data, 1);
+								},
+								focus: function ( data ) {
+									//console.log('focus');
+									//debug.inspect(data, 1);
+								},
+								'click:item': function ( data ) {
+									//console.log('click:item');
+									//debug.inspect(data, 1);
+								},
+								'focus:item': function ( data ) {
+									//console.log('focus:item');
+									//debug.inspect(data, 1);
+								},
+								'blur:item': function ( data ) {
+									//console.log('blur:item');
+									//debug.inspect(data, 1);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabListHoriz'),
+					children: [
+						new List({
+							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+							//visible: false,
+							type: List.prototype.TYPE_HORIZONTAL
+						})
+					]
+				})
+			
+			
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 48 */
+/*!***********************************!*\
+  !*** ./app/js/tabs/main.modal.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
+				Modal  = __webpack_require__(/*! stb/ui/modal */ 11),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabModal'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Button({
+					value: 'show modal window',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new Modal({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							panel.modal.focus();
+						}
+					}
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 49 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.page.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
+				router = __webpack_require__(/*! stb/router */ 4),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabPage'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Button({
+					value: 'switch to page Help',
+					events: {
+						click: function () {
+							router.navigate('pageHelp');
+						}
+					}
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 50 */
+/*!***********************************!*\
+  !*** ./app/js/tabs/main.panel.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Panel = __webpack_require__(/*! stb/ui/panel */ 1),
+				panel = new Panel({
+					$node: document.getElementById('pageMainTabPanel'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelSimple')
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelMulti')
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelParent'),
+					children: [
+						new Panel({
+							$node: document.getElementById('pageMainTabPanelChild')
+						})
+					]
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
+
+
+/***/ },
+/* 51 */
+/*!******************************************!*\
+  !*** ./app/js/tabs/main.progress.bar.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			var Panel       = __webpack_require__(/*! stb/ui/panel */ 1),
+				ProgressBar = __webpack_require__(/*! stb/ui/progress.bar */ 17),
+				panel       = new Panel({
+					$node: document.getElementById('pageMainTabProgressBar'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarPanel'),
+					children: [
+						new ProgressBar({
+							min: -50,
+							max: 50,
+							value: 0,
+							events: {
+								keydown: function ( event ) {
+									if ( event.code === keys.right ) { pb.set(pb.value + 1); }
+									if ( event.code === keys.left  ) { pb.set(pb.value - 1); }
+								},
+								done: function () {
+									debug.log('ProgressBar: done');
+								},
+								change: function ( data ) {
+									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+								}
+							}
+						})
+					]
+				})
+			);
+			
+			
+			// public export
+			module.exports = panel;
 
 
 /***/ }
