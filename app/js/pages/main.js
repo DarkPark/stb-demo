@@ -355,7 +355,7 @@ page.addListener('load', function load () {
 });
 
 
-page.addListener('show', function load () {
+page.addListener('show', function show () {
 	// initial active component
 	if ( !page.activeComponent ) {
 		page.menu.focus();

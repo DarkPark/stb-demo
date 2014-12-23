@@ -27,7 +27,7 @@ page.addListener('load', function load () {
 });
 
 
-page.addListener('show', function load () {
+page.addListener('show', function show () {
 	// initial active component
 	page.back.focus();
 });
