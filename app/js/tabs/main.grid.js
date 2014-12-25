@@ -37,11 +37,12 @@ panel.add(
 		children: [
 			new Grid({
 				data: [
-					[1, 2, 3, 4, 5],
-					[6, {value: '7 ... 9', colSpan: 3}, 10],
-					[{value: '11\n21', rowSpan: 2}, 12, 13, 14, {value: '15\n25', rowSpan: 2}],
-					[22, 23, 24],
-					[{value: '26 ... 30', colSpan: 5}]
+					[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
+					[6, {value: '7-9', colSpan: 3}],
+					[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
+					[18, 19],
+					[{value: '21-25', colSpan: 5}],
+					[{value: '26-35', colSpan: 5, rowSpan: 2}]
 				]
 			})
 		]
