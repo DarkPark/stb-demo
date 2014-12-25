@@ -27,7 +27,9 @@ panel.add(
 				],
 				render: function ( $cell, data ) {
 					$cell.innerHTML = '<div>' + (data.value) + '</div>';
-				}
+				},
+				cycleX: false,
+				cycleY: false
 			})
 		]
 	}),
