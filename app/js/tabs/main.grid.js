@@ -31,7 +31,7 @@ panel.add(
 					key = Object.keys(gridData)[gridDataIndex];
 					grid1.parent.$node.children[0].innerText = key;
 					grid1.init({
-						data: JSON.parse(JSON.stringify(gridData[key].raw))
+						data: gridData[key].raw
 					});
 				}
 			}
@@ -50,7 +50,7 @@ panel.add(
 					key = Object.keys(gridData)[gridDataIndex];
 					grid1.parent.$node.children[0].innerText = key;
 					grid1.init({
-						data: JSON.parse(JSON.stringify(gridData[key].raw))
+						data: gridData[key].raw
 					});
 				}
 			}
