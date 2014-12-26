@@ -6,22 +6,78 @@
 
 'use strict';
 
-var Panel = require('stb/ui/panel'),
-	Grid  = require('stb/ui/grid'),
-	panel = new Panel({
+var Panel    = require('stb/ui/panel'),
+	Button   = require('stb/ui/button'),
+	Grid     = require('stb/ui/grid'),
+	gridData = require('./main.grid.data'),
+	panel    = new Panel({
 		$node: document.getElementById('pageMainTabGrid'),
 		visible: false
-	});
+	}),
+	gridDataIndex = 0,
+	grid1;
 
 
 panel.add(
+	new Button({
+		$node: document.getElementById('pageMainTabGridBtnPrev'),
+		value: '<< prev grid data',
+		events: {
+			click: function () {
+				var key;
+
+				if ( gridDataIndex > 0 ) {
+					gridDataIndex--;
+					key = Object.keys(gridData)[gridDataIndex];
+					grid1.parent.$node.children[0].innerText = key;
+					grid1.init({
+						data: JSON.parse(JSON.stringify(gridData[key].raw))
+					});
+				}
+			}
+		}
+	}),
+
+	new Button({
+		$node: document.getElementById('pageMainTabGridBtnNext'),
+		value: 'next grid data >>',
+		events: {
+			click: function () {
+				var key;
+
+				if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
+					gridDataIndex++;
+					key = Object.keys(gridData)[gridDataIndex];
+					grid1.parent.$node.children[0].innerText = key;
+					grid1.init({
+						data: JSON.parse(JSON.stringify(gridData[key].raw))
+					});
+				}
+			}
+		}
+	}),
+
+	new Button({
+		$node: document.getElementById('pageMainTabGridBtnCycle'),
+		value: 'toggle cycle mode',
+		events: {
+			click: function () {
+				grid1.init({
+					cycleX: !grid1.cycleX,
+					cycleY: !grid1.cycleY
+				});
+			}
+		}
+	}),
+
 	new Panel({
-		$node: document.getElementById('pageMainTabGridSimple'),
+		$node: document.getElementById('pageMainTabGridMain'),
+		$body: document.getElementById('pageMainTabGridMainBody'),
 		children: [
-			new Grid({
+			grid1 = new Grid({
 				data: [
-					[1,   2,  3,  4],
-					[5,   6,  7,  8],
+					[{value: 1, disable: true}, 2,  3,  4],
+					[5, {value: 6, disable: true},  7,  8],
 					[9,  10, 11, 12],
 					[13, 14, 15, {value: 16, focus: true}]
 				],
@@ -39,9 +95,9 @@ panel.add(
 		children: [
 			new Grid({
 				data: [
-					[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
-					[6, {value: '7-9', colSpan: 3}],
-					[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
+					[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+					[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
+					[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, 13, 14],
 					[18, 19],
 					[{value: '21-25', colSpan: 5}],
 					[{value: '26-35', colSpan: 5, rowSpan: 2}]
