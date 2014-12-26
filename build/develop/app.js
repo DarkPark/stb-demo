@@ -403,6 +403,8 @@
 					// middle mouse button
 					if ( event.button === 1 ) {
 						debug.inspect(self);
+						debug.log('this component is now available by window.link');
+						window.link = self;
 					}
 					// @endif
 			
@@ -1330,6 +1332,99 @@
 
 /***/ },
 /* 5 */
+/*!*****************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/button.js ***!
+  \*****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/ui/button
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Component = __webpack_require__(/*! ../component */ 2);
+			
+			
+			/**
+			 * Base button implementation.
+			 *
+			 * @constructor
+			 * @extends Component
+			 *
+			 * @param {Object} [config={}] init parameters (all inherited from the parent)
+			 * @param {string} [config.value] button caption text (generated if not set)
+			 * @param {string} [config.icon] button icon name
+			 *
+			 * @example
+			 * var Button = require('stb/ui/button'),
+			 *     button = new Button({
+			 *         $node: document.getElementById(id),
+			 *         value: 'Apply changes'
+			 *     });
+			 */
+			function Button ( config ) {
+				// current execution context
+				var self = this;
+			
+				// sanitize
+				config = config || {};
+			
+				// parent init
+				Component.call(this, config);
+			
+				// correct CSS class names
+				this.$node.classList.add('button');
+			
+				// set title
+				if ( config.value !== undefined ) {
+					this.$body.innerText = config.value;
+				} else {
+					this.$body.innerText = this.constructor.name + '.' + this.id;
+				}
+			
+				if ( config.icon ) {
+					self.$node.classList.add('icon');
+					self.$node.classList.add('icon-' + config.icon);
+				}
+			
+				this.addListener('keydown', function ( event ) {
+					if ( event.code === 13 ) {
+						/**
+						 * Mouse click event emulation.
+						 *
+						 * @event module:stb/ui/button~Button#click
+						 *
+						 * @type {Object}
+						 * @property {Event} event click event data
+						 */
+						self.emit('click', {event: event});
+					}
+				});
+			
+				this.addListener('click', function () {
+					//console.log(this);
+					self.$node.classList.add('click');
+					setTimeout(function () {
+						self.$node.classList.remove('click');
+					}, 200);
+				});
+			}
+			
+			
+			// inheritance
+			Button.prototype = Object.create(Component.prototype);
+			Button.prototype.constructor = Button;
+			
+			
+			// public export
+			module.exports = Button;
+
+
+/***/ },
+/* 6 */
 /*!***********************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/dom.js ***!
   \***********************************************/
@@ -1514,7 +1609,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /*!************************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
   \************************************************/
@@ -1591,99 +1686,6 @@
 				audio        : 2071, // Alt+G
 				keyboard     : 2076  // Alt+L
 			};
-
-
-/***/ },
-/* 7 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/button.js ***!
-  \*****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/ui/button
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var Component = __webpack_require__(/*! ../component */ 2);
-			
-			
-			/**
-			 * Base button implementation.
-			 *
-			 * @constructor
-			 * @extends Component
-			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {string} [config.value] button caption text (generated if not set)
-			 * @param {string} [config.icon] button icon name
-			 *
-			 * @example
-			 * var Button = require('stb/ui/button'),
-			 *     button = new Button({
-			 *         $node: document.getElementById(id),
-			 *         value: 'Apply changes'
-			 *     });
-			 */
-			function Button ( config ) {
-				// current execution context
-				var self = this;
-			
-				// sanitize
-				config = config || {};
-			
-				// parent init
-				Component.call(this, config);
-			
-				// correct CSS class names
-				this.$node.classList.add('button');
-			
-				// set title
-				if ( config.value !== undefined ) {
-					this.$body.innerText = config.value;
-				} else {
-					this.$body.innerText = this.constructor.name + '.' + this.id;
-				}
-			
-				if ( config.icon ) {
-					self.$node.classList.add('icon');
-					self.$node.classList.add('icon-' + config.icon);
-				}
-			
-				this.addListener('keydown', function ( event ) {
-					if ( event.code === 13 ) {
-						/**
-						 * Mouse click event emulation.
-						 *
-						 * @event module:stb/ui/button~Button#click
-						 *
-						 * @type {Object}
-						 * @property {Event} event click event data
-						 */
-						self.emit('click', {event: event});
-					}
-				});
-			
-				this.addListener('click', function () {
-					//console.log(this);
-					self.$node.classList.add('click');
-					setTimeout(function () {
-						self.$node.classList.remove('click');
-					}, 200);
-				});
-			}
-			
-			
-			// inheritance
-			Button.prototype = Object.create(Component.prototype);
-			Button.prototype.constructor = Button;
-			
-			
-			// public export
-			module.exports = Button;
 
 
 /***/ },
@@ -2776,7 +2778,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 2),
-				keys      = __webpack_require__(/*! ../keys */ 6),
+				keys      = __webpack_require__(/*! ../keys */ 7),
 				groups    = {};
 			
 			
@@ -2929,7 +2931,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 2),
-				keys      = __webpack_require__(/*! ../keys */ 6);
+				keys      = __webpack_require__(/*! ../keys */ 7);
 			
 			
 			/**
@@ -2953,6 +2955,8 @@
 			 * @param {number} [config.size=5] amount of visible items on a page
 			 *
 			 * @fires module:stb/ui/list~List#click:item
+			 *
+			 * @todo add events of going out of range
 			 */
 			function List ( config ) {
 				var self = this,  // current execution context
@@ -3034,98 +3038,36 @@
 				//	this.$focusItem.classList.add('focus');
 				//}
 			
+				// navigation by keyboard
 				this.addListener('keydown', function ( event ) {
-					//var tmp;
-			
-					if ( event.code === keys.ok ) {
-						// notify
-						self.emit('click:item', {$item: self.$focusItem, event: event});
+					switch ( event.code ) {
+						case keys.up:
+						case keys.down:
+						case keys.right:
+						case keys.left:
+						case keys.pageUp:
+						case keys.pageDown:
+							// cursor move only on arrow keys
+							self.move(event.code);
+							break;
+						case keys.ok:
+							// notify
+							self.emit('click:item', {$item: self.$focusItem, event: event});
+							break;
 					}
-			
-					if ( (event.code === keys.up && self.type === self.TYPE_VERTICAL) || (event.code === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.$focusItem.index > 0 ) {
-							//index--;
-			
-							if ( !self.focusPrev() ) {
-								// move the last item to the begging
-								//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
-								self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
-			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.firstChild, self.data[self.$focusItem.index - 1]);
-								self.$body.firstChild.index = self.$focusItem.index - 1;
-								//self.$body.firstChild.data  = self.data[self.$focusItem.index];
-								//} else {
-								//	self.$body.firstChild.innerText = self.data[self.activeIndex-1];
-								//}
-			
-								//self.items.unshift(self.items.pop());
-								//self.activeIndex++;
-								self.focusPrev();
-							}
-						}
-					}
-					if ( (event.code === keys.down && self.type === self.TYPE_VERTICAL) || (event.code === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
-						if ( self.$focusItem.index < self.data.length - 1 ) {
-							//index++;
-			
-							if ( !self.focusNext() ) {
-								// move the first item to the end
-								//self.$body.appendChild(self.items[0]);
-								self.$body.appendChild(self.$body.firstChild);
-			
-								//if ( config.render !== undefined ) {
-								self.render(self.$body.lastChild, self.data[self.$focusItem.index + 1]);
-								self.$body.lastChild.index = self.$focusItem.index + 1;
-								//self.$body.firstChild.data  = self.data[self.$focusItem.index];
-								//} else {
-								//	self.$body.lastChild.innerText = self.data[self.activeIndex + 1];
-								//}
-			
-								//self.items.push(self.items.shift());
-								//self.activeIndex--;
-								self.focusNext();
-							}
-						}
-					}
-			
-					if ( event.code === keys.pageUp ) {
-						//self.activeIndex = self.activeIndex - self.size - 1;
-						//self.focusFirst();
-						self.focusItem(self.$body.firstChild);
-						//self.$focusItem.index = self.$focusItem.index;
-					}
-					if ( event.code === keys.pageDown ) {
-						//self.activeIndex = self.activeIndex + self.size - 1;
-			
-						//self.focusLast();
-						self.focusItem(self.$body.lastChild);
-						//self.$focusItem.index = self.$focusItem.index;
-			
-						//for ( i = 0; i < self.size; i++ ) {
-							//self.render()
-						//}
-					}
-			
-					// swap edge items
-					//tmp = self.items[0];
-					//self.items[0] = self.items[self.items.length-1];
-					//self.items[self.items.length-1] = tmp;
-			
-					//for ( i = 0; i < self.size; i++ ) {
-						//self.items[i].innerText = self.data[i+index];
-					//}
-					//self.$focusItem.classList.remove('focus');
-					//self.$focusItem = self.items[Math.abs(index % self.items.length)];
-					//self.$focusItem.classList.add('focus');
 				});
 			
+				// navigation by mouse
 				this.$body.addEventListener('mousewheel', function ( event ) {
-					var direction = event.wheelDeltaY > 0;
+					// scrolling by Y axis
+					if ( self.type === self.TYPE_VERTICAL && event.wheelDeltaY ) {
+						self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+					}
 			
-					debug.event(event);
-			
-					self.emit('keydown', {code: direction ? keys.up : keys.down});
+					// scrolling by X axis
+					if ( self.type === self.TYPE_HORIZONTAL && event.wheelDeltaX ) {
+						self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+					}
 				});
 			}
 			
@@ -3252,6 +3194,96 @@
 			
 			
 			/**
+			 * Move focus to the given direction.
+			 *
+			 * @param {number} direction arrow key code
+			 */
+			List.prototype.move = function ( direction ) {
+				//switch ( direction ) {
+				//	case keys.up:
+				//
+				//		break;
+				//	case keys.down:
+				//
+				//		break;
+				//	case keys.right:
+				//
+				//		break;
+				//	case keys.left:
+				//
+				//		break;
+				//}
+				//
+				//return;
+			
+				if ( (direction === keys.up && self.type === self.TYPE_VERTICAL) || (direction === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
+					if ( self.$focusItem.index > 0 ) {
+						//index--;
+			
+						if ( !self.focusPrev() ) {
+							// move the last item to the begging
+							//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
+							self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
+			
+							//if ( config.render !== undefined ) {
+							self.render(self.$body.firstChild, self.data[self.$focusItem.index - 1]);
+							self.$body.firstChild.index = self.$focusItem.index - 1;
+							//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+							//} else {
+							//	self.$body.firstChild.innerText = self.data[self.activeIndex-1];
+							//}
+			
+							//self.items.unshift(self.items.pop());
+							//self.activeIndex++;
+							self.focusPrev();
+						}
+					}
+				}
+				if ( (direction === keys.down && self.type === self.TYPE_VERTICAL) || (direction === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
+					if ( self.$focusItem.index < self.data.length - 1 ) {
+						//index++;
+			
+						if ( !self.focusNext() ) {
+							// move the first item to the end
+							//self.$body.appendChild(self.items[0]);
+							self.$body.appendChild(self.$body.firstChild);
+			
+							//if ( config.render !== undefined ) {
+							self.render(self.$body.lastChild, self.data[self.$focusItem.index + 1]);
+							self.$body.lastChild.index = self.$focusItem.index + 1;
+							//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+							//} else {
+							//	self.$body.lastChild.innerText = self.data[self.activeIndex + 1];
+							//}
+			
+							//self.items.push(self.items.shift());
+							//self.activeIndex--;
+							self.focusNext();
+						}
+					}
+				}
+			
+				if ( direction === keys.pageUp ) {
+					//self.activeIndex = self.activeIndex - self.size - 1;
+					//self.focusFirst();
+					self.focusItem(self.$body.firstChild);
+					//self.$focusItem.index = self.$focusItem.index;
+				}
+				if ( direction === keys.pageDown ) {
+					//self.activeIndex = self.activeIndex + self.size - 1;
+			
+					//self.focusLast();
+					self.focusItem(self.$body.lastChild);
+					//self.$focusItem.index = self.$focusItem.index;
+			
+					//for ( i = 0; i < self.size; i++ ) {
+					//self.render()
+					//}
+				}
+			};
+			
+			
+			/**
 			 * Highlight the given DOM element as focused.
 			 * Remove focus from the previously focused item and generate associated event.
 			 *
@@ -3260,6 +3292,7 @@
 			 * @return {boolean} operation status
 			 *
 			 * @fires module:stb/ui/list~List#focus:item
+			 * @fires module:stb/ui/list~List#blur:item
 			 */
 			List.prototype.focusItem = function ( $item ) {
 				var $prev = this.$focusItem;
@@ -3280,7 +3313,14 @@
 						// style
 						$prev.classList.remove('focus');
 			
-						// notify
+						/**
+						 * Remove focus from an element.
+						 *
+						 * @event module:stb/ui/list~List#blur:item
+						 *
+						 * @type {Object}
+						 * @property {Node} $item previously focused HTML element
+						 */
 						this.emit('blur:item', {$item: $prev});
 					}
 					// reassign
@@ -3297,8 +3337,8 @@
 					 * @event module:stb/ui/list~List#focus:item
 					 *
 					 * @type {Object}
-					 * @property {*} [$prev] old/previous focused HTML element
-					 * @property {*} [$curr] new/current focused HTML element
+					 * @property {Node} $prev old/previous focused HTML element
+					 * @property {Node} $curr new/current focused HTML element
 					 */
 					this.emit('focus:item', {$prev: $prev, $curr: $item});
 			
@@ -3377,7 +3417,7 @@
 			'use strict';
 			
 			var Modal = __webpack_require__(/*! ./modal */ 11),
-				dom   = __webpack_require__(/*! ../dom */ 5);
+				dom   = __webpack_require__(/*! ../dom */ 6);
 			
 			
 			/**
@@ -3881,7 +3921,7 @@
 			var util    = __webpack_require__(/*! util */ 9),
 				app     = __webpack_require__(/*! stb/app */ 3),
 				request = __webpack_require__(/*! stb/request */ 25),
-				dom     = __webpack_require__(/*! stb/dom */ 5),
+				dom     = __webpack_require__(/*! stb/dom */ 6),
 				grid    = __webpack_require__(/*! ./grid */ 20),
 				storage = __webpack_require__(/*! ./storage */ 8);
 			
@@ -4491,7 +4531,7 @@
 			
 			'use strict';
 			
-			var dom    = __webpack_require__(/*! stb/dom */ 5),
+			var dom    = __webpack_require__(/*! stb/dom */ 6),
 				config = __webpack_require__(/*! ../../../config/static */ 31);
 			
 			
@@ -4522,7 +4562,7 @@
 			
 			'use strict';
 			
-			var dom     = __webpack_require__(/*! stb/dom */ 5),
+			var dom     = __webpack_require__(/*! stb/dom */ 6),
 				util    = __webpack_require__(/*! util */ 9),
 				storage = __webpack_require__(/*! ./storage */ 8),
 				config  = __webpack_require__(/*! ../../../config/weinre */ 32);
@@ -5096,11 +5136,13 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 2),
-				keys      = __webpack_require__(/*! ../keys */ 6);
+				keys      = __webpack_require__(/*! ../keys */ 7);
 			
 			
 			/**
-			 * Base list implementation.
+			 * Base grid/table implementation.
+			 *
+			 * For navigation map implementation and tests see {@link https://gist.github.com/DarkPark/8c0c2926bfa234043ed1}.
 			 *
 			 * @constructor
 			 * @extends Component
@@ -5115,14 +5157,15 @@
 			 * var Grid = require('stb/ui/grid'),
 			 *     grid = new Grid({
 			 *         data: [
-			 *             [1,   2,  3,  4],
-			 *             [5,   6,  7,  8],
-			 *             [9,  10, 11, 12],
-			 *             [13, 14, 15, 16]
+			 *             [1,   2,  3,  {value: '4;8;12;16', focus: true, rowSpan: 4}],
+			 *             [5,   6,  7],
+			 *             [9,  10, 11],
+			 *             [13, 14, 15]
 			 *         ],
-			 *         render: function ( $cell, data ) {
-			 *             $cell.innerHTML = '<div>' + (data.value) + '</div>';
-			 *         }
+			 *         render: function ( $item, data ) {
+			 *             $item.innerHTML = '<div>' + (data.value) + '</div>';
+			 *         },
+			 *         cycleX: false
 			 *     });
 			 */
 			function Grid ( config ) {
@@ -5135,7 +5178,7 @@
 				 *
 				 * @type {Node[][]}
 				 */
-				this.cells = [];
+				this.map = [];
 			
 				/**
 				 * Link to the currently focused DOM element.
@@ -5172,6 +5215,20 @@
 				 * @type {boolean}
 				 */
 				this.cycleY = true;
+			
+				/**
+				 * Current navigation map horizontal position.
+				 *
+				 * @type {number}
+				 */
+				this.focusX = 0;
+			
+				/**
+				 * Current navigation map vertical position.
+				 *
+				 * @type {number}
+				 */
+				this.focusY = 0;
 			
 			
 				// sanitize
@@ -5225,14 +5282,132 @@
 			
 			/**
 			 * Fill the given cell with data.
-			 * $cell.data can contain the old data (from the previous render).
+			 * $item.data can contain the old data (from the previous render).
 			 *
-			 * @param {Node} $cell item DOM link
+			 * @param {Node} $item item DOM link
 			 * @param {*} data associated with this item data
 			 */
-			Grid.prototype.defaultRender = function ( $cell, data ) {
-				$cell.innerText = data.value;
+			Grid.prototype.defaultRender = function ( $item, data ) {
+				$item.innerText = data.value;
 			};
+			
+			
+			/**
+			 * Make all the data items identical.
+			 * Wrap to objects if necessary and add missing properties.
+			 *
+			 * @param {Array[]} data user 2-dimensional array
+			 * @return {Array[]} reworked incoming data
+			 */
+			function normalize ( data ) {
+				var i, j, item;
+			
+				// rows
+				for ( i = 0; i < data.length; i++ ) {
+					// cols
+					for ( j = 0; j < data[i].length; j++ ) {
+						// cell value
+						item = data[i][j];
+						// primitive value
+						if ( typeof item !== 'object' ) {
+							// wrap
+							item = data[i][j] = {
+								value: data[i][j]
+							};
+						}
+			
+						// always at least one row/col
+						item.colSpan = item.colSpan || 1;
+						item.rowSpan = item.rowSpan || 1;
+			
+						// @ifdef DEBUG
+						if ( Number(item.colSpan) !== item.colSpan ) { throw 'item.colSpan must be a number'; }
+						if ( Number(item.rowSpan) !== item.rowSpan ) { throw 'item.rowSpan must be a number'; }
+						if ( item.colSpan <= 0 ) { throw 'item.colSpan should be positive'; }
+						if ( item.rowSpan <= 0 ) { throw 'item.rowSpan should be positive'; }
+						// @endif
+					}
+				}
+			
+				return data;
+			}
+			
+			
+			/**
+			 * Fill the given rectangle area with value.
+			 *
+			 * @param {Array[]} map link to navigation map
+			 * @param {number} x current horizontal position
+			 * @param {number} y current vertical position
+			 * @param {number} dX amount of horizontal cell to fill
+			 * @param {number} dY amount of vertical cell to fill
+			 * @param {*} value filling data
+			 */
+			function fill ( map, x, y, dX, dY, value ) {
+				var i, j;
+			
+				// rows
+				for ( i = y; i < y + dY; i++ ) {
+					// expand map rows
+					if ( map.length < i + 1 ) { map.push([]); }
+			
+					// compensate long columns from previous rows
+					while ( map[i][x] !== undefined ) {
+						x++;
+					}
+			
+					// cols
+					for ( j = x; j < x + dX; j++ ) {
+						// expand map row cols
+						if ( map[i].length < j + 1 ) { map[i].push(); }
+						// fill
+						map[i][j] = value;
+						// apply coordinates for future mouse clicks
+						if ( value.x === undefined ) { value.x = j; }
+						if ( value.y === undefined ) { value.y = i; }
+					}
+				}
+			}
+			
+			
+			/**
+			 * Create a navigation map from incoming data.
+			 *
+			 * @param {Array[]} data user 2-dimensional array of objects
+			 * @return {Array[]} navigation map
+			 */
+			function map ( data ) {
+				var result = [],
+					i, j, item;
+			
+				// rows
+				for ( i = 0; i < data.length; i++ ) {
+					// cols
+					for ( j = 0; j < data[i].length; j++ ) {
+						// cell value
+						item = data[i][j];
+						// process a cell
+						fill(result, j, i, item.colSpan, item.rowSpan, item.$item);
+						// clear redundant info
+						delete item.colSpan;
+						delete item.rowSpan;
+						delete item.$item;
+					}
+				}
+			
+				return result;
+			}
+			
+			
+			/**
+			 * Mouse click event.
+			 *
+			 * @event module:stb/ui/grid~Grid#click:item
+			 *
+			 * @type {Object}
+			 * @property {Node} $item clicked HTML item
+			 * @property {Event} event click event data
+			 */
 			
 			
 			/**
@@ -5243,11 +5418,16 @@
 			Grid.prototype.init = function ( config ) {
 				var self = this,
 					i, j,
-					$row, $cell, $table, $tbody, $focusItem,
-					cellData,
+					$row, $item, $table, $tbody, $focusItem,
+					itemData,
 					onClick = function ( event ) {
+						// clicked item has the coordinates
+						// of the associated item in the map
+						self.focusX = this.x;
+						self.focusY = this.y;
+			
 						// visualize
-						self.focusItem(this);
+						self.focusItem(self.map[self.focusY][self.focusX]);
 			
 						// notify
 						self.emit('click:item', {$item: this, event: event});
@@ -5288,84 +5468,58 @@
 			
 				$table.appendChild($tbody);
 			
-				// reset if necessary
-				if ( this.cells.length > 0 ) {
-					this.cells = [];
-					this.$body.innerText = '';
-				}
+				// prepare user data
+				this.data = normalize(this.data);
 			
 				// rows
 				for ( i = 0; i < this.data.length; i++ ) {
 					// dom
 					$row = $tbody.insertRow();
-					// navigation map filling
-					this.cells.push([]);
 			
 					// cols
 					for ( j = 0; j < this.data[i].length; j++ ) {
 						// dom
-						$cell = $row.insertCell(-1);
+						$item = $row.insertCell(-1);
 						// additional params
-						$cell.x = j;
-						$cell.y = i;
-						$cell.className = 'cell';
+						$item.className = 'item';
 			
 						// shortcut
-						cellData = this.data[i][j];
+						itemData = this.data[i][j];
 			
-						// cell data type
-						if ( typeof cellData === 'object' ) {
-							// merge columns
-							if ( cellData.colSpan !== undefined ) {
-								// @ifdef DEBUG
-								if ( Number(cellData.colSpan) !== cellData.colSpan ) { throw 'cellData.colSpan must be a number'; }
-								if ( cellData.colSpan <= 0 ) { throw 'cellData.colSpan should be positive'; }
-								// @endif
+						// for map
+						itemData.$item = $item;
 			
-								// apply and clean
-								$cell.colSpan = cellData.colSpan;
-								delete cellData.colSpan;
-							}
+						// merge columns
+						$item.colSpan = itemData.colSpan;
 			
-							// merge rows
-							if ( cellData.rowSpan !== undefined ) {
-								// @ifdef DEBUG
-								if ( Number(cellData.rowSpan) !== cellData.rowSpan ) { throw 'cellData.rowSpan must be a number'; }
-								if ( cellData.rowSpan <= 0 ) { throw 'cellData.rowSpan should be positive'; }
-								// @endif
+						// merge rows
+						$item.rowSpan = itemData.rowSpan;
 			
-								// apply and clean
-								$cell.rowSpan = cellData.rowSpan;
-								delete cellData.rowSpan;
-							}
-			
-							// merge rows
-							if ( cellData.focus !== undefined ) {
-								// store and clean
-								$focusItem = $cell;
-								delete cellData.focus;
-							}
-						} else {
-							// wrap value
-							cellData = this.data[i][j] = {
-								value: this.data[i][j]
-							};
+						// active cell
+						if ( itemData.focus !== undefined ) {
+							// store and clean
+							$focusItem = $item;
+							delete itemData.focus;
 						}
 			
 						// visualize
-						this.render($cell, cellData);
+						this.render($item, itemData);
 			
 						// save data link
-						$cell.data = cellData;
+						$item.data = itemData;
 			
-						// navigation map filling
-						this.cells[i][j] = $cell;
-			
-						$cell.addEventListener('click', onClick);
+						// manual focusing
+						$item.addEventListener('click', onClick);
 					}
 					// row is ready
 					$tbody.appendChild($row);
 				}
+			
+				// navigation map filling
+				this.map = map(this.data);
+			
+				// clear all table
+				this.$body.innerText = null;
 			
 				// everything is ready
 				this.$body.appendChild($table);
@@ -5376,7 +5530,7 @@
 					this.focusItem($focusItem);
 				} else {
 					// just the first cell
-					this.focusItem(this.cells[0][0]);
+					this.focusItem(this.map[0][0]);
 				}
 			};
 			
@@ -5385,48 +5539,115 @@
 			 * Move focus to the given direction.
 			 *
 			 * @param {number} direction arrow key code
+			 *
+			 * @fires module:stb/ui/grid~Grid#cycle
+			 * @fires module:stb/ui/grid~Grid#overflow
 			 */
 			Grid.prototype.move = function ( direction ) {
-				var x = this.$focusItem.x,
-					y = this.$focusItem.y;
+				var x        = this.focusX,
+					y        = this.focusY,
+					overflow = false,
+					cycle    = false;
 			
 				switch ( direction ) {
 					case keys.up:
-						if ( this.cells[y - 1] ) {
+						if ( this.focusY > 0 ) {
 							// can go one step up
-							this.focusItem(this.cells[y - 1][x]);
-						} else if ( this.cycleY ) {
-							// jump to the last row
-							this.focusItem(this.cells[this.cells.length - 1][x]);
+							this.focusY--;
+						} else {
+							if ( this.cycleY ) {
+								// jump to the last row
+								this.focusY = this.map.length - 1;
+								cycle = true;
+							} else {
+								overflow = true;
+							}
 						}
 						break;
+			
 					case keys.down:
-						if ( this.cells[y + 1] ) {
+						if ( this.focusY < this.map.length - 1 ) {
 							// can go one step down
-							this.focusItem(this.cells[y + 1][x]);
-						} else if ( this.cycleY ) {
-							// jump to the first row
-							this.focusItem(this.cells[0][x]);
+							this.focusY++;
+						} else {
+							if ( this.cycleY ) {
+								// jump to the first row
+								this.focusY = 0;
+								cycle = true;
+							} else {
+								overflow = true;
+							}
 						}
 						break;
+			
 					case keys.right:
-						if ( this.cells[y][x + 1] ) {
+						if ( this.focusX < this.map[this.focusY].length - 1 ) {
 							// can go one step right
-							this.focusItem(this.cells[y][x + 1]);
-						} else if ( this.cycleX ) {
-							// jump to the first column
-							this.focusItem(this.cells[y][0]);
+							this.focusX++;
+						} else {
+							if ( this.cycleX ) {
+								// jump to the first column
+								this.focusX = 0;
+								cycle = true;
+							} else {
+								overflow = true;
+							}
 						}
 						break;
+			
 					case keys.left:
-						if ( this.cells[y][x - 1] ) {
+						if ( this.focusX > 0 ) {
 							// can go one step left
-							this.focusItem(this.cells[y][x - 1]);
-						} else if ( this.cycleX ) {
-							// jump to the last column
-							this.focusItem(this.cells[y][this.cells[y].length - 1]);
+							this.focusX--;
+						} else {
+							if ( this.cycleX ) {
+								// jump to the last column
+								this.focusX = this.map[this.focusY].length - 1;
+								cycle = true;
+							} else {
+								overflow = true;
+							}
 						}
 						break;
+				}
+			
+				if ( cycle ) {
+					/**
+					 * Jump to the opposite side.
+					 *
+					 * @event module:stb/ui/grid~Grid#cycle
+					 *
+					 * @type {Object}
+					 * @property {*} direction key code initiator of movement
+					 */
+					this.emit('cycle', {direction: direction});
+				}
+			
+				if ( overflow ) {
+					/**
+					 * Attempt to go beyond the edge of the grid.
+					 *
+					 * @event module:stb/ui/grid~Grid#overflow
+					 *
+					 * @type {Object}
+					 * @property {*} direction key code initiator of movement
+					 */
+					this.emit('overflow', {direction: direction});
+				}
+			
+				// report
+				debug.info(x + ' : ' + this.focusX, 'X old/new');
+				debug.info(y + ' : ' + this.focusY, 'Y old/new');
+				debug.info(cycle,  'cycle');
+				debug.info(overflow, 'overflow');
+			
+				// try to focus the next item
+				if ( !this.focusItem(this.map[this.focusY][this.focusX]) ) {
+					// seems it's a merged item
+					if ( !cycle && !overflow ) {
+						// need to move again
+						this.move(direction);
+					}
 				}
 			};
 			
@@ -5438,6 +5659,9 @@
 			 * @param {Node} $item element to focus
 			 *
 			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/ui/grid~Grid#focus:item
+			 * @fires module:stb/ui/grid~Grid#blur:item
 			 */
 			Grid.prototype.focusItem = function ( $item ) {
 				var $prev = this.$focusItem;
@@ -5458,13 +5682,18 @@
 						// style
 						$prev.classList.remove('focus');
 			
-						// notify
+						/**
+						 * Remove focus from an element.
+						 *
+						 * @event module:stb/ui/grid~Grid#blur:item
+						 *
+						 * @type {Object}
+						 * @property {Node} $item previously focused HTML element
+						 */
 						this.emit('blur:item', {$item: $prev});
 					}
 					// reassign
 					this.$focusItem = $item;
-			
-					this.$focusItem.data = this.data[$item.y][$item.x];
 			
 					// correct CSS
 					$item.classList.add('focus');
@@ -5475,8 +5704,8 @@
 					 * @event module:stb/ui/grid~Grid#focus:item
 					 *
 					 * @type {Object}
-					 * @property {*} [$prev] old/previous focused HTML element
-					 * @property {*} [$curr] new/current focused HTML element
+					 * @property {Node} $prev old/previous focused HTML element
+					 * @property {Node} $curr new/current focused HTML element
 					 */
 					this.emit('focus:item', {$prev: $prev, $curr: $item});
 			
@@ -5508,7 +5737,7 @@
 			'use strict';
 			
 			var ModalBox = __webpack_require__(/*! ./modal.box.js */ 16),
-				dom      = __webpack_require__(/*! ../dom */ 5);
+				dom      = __webpack_require__(/*! ../dom */ 6);
 			
 			
 			/**
@@ -6309,7 +6538,7 @@
 			
 			var app    = __webpack_require__(/*! stb/app */ 3),
 				router = __webpack_require__(/*! stb/router */ 4),
-				keys   = __webpack_require__(/*! stb/keys */ 6);
+				keys   = __webpack_require__(/*! stb/keys */ 7);
 			
 			
 			app.addListeners({
@@ -6360,7 +6589,7 @@
 			
 			var id     = 'pageHelp',
 				Page   = __webpack_require__(/*! stb/ui/page */ 12),
-				Button = __webpack_require__(/*! stb/ui/button */ 7),
+				Button = __webpack_require__(/*! stb/ui/button */ 5),
 				router = __webpack_require__(/*! stb/router */ 4),
 				page   = new Page({$node: document.getElementById(id)});
 			
@@ -6434,13 +6663,13 @@
 				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 16),
 				ModalMessage = __webpack_require__(/*! stb/ui/modal.message */ 28),
 				Panel        = __webpack_require__(/*! stb/ui/panel */ 1),
-				Button       = __webpack_require__(/*! stb/ui/button */ 7),
+				Button       = __webpack_require__(/*! stb/ui/button */ 5),
 				CheckBox     = __webpack_require__(/*! stb/ui/check.box */ 14),
 				ProgressBar  = __webpack_require__(/*! stb/ui/progress.bar */ 17),
 				List         = __webpack_require__(/*! stb/ui/list */ 15),
 				Page         = __webpack_require__(/*! stb/ui/page */ 12),
 				router       = __webpack_require__(/*! stb/router */ 4),
-				keys         = __webpack_require__(/*! stb/keys */ 6),
+				keys         = __webpack_require__(/*! stb/keys */ 7),
 				page         = new Page({$node: document.getElementById(id)});
 			
 			
@@ -6453,7 +6682,7 @@
 				menuData = [
 					{
 						value: 'Panel',
-						panel: __webpack_require__(/*! ../tabs/main.panel */ 50)
+						panel: __webpack_require__(/*! ../tabs/main.panel */ 51)
 					},
 					//{
 					//	value: 'InfoPanel',
@@ -6469,23 +6698,23 @@
 					},
 					{
 						value: 'Grid',
-						panel: __webpack_require__(/*! ../tabs/main.grid */ 46)
+						panel: __webpack_require__(/*! ../tabs/main.grid */ 47)
 					},
 					{
 						value: 'List',
-						panel: __webpack_require__(/*! ../tabs/main.list */ 47)
+						panel: __webpack_require__(/*! ../tabs/main.list */ 48)
 					},
 					{
 						value: 'ProgressBar',
-						panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 51)
+						panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 52)
 					},
 					{
 						value: 'Page',
-						panel: __webpack_require__(/*! ../tabs/main.page */ 49)
+						panel: __webpack_require__(/*! ../tabs/main.page */ 50)
 					},
 					{
 						value: 'Modal',
-						panel: __webpack_require__(/*! ../tabs/main.modal */ 48)
+						panel: __webpack_require__(/*! ../tabs/main.modal */ 49)
 					}
 				];
 			
@@ -6805,7 +7034,7 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+			var Button = __webpack_require__(/*! stb/ui/button */ 5),
 				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
 				panel  = new Panel({
 					$node: document.getElementById('pageMainTabButton'),
@@ -6886,6 +7115,343 @@
 
 /***/ },
 /* 46 */
+/*!***************************************!*\
+  !*** ./app/js/tabs/main.grid.data.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 */
+			
+			'use strict';
+			
+			module.exports = {
+				'table 1x1 with no merge': {
+					raw: [
+						[1]
+					],
+					check: [[1]]
+				},
+			
+				'table 3x3 with no merge': {
+					raw: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[7, 8, 9]
+					],
+					check: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[7, 8, 9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #1': {
+					raw: [
+						[{value: '1;2;4;5', rowSpan: 2, colSpan: 2}, 3],
+						[6],
+						[7, 8, 9]
+					],
+					check: [
+						['1;2;4;5', '1;2;4;5', 3],
+						['1;2;4;5', '1;2;4;5', 6],
+						[7,          8,        9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #2': {
+					raw: [
+						[1, {value: '2;3;5;6', rowSpan: 2, colSpan: 2}],
+						[4],
+						[7, 8, 9]
+					],
+					check: [
+						[1, '2;3;5;6', '2;3;5;6'],
+						[4, '2;3;5;6', '2;3;5;6'],
+						[7,  8,         9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #3': {
+					raw: [
+						[1, 2, 3],
+						[4, {value: '5;6;8;9', rowSpan: 2, colSpan: 2}],
+						[7]
+					],
+					check: [
+						[1,  2,         3],
+						[4, '5;6;8;9', '5;6;8;9'],
+						[7, '5;6;8;9', '5;6;8;9']
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #4': {
+					raw: [
+						[1, 2, 3],
+						[{value: '4;5;7;8', rowSpan: 2, colSpan: 2}, 6],
+						[9]
+					],
+					check: [
+						[1,          2,        3],
+						['4;5;7;8', '4;5;7;8', 6],
+						['4;5;7;8', '4;5;7;8', 9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #1': {
+					raw: [
+						[{value: '1;2;3', colSpan: 3}],
+						[4,       5,      6],
+						[7,       8,      9]
+					],
+					check: [
+						['1;2;3', '1;2;3', '1;2;3'],
+						[4,        5,       6],
+						[7,        8,       9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #2': {
+					raw: [
+						[1, 2, 3],
+						[{value: '4;5;6', colSpan: 3}],
+						[7, 8, 9]
+					],
+					check: [
+						[1,        2,       3],
+						['4;5;6', '4;5;6', '4;5;6'],
+						[7,        8,       9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #3': {
+					raw: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[{value: '7;8;9', colSpan: 3}]
+					],
+					check: [
+						[1,        2,       3],
+						[4,        5,       6],
+						['7;8;9', '7;8;9', '7;8;9']
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #1': {
+					raw: [
+						[{value: '1;4;7', rowSpan: 3}, 2, 3],
+						[5, 6],
+						[8, 9]
+					],
+					check: [
+						['1;4;7', 2, 3],
+						['1;4;7', 5, 6],
+						['1;4;7', 8, 9]
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #2': {
+					raw: [
+						[1, {value: '2;5;8', rowSpan: 3}, 3],
+						[4, 6],
+						[7, 9]
+					],
+					check: [
+						[1, '2;5;8', 3],
+						[4, '2;5;8', 6],
+						[7, '2;5;8', 9]
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #3': {
+					raw: [
+						[1, 2, {value: '3;6;9', rowSpan: 3}],
+						[4, 5],
+						[7, 8]
+					],
+					check: [
+						[1, 2, '3;6;9'],
+						[4, 5, '3;6;9'],
+						[7, 8, '3;6;9']
+					]
+				},
+			
+				'table 2x2 with all merged cells': {
+					raw: [
+						[{value: '1-4', rowSpan: 2, colSpan: 2}]
+					],
+					check: [
+						['1-4', '1-4'],
+						['1-4', '1-4']
+					]
+				},
+			
+				'table 3x3 with all merged cells': {
+					raw: [
+						[{value: '1-9', rowSpan: 3, colSpan: 3}]
+					],
+					check: [
+						['1-9', '1-9', '1-9'],
+						['1-9', '1-9', '1-9'],
+						['1-9', '1-9', '1-9']
+					]
+				},
+			
+				'table 3x3 with horizontal stripes #1': {
+					raw: [
+						[{value: '1;2', colSpan: 2}, 3],
+						[4, {value: '5;6', colSpan: 2}],
+						[{value: '7;8', colSpan: 2}, 9]
+					],
+					check: [
+						['1;2', '1;2',  3],
+						[4,     '5;6', '5;6'],
+						['7;8', '7;8',  9]
+					]
+				},
+			
+				'table 3x3 with horizontal stripes #2': {
+					raw: [
+						[1, {value: '2;3', colSpan: 2}],
+						[{value: '4;5', colSpan: 2}, 6],
+						[7, {value: '8;9', colSpan: 2}]
+					],
+					check: [
+						[1,     '2;3', '2;3'],
+						['4;5', '4;5',  6],
+						[7,     '8;9', '8;9']
+					]
+				},
+			
+				'table 3x3 with vertical stripes #1': {
+					raw: [
+						[{value: '1;4', rowSpan: 2}, 2, {value: '3;6', rowSpan: 2}],
+						[{value: '5;8', rowSpan: 2}],
+						[7, 9]
+					],
+					check: [
+						['1;4',  2,    '3;6'],
+						['1;4', '5;8', '3;6'],
+						[7,     '5;8',  9]
+					]
+				},
+			
+				'table 3x3 with vertical stripes #2': {
+					raw: [
+						[1, {value: '2;5', rowSpan: 2}, 3],
+						[{value: '4;7', rowSpan: 2}, {value: '6;9', rowSpan: 2}],
+						[8]
+					],
+					check: [
+						[1,     '2;5',  3],
+						['4;7', '2;5', '6;9'],
+						['4;7',  8,    '6;9']
+					]
+				},
+			
+				'table 3x3 with spiral merge #1': {
+					raw: [
+						[{value: '1;2', rowSpan: 1, colSpan: 2}, {value: '3;6', rowSpan: 2, colSpan: 1}],
+						[{value: '4;7', rowSpan: 2, colSpan: 1}, 5],
+						[{value: '8;9', rowSpan: 1, colSpan: 2}]
+					],
+					check: [
+						['1;2', '1;2', '3;6'],
+						['4;7',  5,    '3;6'],
+						['4;7', '8;9', '8;9']
+					]
+				},
+			
+				'table 3x3 with spiral merge #2': {
+					raw: [
+						[{value: '1;4', rowSpan: 2, colSpan: 1}, {value: '2;3', rowSpan: 1, colSpan: 2}],
+						[5, {value: '6;9', rowSpan: 2, colSpan: 1}],
+						[{value: '7;8', rowSpan: 1, colSpan: 2}]
+					],
+					check: [
+						['1;4', '2;3', '2;3'],
+						['1;4',  5,    '6;9'],
+						['7;8', '7;8', '6;9']
+					]
+				},
+			
+				'table 5x5 with merge #1': {
+					raw: [
+						[1, 2, 3, 4, 5],
+						[6, {value: '7-9', colSpan: 3}, 10],
+						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14, {value: '15;20', rowSpan: 2}],
+						[18, 19],
+						[{value: '26-30', colSpan: 5}],
+						[{value: '31-40', colSpan: 5, rowSpan: 2}]
+					],
+					check: [
+						[1,              2,            3,       4,       5],
+						[6,             '7-9',        '7-9',   '7-9',    10],
+						['11;12;16;17', '11;12;16;17', 13,      14,     '15;20'],
+						['11;12;16;17', '11;12;16;17', 18,      19,     '15;20'],
+						['26-30',       '26-30',      '26-30', '26-30', '26-30'],
+						['31-40',       '31-40',      '31-40', '31-40', '31-40'],
+						['31-40',       '31-40',      '31-40', '31-40', '31-40']
+					]
+				},
+			
+				'table 5x5 with merge #2': {
+					raw: [
+						[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
+						[6, {value: '7-9', colSpan: 3}],
+						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
+						[18, 19],
+						[{value: '21-25', colSpan: 5}],
+						[{value: '26-35', colSpan: 5, rowSpan: 2}]
+					],
+					check: [
+						[1,              2,            3,       4,      '5;10;15;20'],
+						[6,             '7-9',        '7-9',   '7-9',   '5;10;15;20'],
+						['11;12;16;17', '11;12;16;17', 13,      14,     '5;10;15;20'],
+						['11;12;16;17', '11;12;16;17', 18,      19,     '5;10;15;20'],
+						['21-25',       '21-25',      '21-25', '21-25', '21-25'],
+						['26-35',       '26-35',      '26-35', '26-35', '26-35'],
+						['26-35',       '26-35',      '26-35', '26-35', '26-35']
+					]
+				},
+			
+				'table 4x2 with tricky long columns #1': {
+					raw: [
+						[{value: '1;3;5', rowSpan: 3}, 2],
+						[{value: '4;6;8', rowSpan: 3}],
+						[],  // have to be specified
+						[7]
+					],
+					check: [
+						['1;3;5',  2],
+						['1;3;5', '4;6;8'],
+						['1;3;5', '4;6;8'],
+						[7,       '4;6;8']
+					]
+				},
+			
+				'table 4x2 with tricky long columns #2': {
+					raw: [
+						[1, {value: '2;4;6', rowSpan: 3}],
+						[{value: '3;5;7', rowSpan: 3}],
+						[],  // have to be specified
+						[8]
+					],
+					check: [
+						[1,       '2;4;6'],
+						['3;5;7', '2;4;6'],
+						['3;5;7', '2;4;6'],
+						['3;5;7',  8]
+					]
+				}
+			};
+
+
+/***/ },
+/* 47 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.grid.js ***!
   \**********************************/
@@ -6899,28 +7465,86 @@
 			
 			'use strict';
 			
-			var Panel = __webpack_require__(/*! stb/ui/panel */ 1),
-				Grid  = __webpack_require__(/*! stb/ui/grid */ 27),
-				panel = new Panel({
+			var Panel    = __webpack_require__(/*! stb/ui/panel */ 1),
+				Button   = __webpack_require__(/*! stb/ui/button */ 5),
+				Grid     = __webpack_require__(/*! stb/ui/grid */ 27),
+				gridData = __webpack_require__(/*! ./main.grid.data */ 46),
+				panel    = new Panel({
 					$node: document.getElementById('pageMainTabGrid'),
 					visible: false
-				});
+				}),
+				gridDataIndex = 0,
+				grid1;
 			
 			
 			panel.add(
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnPrev'),
+					value: '<< prev grid data',
+					events: {
+						click: function () {
+							var key;
+			
+							if ( gridDataIndex > 0 ) {
+								gridDataIndex--;
+								key = Object.keys(gridData)[gridDataIndex];
+								grid1.parent.$node.children[0].innerText = key;
+								grid1.init({
+									data: gridData[key].raw
+								});
+							}
+						}
+					}
+				}),
+			
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnNext'),
+					value: 'next grid data >>',
+					events: {
+						click: function () {
+							var key;
+			
+							if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
+								gridDataIndex++;
+								key = Object.keys(gridData)[gridDataIndex];
+								grid1.parent.$node.children[0].innerText = key;
+								grid1.init({
+									data: gridData[key].raw
+								});
+							}
+						}
+					}
+				}),
+			
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnCycle'),
+					value: 'toggle cycle mode',
+					events: {
+						click: function () {
+							grid1.init({
+								cycleX: !grid1.cycleX,
+								cycleY: !grid1.cycleY
+							});
+						}
+					}
+				}),
+			
 				new Panel({
-					$node: document.getElementById('pageMainTabGridSimple'),
+					$node: document.getElementById('pageMainTabGridMain'),
+					$body: document.getElementById('pageMainTabGridMainBody'),
 					children: [
-						new Grid({
+						grid1 = new Grid({
 							data: [
-								[1,   2,  3,  4],
-								[5,   6,  7,  8],
+								[{value: 1, disable: true}, 2,  3,  4],
+								[5, {value: 6, disable: true},  7,  8],
 								[9,  10, 11, 12],
 								[13, 14, 15, {value: 16, focus: true}]
 							],
 							render: function ( $cell, data ) {
 								$cell.innerHTML = '<div>' + (data.value) + '</div>';
-							}
+							},
+							cycleX: false,
+							cycleY: false
 						})
 					]
 				}),
@@ -6930,11 +7554,12 @@
 					children: [
 						new Grid({
 							data: [
-								[1, 2, 3, 4, 5],
-								[6, {value: '7 ... 9', colSpan: 3}, 10],
-								[{value: '11\n21', rowSpan: 2}, 12, 13, 14, {value: '15\n25', rowSpan: 2}],
-								[22, 23, 24],
-								[{value: '26 ... 30', colSpan: 5}]
+								[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+								[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
+								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, 13, 14],
+								[18, 19],
+								[{value: '21-25', colSpan: 5}],
+								[{value: '26-35', colSpan: 5, rowSpan: 2}]
 							]
 						})
 					]
@@ -6947,7 +7572,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.list.js ***!
   \**********************************/
@@ -7062,7 +7687,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /*!***********************************!*\
   !*** ./app/js/tabs/main.modal.js ***!
   \***********************************/
@@ -7076,7 +7701,7 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+			var Button = __webpack_require__(/*! stb/ui/button */ 5),
 				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
 				Modal  = __webpack_require__(/*! stb/ui/modal */ 11),
 				panel  = new Panel({
@@ -7112,7 +7737,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.page.js ***!
   \**********************************/
@@ -7126,7 +7751,7 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! stb/ui/button */ 7),
+			var Button = __webpack_require__(/*! stb/ui/button */ 5),
 				Panel  = __webpack_require__(/*! stb/ui/panel */ 1),
 				router = __webpack_require__(/*! stb/router */ 4),
 				panel  = new Panel({
@@ -7152,7 +7777,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /*!***********************************!*\
   !*** ./app/js/tabs/main.panel.js ***!
   \***********************************/
@@ -7196,7 +7821,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /*!******************************************!*\
   !*** ./app/js/tabs/main.progress.bar.js ***!
   \******************************************/

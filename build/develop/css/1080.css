@@ -138,13 +138,13 @@ a {
   width: 100%;
   table-layout: fixed;
 }
-.component.grid table td.cell {
+.component.grid table td.item {
   cursor: pointer;
   padding: 6px 12px;
   vertical-align: middle;
   text-align: center;
 }
-.component.grid table td.cell.focus {
+.component.grid table td.item.focus {
   color: black;
   background-color: orange;
 }
@@ -215,11 +215,11 @@ div.develop canvas.active {
   outline: 1px dashed orange;
   outline-offset: -1px;
 }
-.component.grid td.cell {
+.component.grid td.item {
   outline: 1px dashed #000000;
   outline-offset: -1px;
 }
-.component.grid td.cell.focus {
+.component.grid td.item.focus {
   outline: 1px dashed orange;
   outline-offset: -1px;
 }
@@ -268,11 +268,11 @@ div.develop canvas.active {
 #pageMain td.body > div .component.panel:last-child {
   margin-bottom: 0;
 }
-#pageMain td.body > div .component.grid td.cell {
+#pageMain td.body > div .component.grid td.item {
   padding: 12px 24px;
 }
-#pageMain td.body #pageMainTabGridSimple {
-  width: 50%;
+#pageMain td.body #pageMainTabGridMain .title {
+  margin-bottom: 1%;
 }
 #pageMain td.body #pageMainTabListSimple,
 #pageMain td.body #pageMainTabListCustom {
