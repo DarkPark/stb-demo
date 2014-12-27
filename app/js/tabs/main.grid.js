@@ -18,6 +18,24 @@ var Panel    = require('stb/ui/panel'),
 	grid1;
 
 
+// add random disabled cells
+Object.keys(gridData).forEach(function ( key ) {
+	gridData[key].raw.forEach(function ( row ) {
+		row = row.map(function ( cell ) {
+			if ( typeof cell !== 'object' ) {
+				cell = {value: cell};
+			}
+			return cell;
+		});
+		row.forEach(function ( cell ) {
+			if ( Math.random() > 0.7 ) {
+				cell.disable = true;
+			}
+		});
+	});
+});
+
+
 panel.add(
 	new Button({
 		$node: document.getElementById('pageMainTabGridBtnPrev'),
