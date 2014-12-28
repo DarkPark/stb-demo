@@ -25,6 +25,7 @@ panel.add(
 				//render: function ( $item, data ) {
 				//	$item.innerHTML = '[' + (data) + ']';
 				//},
+				cycle: false,
 				events: {
 					click: function ( data ) {
 						//console.log('click');
@@ -34,6 +35,12 @@ panel.add(
 					focus: function ( data ) {
 						//console.log('focus');
 						//debug.inspect(data, 1);
+					},
+					cycle: function () {
+						debug.log('cycle');
+					},
+					overflow: function () {
+						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
 						//console.log('click:item');
@@ -61,6 +68,7 @@ panel.add(
 				render: function ( $item, data ) {
 					$item.innerHTML = '[' + (data) + ']';
 				},
+				cycle: true,
 				events: {
 					click: function ( data ) {
 						//console.log('click');
@@ -70,6 +78,9 @@ panel.add(
 					focus: function ( data ) {
 						//console.log('focus');
 						//debug.inspect(data, 1);
+					},
+					overflow: function () {
+						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
 						//console.log('click:item');
@@ -93,7 +104,12 @@ panel.add(
 			new List({
 				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
 				//visible: false,
-				type: List.prototype.TYPE_HORIZONTAL
+				type: List.prototype.TYPE_HORIZONTAL,
+				events: {
+					overflow: function () {
+						debug.log('overflow');
+					}
+				}
 			})
 		]
 	})
