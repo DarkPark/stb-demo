@@ -257,16 +257,16 @@
 				 */
 				this.$body = null;
 			
-				// @ifdef DEBUG
-				/**
-				 * Link to the page owner component.
-				 * It can differ from the direct parent.
-				 * Should be used only in debug.
-				 *
-				 * @type {Page}
-				 */
-				this.page = null;
-				// @endif
+				if ( true ) {
+					/**
+					 * Link to the page owner component.
+					 * It can differ from the direct parent.
+					 * Should be used only in debug.
+					 *
+					 * @type {Page}
+					 */
+					this.page = null;
+				}
 			
 				/**
 				 * Link to the parent component which has this component as a child.
@@ -285,18 +285,20 @@
 			
 				// sanitize
 				config = config || {};
-				// @ifdef DEBUG
-				if ( typeof config !== 'object' ) { throw 'wrong config type'; }
-				// @endif
+			
+				if ( true ) {
+					if ( typeof config !== 'object' ) { throw 'wrong config type'; }
+				}
 			
 				// parent init
 				Emitter.call(this, config.data);
 			
 				// outer handle
 				if ( config.$node !== undefined ) {
-					// @ifdef DEBUG
-					if ( !(config.$node instanceof Node) ) { throw 'wrong config.$node type'; }
-					// @endif
+			
+					if ( true ) {
+						if ( !(config.$node instanceof Node) ) { throw 'wrong config.$node type'; }
+					}
 			
 					this.$node = config.$node;
 				} else {
@@ -306,9 +308,9 @@
 			
 				// inner handle
 				if ( config.$body !== undefined ) {
-					// @ifdef DEBUG
-					if ( !(config.$body instanceof Node) ) { throw 'wrong config.$body type'; }
-					// @endif
+					if ( true ) {
+						if ( !(config.$body instanceof Node) ) { throw 'wrong config.$body type'; }
+					}
 			
 					this.$body = config.$body;
 				} else {
@@ -318,9 +320,9 @@
 			
 				// inject given content into inner component part
 				if ( config.$content !== undefined ) {
-					// @ifdef DEBUG
-					if ( !(config.$content instanceof Node) ) { throw 'wrong config.$content type'; }
-					// @endif
+					if ( true ) {
+						if ( !(config.$content instanceof Node) ) { throw 'wrong config.$content type'; }
+					}
 			
 					this.$body.appendChild(config.$content);
 				}
@@ -330,18 +332,18 @@
 			
 				// apply hierarchy
 				if ( config.parent !== undefined ) {
-					// @ifdef DEBUG
-					if ( !(config.parent instanceof Component) ) { throw 'wrong config.parent type'; }
-					// @endif
+					if ( true ) {
+						if ( !(config.parent instanceof Component) ) { throw 'wrong config.parent type'; }
+					}
 			
 					config.parent.add(this);
 				}
 			
 				// set link to the page owner component
 				//if ( config.page !== undefined ) {
-				//	// @ifdef DEBUG
-				//	if ( !(config.page instanceof Component) ) { throw 'wrong config.page type'; }
-				//	// @endif
+				//	if ( DEBUG ) {
+				//		if ( !(config.page instanceof Component) ) { throw 'wrong config.page type'; }
+				//	}
 			    //
 				//	this.page = config.page;
 				//}
@@ -368,9 +370,9 @@
 			
 				// apply the given children components
 				if ( config.children ) {
-					// @ifdef DEBUG
-					if ( !Array.isArray(config.children) ) { throw 'wrong config.children type'; }
-					// @endif
+					if ( true ) {
+						if ( !Array.isArray(config.children) ) { throw 'wrong config.children type'; }
+					}
 			
 					this.add.apply(this, config.children);
 				}
@@ -399,24 +401,24 @@
 						//}
 					}
 			
-					// @ifdef DEBUG
-					// middle mouse button
-					if ( event.button === 1 ) {
-						debug.inspect(self);
-						debug.log('this component is now available by window.link');
-						window.link = self;
+					if ( true ) {
+						// middle mouse button
+						if ( event.button === 1 ) {
+							debug.inspect(self);
+							debug.log('this component is now available by window.link');
+							window.link = self;
+						}
 					}
-					// @endif
 			
 					event.stopPropagation();
 				});
 			
-				// @ifdef DEBUG
-				// expose a link
-				this.$node.component = this.$body.component = this;
-				this.$node.title = 'component ' + this.constructor.name + '.' + this.id + ' (outer)';
-				this.$body.title = 'component ' + this.constructor.name + '.' + this.id + ' (inner)';
-				// @endif
+				if ( true ) {
+					// expose a link
+					this.$node.component = this.$body.component = this;
+					this.$node.title = 'component ' + this.constructor.name + '.' + this.id + ' (outer)';
+					this.$body.title = 'component ' + this.constructor.name + '.' + this.id + ' (inner)';
+				}
 			}
 			
 			
@@ -445,18 +447,18 @@
 				for ( i = 0; i < arguments.length; i++ ) {
 					child = arguments[i];
 			
-					// @ifdef DEBUG
-					if ( !(child instanceof Component) ) { throw 'wrong child type'; }
-					// @endif
+					if ( true ) {
+						if ( !(child instanceof Component) ) { throw 'wrong child type'; }
+					}
 			
 					// apply
 					this.children.push(child);
 					child.parent = this;
 			
-					// @ifdef DEBUG
-					// apply page for this and all children recursively
-					child.setPage(this.page);
-					// @endif
+					if ( true ) {
+						// apply page for this and all children recursively
+						child.setPage(this.page);
+					}
 			
 					// correct DOM parent/child connection if necessary
 					if ( child.$node !== undefined && child.$node.parentNode === null ) {
@@ -473,22 +475,20 @@
 					 */
 					this.emit('add', {item: child});
 			
-					// @ifdef DEBUG
 					debug.log('component ' + this.constructor.name + '.' + this.id + ' new child: ' + child.constructor.name + '.' + child.id);
-					// @endif
 				}
 			};
 			
 			
-			// @ifdef DEBUG
-			Component.prototype.setPage = function ( page ) {
-				this.page = page;
+			if ( true ) {
+				Component.prototype.setPage = function ( page ) {
+					this.page = page;
 			
-				this.children.forEach(function ( child ) {
-					child.setPage(page);
-				});
-			};
-			// @endif
+					this.children.forEach(function ( child ) {
+						child.setPage(page);
+					});
+				};
+			}
 			
 			
 			/**
@@ -501,9 +501,9 @@
 			
 				// really inserted somewhere
 				if ( this.parent ) {
-					// @ifdef DEBUG
-					if ( !(this.parent instanceof Component) ) { throw 'wrong this.parent type'; }
-					// @endif
+					if ( true ) {
+						if ( !(this.parent instanceof Component) ) { throw 'wrong this.parent type'; }
+					}
 			
 					// active at the moment
 					if ( page.activeComponent === this ) {
@@ -515,9 +515,9 @@
 			
 				// remove all children
 				this.children.forEach(function ( child ) {
-					// @ifdef DEBUG
-					if ( !(child instanceof Component) ) { throw 'wrong child type'; }
-					// @endif
+					if ( true ) {
+						if ( !(child instanceof Component) ) { throw 'wrong child type'; }
+					}
 			
 					child.remove();
 				});
@@ -548,12 +548,12 @@
 				var activePage = router.current,
 					activeItem = activePage.activeComponent;
 			
-				// @ifdef DEBUG
-				if ( this.page !== activePage ) {
-					console.log(this, this.page, activePage);
-					throw 'attempt to focus an invisible component';
+				if ( true ) {
+					if ( this.page !== activePage ) {
+						console.log(this, this.page, activePage);
+						throw 'attempt to focus an invisible component';
+					}
 				}
-				// @endif
 			
 				// this is a visual component on a page
 				// not already focused and can accept focus
@@ -1019,7 +1019,57 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * Page navigation with history.
+			 * Singleton for page navigation with history.
+			 *
+			 * All page modules should be in the directory `app/js/pages`.
+			 * Page module name and the corresponding file name should be the same.
+			 *
+			 * Include module to start working:
+			 *
+			 * ```js
+			 * var router = require('stb/router');
+			 * ```
+			 *
+			 * Init with page modules:
+			 *
+			 * ```js
+			 * router.data([
+			 *     require('./pages/init'),
+			 *     require('./pages/main'),
+			 *     require('./pages/help')
+			 * ]);
+			 * ```
+			 *
+			 * Each page has its ID. The same ID should be used in HTML.
+			 *
+			 * Make some page active/visible by its ID:
+			 *
+			 * ```js
+			 * router.navigate('pageMain');
+			 * ```
+			 *
+			 * This will hide the current page, activate the `pageMain` page and put it in the tail of the history list.
+			 *
+			 * All subscribers of the current and `pageMain` page will be notified with `show/hide` events.
+			 *
+			 * Also the router emits `navigate` event to all subscribers.
+			 *
+			 *
+			 * To get to the previous active page use:
+			 *
+			 * ```js
+			 * router.back();
+			 * ```
+			 *
+			 * The module also has methods to parse location hash address and serialize it back:
+			 *
+			 * ```js
+			 * router.parse('#pageMain/some/additional/data');
+			 * router.stringify('pageMain', ['some', 'additional', 'data']);
+			 * ```
+			 *
+			 * Direct modification of the URL address should be avoided.
+			 * The methods `router.navigate` and `router.back` should be used instead.
 			 *
 			 * @module stb/router
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
@@ -1096,9 +1146,9 @@
 				var i, l, item;
 			
 				if ( pages !== undefined ) {
-					// @ifdef DEBUG
-					if ( !Array.isArray(pages) ) { throw 'wrong pages type'; }
-					// @endif
+					if ( true ) {
+						if ( !Array.isArray(pages) ) { throw 'wrong pages type'; }
+					}
 			
 					// reset page list
 					this.pages = [];
@@ -1141,9 +1191,9 @@
 			 */
 			router.parse = function ( hash ) {
 				var page = {
-					name : '',
-					data : []
-				};
+						name : '',
+						data : []
+					};
 			
 				// get and decode all parts
 				page.data = hash.split('/').map(decodeURIComponent);
@@ -1254,10 +1304,10 @@
 				var pageFrom = this.current,
 					pageTo   = this.ids[name];
 			
-				// @ifdef DEBUG
-				if ( !pageTo || typeof pageTo !== 'object' ) { throw 'wrong pageTo type'; }
-				if ( !('active' in pageTo) ) { throw 'missing field "active" in pageTo'; }
-				// @endif
+				if ( true ) {
+					if ( !pageTo || typeof pageTo !== 'object' ) { throw 'wrong pageTo type'; }
+					if ( !('active' in pageTo) ) { throw 'missing field "active" in pageTo'; }
+				}
 			
 				// valid not already active page
 				if ( pageTo && !pageTo.active ) {
@@ -2389,11 +2439,11 @@
 				 * obj.addListener('click', function ( data ) { ... });
 				 */
 				addListener: function ( name, callback ) {
-					// @ifdef DEBUG
-					if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-					if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-					if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+					}
 			
 					// valid input
 					if ( name && typeof callback === 'function' ) {
@@ -2416,11 +2466,11 @@
 					// current execution context
 					var self = this;
 			
-					// @ifdef DEBUG
-					if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-					if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-					if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+					}
 			
 					// valid input
 					if ( name && typeof callback === 'function' ) {
@@ -2447,11 +2497,11 @@
 				addListeners: function ( callbacks ) {
 					var name;
 			
-					// @ifdef DEBUG
-					if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
-					if ( typeof callbacks !== 'object' ) { throw 'wrong callbacks type'; }
-					if ( Object.keys(callbacks).length === 0 ) { throw 'no callbacks given'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
+						if ( typeof callbacks !== 'object' ) { throw 'wrong callbacks type'; }
+						if ( Object.keys(callbacks).length === 0 ) { throw 'no callbacks given'; }
+					}
 			
 					// valid input
 					if ( typeof callbacks === 'object' ) {
@@ -2474,11 +2524,11 @@
 				 * obj.removeListener('click', func1);
 				 */
 				removeListener: function ( name, callback ) {
-					// @ifdef DEBUG
-					if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-					if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-					if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+					}
 			
 					// the event exists and should have some callbacks
 					if ( Array.isArray(this.events[name]) ) {
@@ -2503,18 +2553,18 @@
 				 * obj.removeAllListeners();
 				 */
 				removeAllListeners: function ( name ) {
-					// @ifdef DEBUG
-					if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw 'wrong or empty name'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw 'wrong or empty name'; }
+					}
 			
 					// check input
 					if ( arguments.length === 0 ) {
 						// no arguments so remove everything
 						this.events = {};
 					} else if ( name ) {
-						// @ifdef DEBUG
-						if ( this.events[name] !== undefined ) { throw 'event is not removed'; }
-						// @endif
+						if ( true ) {
+							if ( this.events[name] !== undefined ) { throw 'event is not removed'; }
+						}
 			
 						// only name is given so remove all callbacks for the given event
 						delete this.events[name];
@@ -2536,21 +2586,21 @@
 					var event = this.events[name],
 						i;
 			
-					// @ifdef DEBUG
-					if ( arguments.length < 1 ) { throw 'wrong arguments number'; }
-					if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-					// @endif
+					if ( true ) {
+						if ( arguments.length < 1 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+					}
 			
 					// the event exists and should have some callbacks
 					if ( event !== undefined ) {
-						// @ifdef DEBUG
-						if ( !Array.isArray(event) ) { throw 'wrong event type'; }
-						// @endif
+						if ( true ) {
+							if ( !Array.isArray(event) ) { throw 'wrong event type'; }
+						}
 			
 						for ( i = 0; i < event.length; i++ ) {
-							// @ifdef DEBUG
-							if ( typeof event[i] !== 'function' ) { throw 'wrong event callback type'; }
-							// @endif
+							if ( true ) {
+								if ( typeof event[i] !== 'function' ) { throw 'wrong event callback type'; }
+							}
 			
 							// invoke the callback with parameters
 							event[i](data);
@@ -2619,6 +2669,14 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
+			 * Page is the main component to build user interface.
+			 * Page is an area filling the whole screen.
+			 * There can be only one active page visible at the same time.
+			 *
+			 * Active/visible state of a page is managed by the `router` module.
+			 *
+			 * A page can contain other components.
+			 *
 			 * @module stb/ui/page
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
@@ -2833,9 +2891,9 @@
 			
 				// apply hierarchy
 				if ( config.group !== undefined ) {
-					// @ifdef DEBUG
-					if ( typeof config.group !== 'string' || config.group.length === 0 ) { throw 'wrong or empty config.group'; }
-					// @endif
+					if ( true ) {
+						if ( typeof config.group !== 'string' || config.group.length === 0 ) { throw 'wrong or empty config.group'; }
+					}
 			
 					// save
 					this.group = config.group;
@@ -2950,9 +3008,10 @@
 			 * @constructor
 			 * @extends Component
 			 *
-			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {Array}  [config.data=[]] component data to visualize
-			 * @param {number} [config.size=5] amount of visible items on a page
+			 * @param {Object}  [config={}] init parameters (all inherited from the parent)
+			 * @param {Array}   [config.data=[]] component data to visualize
+			 * @param {number}  [config.size=5] amount of visible items on a page
+			 * @param {boolean} [config.cycle=true] allow or not to jump to the opposite side of a list when there is nowhere to go next
 			 *
 			 * @fires module:stb/ui/list~List#click:item
 			 *
@@ -3003,6 +3062,13 @@
 				 */
 				this.render = this.defaultRender;
 			
+				/**
+				 * Allow or not to jump to the opposite side of a list when there is nowhere to go next.
+				 *
+				 * @type {boolean}
+				 */
+				this.cycle = false;
+			
 				// sanitize
 				config = config || {};
 			
@@ -3011,9 +3077,9 @@
 			
 				// horizontal or vertical
 				if ( config.type !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.type) !== config.type ) { throw 'config.type must be a number'; }
-					// @endif
+					if ( true ) {
+						if ( Number(config.type) !== config.type ) { throw 'config.type must be a number'; }
+					}
 			
 					this.type = config.type;
 				}
@@ -3100,6 +3166,15 @@
 			List.prototype.init = function ( config ) {
 				var self     = this,
 					currSize = this.$body.children.length,
+					/**
+					 * Item mouse click handler.
+					 *
+					 * @param {Event} event click event data
+					 *
+					 * @this Node
+					 *
+					 * @fires module:stb/ui/list~List#click:item
+					 */
 					onClick  = function ( event ) {
 						if ( this.data !== undefined ) {
 							self.focusItem(this);
@@ -3114,30 +3189,37 @@
 					},
 					item, i;
 			
+				if ( true ) {
+					if ( typeof config !== 'object' ) { throw 'wrong config type'; }
+				}
+			
+				// apply cycle behaviour
+				if ( config.cycle !== undefined ) { this.cycle = config.cycle; }
+			
 				// apply list of items
 				if ( config.data !== undefined ) {
-					// @ifdef DEBUG
-					if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
-					// @endif
+					if ( true ) {
+						if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
+					}
 			
 					this.data = config.data;
 				}
 			
 				// custom render method
 				if ( config.render !== undefined ) {
-					// @ifdef DEBUG
-					if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
-					// @endif
+					if ( true ) {
+						if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
+					}
 			
 					this.render = config.render;
 				}
 			
 				// list items amount on page
 				if ( config.size !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.size) !== config.size ) { throw 'config.size must be a number'; }
-					if ( config.size <= 0 ) { throw 'config.size should be positive'; }
-					// @endif
+					if ( true ) {
+						if ( Number(config.size) !== config.size ) { throw 'config.size must be a number'; }
+						if ( config.size <= 0 ) { throw 'config.size should be positive'; }
+					}
 			
 					this.size = config.size;
 				}
@@ -3194,6 +3276,25 @@
 			
 			
 			/**
+			 * Jump to the opposite side.
+			 *
+			 * @event module:stb/ui/list~List#cycle
+			 *
+			 * @type {Object}
+			 * @property {number} direction key code initiator of movement
+			 */
+			
+			/**
+			 * Attempt to go beyond the edge of the list.
+			 *
+			 * @event module:stb/ui/list~List#overflow
+			 *
+			 * @type {Object}
+			 * @property {number} direction key code initiator of movement
+			 */
+			
+			
+			/**
 			 * Move focus to the given direction.
 			 *
 			 * @param {number} direction arrow key code
@@ -3216,68 +3317,90 @@
 				//
 				//return;
 			
-				if ( (direction === keys.up && self.type === self.TYPE_VERTICAL) || (direction === keys.left && self.type === self.TYPE_HORIZONTAL) ) {
-					if ( self.$focusItem.index > 0 ) {
+				if ( (direction === keys.up && this.type === this.TYPE_VERTICAL) || (direction === keys.left && this.type === this.TYPE_HORIZONTAL) ) {
+					// still can go backward
+					if ( this.$focusItem.index > 0 ) {
 						//index--;
 			
-						if ( !self.focusPrev() ) {
+						if ( !this.focusPrev() ) {
 							// move the last item to the begging
-							//self.$body.insertBefore(self.items[self.items.length-1], self.items[0]);
-							self.$body.insertBefore(self.$body.lastChild, self.$body.firstChild);
+							//this.$body.insertBefore(this.items[this.items.length-1], this.items[0]);
+							this.$body.insertBefore(this.$body.lastChild, this.$body.firstChild);
 			
 							//if ( config.render !== undefined ) {
-							self.render(self.$body.firstChild, self.data[self.$focusItem.index - 1]);
-							self.$body.firstChild.index = self.$focusItem.index - 1;
-							//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+							this.render(this.$body.firstChild, this.data[this.$focusItem.index - 1]);
+							this.$body.firstChild.index = this.$focusItem.index - 1;
+							//this.$body.firstChild.data  = this.data[this.$focusItem.index];
 							//} else {
-							//	self.$body.firstChild.innerText = self.data[self.activeIndex-1];
+							//	this.$body.firstChild.innerText = this.data[this.activeIndex-1];
 							//}
 			
-							//self.items.unshift(self.items.pop());
-							//self.activeIndex++;
-							self.focusPrev();
+							//this.items.unshift(this.items.pop());
+							//this.activeIndex++;
+							this.focusPrev();
+						}
+					} else {
+						// already at the beginning
+						if ( this.cycle ) {
+							// notify
+							this.emit('cycle', {direction: direction});
+							//TODO: implement
+						} else {
+							// notify
+							this.emit('overflow', {direction: direction});
 						}
 					}
 				}
-				if ( (direction === keys.down && self.type === self.TYPE_VERTICAL) || (direction === keys.right && self.type === self.TYPE_HORIZONTAL) ) {
-					if ( self.$focusItem.index < self.data.length - 1 ) {
+				if ( (direction === keys.down && this.type === this.TYPE_VERTICAL) || (direction === keys.right && this.type === this.TYPE_HORIZONTAL) ) {
+					// still can go forward
+					if ( this.$focusItem.index < this.data.length - 1 ) {
 						//index++;
 			
-						if ( !self.focusNext() ) {
+						if ( !this.focusNext() ) {
 							// move the first item to the end
-							//self.$body.appendChild(self.items[0]);
-							self.$body.appendChild(self.$body.firstChild);
+							//this.$body.appendChild(this.items[0]);
+							this.$body.appendChild(this.$body.firstChild);
 			
 							//if ( config.render !== undefined ) {
-							self.render(self.$body.lastChild, self.data[self.$focusItem.index + 1]);
-							self.$body.lastChild.index = self.$focusItem.index + 1;
-							//self.$body.firstChild.data  = self.data[self.$focusItem.index];
+							this.render(this.$body.lastChild, this.data[this.$focusItem.index + 1]);
+							this.$body.lastChild.index = this.$focusItem.index + 1;
+							//this.$body.firstChild.data  = this.data[this.$focusItem.index];
 							//} else {
-							//	self.$body.lastChild.innerText = self.data[self.activeIndex + 1];
+							//	this.$body.lastChild.innerText = this.data[this.activeIndex + 1];
 							//}
 			
-							//self.items.push(self.items.shift());
-							//self.activeIndex--;
-							self.focusNext();
+							//this.items.push(this.items.shift());
+							//this.activeIndex--;
+							this.focusNext();
+						}
+					} else {
+						// already at the beginning
+						if ( this.cycle ) {
+							// notify
+							this.emit('cycle', {direction: direction});
+							//TODO: implement
+						} else {
+							// notify
+							this.emit('overflow', {direction: direction});
 						}
 					}
 				}
 			
 				if ( direction === keys.pageUp ) {
-					//self.activeIndex = self.activeIndex - self.size - 1;
-					//self.focusFirst();
-					self.focusItem(self.$body.firstChild);
-					//self.$focusItem.index = self.$focusItem.index;
+					//this.activeIndex = this.activeIndex - this.size - 1;
+					//this.focusFirst();
+					this.focusItem(this.$body.firstChild);
+					//this.$focusItem.index = this.$focusItem.index;
 				}
 				if ( direction === keys.pageDown ) {
-					//self.activeIndex = self.activeIndex + self.size - 1;
+					//this.activeIndex = this.activeIndex + this.size - 1;
 			
-					//self.focusLast();
-					self.focusItem(self.$body.lastChild);
-					//self.$focusItem.index = self.$focusItem.index;
+					//this.focusLast();
+					this.focusItem(this.$body.lastChild);
+					//this.$focusItem.index = this.$focusItem.index;
 			
-					//for ( i = 0; i < self.size; i++ ) {
-					//self.render()
+					//for ( i = 0; i < this.size; i++ ) {
+					//this.render()
 					//}
 				}
 			};
@@ -3299,16 +3422,16 @@
 			
 				// different element
 				if ( $item !== undefined && $prev !== $item ) {
-					// @ifdef DEBUG
-					if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
-					if ( $item.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
-					// @endif
+					if ( true ) {
+						if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
+						if ( $item.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
+					}
 			
 					// some item is focused already
 					if ( $prev !== null ) {
-						// @ifdef DEBUG
-						if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
-						// @endif
+						if ( true ) {
+							if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
+						}
 			
 						// style
 						$prev.classList.remove('focus');
@@ -3577,9 +3700,9 @@
 			
 				// value changed but in the given range
 				if ( this.value !== value && value <= this.max && value >= this.min ) {
-					// @ifdef DEBUG
-					if ( Number(value) !== value ) { throw 'value must be a number'; }
-					// @endif
+					if ( true ) {
+						if ( Number(value) !== value ) { throw 'value must be a number'; }
+					}
 			
 					// set new value
 					this.value = value;
@@ -3628,27 +3751,27 @@
 			ProgressBar.prototype.init = function ( config ) {
 				// assignment of configuration parameters if they were transferred
 				if ( config.max !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.max) !== config.max ) { throw 'config.max value must be a number'; }
-					// @endif
+					if ( true ) {
+						if ( Number(config.max) !== config.max ) { throw 'config.max value must be a number'; }
+					}
 			
 					this.max = config.max;
 				}
 			
 				if ( config.min !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.min) !== config.min ) { throw 'config.min value must be a number'; }
-					// @endif
+					if ( true ) {
+						if ( Number(config.min) !== config.min ) { throw 'config.min value must be a number'; }
+					}
 			
 					this.min = config.min;
 				}
 			
 				if ( config.value !== undefined ) {
-					// @ifdef DEBUG
-					if ( Number(config.value) !== config.value ) { throw 'config.value must be a number'; }
-					if ( config.value > this.max ) { throw 'config.value more than config.maximum'; }
-					if ( config.value < this.min ) { throw 'config.value less than config.minimum'; }
-					// @endif
+					if ( true ) {
+						if ( Number(config.value) !== config.value ) { throw 'config.value must be a number'; }
+						if ( config.value > this.max ) { throw 'config.value more than config.maximum'; }
+						if ( config.value < this.min ) { throw 'config.value less than config.minimum'; }
+					}
 			
 					this.value = config.value;
 				}
@@ -4609,9 +4732,9 @@
 			 * @param {Object} [data={}] init attributes
 			 */
 			function Model ( data ) {
-				// @ifdef DEBUG
-				if ( data !== undefined && typeof data !== 'object' ) { throw 'wrong data type'; }
-				// @endif
+				if ( true ) {
+					if ( data !== undefined && typeof data !== 'object' ) { throw 'wrong data type'; }
+				}
 			
 				// parent init
 				Emitter.call(this);
@@ -4654,9 +4777,9 @@
 			Model.prototype.clear = function () {
 				var data = this.data;
 			
-				// @ifdef DEBUG
-				if ( typeof data !== 'object' ) { throw 'wrong data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof data !== 'object' ) { throw 'wrong data type'; }
+				}
 			
 				// is there any data?
 				if ( Object.keys(data).length > 0 ) {
@@ -4693,9 +4816,9 @@
 			 * @fires module:stb/model~Model#init
 			 */
 			Model.prototype.init = function ( data ) {
-				// @ifdef DEBUG
-				if ( typeof data !== 'object' ) { throw 'wrong data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof data !== 'object' ) { throw 'wrong data type'; }
+				}
 			
 				// valid input
 				if ( data ) {
@@ -4723,9 +4846,9 @@
 			 * @return {boolean} attribute exists or not
 			 */
 			Model.prototype.has = function ( name ) {
-				// @ifdef DEBUG
-				if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
+				}
 			
 				// hasOwnProperty method is not available directly in case of Object.create(null)
 				//return Object.hasOwnProperty.call(this.data, name);
@@ -4740,9 +4863,9 @@
 			 * @return {*} associated value
 			 */
 			Model.prototype.get = function ( name ) {
-				// @ifdef DEBUG
-				if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
+				}
 			
 				return this.data[name];
 			};
@@ -4773,9 +4896,9 @@
 				var isAttrSet = name in this.data,
 					emitData  = {name: name, curr: value};
 			
-				// @ifdef DEBUG
-				if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
+				}
 			
 				if ( isAttrSet ) {
 					// update
@@ -4815,9 +4938,9 @@
 				var isAttrSet = name in this.data,
 					emitData;
 			
-				// @ifdef DEBUG
-				if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof this.data !== 'object' ) { throw 'wrong this.data type'; }
+				}
 			
 				if ( isAttrSet ) {
 					emitData = {name: name, prev: this.data[name]};
@@ -5144,6 +5267,16 @@
 			 *
 			 * For navigation map implementation and tests see {@link https://gist.github.com/DarkPark/8c0c2926bfa234043ed1}.
 			 *
+			 * Each data cell value can be either a primitive value or an object with these fields:
+			 *
+			 *  Name    | Description
+			 * ---------|-------------
+			 *  value   | actual cell value to render
+			 *  colSpan | amount of cells to merge horizontally
+			 *  rowSpan | amount of cells to merge vertically
+			 *  focus   | is it necessary or not to render this cell as focused
+			 *  disable | is it necessary or not to set this cell as disabled
+			 *
 			 * @constructor
 			 * @extends Component
 			 *
@@ -5157,10 +5290,10 @@
 			 * var Grid = require('stb/ui/grid'),
 			 *     grid = new Grid({
 			 *         data: [
-			 *             [1,   2,  3,  {value: '4;8;12;16', focus: true, rowSpan: 4}],
+			 *             [1,   2,  3, {value: '4;8;12;16', focus: true, rowSpan: 4}],
 			 *             [5,   6,  7],
 			 *             [9,  10, 11],
-			 *             [13, 14, 15]
+			 *             [13, 14, {value: 15, disable: true}]
 			 *         ],
 			 *         render: function ( $item, data ) {
 			 *             $item.innerHTML = '<div>' + (data.value) + '</div>';
@@ -5320,12 +5453,12 @@
 						item.colSpan = item.colSpan || 1;
 						item.rowSpan = item.rowSpan || 1;
 			
-						// @ifdef DEBUG
-						if ( Number(item.colSpan) !== item.colSpan ) { throw 'item.colSpan must be a number'; }
-						if ( Number(item.rowSpan) !== item.rowSpan ) { throw 'item.rowSpan must be a number'; }
-						if ( item.colSpan <= 0 ) { throw 'item.colSpan should be positive'; }
-						if ( item.rowSpan <= 0 ) { throw 'item.rowSpan should be positive'; }
-						// @endif
+						if ( true ) {
+							if ( Number(item.colSpan) !== item.colSpan ) { throw 'item.colSpan must be a number'; }
+							if ( Number(item.rowSpan) !== item.rowSpan ) { throw 'item.rowSpan must be a number'; }
+							if ( item.colSpan <= 0 ) { throw 'item.colSpan should be positive'; }
+							if ( item.rowSpan <= 0 ) { throw 'item.rowSpan should be positive'; }
+						}
 					}
 				}
 			
@@ -5389,8 +5522,6 @@
 						// process a cell
 						fill(result, j, i, item.colSpan, item.rowSpan, item.$item);
 						// clear redundant info
-						delete item.colSpan;
-						delete item.rowSpan;
 						delete item.$item;
 					}
 				}
@@ -5417,25 +5548,33 @@
 			 */
 			Grid.prototype.init = function ( config ) {
 				var self = this,
+					draw = false,
 					i, j,
 					$row, $item, $table, $tbody, $focusItem,
 					itemData,
-					onClick = function ( event ) {
-						// clicked item has the coordinates
-						// of the associated item in the map
-						self.focusX = this.x;
-						self.focusY = this.y;
+					/**
+					 * Cell mouse click handler.
+					 *
+					 * @param {Event} event click event data
+					 *
+					 * @this Node
+					 *
+					 * @fires module:stb/ui/grid~Grid#click:item
+					 */
+					onItemClick = function ( event ) {
+						// allow to accept focus
+						if ( this.data.disable !== true ) {
+							// visualize
+							self.focusItem(this);
 			
-						// visualize
-						self.focusItem(self.map[self.focusY][self.focusX]);
-			
-						// notify
-						self.emit('click:item', {$item: this, event: event});
+							// notify
+							self.emit('click:item', {$item: this, event: event});
+						}
 					};
 			
-				// @ifdef DEBUG
-				if ( typeof config !== 'object' ) { throw 'wrong config type'; }
-				// @endif
+				if ( true ) {
+					if ( typeof config !== 'object' ) { throw 'wrong config type'; }
+				}
 			
 				// apply cycle behaviour
 				if ( config.cycleX !== undefined ) { this.cycleX = config.cycleX; }
@@ -5443,25 +5582,40 @@
 			
 				// apply data
 				if ( config.data !== undefined ) {
-					// @ifdef DEBUG
-					if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
-					// @endif
+					if ( true ) {
+						if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
+					}
 			
-					this.data = config.data;
+					// new data is different
+					if ( this.data !== config.data ) {
+						this.data = config.data;
+						// need to redraw table
+						draw = true;
+					}
 				}
 			
 				// custom render method
 				if ( config.render !== undefined ) {
-					// @ifdef DEBUG
-					if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
-					// @endif
+					if ( true ) {
+						if ( typeof config.render !== 'function' ) { throw 'wrong config.render type'; }
+					}
 			
-					this.render = config.render;
+					// new render is different
+					if ( this.render !== config.render ) {
+						this.render = config.render;
+						// need to redraw table
+						draw = true;
+					}
 				}
 			
-				// @ifdef DEBUG
-				if ( !Array.isArray(this.data) || !Array.isArray(this.data[0]) ) { throw 'wrong this.data'; }
-				// @endif
+				if ( true ) {
+					if ( !Array.isArray(this.data) || !Array.isArray(this.data[0]) ) { throw 'wrong this.data'; }
+				}
+			
+				if ( !draw ) {
+					// do not redraw table
+					return;
+				}
 			
 				$table = document.createElement('table');
 				$tbody = document.createElement('tbody');
@@ -5496,10 +5650,15 @@
 						$item.rowSpan = itemData.rowSpan;
 			
 						// active cell
-						if ( itemData.focus !== undefined ) {
+						if ( itemData.focus === true ) {
 							// store and clean
 							$focusItem = $item;
-							delete itemData.focus;
+						}
+			
+						// disabled cell
+						if ( itemData.disable === true ) {
+							// apply CSS
+							$item.classList.add('disable');
 						}
 			
 						// visualize
@@ -5509,7 +5668,7 @@
 						$item.data = itemData;
 			
 						// manual focusing
-						$item.addEventListener('click', onClick);
+						$item.addEventListener('click', onItemClick);
 					}
 					// row is ready
 					$tbody.appendChild($row);
@@ -5546,69 +5705,102 @@
 			Grid.prototype.move = function ( direction ) {
 				var x        = this.focusX,
 					y        = this.focusY,
+					move     = true,
 					overflow = false,
 					cycle    = false;
 			
-				switch ( direction ) {
-					case keys.up:
-						if ( this.focusY > 0 ) {
-							// can go one step up
-							this.focusY--;
-						} else {
-							if ( this.cycleY ) {
-								// jump to the last row
-								this.focusY = this.map.length - 1;
-								cycle = true;
+				// shift till full stop
+				while ( move ) {
+					// arrow keys
+					switch ( direction ) {
+						case keys.up:
+							if ( y > 0 ) {
+								// can go one step up
+								y--;
 							} else {
-								overflow = true;
+								if ( this.cycleY ) {
+									// jump to the last row
+									y = this.map.length - 1;
+									cycle = true;
+								} else {
+									// grid edge
+									overflow = true;
+								}
 							}
-						}
-						break;
+							break;
 			
-					case keys.down:
-						if ( this.focusY < this.map.length - 1 ) {
-							// can go one step down
-							this.focusY++;
-						} else {
-							if ( this.cycleY ) {
-								// jump to the first row
-								this.focusY = 0;
-								cycle = true;
+						case keys.down:
+							if ( y < this.map.length - 1 ) {
+								// can go one step down
+								y++;
 							} else {
-								overflow = true;
+								if ( this.cycleY ) {
+									// jump to the first row
+									y = 0;
+									cycle = true;
+								} else {
+									// grid edge
+									overflow = true;
+								}
 							}
-						}
-						break;
+							break;
 			
-					case keys.right:
-						if ( this.focusX < this.map[this.focusY].length - 1 ) {
-							// can go one step right
-							this.focusX++;
-						} else {
-							if ( this.cycleX ) {
-								// jump to the first column
-								this.focusX = 0;
-								cycle = true;
+						case keys.right:
+							if ( x < this.map[y].length - 1 ) {
+								// can go one step right
+								x++;
 							} else {
-								overflow = true;
+								if ( this.cycleX ) {
+									// jump to the first column
+									x = 0;
+									cycle = true;
+								} else {
+									// grid edge
+									overflow = true;
+								}
 							}
-						}
-						break;
+							break;
 			
-					case keys.left:
-						if ( this.focusX > 0 ) {
-							// can go one step left
-							this.focusX--;
-						} else {
-							if ( this.cycleX ) {
-								// jump to the last column
-								this.focusX = this.map[this.focusY].length - 1;
-								cycle = true;
+						case keys.left:
+							if ( x > 0 ) {
+								// can go one step left
+								x--;
 							} else {
-								overflow = true;
+								if ( this.cycleX ) {
+									// jump to the last column
+									x = this.map[y].length - 1;
+									cycle = true;
+								} else {
+									// grid edge
+									overflow = true;
+								}
 							}
+							break;
+					}
+			
+					// full cycle - has come to the start point
+					if ( x === this.focusX && y === this.focusY ) {
+						// full stop
+						move = false;
+					}
+			
+					// focus item has changed and it's not disabled
+					if ( this.map[y][x] !== this.map[this.focusY][this.focusX] && this.map[y][x].data.disable !== true ) {
+						// full stop
+						move = false;
+					}
+			
+					// the last cell in a row/col
+					if ( overflow ) {
+						// full stop
+						move = false;
+						// but it's disabled so need to go back
+						if ( this.map[y][x].data.disable === true ) {
+							// return to the start point
+							x = this.focusX;
+							y = this.focusY;
 						}
-						break;
+					}
 				}
 			
 				if ( cycle ) {
@@ -5618,7 +5810,7 @@
 					 * @event module:stb/ui/grid~Grid#cycle
 					 *
 					 * @type {Object}
-					 * @property {*} direction key code initiator of movement
+					 * @property {number} direction key code initiator of movement
 					 */
 					this.emit('cycle', {direction: direction});
 				}
@@ -5630,25 +5822,23 @@
 					 * @event module:stb/ui/grid~Grid#overflow
 					 *
 					 * @type {Object}
-					 * @property {*} direction key code initiator of movement
+					 * @property {number} direction key code initiator of movement
 					 */
 					this.emit('overflow', {direction: direction});
 				}
 			
 				// report
-				debug.info(x + ' : ' + this.focusX, 'X old/new');
-				debug.info(y + ' : ' + this.focusY, 'Y old/new');
+				debug.info(this.focusX + ' : ' + x, 'X old/new');
+				debug.info(this.focusY + ' : ' + y, 'Y old/new');
 				debug.info(cycle,  'cycle');
 				debug.info(overflow, 'overflow');
 			
-				// try to focus the next item
-				if ( !this.focusItem(this.map[this.focusY][this.focusX]) ) {
-					// seems it's a merged item
-					if ( !cycle && !overflow ) {
-						// need to move again
-						this.move(direction);
-					}
-				}
+				this.focusItem(this.map[y][x]);
+			
+				// correct coordinates
+				// focusItem set approximate values
+				this.focusX = x;
+				this.focusY = y;
 			};
 			
 			
@@ -5657,6 +5847,8 @@
 			 * Remove focus from the previously focused item.
 			 *
 			 * @param {Node} $item element to focus
+			 * @param {number} $item.x the item horizontal position
+			 * @param {number} $item.y the item vertical position
 			 *
 			 * @return {boolean} operation status
 			 *
@@ -5667,17 +5859,17 @@
 				var $prev = this.$focusItem;
 			
 				// different element
-				if ( $item !== undefined && $prev !== $item ) {
-					// @ifdef DEBUG
-					if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
-					if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
-					// @endif
+				if ( $item !== undefined && $prev !== $item && $item.data.disable !== true ) {
+					if ( true ) {
+						if ( !($item instanceof Node) ) { throw 'wrong $item type'; }
+						if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
+					}
 			
 					// some item is focused already
 					if ( $prev !== null ) {
-						// @ifdef DEBUG
-						if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
-						// @endif
+						if ( true ) {
+							if ( !($prev instanceof Node) ) { throw 'wrong $prev type'; }
+						}
 			
 						// style
 						$prev.classList.remove('focus');
@@ -5692,6 +5884,11 @@
 						 */
 						this.emit('blur:item', {$item: $prev});
 					}
+			
+					// draft coordinates
+					this.focusX = $item.x;
+					this.focusY = $item.y;
+			
 					// reassign
 					this.$focusItem = $item;
 			
@@ -5926,49 +6123,45 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * Client-side guest part
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 * Client-side guest part.
+			 *
 			 * @author DarkPark
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
 			/**
 			 * @constructor
+			 *
 			 * @param {Object} [options] set of initialization parameters (host, port, name)
 			 */
 			function ProxyGuest ( options ) {
 				// prepare
 				var name;
 			
-			    // connection with server
-			    this.active = false;
+				// connection with server
+				this.active = false;
 			
 				/**
 				 * proxy instance configuration
 				 * @namespace
 				 */
 				this.config = {
-					/** node.js server address */
-					host : '127.0.0.1',
+					// node.js server address
+					host: '127.0.0.1',
 			
-					/** http server port */
-					port : 8800,
+					// http server port
+					port: 8800,
 			
-					/** session name */
-					name : 'anonymous',
+					// session name
+					name: 'anonymous',
 			
-			        /**
-			         * cached url for posting requests
-			         * @type {string}
-			         */
-					urlPost : null,
+					// cached url for posting requests
+					urlPost: '',
 			
-			        /**
-			         * cached url for info collecting
-			         * @type {string}
-			         */
-					urlInfo : null
+					// cached url for info collecting
+					urlInfo: ''
 				};
 			
 				// single ajax object for performance
@@ -5978,7 +6171,9 @@
 				if ( options && typeof options === 'object' ) {
 					for ( name in options ) {
 						// rewrite defaults
-						if ( options.hasOwnProperty(name) ) { this.config[name] = options[name]; }
+						if ( options.hasOwnProperty(name) ) {
+							this.config[name] = options[name];
+						}
 					}
 				}
 			
@@ -5990,7 +6185,7 @@
 				this.config.urlInfo = 'http://' + this.config.host + ':' + this.config.port + '/info/' + name;
 			
 				// check initial connection status
-			    this.active = this.info().active;
+				this.active = this.info().active;
 			
 				console.log('%c[core]\t%c%s\t%c0\t%cconnection to the host %c(%s:%s): %c%s',
 					'color:grey',
@@ -6004,7 +6199,8 @@
 			
 			
 			/**
-			 * Sends a synchronous request to the host system
+			 * Sends a synchronous request to the host system.
+			 *
 			 * @param {Object} request JSON data to send
 			 * @return {*} execution result from the host
 			 */
@@ -6027,11 +6223,11 @@
 				try {
 					response = JSON.parse(this.xhr.responseText);
 				} catch ( e ) {
-					response = {error:e};
+					response = {error: e};
 				}
 			
-			    // update connection status
-			    this.active = !response.error;
+				// update connection status
+				this.active = !response.error;
 			
 				// detailed report
 				console.groupCollapsed('%c[%s]\t%c%s\t%c%s\t%c%s',
@@ -6051,42 +6247,57 @@
 			
 			
 			/**
-			 * Wrapper to send a line of js code to eval on the host
+			 * Wrapper to send a line of js code to eval on the host.
+			 *
 			 * @param {String} code javascript source code to execute on the device
 			 * @return {*} execution result from the host
 			 */
 			ProxyGuest.prototype.eval = function ( code ) {
-				return this.send({type:'eval', code:code});
+				return this.send({
+					type: 'eval',
+					code: code
+				});
 			};
 			
 			
 			/**
-			 * Wrapper to send one function of js code with arguments to eval on the host
+			 * Wrapper to send one function of js code with arguments to eval on the host.
+			 *
 			 * @param {String} method javascript function name (like "encodeURIComponent")
 			 * @param {Array} params list of the function arguments
 			 * @param {String} [context=window] remote call context
 			 * @return {*} execution result from the host
 			 */
 			ProxyGuest.prototype.call = function ( method, params, context ) {
-				return this.send({type:'call', method:method, params:params, context:context});
+				return this.send({
+					type:    'call',
+					method:  method,
+					params:  params,
+					context: context
+				});
 			};
 			
 			
 			/**
-			 * Wrapper to send a var name to get json
+			 * Wrapper to send a var name to get json.
+			 *
 			 * @param {String} name javascript var name to serialize
 			 * @return {*} execution result from the host
 			 */
 			ProxyGuest.prototype.json = function ( name ) {
-				var data = this.send({type:'json', code:name});
+				var data = this.send({
+					type: 'json',
+					code: name
+				});
 			
 				return data ? JSON.parse(data) : null;
 			};
 			
 			
 			/**
-			 * Gets the detailed info about the current connection
-			 * @return {{active:Boolean, count:Number}|{active:Boolean}|Boolean}
+			 * Gets the detailed info about the current connection.
+			 *
+			 * @return {{active:Boolean, count:Number}|{active:Boolean}|Boolean} info
 			 */
 			ProxyGuest.prototype.info = function () {
 				// mandatory init check
@@ -6116,15 +6327,17 @@
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * Client-side host part
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 * Client-side host part.
+			 *
 			 * @author DarkPark
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
 			
 			'use strict';
 			
 			/**
 			 * @constructor
+			 *
 			 * @param {Object} [options] set of initialization parameters (host, port, name)
 			 */
 			function ProxyHost ( options ) {
@@ -6211,7 +6424,8 @@
 				};
 			
 				/**
-				 * message from a desktop browser
+				 * Message from a desktop browser.
+				 *
 				 * @callback
 				 */
 				this.socket.onmessage = function ( message ) {
@@ -6252,7 +6466,7 @@
 			
 			
 			/**
-			 * Finish the connection and strop reconnection if any
+			 * Finish the connection and strop reconnection if any.
 			 */
 			ProxyHost.prototype.disconnect = function () {
 				// stop auto connection
@@ -6262,7 +6476,8 @@
 			
 			
 			/**
-			 * Logging wrapper
+			 * Logging wrapper.
+			 *
 			 * @param {String} type
 			 * @param {Number} time
 			 * @param {Boolean} status
@@ -7477,6 +7692,24 @@
 				grid1;
 			
 			
+			// add random disabled cells
+			Object.keys(gridData).forEach(function ( key ) {
+				gridData[key].raw.forEach(function ( row ) {
+					row = row.map(function ( cell ) {
+						if ( typeof cell !== 'object' ) {
+							cell = {value: cell};
+						}
+						return cell;
+					});
+					row.forEach(function ( cell ) {
+						if ( Math.random() > 0.7 ) {
+							cell.disable = true;
+						}
+					});
+				});
+			});
+			
+			
 			panel.add(
 				new Button({
 					$node: document.getElementById('pageMainTabGridBtnPrev'),
@@ -7605,6 +7838,7 @@
 							//render: function ( $item, data ) {
 							//	$item.innerHTML = '[' + (data) + ']';
 							//},
+							cycle: false,
 							events: {
 								click: function ( data ) {
 									//console.log('click');
@@ -7614,6 +7848,12 @@
 								focus: function ( data ) {
 									//console.log('focus');
 									//debug.inspect(data, 1);
+								},
+								cycle: function () {
+									debug.log('cycle');
+								},
+								overflow: function () {
+									debug.log('overflow');
 								},
 								'click:item': function ( data ) {
 									//console.log('click:item');
@@ -7641,6 +7881,7 @@
 							render: function ( $item, data ) {
 								$item.innerHTML = '[' + (data) + ']';
 							},
+							cycle: true,
 							events: {
 								click: function ( data ) {
 									//console.log('click');
@@ -7650,6 +7891,9 @@
 								focus: function ( data ) {
 									//console.log('focus');
 									//debug.inspect(data, 1);
+								},
+								overflow: function () {
+									debug.log('overflow');
 								},
 								'click:item': function ( data ) {
 									//console.log('click:item');
@@ -7673,7 +7917,12 @@
 						new List({
 							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
 							//visible: false,
-							type: List.prototype.TYPE_HORIZONTAL
+							type: List.prototype.TYPE_HORIZONTAL,
+							events: {
+								overflow: function () {
+									debug.log('overflow');
+								}
+							}
 						})
 					]
 				})
