@@ -121,6 +121,7 @@ a {
   background-color: #0073c4;
 }
 .component.checkBox {
+  cursor: pointer;
   display: inline-block;
   width: 28px;
   height: 28px;
@@ -185,48 +186,6 @@ a {
   height: 24px;
   background-color: orange;
 }
-html {
-  background-color: transparent;
-  overflow: auto;
-}
-body {
-  outline: 1px solid #333;
-  outline-offset: -1px;
-}
-div.develop canvas {
-  cursor: none;
-  visibility: hidden;
-  position: absolute;
-  width: 1280px;
-  height: 720px;
-}
-div.develop canvas.active {
-  visibility: visible;
-  z-index: 1000;
-}
-.component {
-  outline: 1px dashed #005000;
-  outline-offset: -1px;
-}
-.component.focus {
-  outline: 1px dashed red;
-}
-.component.list > .item {
-  outline: 1px dashed #000000;
-  outline-offset: -1px;
-}
-.component.list > .item.focus {
-  outline: 1px dashed orange;
-  outline-offset: -1px;
-}
-.component.grid td.item {
-  outline: 1px dashed #000000;
-  outline-offset: -1px;
-}
-.component.grid td.item.focus {
-  outline: 1px dashed orange;
-  outline-offset: -1px;
-}
 #pageInit {
   text-align: center;
 }
@@ -287,3 +246,47 @@ div.develop canvas.active {
   text-align: center;
   line-height: 720px;
 }
+html {
+  background-color: transparent;
+  overflow: auto;
+}
+body {
+  outline: 1px solid #333;
+  outline-offset: -1px;
+}
+div.develop canvas {
+  cursor: none;
+  visibility: hidden;
+  position: absolute;
+  width: 1280px;
+  height: 720px;
+}
+div.develop canvas.active {
+  visibility: visible;
+  z-index: 1000;
+}
+.component {
+  outline: 1px dashed #005000;
+  outline-offset: -1px;
+}
+.component.focus {
+  outline: 1px dashed red;
+}
+.component.list > .item {
+  outline: 1px dashed #000000;
+  outline-offset: -1px;
+}
+.component.list > .item.focus {
+  outline: 1px dashed orange;
+  outline-offset: -1px;
+}
+.component.grid td.item {
+  outline: 1px dashed #000000;
+  outline-offset: -1px;
+}
+.component.grid td.item.focus {
+  outline: 1px dashed orange;
+  outline-offset: -1px;
+}
+
+/*# sourceMappingURL=720.map */
