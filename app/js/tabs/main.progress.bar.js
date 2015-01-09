@@ -8,17 +8,19 @@
 
 var Panel       = require('stb/ui/panel'),
 	ProgressBar = require('stb/ui/progress.bar'),
+	keys        = require('stb/keys'),
 	panel       = new Panel({
 		$node: document.getElementById('pageMainTabProgressBar'),
 		visible: false
-	});
+	}),
+	pb;
 
 
 panel.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabProgressBarPanel'),
 		children: [
-			new ProgressBar({
+			pb = new ProgressBar({
 				min: -50,
 				max: 50,
 				value: 0,

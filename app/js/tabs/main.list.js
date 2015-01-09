@@ -30,11 +30,11 @@ panel.add(
 					click: function ( data ) {
 						//console.log('click');
 						//data.event.stop = true;
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
 						//console.log('focus');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					cycle: function () {
 						debug.log('cycle');
@@ -44,15 +44,15 @@ panel.add(
 					},
 					'click:item': function ( data ) {
 						//console.log('click:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
 						//console.log('focus:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
 						//console.log('blur:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					}
 				}
 			})
@@ -73,26 +73,26 @@ panel.add(
 					click: function ( data ) {
 						//console.log('click');
 						//data.event.stop = true;
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
 						//console.log('focus');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					overflow: function () {
 						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
 						//console.log('click:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
 						//console.log('focus:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
 						//console.log('blur:item');
-						//debug.inspect(data, 1);
+						debug.inspect(data, 1);
 					}
 				}
 			})
