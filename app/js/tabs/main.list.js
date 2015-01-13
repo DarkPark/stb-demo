@@ -19,21 +19,21 @@ panel.add(
 		$node: document.getElementById('pageMainTabListSimple'),
 		children: [
 			new List({
-				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
-				//data: [1,2,3],
+				//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+				data: [1, 2, 3, {value: 44, disable: true}],
 				size: 5,
 				//render: function ( $item, data ) {
 				//	$item.innerHTML = '[' + (data) + ']';
 				//},
-				cycle: false,
+				cycle: true,
 				events: {
 					click: function ( data ) {
-						//console.log('click');
 						//data.event.stop = true;
+						debug.log('click');
 						debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
-						//console.log('focus');
+						debug.log('focus');
 						debug.inspect(data, 1);
 					},
 					cycle: function () {
@@ -43,15 +43,15 @@ panel.add(
 						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
-						//console.log('click:item');
+						debug.log('click:item');
 						debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
-						//console.log('focus:item');
+						debug.log('focus:item');
 						debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
-						//console.log('blur:item');
+						debug.log('blur:item');
 						debug.inspect(data, 1);
 					}
 				}
@@ -66,32 +66,35 @@ panel.add(
 				//data: [1,2,3],
 				size: 5,
 				render: function ( $item, data ) {
-					$item.innerHTML = '[' + (data) + ']';
+					$item.innerHTML = '[' + (data.value) + ']';
 				},
-				cycle: true,
+				cycle: false,
 				events: {
 					click: function ( data ) {
-						//console.log('click');
 						//data.event.stop = true;
+						debug.log('click');
 						debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
-						//console.log('focus');
+						debug.log('focus');
 						debug.inspect(data, 1);
+					},
+					cycle: function () {
+						debug.log('cycle');
 					},
 					overflow: function () {
 						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
-						//console.log('click:item');
+						debug.log('click:item');
 						debug.inspect(data, 1);
 					},
 					'focus:item': function ( data ) {
-						//console.log('focus:item');
+						debug.log('focus:item');
 						debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
-						//console.log('blur:item');
+						debug.log('blur:item');
 						debug.inspect(data, 1);
 					}
 				}
@@ -105,6 +108,7 @@ panel.add(
 				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
 				//visible: false,
 				type: List.prototype.TYPE_HORIZONTAL,
+				cycle: true,
 				events: {
 					overflow: function () {
 						debug.log('overflow');

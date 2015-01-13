@@ -62,6 +62,7 @@ page.addListener('load', function load () {
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
 			size: 8,
+			cycle: true,
 			render: function ( $item, data ) {
 				$item.textContent = data.value;
 			},
