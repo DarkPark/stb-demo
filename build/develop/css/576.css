@@ -145,9 +145,17 @@ a {
   vertical-align: middle;
   text-align: center;
 }
+.component.grid table td.item.mark {
+  color: black;
+  background-color: green;
+}
 .component.grid table td.item.focus {
   color: black;
   background-color: orange;
+}
+.component.grid table td.item.focus.mark {
+  color: white;
+  background-color: #AE7200;
 }
 .component.grid table td.item.disable {
   color: grey;
@@ -164,9 +172,17 @@ a {
   height: 38.4px;
   line-height: 38.4px;
 }
+.component.list > .item.mark {
+  background-color: green;
+  color: black;
+}
 .component.list > .item.focus {
   background-color: orange;
   color: black;
+}
+.component.list > .item.focus.mark {
+  background-color: #AE7200;
+  color: white;
 }
 .component.list.horizontal {
   display: table;
@@ -185,6 +201,23 @@ a {
 .component.progressBar > .value {
   height: 19.2px;
   background-color: orange;
+}
+.component.scrollBar {
+  background-color: grey;
+  position: relative;
+}
+.component.scrollBar.horizontal {
+  height: 8px;
+  width: 100%;
+}
+.component.scrollBar.vertical {
+  height: 100%;
+  width: 8px;
+}
+.component.scrollBar > .value {
+  background-color: orange;
+  height: 8px;
+  width: 8px;
 }
 #pageInit {
   text-align: center;

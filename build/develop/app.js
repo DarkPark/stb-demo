@@ -1320,7 +1320,7 @@
 					this.hide(this.current);
 					this.show(pageTo, data);
 			
-					// notify
+					// notify listeners
 					this.emit('navigate', {from: pageFrom, to: pageTo});
 			
 					// store
@@ -1364,7 +1364,7 @@
 						this.hide(this.current);
 						this.show(pageTo);
 			
-						// notify
+						// notify listeners
 						this.emit('navigate', {from: pageFrom, to: pageTo});
 			
 						return true;
@@ -2805,6 +2805,13 @@
 			/**
 			 * Base list implementation.
 			 *
+			 * Each data item can be either a primitive value or an object with these fields:
+			 *
+			 *  Name    | Description
+			 * ---------|-------------
+			 *  value   | actual cell value to render
+			 *  mark    | is it necessary or not to render this cell as marked
+			 *
 			 * @constructor
 			 * @extends Component
 			 *
@@ -2896,7 +2903,7 @@
 							self.move(event.code);
 							break;
 						case keys.ok:
-							// notify
+							// notify listeners
 							self.emit('click:item', {$item: self.$focusItem, event: event});
 							break;
 					}
@@ -2962,7 +2969,7 @@
 					item = data[i];
 					// primitive value
 					if ( typeof item !== 'object' ) {
-						// wrap
+						// wrap with defaults
 						item = data[i] = {
 							value: data[i]
 						};
@@ -2970,6 +2977,7 @@
 			
 					if ( true ) {
 						if ( !('value' in item) ) { throw 'field "value" is missing'; }
+						if ( ('mark' in item) && Boolean(item.mark) !== item.mark ) { throw 'item.mark must be boolean'; }
 					}
 				}
 			
@@ -2997,7 +3005,7 @@
 					onClick  = function ( event ) {
 						if ( this.data !== undefined ) {
 							self.focusItem(this);
-							// notify
+							// notify listeners
 							self.emit('click:item', {$item: this, event: event});
 						}
 					},
@@ -3063,14 +3071,26 @@
 			
 			
 			/**
+			 * Shift the visible view window event.
+			 *
+			 * @event module:stb/ui/list~List#move:view
+			 *
+			 * @type {Object}
+			 * @property {number} prevIndex previous view window position
+			 * @property {number} currIndex current view window position
+			 */
+			
+			/**
 			 * Draw the visible window.
 			 *
 			 * @param {number} index start position to render
 			 *
 			 * @return {boolean} operation status
+			 *
+			 * @fires module:stb/ui/list~List#move:view
 			 */
 			List.prototype.renderView = function ( index ) {
-				var $item, i, itemData;
+				var $item, i, itemData, prevIndex, currIndex;
 			
 				if ( true ) {
 					if ( Number(index) !== index ) { throw 'index must be a number'; }
@@ -3080,8 +3100,10 @@
 			
 				// has the view window position changed
 				if ( this.indexView !== index ) {
+					// save for emit
+					prevIndex = this.indexView;
 					// sync global pointer
-					this.indexView = index;
+					this.indexView = currIndex = index;
 			
 					// rebuild all visible items
 					for ( i = 0; i < this.size; i++ ) {
@@ -3095,6 +3117,13 @@
 							$item.data  = itemData;
 							$item.index = index;
 							this.renderItem($item, itemData);
+			
+							// apply CSS
+							if ( itemData.mark ) {
+								$item.classList.add('mark');
+							} else {
+								$item.classList.remove('mark');
+							}
 						} else {
 							// nothing to render
 							$item.data = $item.index = undefined;
@@ -3102,6 +3131,9 @@
 						}
 						index++;
 					}
+			
+					// notify listeners
+					this.emit('move:view', {prevIndex: prevIndex, currIndex: currIndex});
 			
 					// full rebuild
 					return true;
@@ -3135,6 +3167,9 @@
 			 * Move focus to the given direction.
 			 *
 			 * @param {number} direction arrow key code
+			 *
+			 * @fires module:stb/ui/list~List#cycle
+			 * @fires module:stb/ui/list~List#overflow
 			 */
 			List.prototype.move = function ( direction ) {
 				//switch ( direction ) {
@@ -3167,10 +3202,10 @@
 						if ( this.cycle ) {
 							// jump to the end of the list
 							this.move(keys.end);
-							// notify
+							// notify listeners
 							this.emit('cycle', {direction: direction});
 						} else {
-							// notify
+							// notify listeners
 							this.emit('overflow', {direction: direction});
 						}
 					}
@@ -3188,10 +3223,10 @@
 						if ( this.cycle ) {
 							// jump to the beginning of the list
 							this.move(keys.home);
-							// notify
+							// notify listeners
 							this.emit('cycle', {direction: direction});
 						} else {
-							// notify
+							// notify listeners
 							this.emit('overflow', {direction: direction});
 						}
 					}
@@ -3310,6 +3345,31 @@
 			
 				// nothing was done
 				return false;
+			};
+			
+			
+			/**
+			 * Set item state and appearance as marked.
+			 *
+			 * @param {Node|Element} $item element to focus
+			 * @param {boolean} state true - marked, false - not marked
+			 */
+			List.prototype.markItem = function ( $item, state ) {
+				if ( true ) {
+					if ( !($item instanceof Element) ) { throw 'wrong $item type'; }
+					if ( $item.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
+					if ( Boolean(state) !== state ) { throw 'state must be boolean'; }
+				}
+			
+				// correct CSS
+				if ( state ) {
+					$item.classList.add('mark');
+				} else {
+					$item.classList.remove('mark');
+				}
+			
+				// apply flag
+				$item.data.mark = state;
 			};
 			
 			
@@ -4946,17 +5006,29 @@
 			
 			
 			/**
+			 * Mouse click event.
+			 *
+			 * @event module:stb/ui/grid~Grid#click:item
+			 *
+			 * @type {Object}
+			 * @property {Element} $item clicked HTML item
+			 * @property {Event} event click event data
+			 */
+			
+			
+			/**
 			 * Base grid/table implementation.
 			 *
 			 * For navigation map implementation and tests see {@link https://gist.github.com/DarkPark/8c0c2926bfa234043ed1}.
 			 *
-			 * Each data cell value can be either a primitive value or an object with these fields:
+			 * Each data cell can be either a primitive value or an object with these fields:
 			 *
 			 *  Name    | Description
 			 * ---------|-------------
 			 *  value   | actual cell value to render
 			 *  colSpan | amount of cells to merge horizontally
 			 *  rowSpan | amount of cells to merge vertically
+			 *  mark    | is it necessary or not to render this cell as marked
 			 *  focus   | is it necessary or not to render this cell as focused
 			 *  disable | is it necessary or not to set this cell as disabled
 			 *
@@ -4968,6 +5040,8 @@
 			 * @param {function} [config.render] method to build each grid cell content
 			 * @param {boolean}  [config.cycleX=true] allow or not to jump to the opposite side of line when there is nowhere to go next
 			 * @param {boolean}  [config.cycleY=true] allow or not to jump to the opposite side of column when there is nowhere to go next
+			 *
+			 * @fires module:stb/ui/grid~Grid#click:item
 			 *
 			 * @example
 			 * var Grid = require('stb/ui/grid'),
@@ -5062,7 +5136,7 @@
 							self.move(event.code);
 							break;
 						case keys.ok:
-							// notify
+							// notify listeners
 							self.emit('click:item', {$item: self.$focusItem, event: event});
 							break;
 					}
@@ -5127,15 +5201,17 @@
 						item = data[i][j];
 						// primitive value
 						if ( typeof item !== 'object' ) {
-							// wrap
+							// wrap with defaults
 							item = data[i][j] = {
-								value: data[i][j]
+								value: data[i][j],
+								colSpan: 1,
+								rowSpan: 1
 							};
+						} else {
+							// always at least one row/col
+							item.colSpan = item.colSpan || 1;
+							item.rowSpan = item.rowSpan || 1;
 						}
-			
-						// always at least one row/col
-						item.colSpan = item.colSpan || 1;
-						item.rowSpan = item.rowSpan || 1;
 			
 						if ( true ) {
 							if ( !('value' in item) ) { throw 'field "value" is missing'; }
@@ -5143,6 +5219,8 @@
 							if ( Number(item.rowSpan) !== item.rowSpan ) { throw 'item.rowSpan must be a number'; }
 							if ( item.colSpan <= 0 ) { throw 'item.colSpan should be positive'; }
 							if ( item.rowSpan <= 0 ) { throw 'item.rowSpan should be positive'; }
+							if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) { throw 'item.focus must be boolean'; }
+							if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) { throw 'item.disable must be boolean'; }
 						}
 					}
 				}
@@ -5216,17 +5294,6 @@
 			
 			
 			/**
-			 * Mouse click event.
-			 *
-			 * @event module:stb/ui/grid~Grid#click:item
-			 *
-			 * @type {Object}
-			 * @property {Element} $item clicked HTML item
-			 * @property {Event} event click event data
-			 */
-			
-			
-			/**
 			 * Init or re-init of the component inner structures and HTML.
 			 *
 			 * @param {Object} [config={}] init parameters (subset of constructor config params)
@@ -5252,7 +5319,7 @@
 							// visualize
 							self.focusItem(this);
 			
-							// notify
+							// notify listeners
 							self.emit('click:item', {$item: this, event: event});
 						}
 					};
@@ -5268,7 +5335,7 @@
 				// apply data
 				if ( config.data !== undefined ) {
 					if ( true ) {
-						if ( !Array.isArray(config.data) ) { throw 'wrong config.data type'; }
+						if ( !Array.isArray(config.data) || !Array.isArray(config.data[0]) ) { throw 'wrong config.data type'; }
 					}
 			
 					// new data is different
@@ -5291,10 +5358,6 @@
 						// need to redraw table
 						draw = true;
 					}
-				}
-			
-				if ( true ) {
-					if ( !Array.isArray(this.data) || !Array.isArray(this.data[0]) ) { throw 'wrong this.data'; }
 				}
 			
 				if ( !draw ) {
@@ -5335,15 +5398,21 @@
 						$item.rowSpan = itemData.rowSpan;
 			
 						// active cell
-						if ( itemData.focus === true ) {
+						if ( itemData.focus ) {
 							// store and clean
 							$focusItem = $item;
 						}
 			
 						// disabled cell
-						if ( itemData.disable === true ) {
+						if ( itemData.disable ) {
 							// apply CSS
 							$item.classList.add('disable');
+						}
+			
+						// marked cell
+						if ( itemData.mark ) {
+							// apply CSS
+							$item.classList.add('mark');
 						}
 			
 						// visualize
@@ -5596,6 +5665,31 @@
 			
 				// nothing was done
 				return false;
+			};
+			
+			
+			/**
+			 * Set item state and appearance as marked.
+			 *
+			 * @param {Node|Element} $item element to focus
+			 * @param {boolean} state true - marked, false - not marked
+			 */
+			Grid.prototype.markItem = function ( $item, state ) {
+				if ( true ) {
+					if ( !($item instanceof Element) ) { throw 'wrong $item type'; }
+					if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw 'wrong $item parent element'; }
+					if ( Boolean(state) !== state ) { throw 'state must be boolean'; }
+				}
+			
+				// correct CSS
+				if ( state ) {
+					$item.classList.add('mark');
+				} else {
+					$item.classList.remove('mark');
+				}
+			
+				// apply flag
+				$item.data.mark = state;
 			};
 			
 			
@@ -7321,7 +7415,7 @@
 					visible: false
 				}),
 				gridDataIndex = 0,
-				grid1;
+				grid1, grid2;
 			
 			
 			// add random disabled cells
@@ -7417,15 +7511,20 @@
 				new Panel({
 					$node: document.getElementById('pageMainTabGridJoin'),
 					children: [
-						new Grid({
+						grid2 = new Grid({
 							data: [
-								[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+								[1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
 								[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
-								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, 13, 14],
+								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
 								[18, 19],
 								[{value: '21-25', colSpan: 5}],
 								[{value: '26-35', colSpan: 5, rowSpan: 2}]
-							]
+							],
+							events: {
+								'click:item': function ( data ) {
+									grid2.markItem(data.$item, !data.$item.data.mark);
+								}
+							}
 						})
 					]
 				})
@@ -7456,7 +7555,8 @@
 				panel = new Panel({
 					$node: document.getElementById('pageMainTabList'),
 					visible: false
-				});
+				}),
+				list2;
 			
 			
 			panel.add(
@@ -7465,7 +7565,7 @@
 					children: [
 						new List({
 							//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
-							data: [1, 2, 3, {value: 44, disable: true}],
+							data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
 							size: 5,
 							//render: function ( $item, data ) {
 							//	$item.innerHTML = '[' + (data) + ']';
@@ -7506,8 +7606,8 @@
 				new Panel({
 					$node: document.getElementById('pageMainTabListCustom'),
 					children: [
-						new List({
-							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+						list2 = new List({
+							data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 							//data: [1,2,3],
 							size: 5,
 							render: function ( $item, data ) {
@@ -7517,12 +7617,12 @@
 							events: {
 								click: function ( data ) {
 									//data.event.stop = true;
-									debug.log('click');
-									debug.inspect(data, 1);
+									//debug.log('click');
+									//debug.inspect(data, 1);
 								},
 								focus: function ( data ) {
-									debug.log('focus');
-									debug.inspect(data, 1);
+									//debug.log('focus');
+									//debug.inspect(data, 1);
 								},
 								cycle: function () {
 									debug.log('cycle');
@@ -7531,16 +7631,18 @@
 									debug.log('overflow');
 								},
 								'click:item': function ( data ) {
-									debug.log('click:item');
-									debug.inspect(data, 1);
+									//debug.log('click:item');
+									//debug.inspect(data, 1);
+			
+									list2.markItem(data.$item, !data.$item.data.mark);
 								},
 								'focus:item': function ( data ) {
-									debug.log('focus:item');
-									debug.inspect(data, 1);
+									//debug.log('focus:item');
+									//debug.inspect(data, 1);
 								},
 								'blur:item': function ( data ) {
-									debug.log('blur:item');
-									debug.inspect(data, 1);
+									//debug.log('blur:item');
+									//debug.inspect(data, 1);
 								}
 							}
 						})
