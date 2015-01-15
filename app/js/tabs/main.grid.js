@@ -15,7 +15,7 @@ var Panel    = require('stb/ui/panel'),
 		visible: false
 	}),
 	gridDataIndex = 0,
-	grid1;
+	grid1, grid2;
 
 
 // add random disabled cells
@@ -111,15 +111,20 @@ panel.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabGridJoin'),
 		children: [
-			new Grid({
+			grid2 = new Grid({
 				data: [
-					[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+					[1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
 					[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
-					[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, 13, 14],
+					[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
 					[18, 19],
 					[{value: '21-25', colSpan: 5}],
 					[{value: '26-35', colSpan: 5, rowSpan: 2}]
-				]
+				],
+				events: {
+					'click:item': function ( data ) {
+						grid2.markItem(data.$item, !data.$item.data.mark);
+					}
+				}
 			})
 		]
 	})

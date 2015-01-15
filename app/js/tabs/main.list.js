@@ -11,7 +11,8 @@ var Panel = require('stb/ui/panel'),
 	panel = new Panel({
 		$node: document.getElementById('pageMainTabList'),
 		visible: false
-	});
+	}),
+	list2;
 
 
 panel.add(
@@ -20,7 +21,7 @@ panel.add(
 		children: [
 			new List({
 				//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
-				data: [1, 2, 3, {value: 44, disable: true}],
+				data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
 				size: 5,
 				//render: function ( $item, data ) {
 				//	$item.innerHTML = '[' + (data) + ']';
@@ -61,8 +62,8 @@ panel.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabListCustom'),
 		children: [
-			new List({
-				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+			list2 = new List({
+				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
 				size: 5,
 				render: function ( $item, data ) {
@@ -72,12 +73,12 @@ panel.add(
 				events: {
 					click: function ( data ) {
 						//data.event.stop = true;
-						debug.log('click');
-						debug.inspect(data, 1);
+						//debug.log('click');
+						//debug.inspect(data, 1);
 					},
 					focus: function ( data ) {
-						debug.log('focus');
-						debug.inspect(data, 1);
+						//debug.log('focus');
+						//debug.inspect(data, 1);
 					},
 					cycle: function () {
 						debug.log('cycle');
@@ -86,16 +87,18 @@ panel.add(
 						debug.log('overflow');
 					},
 					'click:item': function ( data ) {
-						debug.log('click:item');
-						debug.inspect(data, 1);
+						//debug.log('click:item');
+						//debug.inspect(data, 1);
+
+						list2.markItem(data.$item, !data.$item.data.mark);
 					},
 					'focus:item': function ( data ) {
-						debug.log('focus:item');
-						debug.inspect(data, 1);
+						//debug.log('focus:item');
+						//debug.inspect(data, 1);
 					},
 					'blur:item': function ( data ) {
-						debug.log('blur:item');
-						debug.inspect(data, 1);
+						//debug.log('blur:item');
+						//debug.inspect(data, 1);
 					}
 				}
 			})
