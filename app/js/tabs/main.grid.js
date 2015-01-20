@@ -88,6 +88,7 @@ panel.add(
 		}
 	}),
 
+
 	new Panel({
 		$node: document.getElementById('pageMainTabGridMain'),
 		$body: document.getElementById('pageMainTabGridMainBody'),

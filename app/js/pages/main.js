@@ -49,6 +49,10 @@ page.addListener('load', function load () {
 			{
 				value: 'Modal',
 				panel: require('../tabs/main.modal')
+			},
+			{
+				value: 'Widget',
+				panel: require('../tabs/main.widget')
 			}
 		];
 
@@ -61,7 +65,7 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
-			size: 8,
+			size: 9,
 			cycle: true,
 			render: function ( $item, data ) {
 				$item.textContent = data.value;
