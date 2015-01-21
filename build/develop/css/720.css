@@ -31,16 +31,141 @@ a {
 .component.hidden {
   display: none !important;
 }
-.component.page {
-  width: 1280px;
-  height: 720px;
-  padding: 0;
-  position: absolute;
-  visibility: hidden;
-  overflow: hidden;
+.component div {
+  -webkit-box-sizing: border-box;
 }
-.component.page.active {
-  visibility: visible;
+.component.button {
+  background-color: #002042;
+  display: inline-block;
+  height: 46px;
+  line-height: 46px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.component.button:hover {
+  background-color: #005b9c;
+}
+.component.button.focus {
+  background-color: #005b9c;
+}
+.component.button.click {
+  background-color: #0073c4;
+}
+.component.button .icon {
+  height: 46px;
+  width: 46px;
+  display: inline-block;
+  background: no-repeat center center;
+}
+.component.button .text {
+  display: inline-block;
+  padding: 0 12px;
+  vertical-align: top;
+}
+.component.button .text:not(:only-child) {
+  padding-left: 0;
+}
+.component.checkBox {
+  cursor: pointer;
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  background-color: #333;
+  vertical-align: bottom;
+}
+.component.checkBox.checked {
+  background-color: orange;
+}
+.component.grid {
+  background-color: #333;
+}
+.component.grid table {
+  width: 100%;
+  table-layout: fixed;
+}
+.component.grid table td.item {
+  cursor: pointer;
+  padding: 4px 8px;
+  vertical-align: middle;
+  text-align: center;
+}
+.component.grid table td.item.mark {
+  color: black;
+  background-color: green;
+}
+.component.grid table td.item.focus {
+  color: black;
+  background-color: orange;
+}
+.component.grid table td.item.focus.mark {
+  color: white;
+  background-color: #AE7200;
+}
+.component.grid table td.item.disable {
+  color: grey;
+  background-color: #111;
+}
+.component.input {
+  width: 250px;
+  height: 38px;
+  padding: 0 4px;
+  border: 2px solid green;
+  cursor: text;
+  overflow: hidden;
+  font-size: 24px;
+  color: #000;
+  text-align: left;
+  background-color: #fff;
+}
+.component.input > .caret {
+  height: 30px;
+  margin: 2px;
+  width: 1px;
+  border: none;
+  background: #000;
+  display: inline-block;
+  vertical-align: top;
+}
+.component.input > .char {
+  color: #000;
+  display: inline-block;
+  vertical-align: top;
+  height: 34px;
+  line-height: 34px;
+}
+.component.list {
+  background-color: #333;
+  width: 100%;
+}
+.component.list > .item {
+  cursor: pointer;
+  padding: 0 8px;
+  vertical-align: middle;
+  height: 48px;
+  line-height: 48px;
+}
+.component.list > .item.mark {
+  background-color: green;
+  color: black;
+}
+.component.list > .item.focus {
+  background-color: orange;
+  color: black;
+}
+.component.list > .item.focus.mark {
+  background-color: #AE7200;
+  color: white;
+}
+.component.list.horizontal {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.component.list.horizontal > .item {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
 .component.modal {
   width: 1280px;
@@ -93,106 +218,20 @@ a {
   min-width: 20%;
   min-height: 10%;
 }
+.component.page {
+  width: 1280px;
+  height: 720px;
+  padding: 0;
+  position: absolute;
+  visibility: hidden;
+  overflow: hidden;
+}
+.component.page.active {
+  visibility: visible;
+}
 .component.panel {
   padding: 10px 10px;
   background-color: #222;
-}
-.component.button {
-  background-color: #002042;
-  display: inline-block;
-  padding: 6px 12px;
-  height: 36px;
-  line-height: 36px;
-  vertical-align: middle;
-  cursor: pointer;
-}
-.component.button.icon {
-  padding-left: 48px;
-  background-repeat: no-repeat;
-  background-position: 12px center;
-}
-.component.button:hover {
-  background-color: #005b9c;
-}
-.component.button.focus {
-  background-color: #005b9c;
-}
-.component.button.click {
-  background-color: #0073c4;
-}
-.component.checkBox {
-  cursor: pointer;
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-  background-color: #333;
-  vertical-align: bottom;
-}
-.component.checkBox.checked {
-  background-color: orange;
-}
-.component.grid {
-  background-color: #333;
-}
-.component.grid table {
-  width: 100%;
-  table-layout: fixed;
-}
-.component.grid table td.item {
-  cursor: pointer;
-  padding: 4px 8px;
-  vertical-align: middle;
-  text-align: center;
-}
-.component.grid table td.item.mark {
-  color: black;
-  background-color: green;
-}
-.component.grid table td.item.focus {
-  color: black;
-  background-color: orange;
-}
-.component.grid table td.item.focus.mark {
-  color: white;
-  background-color: #AE7200;
-}
-.component.grid table td.item.disable {
-  color: grey;
-  background-color: #111;
-}
-.component.list {
-  background-color: #333;
-  width: 100%;
-}
-.component.list > .item {
-  cursor: pointer;
-  padding: 4px 8px;
-  vertical-align: middle;
-  height: 48px;
-  line-height: 48px;
-}
-.component.list > .item.mark {
-  background-color: green;
-  color: black;
-}
-.component.list > .item.focus {
-  background-color: orange;
-  color: black;
-}
-.component.list > .item.focus.mark {
-  background-color: #AE7200;
-  color: white;
-}
-.component.list.horizontal {
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-}
-.component.list.horizontal > .item {
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle;
 }
 .component.progressBar {
   height: 24px;
@@ -203,8 +242,8 @@ a {
   background-color: orange;
 }
 .component.scrollBar {
-  background-color: grey;
-  position: relative;
+  display: inline-block;
+  background-color: red;
 }
 .component.scrollBar.horizontal {
   height: 8px;
@@ -215,9 +254,17 @@ a {
   width: 8px;
 }
 .component.scrollBar > .value {
+  display: inline-block;
   background-color: orange;
   height: 8px;
   width: 8px;
+}
+.component.widget {
+  position: absolute;
+  background-color: darkslateblue;
+}
+.component.widget.hidden {
+  visibility: hidden;
 }
 #pageInit {
   text-align: center;
@@ -255,6 +302,9 @@ a {
   padding: 0;
   background-color: black;
 }
+#pageMain td.body > div .component.button .menu {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABP9JREFUeNrMWFlIXUcY/nOpVhFMpIpaIhoFFRGCICaoFISU6kOxfRGE4lKNWxVbQfpYig9uaFQSH6oUXAjiQ1KsiEFBqCipD4o+qLjhvmtccGmq3v7fMHM5Hs+9uW6hP3ycOXPP/PPNzL/NvWM2m+mS8pjxiPGQEczwZXwmf9tizDHGGcOMvxlvL6P8jp2EPBjfML5mxDIc7NT/L6OT8SfjD8bGTRD6jpHE+FJ1dHd30/j4OC0sLND6+jrt7u4S9Li4uJCHhwfdv3+fQkJCKC4uTquni9HIaL4qoQBGLuMH7Mjq6iq1trbSwMAA7e/v09nZmSABoK3etU8QjIyMpKSkJEFS7tgLxnPG9GUIwUZ+ZnwrltbVRXV1dXR8fHyOhC0y2n4HBwcqKCig+Ph4pf81o1Ta2AcJgcyvjK92dnaoqKiIJicnL0xoRMYaIdUODg6mmpoacnd3xzxvGL/oSekJ4ZjKsTM4osLCQnr37t2NkFHv9+7do5cvX5KPj4/aqULt8ekJPWP8CBK5ubmEHbJ1JPYQMHoHqfb2duEALFWMn4wIwZt+hwHn5+fTxMSEXfZh77u+HRoaSm1tbcrQv1feZ9LEGbi2Q2dnp3Dpk5MTgdPTU0v7MtCOM2oPDQ2Jo5MxLUlysOzQU8Zvy8vLlJGRQUdHR+dWlZCQQGlpaVRfX0/Nzc2iLzExkdLT08nV1dVmEEOMgiFjrN5DHR0dqaenhx48eIBPMxh1aocQgampqYkODg4urCo5OZmcnZ3FU/XZQwZy9+5dysvLE/qUTtU+PDykiooK0nIwydyEdEC9vb2G24/VIRjiqfpqa2tpe3vbohyA6I94a2uLKisrLd8oO1LvHR0dihA4PMaR5cPSYfXFxcVXMlBrxq+OyOhdAVJdXS2iOTzcJLM2DQ8PWzVka4atN1Zb0C5OuwAA6UjKw09kCUHT09NCsb27Y+v5IegFIUZKsEnWM7S0tGR1F2DMcNPU1FRLX0pKCo2MjND8/DwtLi6K8SsrK4QIv7a2JqqAjY0NmpqaoszMTAtZI0HVIMUXNnTMjU/Dw8OFuxvtxuDgoPAWuDACGvpGR0dFnz2CyC9d21CcnJzEQlj+UW5v0z4QR/b29qiqqspiE+Xl5cKDtGOM9GxublJpaemlKsYlfn4eHR0tWN60fdgj3t7eNDY2huaySdbA5OXldW5n9EFMHz/0nnNVMhCZ+SFzJlmQizM2ImHNfbW7dl0JDAxUzXGTvB1QWFiY1fiRnZ1Nc3NzlJOTYyGRlZVFs7OzokSxBXyD8bYkIiJCNYdhQ0gdfyHrBgUFWQoyLWZmZkQNgwn8/PzESEyEvut6GXRAlyxDvjDJexOuKvTkyRND+4BHweXxVFJSUiI86LpeFhsbq5rg8PZc+YGdiIqKshTzty2IP/39/eTv73+h/MAlrgs/YDUfgwykrKxMkemSHIxL2JiYGJEqblPgRCjOrJWwJDtwiaOWlhZ1VbkVgW7MIeWF9jZr0n2LG+VrT09PcV2+DVLQCd2YQ16Dnmt/1xOaljfKN3Dvvr4+sbU3eUzQKUPHGznX+Su1lZz0iPHKLKWhocHMKzJzdr8SMBY6NPJKznExF9pIlAGMZ4z30MAFnJnrGrOvr6/dRPAtxmCslPdSZ4C1ea/0d0xjY6MoO1HpobhCJIa4ubmJRInchHQg6+Qb+zvmf/uH1Uf9S+8/AQYA5769ZpEf/kkAAAAASUVORK5CYII=");
+}
 #pageMain td.body > div .component.panel {
   margin-bottom: 10px;
 }
@@ -267,13 +317,27 @@ a {
 #pageMain td.body > div .component.grid td.item {
   padding: 8px 16px;
 }
-#pageMain td.body #pageMainTabGridMain .title {
+#pageMainTabGridMain .title {
   margin-bottom: 1%;
 }
-#pageMain td.body #pageMainTabListSimple,
-#pageMain td.body #pageMainTabListCustom {
+#pageMainTabListSimple,
+#pageMainTabListCustom {
   display: inline-block;
   width: 40%;
+}
+.component.widget {
+  width: 100px;
+  height: 100px;
+}
+#pageMainTabWidgetW1 {
+  background-color: red;
+}
+#pageMainTabWidgetW2 {
+  background-color: green;
+}
+#pageMainTabWidgetW3 {
+  background-color: blue;
+  right: 0;
 }
 #pageHelp {
   text-align: center;
