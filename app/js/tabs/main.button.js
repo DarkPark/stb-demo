@@ -27,6 +27,14 @@ panel.add(
 		$node: document.getElementById('pageMainTabButtonIcon'),
 		children: [
 			new Button({
+				icon: 'menu'
+			})
+		]
+	}),
+	new Panel({
+		$node: document.getElementById('pageMainTabButtonIconText'),
+		children: [
+			new Button({
 				icon: 'menu',
 				value: 'press me'
 			})
