@@ -18,13 +18,13 @@ page.addListener('load', function load () {
 				value: 'Panel',
 				panel: require('../tabs/main.panel')
 			},
-			//{
-			//	value: 'InfoPanel',
-			//	panel: require('../tabs/main.info.panel')
-			//},
 			{
 				value: 'Button',
 				panel: require('../tabs/main.button')
+			},
+			{
+				value: 'Input',
+				panel: require('../tabs/main.input')
 			},
 			{
 				value: 'CheckBox',
@@ -65,7 +65,7 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
-			size: 9,
+			size: 10,
 			cycle: true,
 			render: function ( $item, data ) {
 				$item.textContent = data.value;
