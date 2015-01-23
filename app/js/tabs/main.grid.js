@@ -9,6 +9,7 @@
 var Panel    = require('stb/ui/panel'),
 	Button   = require('stb/ui/button'),
 	Grid     = require('stb/ui/grid'),
+	keys     = require('stb/keys'),
 	gridData = require('./main.grid.data'),
 	panel    = new Panel({
 		$node: document.getElementById('pageMainTabGrid'),
@@ -125,6 +126,12 @@ panel.add(
 					'click:item': function ( data ) {
 						grid2.markItem(data.$item, !data.$item.data.mark);
 					}
+				},
+				navigate: function ( event ) {
+					if ( event.code === keys.up    ) { this.move(keys.down); }
+					if ( event.code === keys.down  ) { this.move(keys.up); }
+					if ( event.code === keys.right ) { this.move(keys.left); }
+					if ( event.code === keys.left  ) { this.move(keys.right); }
 				}
 			})
 		]

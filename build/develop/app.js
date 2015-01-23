@@ -57,7 +57,7 @@
 			
 			'use strict';
 			
-			var app     = __webpack_require__(/*! ../app */ 3),
+			var app     = __webpack_require__(/*! ../app */ 4),
 				storage = __webpack_require__(/*! ./storage */ 7),
 				metrics = __webpack_require__(/*! metrics */ 12);
 			
@@ -192,7 +192,7 @@
 					 *
 					 * @type {Page}
 					 */
-					this.page = null;
+					//this.page = null;
 				}
 			
 				/**
@@ -385,10 +385,10 @@
 					this.children.push(child);
 					child.parent = this;
 			
-					if ( true ) {
-						// apply page for this and all children recursively
-						child.setPage(this.page);
-					}
+					//if ( DEBUG ) {
+					//	// apply page for this and all children recursively
+					//	child.setPage(this.page);
+					//}
 			
 					// correct DOM parent/child connection if necessary
 					if ( child.$node !== undefined && child.$node.parentNode === null ) {
@@ -413,15 +413,15 @@
 			};
 			
 			
-			if ( true ) {
-				Component.prototype.setPage = function ( page ) {
-					this.page = page;
-			
-					this.children.forEach(function ( child ) {
-						child.setPage(page);
-					});
-				};
-			}
+			//if ( DEBUG ) {
+			//	Component.prototype.setPage = function ( page ) {
+			//		this.page = page;
+			//
+			//		this.children.forEach(function ( child ) {
+			//			child.setPage(page);
+			//		});
+			//	};
+			//}
 			
 			
 			/**
@@ -699,6 +699,80 @@
 
 /***/ },
 /* 3 */
+/*!************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Global list of non-printable control key codes.
+			 *
+			 * WARNING!!! All codes in this file (exclude 'volumeUp', 'volumeDown')
+			 * uses in window 'keydown' handler to prevent wrong 'keypress' firings.
+			 * If u add code into this file, 'keypress' event with this code will never fires.
+			 *
+			 *  Value | Description
+			 * -------|-------------
+			 *  +1000 | shift key pressed
+			 *  +2000 | alt key pressed
+			 *
+			 * @module stb/keys
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			
+			// public export
+			module.exports = {
+				back         : 8,    // Backspace
+				'delete'     : 46,
+				channelPrev  : 1009, // Shift+Tab
+				channelNext  : 9,    // Tab
+				ok           : 13,   // Enter
+				exit         : 27,   // Esc
+				up           : 38,   // UP ARROW
+				down         : 40,   // DOWN ARROW
+				left         : 37,   // LEFT ARROW
+				right        : 39,   // RIGHT ARROW
+				pageUp       : 33,   // Page Up
+				pageDown     : 34,   // Page Down
+				end          : 35,
+				home         : 36,
+				volumeUp     : 107,  // NUMPAD +
+				volumeDown   : 109,  // NUMPAD -
+				f1           : 112,  // F1
+				f2           : 113,  // F2
+				f3           : 114,  // F3
+				f4           : 115,  // F4
+				refresh      : 116,  // F5
+				frame        : 117,  // F6
+				phone        : 119,  // F8
+				set          : 120,  // F9
+				tv           : 121,  // F10
+				menu         : 122,  // F11
+				web          : 123,  // F12
+				mic          : 2032,
+				rewind       : 2066, // Alt+B
+				forward      : 2070, // Alt+F
+				app          : 2076, // Alt+L
+				usbMounted   : 2080, // Alt+P
+				usbUnmounted : 2081, // Alt+Q
+				playPause    : 2082, // Alt+R
+				stop         : 2083, // Alt+S
+				power        : 2085, // Alt+U
+				record       : 2087, // Alt+W
+				info         : 2089, // Alt+Y
+				mute         : 2192,
+				clock        : 2032,
+				audio        : 2071, // Alt+G
+				keyboard     : 2076  // Alt+L
+			};
+
+
+/***/ },
+/* 4 */
 /*!***********************************************!*\
   !*** /home/dp/Projects/web/stb/app/js/app.js ***!
   \***********************************************/
@@ -714,9 +788,9 @@
 			
 			var Model    = __webpack_require__(/*! ./model */ 20),
 				router   = __webpack_require__(/*! ./router */ 5),
-				keys     = __webpack_require__(/*! ./keys */ 4),
+				keys     = __webpack_require__(/*! ./keys */ 3),
 				keyCodes = {},
-				app, linkCSS, key;
+				app, key;
 			
 			
 			__webpack_require__(/*! stb/shims */ 22);
@@ -780,6 +854,8 @@
 			 * @return {boolean} operation status
 			 */
 			app.setScreen = function ( metrics ) {
+				var linkCSS;
+			
 				if ( true ) {
 					if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
 				}
@@ -796,6 +872,9 @@
 					// set max browser window size
 					window.moveTo(0, 0);
 					window.resizeTo(metrics.width, metrics.height);
+			
+					// get the link tag
+					linkCSS = document.querySelector('link[rel=stylesheet]');
 			
 					// already was initialized
 					if ( linkCSS && linkCSS instanceof HTMLLinkElement ) {
@@ -1023,7 +1102,7 @@
 				}
 			
 				// suppress non-printable keys in stb device (not in your browser)
-				if ( app.host && keyCodes[event.code] ) {
+				if ( app.data.host && keyCodes[event.code] ) {
 					event.preventDefault();
 				}
 			});
@@ -1117,80 +1196,6 @@
 			
 			// public export
 			module.exports = app;
-
-
-/***/ },
-/* 4 */
-/*!************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Global list of non-printable control key codes.
-			 *
-			 * WARNING!!! All codes in this file (exclude 'volumeUp', 'volumeDown')
-			 * uses in window 'keydown' handler to prevent wrong 'keypress' firings.
-			 * If u add code into this file, 'keypress' event with this code will never fires.
-			 *
-			 *  Value | Description
-			 * -------|-------------
-			 *  +1000 | shift key pressed
-			 *  +2000 | alt key pressed
-			 *
-			 * @module stb/keys
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			
-			// public export
-			module.exports = {
-				back         : 8,    // Backspace
-				'delete'     : 46,
-				channelPrev  : 1009, // Shift+Tab
-				channelNext  : 9,    // Tab
-				ok           : 13,   // Enter
-				exit         : 27,   // Esc
-				up           : 38,   // UP ARROW
-				down         : 40,   // DOWN ARROW
-				left         : 37,   // LEFT ARROW
-				right        : 39,   // RIGHT ARROW
-				pageUp       : 33,   // Page Up
-				pageDown     : 34,   // Page Down
-				end          : 35,
-				home         : 36,
-				volumeUp     : 107,  // NUMPAD +
-				volumeDown   : 109,  // NUMPAD -
-				f1           : 112,  // F1
-				f2           : 113,  // F2
-				f3           : 114,  // F3
-				f4           : 115,  // F4
-				refresh      : 116,  // F5
-				frame        : 117,  // F6
-				phone        : 119,  // F8
-				set          : 120,  // F9
-				tv           : 121,  // F10
-				menu         : 122,  // F11
-				web          : 123,  // F12
-				mic          : 2032,
-				rewind       : 2066, // Alt+B
-				forward      : 2070, // Alt+F
-				app          : 2076, // Alt+L
-				usbMounted   : 2080, // Alt+P
-				usbUnmounted : 2081, // Alt+Q
-				playPause    : 2082, // Alt+R
-				stop         : 2083, // Alt+S
-				power        : 2085, // Alt+U
-				record       : 2087, // Alt+W
-				info         : 2089, // Alt+Y
-				mute         : 2192,
-				clock        : 2032,
-				audio        : 2071, // Alt+G
-				keyboard     : 2076  // Alt+L
-			};
 
 
 /***/ },
@@ -1609,6 +1614,7 @@
 			 * var Button = require('stb/ui/button'),
 			 *     button = new Button({
 			 *         $node: document.getElementById(id),
+			 *         icon: 'menu'
 			 *         value: 'Apply changes'
 			 *     });
 			 */
@@ -1630,12 +1636,20 @@
 					// so everything should be prepared here
 			
 					if ( config.icon ) {
+						if ( true ) {
+							if ( typeof config.icon !== 'string' || config.icon.length === 0 ) { throw 'wrong or empty config.icon'; }
+						}
+			
 						// insert icon
 						this.$icon = this.$node.appendChild(document.createElement('div'));
 						this.$icon.className = 'icon ' + config.icon;
 					}
 			
 					if ( config.value !== undefined ) {
+						if ( true ) {
+							if ( typeof config.value !== 'string' || config.value.length === 0 ) { throw 'wrong or empty config.value'; }
+						}
+			
 						// insert caption placeholder
 						this.$body = this.$node.appendChild(document.createElement('div'));
 						this.$body.classList.add('text');
@@ -1697,7 +1711,7 @@
 			
 			'use strict';
 			
-			var data = __webpack_require__(/*! stb/app */ 3).data;
+			var data = __webpack_require__(/*! stb/app */ 4).data;
 			
 			
 			// public export
@@ -2697,14 +2711,21 @@
 			
 			
 				/**
-				 * Execute each of the listeners in order with the supplied arguments.
+				 * Execute each of the listeners in the given order with the supplied arguments.
 				 *
 				 * @param {string} name event identifier
 				 * @param {Object} [data] options to send
 				 *
+				 * @todo consider use context
+				 *
 				 * @example
 				 * obj.emit('init');
 				 * obj.emit('click', {src:panel1, dst:panel2});
+				 *
+				 * // it's a good idea to emit event only when there are some listeners
+				 * if ( this.events['click'] !== undefined ) {
+				 *     this.emit('click', {event: event});
+				 * }
 				 */
 				emit: function ( name, data ) {
 					var event = this.events[name],
@@ -2727,7 +2748,8 @@
 							}
 			
 							// invoke the callback with parameters
-							event[i](data);
+							// http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
+							event[i].call(this, data);
 						}
 					}
 				}
@@ -2913,7 +2935,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 4);
+				keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -3565,7 +3587,7 @@
 			
 			'use strict';
 			
-			var host   = __webpack_require__(/*! stb/app */ 3).data.host,
+			var host   = __webpack_require__(/*! stb/app */ 4).data.host,
 				config = __webpack_require__(/*! ../../../config/logger */ 30),
 				util   = __webpack_require__(/*! util */ 8),
 				buffer = [],
@@ -3801,7 +3823,7 @@
 			'use strict';
 			
 			var util    = __webpack_require__(/*! util */ 8),
-				app     = __webpack_require__(/*! stb/app */ 3),
+				app     = __webpack_require__(/*! stb/app */ 4),
 				request = __webpack_require__(/*! stb/request */ 21),
 				dom     = __webpack_require__(/*! stb/dom */ 9),
 				grid    = __webpack_require__(/*! ./grid */ 16),
@@ -3991,7 +4013,7 @@
 			
 			'use strict';
 			
-			var data    = __webpack_require__(/*! stb/app */ 3).data,
+			var data    = __webpack_require__(/*! stb/app */ 4).data,
 				storage = __webpack_require__(/*! ./storage */ 7);
 			
 			
@@ -4291,7 +4313,7 @@
 			
 			'use strict';
 			
-			var host   = __webpack_require__(/*! stb/app */ 3).data.host,
+			var host   = __webpack_require__(/*! stb/app */ 4).data.host,
 				util   = __webpack_require__(/*! util */ 8),
 				config = __webpack_require__(/*! ../../../config/proxy */ 31);
 			
@@ -5033,7 +5055,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 4),
+				keys      = __webpack_require__(/*! ../keys */ 3),
 				groups    = {};
 			
 			
@@ -5193,7 +5215,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 4);
+				keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -5229,6 +5251,7 @@
 			 * @param {Object}   [config={}] init parameters (all inherited from the parent)
 			 * @param {Array[]}  [config.data=[]] component data to visualize
 			 * @param {function} [config.render] method to build each grid cell content
+			 * @param {function} [config.navigate] method to move focus according to pressed keys
 			 * @param {boolean}  [config.cycleX=true] allow or not to jump to the opposite side of line when there is nowhere to go next
 			 * @param {boolean}  [config.cycleY=true] allow or not to jump to the opposite side of column when there is nowhere to go next
 			 *
@@ -5316,25 +5339,17 @@
 				// component setup
 				this.init(config);
 			
-				// navigation by keyboard
-				this.addListener('keydown', function ( event ) {
-					switch ( event.code ) {
-						case keys.up:
-						case keys.down:
-						case keys.right:
-						case keys.left:
-							// cursor move only on arrow keys
-							self.move(event.code);
-							break;
-						case keys.ok:
-							// there are some listeners
-							if ( self.events['click:item'] !== undefined ) {
-								// notify listeners
-								self.emit('click:item', {$item: self.$focusItem, event: event});
-							}
-							break;
+				// custom navigation method
+				if ( config.navigate !== undefined ) {
+					if ( true ) {
+						if ( typeof config.navigate !== 'function' ) { throw 'wrong config.navigate type'; }
 					}
-				});
+			
+					this.navigateDefault = config.navigate;
+				}
+			
+				// navigation by keyboard
+				this.addListener('keydown', this.navigateDefault);
 			
 				// navigation by mouse
 				this.$body.addEventListener('mousewheel', function ( event ) {
@@ -5380,6 +5395,40 @@
 			 * @type {function}
 			 */
 			Grid.prototype.renderItem = Grid.prototype.renderItemDefault;
+			
+			
+			/**
+			 * Default method to move focus according to pressed keys.
+			 *
+			 * @param {Event} event generated event source of movement
+			 */
+			Grid.prototype.navigateDefault = function ( event ) {
+				switch ( event.code ) {
+					case keys.up:
+					case keys.down:
+					case keys.right:
+					case keys.left:
+						// cursor move only on arrow keys
+						this.move(event.code);
+						break;
+					case keys.ok:
+						// there are some listeners
+						if ( this.events['click:item'] !== undefined ) {
+							// notify listeners
+							this.emit('click:item', {$item: self.$focusItem, event: event});
+						}
+						break;
+				}
+			};
+			
+			
+			/**
+			 * Method to move focus according to pressed keys.
+			 * Can be redefined to provide custom navigation.
+			 *
+			 * @type {function}
+			 */
+			Grid.prototype.navigate = Grid.prototype.navigateDefault;
 			
 			
 			/**
@@ -5516,7 +5565,7 @@
 				var self = this,
 					draw = false,
 					i, j,
-					$row, $item, $table, $tbody, $focusItem,
+					$row, $item, $tbody, $focusItem,
 					itemData,
 					/**
 					 * Cell mouse click handler.
@@ -5583,10 +5632,9 @@
 					return;
 				}
 			
-				$table = document.createElement('table');
-				$tbody = document.createElement('tbody');
-			
-				$table.appendChild($tbody);
+				// export pointer to inner table
+				this.$table = document.createElement('table');
+				$tbody      = document.createElement('tbody');
 			
 				// prepare user data
 				this.data = normalize(this.data);
@@ -5653,7 +5701,8 @@
 				this.$body.innerText = null;
 			
 				// everything is ready
-				this.$body.appendChild($table);
+				this.$table.appendChild($tbody);
+				this.$body.appendChild(this.$table);
 			
 				// apply focus
 				if ( $focusItem !== undefined ) {
@@ -5952,7 +6001,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! stb/component */ 1),
-				keys      = __webpack_require__(/*! stb/keys */ 4);
+				keys      = __webpack_require__(/*! stb/keys */ 3);
 			
 			
 			/**
@@ -6001,7 +6050,7 @@
 				/**
 				 * Caret element, which shows current cursor position.
 				 *
-				 * @type {HTMLElement}
+				 * @type {Element}
 				 */
 				this.$caret = document.createElement('span');
 			
@@ -6064,21 +6113,18 @@
 							break;
 			
 						case keys.left:
-							self.moveCaret(self.$caret.index - 1);
-							break;
-			
 						case keys.right:
-							self.moveCaret(self.$caret.index + 1);
+							self.moveCaret(event.code);
 							break;
 			
 						case keys.end:
 						case keys.down:
-							self.moveCaret(self.value.length);
+							self.moveCaret(0, self.value.length);
 							break;
 			
 						case keys.home:
 						case keys.up:
-							self.moveCaret(0);
+							self.moveCaret(0, 0);
 							break;
 			
 						default:
@@ -6171,12 +6217,13 @@
 			Input.prototype.removeChar = function ( index ) {
 				index = (index === undefined) ? (this.$caret.index - 1) : index;
 			
-				if ( true ) {
-					if ( index < 0 ) { throw 'index must be a positive value'; }
-					if ( index > this.value.length ) { throw 'index must be a less than or equal to total length'; }
-				}
-			
 				if ( this.value.length > 0 ) {
+			
+					if ( true ) {
+						if ( index < 0 ) { throw 'index must be a positive value'; }
+						if ( index > this.value.length ) { throw 'index must be a less than or equal to total length'; }
+					}
+			
 					if ( this.$caret.index === index && index < this.value.length ) { // remove char after caret
 						this.$body.removeChild(this.$body.children.item(index + 1));
 					} else if ( this.$caret.index > index ) { // remove char before caret
@@ -6205,11 +6252,21 @@
 			
 			/**
 			 * Move caret to the given index
-			 * Do nothing if index is out of the range (0, length).
+			 * Do nothing if index is out of the range (0, this.value.length).
 			 *
-			 * @param {number} index given position
+			 * @param {number} direction given keyCode, keys.left or keys.right
+			 * @param {number} [index=this.$caret.index] given position, if not passed sets to caret index +/- 1 (depends on the direction)
 			 */
-			Input.prototype.moveCaret = function ( index ) {
+			Input.prototype.moveCaret = function ( direction, index ) {
+				if ( index === undefined ) {
+					index = this.$caret.index;
+					if ( direction === keys.right ) {
+						 ++index;
+					} else {
+						--index;
+					}
+				}
+			
 				if ( index >= 0 && index <= this.value.length ) {
 					if ( index === this.value.length ) { // add to the end
 						this.$body.appendChild(this.$caret);
@@ -6230,21 +6287,71 @@
 			 */
 			Input.prototype.setValue = function ( value ) {
 				var len = value.length,
-					i;
+					i = 0,
+					df = document.createDocumentFragment(),
+					span;
 			
 				if ( true ) {
 					if ( typeof value !== 'string' ) { throw 'value must be a string'; }
 				}
 				if ( len > 0 ) {
+					if ( this.value.length === 0 && this.placeholder.length > 0 ) { // remove placeholder
+						this.$body.innerText = '';
+					}
+			
+					if ( this.$caret.parentNode !== null ) { // remove caret
+						this.$body.removeChild(this.$caret);
+					}
+			
 					this.$caret.index = 0;
-					while ( this.$body.firstChild ) {
-						this.$body.removeChild(this.$body.firstChild);
+			
+					while ( i < this.value.length ) {
+						span = this.$body.children.item(i);
+						if ( this.type === this.TYPE_PASSWORD ) {
+						} else if ( value[i] === ' ' ) {
+							span.innerHTML = '&nbsp;';
+						} else {
+							span.innerText = value[i];
+						}
+						++i;
+					}
+			
+					if ( len < this.value.length ) { // remove unused elements
+						while ( this.value.length !== len ) {
+							this.$body.removeChild(this.$body.lastChild);
+							this.value = this.value.substring(0, this.value.length - 1);
+						}
+					}
+			
+					while ( i < value.length ) { // append child
+						span = document.createElement('span');
+						span.className = 'char';
+						df.appendChild(span);
+						if ( this.type === this.TYPE_PASSWORD ) {
+							span.innerText = '*';
+						} else if ( value[i] === ' ' ) {
+							span.innerHTML = '&nbsp;';
+						} else {
+							span.innerText = value[i];
+						}
+						++i;
+					}
+			
+					this.$body.appendChild(df);
+					this.value = value;
+					this.$caret.index = i;
+					this.$body.appendChild(this.$caret);
+				} else if ( this.placeholder.length > 0 ) {
+					if ( this.$caret.parentNode !== null ) { // remove caret
+						this.$body.removeChild(this.$caret);
 					}
 					this.value = '';
-					this.$body.appendChild(this.$caret);
+					this.$body.innerText = this.placeholder;
 				}
-				for ( i = 0; i < len; ++i ) {
-					this.addChar(value[i], this.value.length);
+				// there are some listeners
+				if ( this.events['input'] !== undefined ) {
+					// notify listeners
+					this.emit('input', {value: this.value});
 				}
 			};
 			
@@ -7609,9 +7716,9 @@
 			
 			'use strict';
 			
-			var app    = __webpack_require__(/*! stb/app */ 3),
+			var app    = __webpack_require__(/*! stb/app */ 4),
 				router = __webpack_require__(/*! stb/router */ 5),
-				keys   = __webpack_require__(/*! stb/keys */ 4);
+				keys   = __webpack_require__(/*! stb/keys */ 3);
 			
 			
 			app.addListeners({
@@ -8305,6 +8412,7 @@
 			var Panel    = __webpack_require__(/*! stb/ui/panel */ 2),
 				Button   = __webpack_require__(/*! stb/ui/button */ 6),
 				Grid     = __webpack_require__(/*! stb/ui/grid */ 24),
+				keys     = __webpack_require__(/*! stb/keys */ 3),
 				gridData = __webpack_require__(/*! ./main.grid.data */ 47),
 				panel    = new Panel({
 					$node: document.getElementById('pageMainTabGrid'),
@@ -8421,6 +8529,12 @@
 								'click:item': function ( data ) {
 									grid2.markItem(data.$item, !data.$item.data.mark);
 								}
+							},
+							navigate: function ( event ) {
+								if ( event.code === keys.up    ) { this.move(keys.down); }
+								if ( event.code === keys.down  ) { this.move(keys.up); }
+								if ( event.code === keys.right ) { this.move(keys.left); }
+								if ( event.code === keys.left  ) { this.move(keys.right); }
 							}
 						})
 					]
@@ -8774,7 +8888,7 @@
 			
 			var Panel       = __webpack_require__(/*! stb/ui/panel */ 2),
 				ProgressBar = __webpack_require__(/*! stb/ui/progress.bar */ 27),
-				keys        = __webpack_require__(/*! stb/keys */ 4),
+				keys        = __webpack_require__(/*! stb/keys */ 3),
 				panel       = new Panel({
 					$node: document.getElementById('pageMainTabProgressBar'),
 					visible: false

@@ -86,7 +86,7 @@ a {
 }
 .component.grid table td.item {
   cursor: pointer;
-  padding: 3.6px 5px;
+  padding: 2.4px 5px;
   vertical-align: middle;
   text-align: center;
 }
@@ -109,7 +109,7 @@ a {
 .component.input {
   width: 200px;
   height: 31.2px;
-  padding: 0 2px;
+  padding: 0 3px;
   border: 1px solid green;
   cursor: text;
   overflow: hidden;
@@ -315,7 +315,7 @@ a {
   margin-bottom: 0;
 }
 #pageMain td.body > div .component.grid td.item {
-  padding: 7.2px 10px;
+  padding: 4.8px 10px;
 }
 #pageMainTabGridMain .title {
   margin-bottom: 1%;
@@ -324,6 +324,12 @@ a {
 #pageMainTabListCustom {
   display: inline-block;
   width: 40%;
+}
+#pageMainTabListCustom {
+  vertical-align: top;
+}
+#pageMainTabListCustom > table {
+  width: 100%;
 }
 .component.widget {
   width: 100px;

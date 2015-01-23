@@ -325,6 +325,12 @@ a {
   display: inline-block;
   width: 40%;
 }
+#pageMainTabListCustom {
+  vertical-align: top;
+}
+#pageMainTabListCustom > table {
+  width: 100%;
+}
 .component.widget {
   width: 100px;
   height: 100px;
