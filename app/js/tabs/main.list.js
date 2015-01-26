@@ -80,12 +80,12 @@ panel.add(
 				},
 				cycle: false,
 				events: {
-					click: function ( data ) {
+					click: function () {
 						//data.event.stop = true;
 						//debug.log('click');
 						//debug.inspect(data, 1);
 					},
-					focus: function ( data ) {
+					focus: function () {
 						//debug.log('focus');
 						//debug.inspect(data, 1);
 					},
@@ -101,11 +101,11 @@ panel.add(
 
 						list2.markItem(data.$item, !data.$item.data.mark);
 					},
-					'focus:item': function ( data ) {
+					'focus:item': function () {
 						//debug.log('focus:item');
 						//debug.inspect(data, 1);
 					},
-					'blur:item': function ( data ) {
+					'blur:item': function () {
 						//debug.log('blur:item');
 						//debug.inspect(data, 1);
 					}
