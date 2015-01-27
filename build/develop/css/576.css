@@ -120,10 +120,9 @@ a {
 }
 .component.input > .caret {
   height: 26.8px;
-  margin: 1.2px;
-  width: 1px;
-  border: none;
-  background: #000;
+  margin: 1.2px 0 1.2px -1px;
+  width: 0;
+  border-right: 1px solid #000000;
   display: inline-block;
   vertical-align: top;
 }
