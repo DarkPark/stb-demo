@@ -3885,6 +3885,7 @@
 					// numpad 0
 					case 96:
 						debug.log('full document reload', 'red');
+						location.hash = '';
 						location.reload();
 						break;
 			
@@ -6393,13 +6394,13 @@
 
 /***/ },
 /* 26 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/modal.js ***!
-  \****************************************************/
+/*!********************************************************!*\
+  !*** /home/dp/Projects/web/stb/app/js/ui/modal.box.js ***!
+  \********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
-			 * @module stb/ui/modal
+			 * @module stb/ui/modal.box
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
 			 * @license GNU GENERAL PUBLIC LICENSE Version 3
 			 */
@@ -6413,29 +6414,38 @@
 			 * Base modal window implementation.
 			 *
 			 * @constructor
-			 * @extends Component
+			 * @extends Modal
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 */
-			function Modal ( config ) {
+			function ModalBox ( config ) {
 				// sanitize
 				config = config || {};
 			
 				// parent init
 				Component.call(this, config);
 			
+				// create $body if not provided
+				if ( this.$node === this.$body ) {
+					// create centered div
+					this.$body = document.createElement('div');
+					this.$body.className = 'body';
+					// add table-cell wrapper
+					this.$node.appendChild(document.createElement('div').appendChild(this.$body).parentNode);
+				}
+			
 				// correct CSS class names
-				this.$node.classList.add('modal');
+				this.$node.classList.add('modalBox');
 			}
 			
 			
 			// inheritance
-			Modal.prototype = Object.create(Component.prototype);
-			Modal.prototype.constructor = Modal;
+			ModalBox.prototype = Object.create(Component.prototype);
+			ModalBox.prototype.constructor = ModalBox;
 			
 			
 			// public export
-			module.exports = Modal;
+			module.exports = ModalBox;
 
 
 /***/ },
@@ -8642,10 +8652,11 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! stb/ui/button */ 6),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
-				Modal  = __webpack_require__(/*! stb/ui/modal */ 26),
-				panel  = new Panel({
+			var Button       = __webpack_require__(/*! stb/ui/button */ 6),
+				Panel        = __webpack_require__(/*! stb/ui/panel */ 2),
+				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 26),
+				//ModalMessage = require('stb/ui/modal.message'),
+				panel        = new Panel({
 					$node: document.getElementById('pageMainTabModal'),
 					visible: false
 				});
@@ -8653,11 +8664,11 @@
 			
 			panel.add(
 				new Button({
-					value: 'show modal window',
+					value: 'show simple modal window',
 					events: {
 						click: function () {
 							panel.add(
-								panel.modal = new Modal({
+								panel.modal = new ModalBox({
 									events: {
 										click: function () {
 											console.log(panel.modal);
@@ -8666,10 +8677,49 @@
 									}
 								})
 							);
+							panel.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
 							panel.modal.focus();
 						}
 					}
-				})
+				}),
+				new Button({
+					value: 'show modal window with a lot of text',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new ModalBox({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							panel.modal.$body.innerText = new Array(300).join('text ');
+							panel.modal.focus();
+						}
+					}
+				})/*,
+				new Button({
+					value: 'show modal message',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new ModalMessage({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							//panel.modal.$body.innerText = new Array(300).join('text ');
+							panel.modal.focus();
+						}
+					}
+				})*/
 			);
 			
 			
