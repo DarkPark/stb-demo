@@ -27,6 +27,20 @@ panel.add(
 				}
 			})
 		]
+	}),
+	new Panel({
+		$node: document.getElementById('pageMainTabInputPassword'),
+		children: [
+			new Input({
+				value: 'some text',
+				type: Input.prototype.TYPE_PASSWORD,
+				events: {
+					click: function () {
+
+					}
+				}
+			})
+		]
 	})
 );
 
