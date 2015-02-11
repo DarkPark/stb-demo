@@ -39,6 +39,7 @@ panel.add(
 				min: -5,
 				max: 5,
 				value: -2,
+				focusable: true,
 				events: {
 					keydown: function ( event ) {
 						if ( event.code === keys.right ) { this.set(this.value + 1); }
@@ -61,6 +62,7 @@ panel.add(
 				min: -200,
 				max: 200,
 				value: 0,
+				focusable: true,
 				events: {
 					keydown: function ( event ) {
 						if ( event.code === keys.right ) { this.set(this.value + 1); }
