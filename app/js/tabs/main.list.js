@@ -20,7 +20,6 @@ var Panel     = require('stb/ui/panel'),
 	}),
 	list2;
 
-console.log(listScroll);
 
 panel.add(
 	new Panel({

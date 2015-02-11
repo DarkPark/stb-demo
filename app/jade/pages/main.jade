@@ -74,7 +74,7 @@
 							tr
 								td
 									#pageMainTabListCustomList
-								td
+								td.scroll
 									#pageMainTabListCustomScroll
 					#pageMainTabListHoriz horizontal list with custom rows renderer
 						br
@@ -85,7 +85,19 @@
 				#pageMainTabPage
 
 				#pageMainTabProgressBar
-					#pageMainTabProgressBarPanel simple progress bar with range from -50 to 50 and initial value 0
+					#pageMainTabProgressBarEmpty simple progress bar with initial value 0
+						br
+						br
+					#pageMainTabProgressBarFull simple progress bar with initial value 100%
+						br
+						br
+					#pageMainTabProgressBarStep1 focusable progress bar with range from -5 to 5 (arrows can change value)
+						br
+						br
+					#pageMainTabProgressBarStep2 focusable progress bar with range from -200 to 200 (arrows can change value)
+						br
+						br
+					#pageMainTabProgressBarStyle styled progress bar
 						br
 						br
 
