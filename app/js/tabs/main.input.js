@@ -16,6 +16,12 @@ var Input = require('stb/ui/input'),
 
 panel.add(
 	new Panel({
+		$node: document.getElementById('pageMainTabInputEmpty'),
+		children: [
+			new Input()
+		]
+	}),
+	new Panel({
 		$node: document.getElementById('pageMainTabInputSimple'),
 		children: [
 			new Input({
@@ -34,6 +40,20 @@ panel.add(
 			new Input({
 				value: 'some text',
 				type: Input.prototype.TYPE_PASSWORD,
+				events: {
+					click: function () {
+
+					}
+				}
+			})
+		]
+	}),
+	new Panel({
+		$node: document.getElementById('pageMainTabInputPlaceholder'),
+		children: [
+			new Input({
+				//value: 'some text',
+				placeholder: 'hint text',
 				events: {
 					click: function () {
 
