@@ -108,30 +108,48 @@ a {
 }
 .component.input {
   width: 200px;
-  height: 26px;
-  padding: 0 3px;
+  height: 30px;
   border: 1px solid green;
-  cursor: text;
-  overflow: hidden;
   font-size: 20px;
   color: #000;
-  text-align: left;
   background-color: #fff;
+  display: table;
+  table-layout: fixed;
 }
-.component.input > .caret {
-  height: 22px;
-  margin: 1px 0 1px -1px;
-  width: 0;
-  border-right: 1px solid #000000;
-  display: inline-block;
-  vertical-align: top;
+.component.input > .body {
+  cursor: text;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 3px;
+  overflow: hidden;
+  white-space: nowrap;
 }
-.component.input > .char {
-  color: #000;
+.component.input > .body > .char,
+.component.input > .body > .placeholder,
+.component.input > .body > .caret {
   display: inline-block;
-  vertical-align: top;
-  height: 24px;
-  line-height: 24px;
+  vertical-align: middle;
+}
+.component.input > .body > .caret {
+  height: 80%;
+  width: 2px;
+  margin-left: -2px;
+}
+.component.input > .body > .placeholder {
+  color: #999;
+}
+.component.input.focus > .body > .caret {
+  background-color: #000000;
+  -webkit-animation: inputCursor 1s;
+  -webkit-animation-iteration-count: infinite;
+}
+@-webkit-keyframes inputCursor {
+  from {
+    background-color: #000000;
+  }
+  to {
+    background-color: transparent;
+  }
 }
 .component.list {
   background-color: #333;
@@ -223,26 +241,35 @@ a {
   background-color: grey;
 }
 .component.progressBar > .value {
-  height: 16px;
+  height: 100%;
   background-color: orange;
 }
 .component.scrollBar {
+  background-color: grey;
   display: inline-block;
-  background-color: red;
+  height: 100%;
+  width: 4px;
+  vertical-align: bottom;
+}
+.component.scrollBar > .thumb {
+  display: block;
+  width: 4px;
+  min-height: 4px;
+  background-color: white;
+}
+.component.scrollBar > .thumb.hidden {
+  display: none;
 }
 .component.scrollBar.horizontal {
-  height: 8px;
+  display: block;
+  height: 4px;
   width: 100%;
 }
-.component.scrollBar.vertical {
-  height: 100%;
-  width: 8px;
-}
-.component.scrollBar > .value {
+.component.scrollBar.horizontal > .thumb {
   display: inline-block;
-  background-color: orange;
-  height: 8px;
-  width: 8px;
+  vertical-align: top;
+  height: 4px;
+  min-width: 4px;
 }
 .component.widget {
   position: absolute;
@@ -313,11 +340,25 @@ a {
   display: inline-block;
   width: 40%;
 }
+#pageMainTabListSimple,
 #pageMainTabListCustom {
   vertical-align: top;
 }
+#pageMainTabListSimple > table,
 #pageMainTabListCustom > table {
   width: 100%;
+}
+#pageMainTabListSimple > table .scroll,
+#pageMainTabListCustom > table .scroll {
+  width: 1%;
+  text-align: right;
+}
+#pageMainTabProgressBarStyle .component.progressBar {
+  height: 10px;
+  background-color: #ffffff;
+}
+#pageMainTabProgressBarStyle .component.progressBar .value {
+  background-color: green;
 }
 .component.widget {
   width: 100px;
@@ -378,6 +419,12 @@ div.develop canvas.active {
 .component.grid td.item.focus {
   outline: 1px dashed orange;
   outline-offset: -1px;
+}
+.component.input > .body {
+  outline: 1px dashed #000;
+}
+.component.focus.input > .body {
+  outline: 1px dashed red;
 }
 
 /*# sourceMappingURL=480.map */
