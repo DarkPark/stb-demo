@@ -13,10 +13,21 @@ var Panel     = require('stb/ui/panel'),
 		$node: document.getElementById('pageMainTabList'),
 		visible: false
 	}),
-	listScroll = new ScrollBar({
-		$node: document.getElementById('pageMainTabListCustomScroll'),
-		min: 5,
-		max: 100
+	listScrollN = new ScrollBar({
+		$node: document.getElementById('pageMainTabListCustomScrollN'),
+		viewSize: 5,
+		realSize: 4
+	}),
+	listScrollV = new ScrollBar({
+		$node: document.getElementById('pageMainTabListCustomScrollV'),
+		viewSize: 5,
+		realSize: 25
+	}),
+	listScrollH = new ScrollBar({
+		$node: document.getElementById('pageMainTabListCustomScrollH'),
+		type: ScrollBar.prototype.TYPE_HORIZONTAL,
+		viewSize: 5,
+		realSize: 100
 	}),
 	list2;
 
@@ -26,6 +37,8 @@ panel.add(
 		$node: document.getElementById('pageMainTabListSimple'),
 		children: [
 			new List({
+				$node: document.getElementById('pageMainTabListSimpleList'),
+				scroll: listScrollN,
 				//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
 				data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
 				size: 5,
@@ -70,8 +83,8 @@ panel.add(
 		children: [
 			list2 = new List({
 				$node: document.getElementById('pageMainTabListCustomList'),
-				scroll: listScroll,
-				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
+				scroll: listScrollV,
+				data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
 				size: 5,
 				render: function ( $item, data ) {
@@ -116,8 +129,9 @@ panel.add(
 		$node: document.getElementById('pageMainTabListHoriz'),
 		children: [
 			new List({
-				data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
-				//visible: false,
+				$node: document.getElementById('pageMainTabListHList'),
+				data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+				scroll: listScrollH,
 				type: List.prototype.TYPE_HORIZONTAL,
 				cycle: true,
 				events: {

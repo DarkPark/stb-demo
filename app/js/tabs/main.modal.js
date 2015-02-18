@@ -9,7 +9,7 @@
 var Button       = require('stb/ui/button'),
 	Panel        = require('stb/ui/panel'),
 	ModalBox     = require('stb/ui/modal.box'),
-	//ModalMessage = require('stb/ui/modal.message'),
+	ModalMessage = require('stb/ui/modal.message'),
 	panel        = new Panel({
 		$node: document.getElementById('pageMainTabModal'),
 		visible: false
@@ -54,7 +54,7 @@ panel.add(
 				panel.modal.focus();
 			}
 		}
-	})/*,
+	}),
 	new Button({
 		value: 'show modal message',
 		events: {
@@ -73,7 +73,7 @@ panel.add(
 				panel.modal.focus();
 			}
 		}
-	})*/
+	})
 );
 
 
