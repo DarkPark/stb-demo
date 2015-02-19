@@ -1536,12 +1536,10 @@
 					pageTo   = this.ids[name];
 			
 				if ( true ) {
-					if ( router.pages.length > 0 ) {
 						if ( !pageTo || typeof pageTo !== 'object' ) { throw 'wrong pageTo type'; }
 						if ( !('active' in pageTo) ) { throw 'missing field "active" in pageTo'; }
 					}
-				}
-			
+
 				// valid not already active page
 				if ( pageTo && !pageTo.active ) {
 					debug.log('router.navigate: ' + name, pageTo === pageFrom ? 'grey' : 'green');
