@@ -119,5 +119,5 @@ page.addListener('show', function show () {
 });
 
 
-// public export
+// public
 module.exports = page;
