@@ -659,7 +659,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = Component;
 
 
@@ -728,7 +728,7 @@
 			Panel.prototype.constructor = Panel;
 			
 			
-			// public export
+			// public
 			module.exports = Panel;
 
 
@@ -759,7 +759,7 @@
 			'use strict';
 			
 			
-			// public export
+			// public
 			module.exports = {
 				back         : 8,    // Backspace
 				'delete'     : 46,
@@ -1229,7 +1229,7 @@
 			//});
 			
 			
-			// public export
+			// public
 			module.exports = app;
 
 
@@ -1536,10 +1536,12 @@
 					pageTo   = this.ids[name];
 			
 				if ( true ) {
+					if ( router.pages.length > 0 ) {
 						if ( !pageTo || typeof pageTo !== 'object' ) { throw 'wrong pageTo type'; }
 						if ( !('active' in pageTo) ) { throw 'missing field "active" in pageTo'; }
 					}
-
+				}
+			
 				// valid not already active page
 				if ( pageTo && !pageTo.active ) {
 					debug.log('router.navigate: ' + name, pageTo === pageFrom ? 'grey' : 'green');
@@ -1613,7 +1615,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = router;
 
 
@@ -1725,7 +1727,7 @@
 			Button.prototype.constructor = Button;
 			
 			
-			// public export
+			// public
 			module.exports = Button;
 
 
@@ -1749,7 +1751,7 @@
 			var data = __webpack_require__(/*! stb/app */ 4).data;
 			
 			
-			// public export
+			// public
 			module.exports = {
 				get: function ( name ) {
 					var value;
@@ -2552,7 +2554,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = dom;
 
 
@@ -2791,7 +2793,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = Emitter;
 
 
@@ -2886,7 +2888,7 @@
 			Page.prototype.constructor = Page;
 			
 			
-			// public export
+			// public
 			module.exports = Page;
 
 
@@ -2906,7 +2908,7 @@
 			
 			'use strict';
 			
-			// public export
+			// public
 			module.exports = {
 				480 : {
 					// screen base dimension
@@ -3652,7 +3654,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = List;
 
 
@@ -3708,7 +3710,7 @@
 			ModalBox.prototype.constructor = ModalBox;
 			
 			
-			// public export
+			// public
 			module.exports = ModalBox;
 
 
@@ -4039,9 +4041,7 @@
 					// numpad 6
 					case 102:
 						// stress-testing for emulation
-						if ( !app.data.host ) {
-							window.horde.unleash({nb: 500});
-						}
+						window.horde.unleash({nb: 500});
 						break;
 			
 					// numpad 7
@@ -4160,7 +4160,7 @@
 				storage = __webpack_require__(/*! ./storage */ 7);
 			
 			
-			// public export
+			// public
 			module.exports = window.grid = {
 			
 				/** @type {HTMLElement} */
@@ -4601,6 +4601,18 @@
 					return fBound;
 				};
 			}
+			
+			
+			if ( !window.requestAnimationFrame ) {
+				// shim layer with setTimeout fallback
+				window.requestAnimationFrame =
+					window.mozRequestAnimationFrame ||
+					window.webkitRequestAnimationFrame ||
+					window.msRequestAnimationFrame ||
+					function ( callback ) {
+						window.setTimeout(callback, 1000 / 60);
+					};
+			}
 
 
 /***/ },
@@ -5016,7 +5028,7 @@
 			//};
 			
 			
-			// public export
+			// public
 			module.exports = Model;
 
 
@@ -5144,7 +5156,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = request;
 
 
@@ -5380,7 +5392,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = CheckBox;
 
 
@@ -6167,7 +6179,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = Grid;
 
 
@@ -6592,7 +6604,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = Input;
 
 
@@ -6651,7 +6663,7 @@
 			ModalMessage.prototype.constructor = ModalMessage;
 			
 			
-			// public export
+			// public
 			module.exports = ModalMessage;
 
 
@@ -6873,7 +6885,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = ProgressBar;
 
 
@@ -7142,7 +7154,7 @@
 			};
 			
 			
-			// public export
+			// public
 			module.exports = ScrollBar;
 
 
@@ -7208,7 +7220,7 @@
 			Widget.prototype.constructor = Widget;
 			
 			
-			// public export
+			// public
 			module.exports = Widget;
 
 
@@ -7638,69 +7650,40 @@
 			// shim for using process in browser
 			
 			var process = module.exports = {};
+			var queue = [];
+			var draining = false;
 			
-			process.nextTick = (function () {
-			    var canSetImmediate = typeof window !== 'undefined'
-			    && window.setImmediate;
-			    var canMutationObserver = typeof window !== 'undefined'
-			    && window.MutationObserver;
-			    var canPost = typeof window !== 'undefined'
-			    && window.postMessage && window.addEventListener
-			    ;
-			
-			    if (canSetImmediate) {
-			        return function (f) { return window.setImmediate(f) };
+			function drainQueue() {
+			    if (draining) {
+			        return;
 			    }
-			
-			    var queue = [];
-			
-			    if (canMutationObserver) {
-			        var hiddenDiv = document.createElement("div");
-			        var observer = new MutationObserver(function () {
-			            var queueList = queue.slice();
-			            queue.length = 0;
-			            queueList.forEach(function (fn) {
-			                fn();
-			            });
-			        });
-			
-			        observer.observe(hiddenDiv, { attributes: true });
-			
-			        return function nextTick(fn) {
-			            if (!queue.length) {
-			                hiddenDiv.setAttribute('yes', 'no');
-			            }
-			            queue.push(fn);
-			        };
+			    draining = true;
+			    var currentQueue;
+			    var len = queue.length;
+			    while(len) {
+			        currentQueue = queue;
+			        queue = [];
+			        var i = -1;
+			        while (++i < len) {
+			            currentQueue[i]();
+			        }
+			        len = queue.length;
 			    }
-			
-			    if (canPost) {
-			        window.addEventListener('message', function (ev) {
-			            var source = ev.source;
-			            if ((source === window || source === null) && ev.data === 'process-tick') {
-			                ev.stopPropagation();
-			                if (queue.length > 0) {
-			                    var fn = queue.shift();
-			                    fn();
-			                }
-			            }
-			        }, true);
-			
-			        return function nextTick(fn) {
-			            queue.push(fn);
-			            window.postMessage('process-tick', '*');
-			        };
+			    draining = false;
+			}
+			process.nextTick = function (fun) {
+			    queue.push(fun);
+			    if (!draining) {
+			        setTimeout(drainQueue, 0);
 			    }
-			
-			    return function nextTick(fn) {
-			        setTimeout(fn, 0);
-			    };
-			})();
+			};
 			
 			process.title = 'browser';
 			process.browser = true;
 			process.env = {};
 			process.argv = [];
+			process.version = ''; // empty string to avoid regexp issues
+			process.versions = {};
 			
 			function noop() {}
 			
@@ -7721,6 +7704,7 @@
 			process.chdir = function (dir) {
 			    throw new Error('process.chdir is not supported');
 			};
+			process.umask = function() { return 0; };
 
 
 /***/ },
@@ -7926,7 +7910,7 @@
 			});
 			
 			
-			// public export
+			// public
 			module.exports = page;
 
 
@@ -7951,7 +7935,7 @@
 				page = new Page({$node: document.getElementById(id)});
 			
 			
-			// public export
+			// public
 			module.exports = page;
 
 
@@ -8083,7 +8067,7 @@
 			});
 			
 			
-			// public export
+			// public
 			module.exports = page;
 
 
@@ -8139,7 +8123,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -8185,7 +8169,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -8674,7 +8658,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -8752,7 +8736,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -8912,7 +8896,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9002,7 +8986,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9042,7 +9026,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9086,7 +9070,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9188,7 +9172,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9262,7 +9246,7 @@
 			);
 			
 			
-			// public export
+			// public
 			module.exports = panel;
 
 
@@ -9282,7 +9266,7 @@
 			
 			'use strict';
 			
-			// public export
+			// public
 			module.exports = {
 				// turn on/off server
 				active: false,
@@ -9308,7 +9292,7 @@
 			
 			'use strict';
 			
-			// public export
+			// public
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -9352,7 +9336,7 @@
 			
 			'use strict';
 			
-			// public export
+			// public
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -9388,7 +9372,7 @@
 			
 			'use strict';
 			
-			// public export
+			// public
 			module.exports = {
 				// turn on/off server
 				active: true,
@@ -9408,5 +9392,5 @@
 
 
 /***/ }
-/******/ ])
+/******/ ]);
 //# sourceMappingURL=app.js.map
