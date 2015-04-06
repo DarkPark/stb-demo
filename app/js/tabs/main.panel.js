@@ -31,5 +31,5 @@ panel.add(
 );
 
 
-// public export
+// public
 module.exports = panel;
