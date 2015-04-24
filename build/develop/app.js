@@ -1077,20 +1077,7 @@
 			});
 			
 			
-			/**
-			 * The keydown event is fired when a key is pressed down.
-			 * Set event.stop to true in order to prevent bubbling.
-			 *
-			 * Control flow:
-			 *   1. Current active component on the active page.
-			 *   2. Current active page itself.
-			 *   3. Application.
-			 *
-			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keydown
-			 *
-			 * @param {Event} event generated object with event data
-			 */
-			window.addEventListener('keydown', function globalEventListenerKeydown ( event ) {
+			function globalEventListenerKeydown ( event ) {
 				var page = router.current;
 			
 				if ( true ) {
@@ -1137,10 +1124,26 @@
 				}
 			
 				// suppress non-printable keys in stb device (not in your browser)
-				if ( app.data.host && keyCodes[event.code] ) {
+				if ( app.data.host && keyCodes[event.code] && event.preventDefault ) {
 					event.preventDefault();
 				}
-			});
+			}
+			
+			
+			/**
+			 * The keydown event is fired when a key is pressed down.
+			 * Set event.stop to true in order to prevent bubbling.
+			 *
+			 * Control flow:
+			 *   1. Current active component on the active page.
+			 *   2. Current active page itself.
+			 *   3. Application.
+			 *
+			 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keydown
+			 *
+			 * @param {Event} event generated object with event data
+			 */
+			window.addEventListener('keydown', globalEventListenerKeydown);
 			
 			
 			/**
@@ -1194,12 +1197,25 @@
 			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('contextmenu', function globalEventListenerContextmenu ( event ) {
+				var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
+			
 				debug.event(event);
 			
-				if ( false ) {
-					// disable right click in release mode
-					event.preventDefault();
-				}
+				kbEvent.type    = 'keydown';
+				kbEvent.keyCode = 8;
+			
+				//debug.log(kbEvent.type);
+			
+				globalEventListenerKeydown(kbEvent);
+				//var event = document.createEvent('KeyboardEvent');
+				//event.initEvent('keydown', true, true);
+			
+				//document.dispatchEvent(kbEvent);
+			
+				//if ( !DEBUG ) {
+				// disable right click in release mode
+				event.preventDefault();
+				//}
 			});
 			
 			
@@ -2411,8 +2427,6 @@
 			 * dom.tag('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
 			 */
 			dom.tag = function ( tagName, attrList, content ) {
-				/* jshint unused:vars */
-			
 				var node = null,
 					i, name;
 			
@@ -2423,7 +2437,6 @@
 			
 					// optional attribute list is given
 					if ( attrList && typeof attrList === 'object' ) {
-						/* jshint forin:false */
 						for ( name in attrList ) {
 							// extend a new node with the given attributes
 							node[name] = attrList[name];
@@ -2499,8 +2512,6 @@
 			 * add(some_div, div1, 'hello', 'world');
 			 */
 			dom.add = function ( tagDst, content ) {
-				/* jshint unused:vars */
-			
 				var i;
 			
 				// valid HTML tag as the destination
@@ -2535,8 +2546,6 @@
 			 * dom.remove(div1, div2, div3);
 			 */
 			dom.remove = function ( nodes ) {
-				/* jshint unused:vars */
-			
 				var count = 0,  // amount of successfully removed nodes
 					i;
 			
@@ -2999,12 +3008,14 @@
 			 * @constructor
 			 * @extends Component
 			 *
-			 * @param {Object}   [config={}] init parameters (all inherited from the parent)
-			 * @param {Array}    [config.data=[]] component data to visualize
-			 * @param {function} [config.render] method to build each grid cell content
-			 * @param {function} [config.navigate] method to move focus according to pressed keys
-			 * @param {number}   [config.size=5] amount of visible items on a page
-			 * @param {boolean}  [config.cycle=true] allow or not to jump to the opposite side of a list when there is nowhere to go next
+			 * @param {Object}   [config={}]          init parameters (all inherited from the parent)
+			 * @param {Array}    [config.data=[]]     component data to visualize
+			 * @param {function} [config.render]      method to build each grid cell content
+			 * @param {function} [config.navigate]    method to move focus according to pressed keys
+			 * @param {number}   [config.size=5]      amount of visible items on a page
+			 * @param {number}   [config.viewIndex=0] move view window to this position on init
+			 * @param {number}   [config.focusIndex]  list item index to make item focused (move view window to this position)
+			 * @param {boolean}  [config.cycle=true]  allow or not to jump to the opposite side of a list when there is nowhere to go next
 			 * @param {boolean}  [config.scroll=null] associated ScrollBar component link
 			 *
 			 * @fires module:stb/ui/list~List#click:item
@@ -3025,7 +3036,7 @@
 				 *
 				 * @type {number}
 				 */
-				this.indexView = null;
+				this.viewIndex = null;
 			
 				/**
 				 * Component data to visualize.
@@ -3235,7 +3246,7 @@
 					 *
 					 * @fires module:stb/ui/list~List#click:item
 					 */
-					onClick  = function ( event ) {
+					onClick = function ( event ) {
 						if ( this.data !== undefined ) {
 							self.focusItem(this);
 			
@@ -3306,7 +3317,28 @@
 					}
 				}
 			
-				this.renderView(0);
+				// view window position
+				if ( config.viewIndex !== undefined ) {
+					if ( true ) {
+						if ( Number(config.viewIndex) !== config.viewIndex ) { throw 'config.viewIndex must be a number'; }
+						if ( config.viewIndex < 0 ) { throw 'config.viewIndex should be positive'; }
+					}
+				}
+			
+				// set focus item
+				if ( config.focusIndex !== undefined ) {
+					if ( true ) {
+						if ( Number(config.focusIndex) !== config.focusIndex ) { throw 'config.focusIndex must be a number'; }
+						if ( config.focusIndex < 0 ) { throw 'config.focusIndex should be positive'; }
+						if ( config.focusIndex > this.data.length - 1 ) { throw 'config.focusIndex should be less than data size'; }
+					}
+			
+					// jump to the necessary item
+					this.focusIndex(config.focusIndex);
+				} else {
+					// go to the first page
+					this.renderView(config.viewIndex || 0);
+				}
 			};
 			
 			
@@ -3341,11 +3373,11 @@
 				}
 			
 				// has the view window position changed
-				if ( this.indexView !== index ) {
+				if ( this.viewIndex !== index ) {
 					// save for emit
-					prevIndex = this.indexView;
+					prevIndex = this.viewIndex;
 					// sync global pointer
-					this.indexView = currIndex = index;
+					this.viewIndex = currIndex = index;
 			
 					// rebuild all visible items
 					for ( i = 0; i < this.size; i++ ) {
@@ -3382,7 +3414,7 @@
 			
 					// update a linked scroll component
 					if ( this.scroll ) {
-						this.scroll.scrollTo(this.indexView);
+						this.scroll.scrollTo(this.viewIndex);
 					}
 			
 					// full rebuild
@@ -3423,23 +3455,6 @@
 			 * @fires module:stb/ui/list~List#overflow
 			 */
 			List.prototype.move = function ( direction ) {
-				//switch ( direction ) {
-				//	case keys.up:
-				//
-				//		break;
-				//	case keys.down:
-				//
-				//		break;
-				//	case keys.right:
-				//
-				//		break;
-				//	case keys.left:
-				//
-				//		break;
-				//}
-				//
-				//return;
-			
 				if ( true ) {
 					if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
 					if ( Number(direction) !== direction ) { throw 'direction must be a number'; }
@@ -3449,7 +3464,7 @@
 					// still can go backward
 					if ( this.$focusItem && this.$focusItem.index > 0 ) {
 						if ( this.$focusItem === this.$body.firstChild ) {
-							this.renderView(this.indexView - 1);
+							this.renderView(this.viewIndex - 1);
 						} else {
 							this.focusItem(this.$focusItem.previousSibling);
 						}
@@ -3477,7 +3492,7 @@
 					// still can go forward
 					if ( this.$focusItem && this.$focusItem.index < this.data.length - 1 ) {
 						if ( this.$focusItem === this.$body.lastChild ) {
-							this.renderView(this.indexView + 1);
+							this.renderView(this.viewIndex + 1);
 						} else {
 							this.focusItem(this.$focusItem.nextSibling);
 						}
@@ -3504,12 +3519,12 @@
 			
 				if ( direction === keys.pageUp ) {
 					// determine jump size
-					if ( this.indexView < this.size ) {
+					if ( this.viewIndex < this.size ) {
 						// first page
 						this.renderView(0);
 					} else {
 						// second page and further
-						this.renderView(this.indexView - this.size + 1);
+						this.renderView(this.viewIndex - this.size + 1);
 					}
 			
 					this.focusItem(this.$body.firstChild);
@@ -3519,12 +3534,12 @@
 					// data is bigger then one page
 					if ( this.data.length > this.size ) {
 						// determine jump size
-						if ( this.indexView > this.data.length - this.size * 2 ) {
+						if ( this.viewIndex > this.data.length - this.size * 2 ) {
 							// last page
 							this.renderView(this.data.length - this.size);
 						} else {
 							// before the last page
-							this.renderView(this.indexView + this.size - 1);
+							this.renderView(this.viewIndex + this.size - 1);
 						}
 						this.focusItem(this.$body.lastChild);
 					} else {
@@ -3625,6 +3640,44 @@
 			
 				// nothing was done
 				return false;
+			};
+			
+			
+			/**
+			 * Set the given item focused by item index.
+			 *
+			 * @param {number} index item data index
+			 */
+			List.prototype.focusIndex = function ( index ) {
+				var viewIndex = this.viewIndex || 0;
+			
+				if ( true ) {
+					if ( Number(index) !== index ) { throw 'index must be a number'; }
+					if ( index < 0 ) { throw 'index should be positive'; }
+					if ( index > this.data.length - 1 ) { throw 'index should be less than data size'; }
+				}
+			
+				// determine direction
+				if ( index >= viewIndex + this.size ) {
+					// check range
+					index = index < this.data.length - 1 ? index : this.data.length - 1;
+					// move down
+					this.renderView(index - this.size + 1);
+					this.focusItem(this.$body.lastChild);
+				} else if ( index < viewIndex ) {
+					// check range
+					index = index > 0 ? index : 0;
+					// move up
+					this.renderView(index);
+					this.focusItem(this.$body.firstChild);
+				} else {
+					// no move
+					if ( this.viewIndex === null ) {
+						// first attempt
+						this.renderView(0);
+					}
+					this.focusItem(this.$body.children[index - viewIndex]);
+				}
 			};
 			
 			
@@ -4503,7 +4556,6 @@
 			
 				// create local stb objects
 				stbNames.forEach(function forEachStbNames ( stbObjName ) {
-					/* jshint evil:true */
 					// prepare
 					var stbObj = window[stbObjName] = {},
 						// for each global stb object get all its properties
@@ -7770,31 +7822,31 @@
 			'use strict';
 			
 			var styles = {
-					reset:         [0,   0],
-					bold:          [1,  22],
-					dim:           [2,  22],
-					italic:        [3,  23],
-					underline:     [4,  24],
-					inverse:       [7,  27],
-					hidden:        [8,  28],
-					strikethrough: [9,  29],
-					black:         [30, 39],
-					red:           [31, 39],
-					green:         [32, 39],
-					yellow:        [33, 39],
-					blue:          [34, 39],
-					magenta:       [35, 39],
-					cyan:          [36, 39],
-					white:         [37, 39],
-					grey:          [90, 39],
-					bgBlack:       [40, 49],
-					bgRed:         [41, 49],
-					bgGreen:       [42, 49],
-					bgYellow:      [43, 49],
-					bgBlue:        [44, 49],
-					bgMagenta:     [45, 49],
-					bgCyan:        [46, 49],
-					bgWhite:       [47, 49]
+					reset:     [0,   0],
+					bold:      [1,  22],
+					dim:       [2,  22],
+					italic:    [3,  23],
+					underline: [4,  24],
+					inverse:   [7,  27],
+					hidden:    [8,  28],
+					strike:    [9,  29],
+					black:     [30, 39],
+					red:       [31, 39],
+					green:     [32, 39],
+					yellow:    [33, 39],
+					blue:      [34, 39],
+					magenta:   [35, 39],
+					cyan:      [36, 39],
+					white:     [37, 39],
+					grey:      [90, 39],
+					bgBlack:   [40, 49],
+					bgRed:     [41, 49],
+					bgGreen:   [42, 49],
+					bgYellow:  [43, 49],
+					bgBlue:    [44, 49],
+					bgMagenta: [45, 49],
+					bgCyan:    [46, 49],
+					bgWhite:   [47, 49]
 				};
 			
 			
@@ -8013,6 +8065,7 @@
 					page.menu = new List({
 						$node: document.getElementById('pageMainMenu'),
 						data: menuData,
+						focusIndex: 0,
 						size: 10,
 						cycle: true,
 						render: function ( $item, data ) {
@@ -8048,9 +8101,6 @@
 					})
 					//page.body = new Panel({$node: document.getElementById('pageMainBody')})
 				);
-			
-				page.menu.focusItem(page.menu.$body.firstChild);
-			
 			
 				page.focusable = false;
 				//page.addListener('click', function ( data ) {
@@ -8835,6 +8885,7 @@
 							scroll: listScrollV,
 							data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 							//data: [1,2,3],
+							viewIndex: 8,
 							size: 5,
 							render: function ( $item, data ) {
 								$item.innerHTML = '[' + (data.value) + ']';
