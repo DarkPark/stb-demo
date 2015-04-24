@@ -65,6 +65,7 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
+			focusIndex: 0,
 			size: 10,
 			cycle: true,
 			render: function ( $item, data ) {
@@ -100,9 +101,6 @@ page.addListener('load', function load () {
 		})
 		//page.body = new Panel({$node: document.getElementById('pageMainBody')})
 	);
-
-	page.menu.focusItem(page.menu.$body.firstChild);
-
 
 	page.focusable = false;
 	//page.addListener('click', function ( data ) {

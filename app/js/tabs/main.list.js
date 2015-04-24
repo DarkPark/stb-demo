@@ -86,6 +86,7 @@ panel.add(
 				scroll: listScrollV,
 				data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
+				viewIndex: 8,
 				size: 5,
 				render: function ( $item, data ) {
 					$item.innerHTML = '[' + (data.value) + ']';
