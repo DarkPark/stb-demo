@@ -42,9 +42,9 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/main.js ***!
-  \********************************************************/
+/*!*************************************!*\
+  !*** ../stb/app/js/develop/main.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -59,7 +59,7 @@
 			
 			var app     = __webpack_require__(/*! ../app */ 4),
 				storage = __webpack_require__(/*! ./storage */ 7),
-				metrics = __webpack_require__(/*! cfg/metrics */ 12);
+				metrics = __webpack_require__(/*! cfg/metrics */ 9);
 			
 			
 			// export to globals for easy debugging
@@ -75,7 +75,7 @@
 			// platform?
 			if ( app.data.host ) {
 				// web inspector
-				__webpack_require__(/*! ./weinre */ 21);
+				__webpack_require__(/*! ./weinre */ 40);
 			}
 			
 			// apply screen size, position, margins and styles
@@ -87,21 +87,21 @@
 			
 			
 			// additional dev modules
-			__webpack_require__(/*! ./shims */ 19);
-			__webpack_require__(/*! ./static */ 20);
-			__webpack_require__(/*! ./proxy */ 18);
-			__webpack_require__(/*! ./events */ 16);
-			__webpack_require__(/*! ./debug */ 15);
+			__webpack_require__(/*! ./shims */ 38);
+			__webpack_require__(/*! ./static */ 39);
+			__webpack_require__(/*! ./proxy */ 37);
+			__webpack_require__(/*! ./events */ 35);
+			__webpack_require__(/*! ./debug */ 34);
 			
 			// the application itself
-			__webpack_require__(/*! app/main */ 39);
+			__webpack_require__(/*! app/main */ 15);
 
 
 /***/ },
 /* 1 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/component.js ***!
-  \*****************************************************/
+/*!**********************************!*\
+  !*** ../stb/app/js/component.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -112,7 +112,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10),
+			var Emitter = __webpack_require__(/*! ./emitter */ 11),
 				router  = __webpack_require__(/*! ./router */ 5),
 				counter = 0;
 			
@@ -665,9 +665,9 @@
 
 /***/ },
 /* 2 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/panel.js ***!
-  \****************************************************/
+/*!*********************************!*\
+  !*** ../stb/app/js/ui/panel.js ***!
+  \*********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -734,9 +734,9 @@
 
 /***/ },
 /* 3 */
-/*!************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/keys.js ***!
-  \************************************************/
+/*!*****************************!*\
+  !*** ../stb/app/js/keys.js ***!
+  \*****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -808,9 +808,9 @@
 
 /***/ },
 /* 4 */
-/*!***********************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/app.js ***!
-  \***********************************************/
+/*!****************************!*\
+  !*** ../stb/app/js/app.js ***!
+  \****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -821,14 +821,14 @@
 			
 			'use strict';
 			
-			var Model    = __webpack_require__(/*! ./model */ 22),
+			var Model    = __webpack_require__(/*! ./model */ 41),
 				router   = __webpack_require__(/*! ./router */ 5),
 				keys     = __webpack_require__(/*! ./keys */ 3),
 				keyCodes = {},
 				app, key;
 			
 			
-			__webpack_require__(/*! stb/shims */ 24);
+			__webpack_require__(/*! stb/shims */ 43);
 			
 			
 			/**
@@ -933,9 +933,139 @@
 				return false;
 			};
 			
+			// define events constants
+			
+			/**
+			 * The player reached the end of the media content or detected a discontinuity of the stream
+			 *
+			 * @const {number} EVENT_END_OF_FILE
+			 * @default 1
+			 */
+			app.EVENT_END_OF_FILE = 1;
+			
+			/**
+			 * Information on audio and video tracks of the media content is received. It's now possible to call gSTB.GetAudioPIDs etc.
+			 *
+			 * @const {number} EVENT_GET_MEDIA_INFO
+			 * @default 2
+			 */
+			app.EVENT_GET_MEDIA_INFO = 2;
+			
+			/**
+			 * Video and/or audio playback has begun
+			 *
+			 * @const {number} EVENT_PLAYBACK_BEGIN
+			 * @default 4
+			 */
+			app.EVENT_PLAYBACK_BEGIN = 4;
+			
+			/**
+			 * Error when opening the content: content not found on the server or connection with the server was rejected
+			 *
+			 * @const {number} EVENT_CONTENT_ERROR
+			 * @default 5
+			 */
+			app.EVENT_CONTENT_ERROR = 5;
+			
+			/**
+			 * Detected DualMono AC-3 sound
+			 *
+			 * @const {number} EVENT_DUAL_MONO_DETECT
+			 * @default 6
+			 */
+			app.EVENT_DUAL_MONO_DETECT = 6;
+			
+			/**
+			 * The decoder has received info about the content and started to play. It's now possible to call gSTB.GetVideoInfo
+			 *
+			 * @const {number} EVENT_INFO_GET
+			 * @default 7
+			 */
+			app.EVENT_INFO_GET = 7;
+			
+			/**
+			 * Error occurred while loading external subtitles
+			 *
+			 * @const {number} EVENT_SUBTITLE_LOAD_ERROR
+			 * @default 8
+			 */
+			app.EVENT_SUBTITLE_LOAD_ERROR = 8;
+			
+			/**
+			 * Found new teletext subtitles in stream
+			 *
+			 * @const {number} EVENT_SUBTITLE_FIND
+			 * @default 9
+			 */
+			app.EVENT_SUBTITLE_FIND = 9;
+			
+			/**
+			 * HDMI device has been connected
+			 *
+			 * @const {number} EVENT_HDMI_CONNECT
+			 * @default 32
+			 */
+			app.EVENT_HDMI_CONNECT = 32;
+			
+			/**
+			 * HDMI device has been disconnected
+			 *
+			 * @const {number} EVENT_HDMI_DISCONNECT
+			 * @default 33
+			 */
+			app.EVENT_HDMI_DISCONNECT = 33;
+			
+			/**
+			 * Recording task has been finished successfully. See Appendix 13. JavaScript API for PVR subsystem
+			 *
+			 * @const {number} EVENT_RECORD_FINISH_SUCCESSFULL
+			 * @default 34
+			 */
+			app.EVENT_RECORD_FINISH_SUCCESSFULL = 34;
+			
+			/**
+			 * Recording task has been finished with error. See Appendix 13. JavaScript API for PVR subsystem
+			 *
+			 * @const {number} EVENT_RECORD_FINISH_ERROR
+			 * @default 35
+			 */
+			app.EVENT_RECORD_FINISH_ERROR = 35;
+			
+			/**
+			 * Scanning DVB Channel in progress
+			 *
+			 * @const {number} EVENT_DVB_SCANING
+			 * @default 40
+			 */
+			app.EVENT_DVB_SCANING = 40;
+			
+			/**
+			 * Scanning DVB Channel found
+			 *
+			 * @const {number} EVENT_DVB_FOUND
+			 * @default 41
+			 */
+			app.EVENT_DVB_FOUND = 41;
+			
+			/**
+			 * DVB Channel EPG update
+			 *
+			 * @const {number} EVENT_DVB_CHANELL_EPG_UPDATE
+			 * @default 42
+			 */
+			app.EVENT_DVB_CHANELL_EPG_UPDATE = 42;
+			
+			/**
+			 * DVB antenna power off
+			 *
+			 * @const {number} EVENT_DVB_ANTENNA_OFF
+			 * @default 43
+			 */
+			app.EVENT_DVB_ANTENNA_OFF = 43;
+			
 			
 			// apply screen size, position and margins
-			app.setScreen(__webpack_require__(/*! cfg/metrics */ 12)[screen.height]);
+			app.setScreen(__webpack_require__(/*! cfg/metrics */ 9)[screen.height]);
 			
 			// extract key codes
 			for ( key in keys ) {
@@ -965,6 +1095,9 @@
 			
 				// time mark
 				app.data.time.load = event.timeStamp;
+			
+				// require device event listener for stb target
+				//require('./targets/stb/events');
 			
 				// global handler
 				// there are some listeners
@@ -1124,7 +1257,7 @@
 				}
 			
 				// suppress non-printable keys in stb device (not in your browser)
-				if ( app.data.host && keyCodes[event.code] && event.preventDefault ) {
+				if ( app.data.host && keyCodes[event.code] ) {
 					event.preventDefault();
 				}
 			}
@@ -1197,25 +1330,25 @@
 			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('contextmenu', function globalEventListenerContextmenu ( event ) {
-				var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
+				//var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
 			
 				debug.event(event);
 			
-				kbEvent.type    = 'keydown';
-				kbEvent.keyCode = 8;
+				//kbEvent.type    = 'keydown';
+				//kbEvent.keyCode = 8;
 			
 				//debug.log(kbEvent.type);
 			
-				globalEventListenerKeydown(kbEvent);
+				//globalEventListenerKeydown(kbEvent);
 				//var event = document.createEvent('KeyboardEvent');
 				//event.initEvent('keydown', true, true);
 			
 				//document.dispatchEvent(kbEvent);
 			
-				//if ( !DEBUG ) {
-				// disable right click in release mode
-				event.preventDefault();
-				//}
+				if ( false ) {
+					// disable right click in release mode
+					event.preventDefault();
+				}
 			});
 			
 			
@@ -1251,9 +1384,9 @@
 
 /***/ },
 /* 5 */
-/*!**************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/router.js ***!
-  \**************************************************/
+/*!*******************************!*\
+  !*** ../stb/app/js/router.js ***!
+  \*******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -1316,7 +1449,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10),
+			var Emitter = __webpack_require__(/*! ./emitter */ 11),
 				router;
 			
 			
@@ -1637,9 +1770,9 @@
 
 /***/ },
 /* 6 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/button.js ***!
-  \*****************************************************/
+/*!**********************************!*\
+  !*** ../stb/app/js/ui/button.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -1749,9 +1882,9 @@
 
 /***/ },
 /* 7 */
-/*!***********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/storage.js ***!
-  \***********************************************************/
+/*!****************************************!*\
+  !*** ../stb/app/js/develop/storage.js ***!
+  \****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -1795,9 +1928,9 @@
 
 /***/ },
 /* 8 */
-/*!****************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/util.js ***!
-  \****************************************************/
+/*!**************************************************************************!*\
+  !*** ../stb/~/gulp-webpack/~/webpack/~/node-libs-browser/~/util/util.js ***!
+  \**************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2325,7 +2458,7 @@
 			}
 			exports.isPrimitive = isPrimitive;
 			
-			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 37);
+			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 56);
 			
 			function objectToString(o) {
 			  return Object.prototype.toString.call(o);
@@ -2369,7 +2502,7 @@
 			 *     prototype.
 			 * @param {function} superCtor Constructor function to inherit prototype from.
 			 */
-			exports.inherits = __webpack_require__(/*! inherits */ 36);
+			exports.inherits = __webpack_require__(/*! inherits */ 55);
 			
 			exports._extend = function(origin, add) {
 			  // Don't do anything if add isn't an object
@@ -2387,13 +2520,77 @@
 			  return Object.prototype.hasOwnProperty.call(obj, prop);
 			}
 			
-			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 35)))
+			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ../stb/~/gulp-webpack/~/webpack/~/node-libs-browser/~/process/browser.js */ 54)))
 
 /***/ },
 /* 9 */
-/*!***********************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/dom.js ***!
-  \***********************************************/
+/*!***************************!*\
+  !*** ./config/metrics.js ***!
+  \***************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Application geometry options for js/less.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			// public
+			module.exports = {
+				480 : {
+					// screen base dimension
+					height: 480,
+					width : 720,
+					// safe zone margins
+					availTop   : 24,
+					availBottom: 24,
+					availRight : 32,
+					availLeft  : 48
+				},
+			
+				576 : {
+					// screen base dimension
+					height: 576,
+					width : 720,
+					// safe zone margins
+					availTop   : 24,
+					availBottom: 24,
+					availRight : 28,
+					availLeft  : 54
+				},
+			
+				720 : {
+					// screen base dimension
+					height: 720,
+					width : 1280,
+					// safe zone margins
+					availTop   : 10,
+					availBottom: 10,
+					availRight : 10,
+					availLeft  : 10
+				},
+			
+				1080: {
+					// screen base dimension
+					height: 1080,
+					width : 1920,
+					// safe zone margins
+					availTop   : 15,
+					availBottom: 15,
+					availRight : 15,
+					availLeft  : 15
+				}
+			};
+
+
+/***/ },
+/* 10 */
+/*!****************************!*\
+  !*** ../stb/app/js/dom.js ***!
+  \****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -2568,10 +2765,10 @@
 
 
 /***/ },
-/* 10 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/emitter.js ***!
-  \***************************************************/
+/* 11 */
+/*!********************************!*\
+  !*** ../stb/app/js/emitter.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -2807,10 +3004,10 @@
 
 
 /***/ },
-/* 11 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/page.js ***!
-  \***************************************************/
+/* 12 */
+/*!********************************!*\
+  !*** ../stb/app/js/ui/page.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -2902,74 +3099,10 @@
 
 
 /***/ },
-/* 12 */
-/*!***************************!*\
-  !*** ./config/metrics.js ***!
-  \***************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Application geometry options for js/less.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public
-			module.exports = {
-				480 : {
-					// screen base dimension
-					height: 480,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 32,
-					availLeft  : 48
-				},
-			
-				576 : {
-					// screen base dimension
-					height: 576,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 28,
-					availLeft  : 54
-				},
-			
-				720 : {
-					// screen base dimension
-					height: 720,
-					width : 1280,
-					// safe zone margins
-					availTop   : 10,
-					availBottom: 10,
-					availRight : 10,
-					availLeft  : 10
-				},
-			
-				1080: {
-					// screen base dimension
-					height: 1080,
-					width : 1920,
-					// safe zone margins
-					availTop   : 15,
-					availBottom: 15,
-					availRight : 15,
-					availLeft  : 15
-				}
-			};
-
-
-/***/ },
 /* 13 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/list.js ***!
-  \***************************************************/
+/*!********************************!*\
+  !*** ../stb/app/js/ui/list.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -3713,9 +3846,9 @@
 
 /***/ },
 /* 14 */
-/*!********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/modal.box.js ***!
-  \********************************************************/
+/*!*************************************!*\
+  !*** ../stb/app/js/ui/modal.box.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -3769,9 +3902,1596 @@
 
 /***/ },
 /* 15 */
-/*!*********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/debug.js ***!
-  \*********************************************************/
+/*!************************!*\
+  !*** ./app/js/main.js ***!
+  \************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Main application entry point.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var app    = __webpack_require__(/*! stb/app */ 4),
+				router = __webpack_require__(/*! stb/router */ 5),
+				keys   = __webpack_require__(/*! stb/keys */ 3);
+			
+			
+			app.addListeners({
+				// all resources are loaded
+				load: function load () {
+					// set pages
+					router.init([
+						__webpack_require__(/*! ./pages/init */ 17),
+						__webpack_require__(/*! ./pages/main */ 18),
+						__webpack_require__(/*! ./pages/help */ 16)
+					]);
+				},
+			
+				// everything is ready
+				done: function done () {
+					// go to the main page
+					router.navigate('pageMain');
+				},
+			
+				// event
+				keydown: function keydown ( event ) {
+					if ( event.code === keys.back ) {
+						router.back();
+					}
+				}
+			});
+			
+			
+			// new way of string handling
+			// all strings are in UTF-16
+			//gSTB.SetNativeStringMode(true);
+
+
+/***/ },
+/* 16 */
+/*!******************************!*\
+  !*** ./app/js/pages/help.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var id     = 'pageHelp',
+				Page   = __webpack_require__(/*! stb/ui/page */ 12),
+				Button = __webpack_require__(/*! stb/ui/button */ 6),
+				router = __webpack_require__(/*! stb/router */ 5),
+				page   = new Page({$node: document.getElementById(id)});
+			
+			
+			page.addListener('load', function load () {
+				page.add(
+					page.back = new Button({
+						value: 'go back',
+						events: {
+							click: function () {
+								router.navigate('pageMain');
+							}
+						}
+					})
+				);
+			});
+			
+			
+			page.addListener('show', function show () {
+				// initial active component
+				page.back.focus();
+			});
+			
+			
+			// public
+			module.exports = page;
+
+
+/***/ },
+/* 17 */
+/*!******************************!*\
+  !*** ./app/js/pages/init.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Loading page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var id   = 'pageInit',
+				Page = __webpack_require__(/*! stb/ui/page */ 12),
+				page = new Page({$node: document.getElementById(id)});
+			
+			
+			// public
+			module.exports = page;
+
+
+/***/ },
+/* 18 */
+/*!******************************!*\
+  !*** ./app/js/pages/main.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Page implementation.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var id   = 'pageMain',
+				List = __webpack_require__(/*! stb/ui/list */ 13),
+				Page = __webpack_require__(/*! stb/ui/page */ 12),
+				page = new Page({$node: document.getElementById(id)});
+			
+			
+			page.addListener('load', function load () {
+				var menuData = [
+						{
+							value: 'Panel',
+							panel: __webpack_require__(/*! ../tabs/main.panel */ 27)
+						},
+						{
+							value: 'Button',
+							panel: __webpack_require__(/*! ../tabs/main.button */ 19)
+						},
+						{
+							value: 'Input',
+							panel: __webpack_require__(/*! ../tabs/main.input */ 23)
+						},
+						{
+							value: 'CheckBox',
+							panel: __webpack_require__(/*! ../tabs/main.check.box */ 20)
+						},
+						{
+							value: 'Grid',
+							panel: __webpack_require__(/*! ../tabs/main.grid */ 22)
+						},
+						{
+							value: 'List',
+							panel: __webpack_require__(/*! ../tabs/main.list */ 24)
+						},
+						{
+							value: 'ProgressBar',
+							panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 28)
+						},
+						{
+							value: 'Page',
+							panel: __webpack_require__(/*! ../tabs/main.page */ 26)
+						},
+						{
+							value: 'Modal',
+							panel: __webpack_require__(/*! ../tabs/main.modal */ 25)
+						},
+						{
+							value: 'Widget',
+							panel: __webpack_require__(/*! ../tabs/main.widget */ 29)
+						}
+					];
+			
+				// attach to page
+				menuData.forEach(function ( item ) {
+					page.add(item.panel);
+				});
+			
+				page.add(
+					page.menu = new List({
+						$node: document.getElementById('pageMainMenu'),
+						data: menuData,
+						focusIndex: 0,
+						size: 10,
+						cycle: true,
+						render: function ( $item, data ) {
+							$item.textContent = data.value;
+						},
+						events: {
+							/*click: function ( data ) {
+								//console.log('click');
+								//data.event.stop = true;
+								//debug.inspect(data, 1);
+							},
+							focus: function ( data ) {
+								//console.log('focus');
+								//debug.inspect(data, 1);
+							},
+							'click:item': function ( data ) {
+								//console.log('click:item');
+								//debug.inspect(data, 1);
+							},*/
+							'focus:item': function ( data ) {
+								//console.log('focus:item');
+								//debug.inspect(data, 1);
+								if ( data.$prev ) {
+									data.$prev.data.panel.hide();
+								}
+								data.$curr.data.panel.show();
+							}
+							/*'blur:item': function ( data ) {
+								//console.log('blur:item');
+								//debug.inspect(data, 1);
+							}*/
+						}
+					})
+					//page.body = new Panel({$node: document.getElementById('pageMainBody')})
+				);
+			
+				page.focusable = false;
+				//page.addListener('click', function ( data ) {
+				//	data.event.stop = true;
+				//});
+			});
+			
+			
+			page.addListener('show', function show () {
+				// initial active component
+				if ( !page.activeComponent ) {
+					page.menu.focus();
+				}
+			});
+			
+			
+			// public
+			module.exports = page;
+
+
+/***/ },
+/* 19 */
+/*!************************************!*\
+  !*** ./app/js/tabs/main.button.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 6),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabButton'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabButtonSimple'),
+					children: [
+						new Button({
+							value: 'press me'
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabButtonIcon'),
+					children: [
+						new Button({
+							icon: 'menu'
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabButtonIconText'),
+					children: [
+						new Button({
+							icon: 'menu',
+							value: 'press me'
+						})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 20 */
+/*!***************************************!*\
+  !*** ./app/js/tabs/main.check.box.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Panel    = __webpack_require__(/*! stb/ui/panel */ 2),
+				CheckBox = __webpack_require__(/*! stb/ui/check.box */ 44),
+				panel    = new Panel({
+					$node: document.getElementById('pageMainTabCheckBox'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabCheckBoxSimple'),
+					children: [
+						new CheckBox()
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabCheckBoxGroup'),
+					children: [
+						new CheckBox({group: 'main', value: false}),
+						new CheckBox({group: 'main', value: true}),
+						new CheckBox({group: 'main', value: false}),
+						new CheckBox({group: 'main', value: false})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 21 */
+/*!***************************************!*\
+  !*** ./app/js/tabs/main.grid.data.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			module.exports = {
+				'table 1x1 with no merge': {
+					raw: [
+						[1]
+					],
+					check: [[1]]
+				},
+			
+				'table 3x3 with no merge': {
+					raw: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[7, 8, 9]
+					],
+					check: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[7, 8, 9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #1': {
+					raw: [
+						[{value: '1;2;4;5', rowSpan: 2, colSpan: 2}, 3],
+						[6],
+						[7, 8, 9]
+					],
+					check: [
+						['1;2;4;5', '1;2;4;5', 3],
+						['1;2;4;5', '1;2;4;5', 6],
+						[7,          8,        9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #2': {
+					raw: [
+						[1, {value: '2;3;5;6', rowSpan: 2, colSpan: 2}],
+						[4],
+						[7, 8, 9]
+					],
+					check: [
+						[1, '2;3;5;6', '2;3;5;6'],
+						[4, '2;3;5;6', '2;3;5;6'],
+						[7,  8,         9]
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #3': {
+					raw: [
+						[1, 2, 3],
+						[4, {value: '5;6;8;9', rowSpan: 2, colSpan: 2}],
+						[7]
+					],
+					check: [
+						[1,  2,         3],
+						[4, '5;6;8;9', '5;6;8;9'],
+						[7, '5;6;8;9', '5;6;8;9']
+					]
+				},
+			
+				'table 3x3 with merge 2x2 #4': {
+					raw: [
+						[1, 2, 3],
+						[{value: '4;5;7;8', rowSpan: 2, colSpan: 2}, 6],
+						[9]
+					],
+					check: [
+						[1,          2,        3],
+						['4;5;7;8', '4;5;7;8', 6],
+						['4;5;7;8', '4;5;7;8', 9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #1': {
+					raw: [
+						[{value: '1;2;3', colSpan: 3}],
+						[4,       5,      6],
+						[7,       8,      9]
+					],
+					check: [
+						['1;2;3', '1;2;3', '1;2;3'],
+						[4,        5,       6],
+						[7,        8,       9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #2': {
+					raw: [
+						[1, 2, 3],
+						[{value: '4;5;6', colSpan: 3}],
+						[7, 8, 9]
+					],
+					check: [
+						[1,        2,       3],
+						['4;5;6', '4;5;6', '4;5;6'],
+						[7,        8,       9]
+					]
+				},
+			
+				'table 3x3 with merge 3x1 #3': {
+					raw: [
+						[1, 2, 3],
+						[4, 5, 6],
+						[{value: '7;8;9', colSpan: 3}]
+					],
+					check: [
+						[1,        2,       3],
+						[4,        5,       6],
+						['7;8;9', '7;8;9', '7;8;9']
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #1': {
+					raw: [
+						[{value: '1;4;7', rowSpan: 3}, 2, 3],
+						[5, 6],
+						[8, 9]
+					],
+					check: [
+						['1;4;7', 2, 3],
+						['1;4;7', 5, 6],
+						['1;4;7', 8, 9]
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #2': {
+					raw: [
+						[1, {value: '2;5;8', rowSpan: 3}, 3],
+						[4, 6],
+						[7, 9]
+					],
+					check: [
+						[1, '2;5;8', 3],
+						[4, '2;5;8', 6],
+						[7, '2;5;8', 9]
+					]
+				},
+			
+				'table 3x3 with merge 1x3 #3': {
+					raw: [
+						[1, 2, {value: '3;6;9', rowSpan: 3}],
+						[4, 5],
+						[7, 8]
+					],
+					check: [
+						[1, 2, '3;6;9'],
+						[4, 5, '3;6;9'],
+						[7, 8, '3;6;9']
+					]
+				},
+			
+				'table 2x2 with all merged cells': {
+					raw: [
+						[{value: '1-4', rowSpan: 2, colSpan: 2}]
+					],
+					check: [
+						['1-4', '1-4'],
+						['1-4', '1-4']
+					]
+				},
+			
+				'table 3x3 with all merged cells': {
+					raw: [
+						[{value: '1-9', rowSpan: 3, colSpan: 3}]
+					],
+					check: [
+						['1-9', '1-9', '1-9'],
+						['1-9', '1-9', '1-9'],
+						['1-9', '1-9', '1-9']
+					]
+				},
+			
+				'table 3x3 with horizontal stripes #1': {
+					raw: [
+						[{value: '1;2', colSpan: 2}, 3],
+						[4, {value: '5;6', colSpan: 2}],
+						[{value: '7;8', colSpan: 2}, 9]
+					],
+					check: [
+						['1;2', '1;2',  3],
+						[4,     '5;6', '5;6'],
+						['7;8', '7;8',  9]
+					]
+				},
+			
+				'table 3x3 with horizontal stripes #2': {
+					raw: [
+						[1, {value: '2;3', colSpan: 2}],
+						[{value: '4;5', colSpan: 2}, 6],
+						[7, {value: '8;9', colSpan: 2}]
+					],
+					check: [
+						[1,     '2;3', '2;3'],
+						['4;5', '4;5',  6],
+						[7,     '8;9', '8;9']
+					]
+				},
+			
+				'table 3x3 with vertical stripes #1': {
+					raw: [
+						[{value: '1;4', rowSpan: 2}, 2, {value: '3;6', rowSpan: 2}],
+						[{value: '5;8', rowSpan: 2}],
+						[7, 9]
+					],
+					check: [
+						['1;4',  2,    '3;6'],
+						['1;4', '5;8', '3;6'],
+						[7,     '5;8',  9]
+					]
+				},
+			
+				'table 3x3 with vertical stripes #2': {
+					raw: [
+						[1, {value: '2;5', rowSpan: 2}, 3],
+						[{value: '4;7', rowSpan: 2}, {value: '6;9', rowSpan: 2}],
+						[8]
+					],
+					check: [
+						[1,     '2;5',  3],
+						['4;7', '2;5', '6;9'],
+						['4;7',  8,    '6;9']
+					]
+				},
+			
+				'table 3x3 with spiral merge #1': {
+					raw: [
+						[{value: '1;2', rowSpan: 1, colSpan: 2}, {value: '3;6', rowSpan: 2, colSpan: 1}],
+						[{value: '4;7', rowSpan: 2, colSpan: 1}, 5],
+						[{value: '8;9', rowSpan: 1, colSpan: 2}]
+					],
+					check: [
+						['1;2', '1;2', '3;6'],
+						['4;7',  5,    '3;6'],
+						['4;7', '8;9', '8;9']
+					]
+				},
+			
+				'table 3x3 with spiral merge #2': {
+					raw: [
+						[{value: '1;4', rowSpan: 2, colSpan: 1}, {value: '2;3', rowSpan: 1, colSpan: 2}],
+						[5, {value: '6;9', rowSpan: 2, colSpan: 1}],
+						[{value: '7;8', rowSpan: 1, colSpan: 2}]
+					],
+					check: [
+						['1;4', '2;3', '2;3'],
+						['1;4',  5,    '6;9'],
+						['7;8', '7;8', '6;9']
+					]
+				},
+			
+				'table 5x5 with merge #1': {
+					raw: [
+						[1, 2, 3, 4, 5],
+						[6, {value: '7-9', colSpan: 3}, 10],
+						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14, {value: '15;20', rowSpan: 2}],
+						[18, 19],
+						[{value: '26-30', colSpan: 5}],
+						[{value: '31-40', colSpan: 5, rowSpan: 2}]
+					],
+					check: [
+						[1,              2,            3,       4,       5],
+						[6,             '7-9',        '7-9',   '7-9',    10],
+						['11;12;16;17', '11;12;16;17', 13,      14,     '15;20'],
+						['11;12;16;17', '11;12;16;17', 18,      19,     '15;20'],
+						['26-30',       '26-30',      '26-30', '26-30', '26-30'],
+						['31-40',       '31-40',      '31-40', '31-40', '31-40'],
+						['31-40',       '31-40',      '31-40', '31-40', '31-40']
+					]
+				},
+			
+				'table 5x5 with merge #2': {
+					raw: [
+						[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
+						[6, {value: '7-9', colSpan: 3}],
+						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
+						[18, 19],
+						[{value: '21-25', colSpan: 5}],
+						[{value: '26-35', colSpan: 5, rowSpan: 2}]
+					],
+					check: [
+						[1,              2,            3,       4,      '5;10;15;20'],
+						[6,             '7-9',        '7-9',   '7-9',   '5;10;15;20'],
+						['11;12;16;17', '11;12;16;17', 13,      14,     '5;10;15;20'],
+						['11;12;16;17', '11;12;16;17', 18,      19,     '5;10;15;20'],
+						['21-25',       '21-25',      '21-25', '21-25', '21-25'],
+						['26-35',       '26-35',      '26-35', '26-35', '26-35'],
+						['26-35',       '26-35',      '26-35', '26-35', '26-35']
+					]
+				},
+			
+				'table 4x2 with tricky long columns #1': {
+					raw: [
+						[{value: '1;3;5', rowSpan: 3}, 2],
+						[{value: '4;6;8', rowSpan: 3}],
+						[],  // have to be specified
+						[7]
+					],
+					check: [
+						['1;3;5',  2],
+						['1;3;5', '4;6;8'],
+						['1;3;5', '4;6;8'],
+						[7,       '4;6;8']
+					]
+				},
+			
+				'table 4x2 with tricky long columns #2': {
+					raw: [
+						[1, {value: '2;4;6', rowSpan: 3}],
+						[{value: '3;5;7', rowSpan: 3}],
+						[],  // have to be specified
+						[8]
+					],
+					check: [
+						[1,       '2;4;6'],
+						['3;5;7', '2;4;6'],
+						['3;5;7', '2;4;6'],
+						['3;5;7',  8]
+					]
+				}
+			};
+
+
+/***/ },
+/* 22 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.grid.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Panel    = __webpack_require__(/*! stb/ui/panel */ 2),
+				Button   = __webpack_require__(/*! stb/ui/button */ 6),
+				Grid     = __webpack_require__(/*! stb/ui/grid */ 45),
+				keys     = __webpack_require__(/*! stb/keys */ 3),
+				gridData = __webpack_require__(/*! ./main.grid.data */ 21),
+				panel    = new Panel({
+					$node: document.getElementById('pageMainTabGrid'),
+					visible: false
+				}),
+				gridDataIndex = 0,
+				grid1, grid2;
+			
+			
+			// add random disabled cells
+			Object.keys(gridData).forEach(function ( key ) {
+				gridData[key].raw.forEach(function ( row ) {
+					row = row.map(function ( cell ) {
+						if ( typeof cell !== 'object' ) {
+							cell = {value: cell};
+						}
+						return cell;
+					});
+					row.forEach(function ( cell ) {
+						if ( Math.random() > 0.7 ) {
+							cell.disable = true;
+						}
+					});
+				});
+			});
+			
+			
+			panel.add(
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnPrev'),
+					value: '<< prev grid data',
+					events: {
+						click: function () {
+							var key;
+			
+							if ( gridDataIndex > 0 ) {
+								gridDataIndex--;
+								key = Object.keys(gridData)[gridDataIndex];
+								grid1.parent.$node.children[0].innerText = key;
+								grid1.init({
+									data: gridData[key].raw
+								});
+							}
+						}
+					}
+				}),
+			
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnNext'),
+					value: 'next grid data >>',
+					events: {
+						click: function () {
+							var key;
+			
+							if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
+								gridDataIndex++;
+								key = Object.keys(gridData)[gridDataIndex];
+								grid1.parent.$node.children[0].innerText = key;
+								grid1.init({
+									data: gridData[key].raw
+								});
+							}
+						}
+					}
+				}),
+			
+				new Button({
+					$node: document.getElementById('pageMainTabGridBtnCycle'),
+					value: 'toggle cycle mode',
+					events: {
+						click: function () {
+							grid1.init({
+								cycleX: !grid1.cycleX,
+								cycleY: !grid1.cycleY
+							});
+						}
+					}
+				}),
+			
+			
+				new Panel({
+					$node: document.getElementById('pageMainTabGridMain'),
+					$body: document.getElementById('pageMainTabGridMainBody'),
+					children: [
+						grid1 = new Grid({
+							data: [
+								[{value: 1, disable: true}, 2,  3,  4],
+								[5, {value: 6, disable: true},  7,  8],
+								[9,  10, 11, 12],
+								[13, 14, 15, {value: 16, focus: true}]
+							],
+							render: function ( $cell, data ) {
+								$cell.innerHTML = '<div>' + (data.value) + '</div>';
+							},
+							cycleX: false,
+							cycleY: false
+						})
+					]
+				}),
+			
+				new Panel({
+					$node: document.getElementById('pageMainTabGridJoin'),
+					children: [
+						grid2 = new Grid({
+							data: [
+								[1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+								[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
+								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
+								[18, 19],
+								[{value: '21-25', colSpan: 5}],
+								[{value: '26-35', colSpan: 5, rowSpan: 2}]
+							],
+							events: {
+								'click:item': function ( data ) {
+									grid2.markItem(data.$item, !data.$item.data.mark);
+								}
+							},
+							navigate: function ( event ) {
+								if ( event.code === keys.up    ) { this.move(keys.down); }
+								if ( event.code === keys.down  ) { this.move(keys.up); }
+								if ( event.code === keys.right ) { this.move(keys.left); }
+								if ( event.code === keys.left  ) { this.move(keys.right); }
+							}
+						})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 23 */
+/*!***********************************!*\
+  !*** ./app/js/tabs/main.input.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Input = __webpack_require__(/*! stb/ui/input */ 46),
+				Panel = __webpack_require__(/*! stb/ui/panel */ 2),
+				panel = new Panel({
+					$node: document.getElementById('pageMainTabInput'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabInputEmpty'),
+					children: [
+						new Input()
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabInputSimple'),
+					children: [
+						new Input({
+							value: 'some text',
+							events: {
+								click: function () {
+			
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabInputPassword'),
+					children: [
+						new Input({
+							value: 'some text',
+							type: Input.prototype.TYPE_PASSWORD,
+							events: {
+								click: function () {
+			
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabInputPlaceholder'),
+					children: [
+						new Input({
+							//value: 'some text',
+							placeholder: 'hint text',
+							events: {
+								click: function () {
+			
+								}
+							}
+						})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 24 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.list.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Panel     = __webpack_require__(/*! stb/ui/panel */ 2),
+				List      = __webpack_require__(/*! stb/ui/list */ 13),
+				ScrollBar = __webpack_require__(/*! stb/ui/scroll.bar */ 49),
+				panel     = new Panel({
+					$node: document.getElementById('pageMainTabList'),
+					visible: false
+				}),
+				listScrollN = new ScrollBar({
+					$node: document.getElementById('pageMainTabListCustomScrollN'),
+					viewSize: 5,
+					realSize: 4
+				}),
+				listScrollV = new ScrollBar({
+					$node: document.getElementById('pageMainTabListCustomScrollV'),
+					viewSize: 5,
+					realSize: 25
+				}),
+				listScrollH = new ScrollBar({
+					$node: document.getElementById('pageMainTabListCustomScrollH'),
+					type: ScrollBar.prototype.TYPE_HORIZONTAL,
+					viewSize: 5,
+					realSize: 100
+				}),
+				list2;
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabListSimple'),
+					children: [
+						new List({
+							$node: document.getElementById('pageMainTabListSimpleList'),
+							scroll: listScrollN,
+							//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+							data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
+							size: 5,
+							//render: function ( $item, data ) {
+							//	$item.innerHTML = '[' + (data) + ']';
+							//},
+							cycle: true,
+							events: {
+								click: function ( data ) {
+									//data.event.stop = true;
+									debug.log('click');
+									debug.inspect(data, 1);
+								},
+								focus: function ( data ) {
+									debug.log('focus');
+									debug.inspect(data, 1);
+								},
+								cycle: function () {
+									debug.log('cycle');
+								},
+								overflow: function () {
+									debug.log('overflow');
+								},
+								'click:item': function ( data ) {
+									debug.log('click:item');
+									debug.inspect(data, 1);
+								},
+								'focus:item': function ( data ) {
+									debug.log('focus:item');
+									debug.inspect(data, 1);
+								},
+								'blur:item': function ( data ) {
+									debug.log('blur:item');
+									debug.inspect(data, 1);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabListCustom'),
+					children: [
+						list2 = new List({
+							$node: document.getElementById('pageMainTabListCustomList'),
+							scroll: listScrollV,
+							data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
+							//data: [1,2,3],
+							viewIndex: 8,
+							size: 5,
+							render: function ( $item, data ) {
+								$item.innerHTML = '[' + (data.value) + ']';
+							},
+							cycle: false,
+							events: {
+								click: function () {
+									//data.event.stop = true;
+									//debug.log('click');
+									//debug.inspect(data, 1);
+								},
+								focus: function () {
+									//debug.log('focus');
+									//debug.inspect(data, 1);
+								},
+								cycle: function () {
+									debug.log('cycle');
+								},
+								overflow: function () {
+									debug.log('overflow');
+								},
+								'click:item': function ( data ) {
+									//debug.log('click:item');
+									//debug.inspect(data, 1);
+			
+									list2.markItem(data.$item, !data.$item.data.mark);
+								},
+								'focus:item': function () {
+									//debug.log('focus:item');
+									//debug.inspect(data, 1);
+								},
+								'blur:item': function () {
+									//debug.log('blur:item');
+									//debug.inspect(data, 1);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabListHoriz'),
+					children: [
+						new List({
+							$node: document.getElementById('pageMainTabListHList'),
+							data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+							scroll: listScrollH,
+							type: List.prototype.TYPE_HORIZONTAL,
+							cycle: true,
+							events: {
+								overflow: function () {
+									debug.log('overflow');
+								}
+							}
+						})
+					]
+				})
+			
+			
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 25 */
+/*!***********************************!*\
+  !*** ./app/js/tabs/main.modal.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Button       = __webpack_require__(/*! stb/ui/button */ 6),
+				Panel        = __webpack_require__(/*! stb/ui/panel */ 2),
+				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 14),
+				ModalMessage = __webpack_require__(/*! stb/ui/modal.message */ 47),
+				panel        = new Panel({
+					$node: document.getElementById('pageMainTabModal'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Button({
+					value: 'show simple modal window',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new ModalBox({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							panel.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
+							panel.modal.focus();
+						}
+					}
+				}),
+				new Button({
+					value: 'show modal window with a lot of text',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new ModalBox({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							panel.modal.$body.innerText = new Array(300).join('text ');
+							panel.modal.focus();
+						}
+					}
+				}),
+				new Button({
+					value: 'show modal message',
+					events: {
+						click: function () {
+							panel.add(
+								panel.modal = new ModalMessage({
+									events: {
+										click: function () {
+											console.log(panel.modal);
+											panel.modal.remove();
+										}
+									}
+								})
+							);
+							//panel.modal.$body.innerText = new Array(300).join('text ');
+							panel.modal.focus();
+						}
+					}
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 26 */
+/*!**********************************!*\
+  !*** ./app/js/tabs/main.page.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 6),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
+				router = __webpack_require__(/*! stb/router */ 5),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabPage'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Button({
+					value: 'switch to page Help',
+					events: {
+						click: function () {
+							router.navigate('pageHelp');
+						}
+					}
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 27 */
+/*!***********************************!*\
+  !*** ./app/js/tabs/main.panel.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Panel = __webpack_require__(/*! stb/ui/panel */ 2),
+				panel = new Panel({
+					$node: document.getElementById('pageMainTabPanel'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelSimple')
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelMulti')
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabPanelParent'),
+					children: [
+						new Panel({
+							$node: document.getElementById('pageMainTabPanelChild')
+						})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 28 */
+/*!******************************************!*\
+  !*** ./app/js/tabs/main.progress.bar.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Panel       = __webpack_require__(/*! stb/ui/panel */ 2),
+				ProgressBar = __webpack_require__(/*! stb/ui/progress.bar */ 48),
+				keys        = __webpack_require__(/*! stb/keys */ 3),
+				panel       = new Panel({
+					$node: document.getElementById('pageMainTabProgressBar'),
+					visible: false
+				});
+			
+			
+			panel.add(
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarEmpty'),
+					children: [
+						new ProgressBar({
+							value: 0
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarFull'),
+					children: [
+						new ProgressBar({
+							value: 100
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarStep1'),
+					children: [
+						new ProgressBar({
+							min: -5,
+							max: 5,
+							value: -2,
+							focusable: true,
+							events: {
+								keydown: function ( event ) {
+									if ( event.code === keys.right ) { this.set(this.value + 1); }
+									if ( event.code === keys.left  ) { this.set(this.value - 1); }
+								},
+								done: function () {
+									debug.log('ProgressBar: done');
+								},
+								change: function ( data ) {
+									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarStep2'),
+					children: [
+						new ProgressBar({
+							min: -200,
+							max: 200,
+							value: 0,
+							focusable: true,
+							events: {
+								keydown: function ( event ) {
+									if ( event.code === keys.right ) { this.set(this.value + 1); }
+									if ( event.code === keys.left  ) { this.set(this.value - 1); }
+								},
+								done: function () {
+									debug.log('ProgressBar: done');
+								},
+								change: function ( data ) {
+									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+								}
+							}
+						})
+					]
+				}),
+				new Panel({
+					$node: document.getElementById('pageMainTabProgressBarStyle'),
+					children: [
+						new ProgressBar({
+							value: 70
+						})
+					]
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 29 */
+/*!************************************!*\
+  !*** ./app/js/tabs/main.widget.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Tab content.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Button = __webpack_require__(/*! stb/ui/button */ 6),
+				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
+				Widget = __webpack_require__(/*! stb/ui/widget */ 50),
+				panel  = new Panel({
+					$node: document.getElementById('pageMainTabWidget'),
+					visible: false
+				}),
+				w1 = new Widget({
+					$node: document.getElementById('pageMainTabWidgetW1'),
+					events: {
+						click: function () { w1.hide(); }
+					}
+				}),
+				w2 = new Widget({
+					$node: document.getElementById('pageMainTabWidgetW2'),
+					events: {
+						click: function () { w2.hide(); }
+					}
+				}),
+				w3 = new Widget({
+					$node: document.getElementById('pageMainTabWidgetW3'),
+					events: {
+						click: function () { w3.hide(); }
+					}
+				});
+			
+			
+			panel.add(
+				new Button({
+					value: 'show local tab widget',
+					events: {
+						click: function () {
+							w1.show();
+						}
+					}
+				}),
+				new Button({
+					value: 'show local page widget',
+					events: {
+						click: function () {
+							w2.show();
+						}
+					}
+				}),
+				new Button({
+					value: 'show global app widget',
+					events: {
+						click: function () {
+							w3.show();
+						}
+					}
+				})
+			);
+			
+			
+			// public
+			module.exports = panel;
+
+
+/***/ },
+/* 30 */
+/*!**************************!*\
+  !*** ./config/logger.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * WebSocket logging server configuration.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			// public
+			module.exports = {
+				// turn on/off server
+				active: false,
+			
+				// listening port
+				port: 8010
+			};
+
+
+/***/ },
+/* 31 */
+/*!*************************!*\
+  !*** ./config/proxy.js ***!
+  \*************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * Code-proxy server configuration.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			// public
+			module.exports = {
+				// turn on/off server
+				active: true,
+			
+				// listening HTTP port to serve proxy files
+				portHttp: 8800,
+			
+				// listening WebSocket port to serve requests
+				portWs: 8900,
+			
+				// time between connection/sending attempts (in ms)
+				retryDelay: 100,
+			
+				// amount of connection/sending attempts before give up
+				retryLimit: 30,
+			
+				// full logging
+				logging: false,
+			
+				// session name
+				name: 'anonymous',
+			
+				// use localStorage to get/save requests data
+				cache: true
+			};
+
+
+/***/ },
+/* 32 */
+/*!**************************!*\
+  !*** ./config/static.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * HTTP static server configuration.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			// public
+			module.exports = {
+				// turn on/off server
+				active: true,
+			
+				// listening HTTP port to serve project files
+				port: 8000,
+			
+				// static file server cache activation
+				// false to disable of amount of seconds to cache
+				cache: false,
+			
+				// full logging
+				logging: true,
+			
+				// enable automatic reload on file changes mode
+				livereload: true
+			};
+
+
+/***/ },
+/* 33 */
+/*!**************************!*\
+  !*** ./config/weinre.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * WEb INspector REmote debugger server configuration.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			// public
+			module.exports = {
+				// turn on/off server
+				active: true,
+			
+				// listening HTTP port to provide client interface
+				port: 8080,
+			
+				// address to listen
+				host: '-all-',
+			
+				// full logging
+				logging: false,
+			
+				// debug servers session id
+				name: 'anonymous'
+			};
+
+
+/***/ },
+/* 34 */
+/*!**************************************!*\
+  !*** ../stb/app/js/develop/debug.js ***!
+  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -3785,14 +5505,18 @@
 			'use strict';
 			
 			var host   = __webpack_require__(/*! stb/app */ 4).data.host,
-				config = __webpack_require__(/*! cfg/logger */ 54),
+				config = __webpack_require__(/*! cfg/logger */ 30),
 				util   = __webpack_require__(/*! util */ 8),
 				buffer = [],
+				/**
+				 * Storage for timers (time, timeEnd).
+				 */
+				timeCounters = {},
 				socket;
 			
 			
 			// enable colors in console
-			__webpack_require__(/*! tty-colors */ 38);
+			__webpack_require__(/*! tty-colors */ 57);
 			
 			
 			(function connect () {
@@ -3998,15 +5722,86 @@
 					if ( typeof cb === 'function' ) {
 						cb();
 					}
+				},
+			
+			
+				/**
+				 * Start specific timer.
+				 * Use to calculate time of some actions.
+				 *
+				 * @param {string} name timer name
+				 *
+				 * @example
+				 * debug.time('function1');
+				 * // some processing...
+				 * debug.timeEnd('function1');
+				 * // print time execution, like 'function1: 934ms'
+				 */
+				time: function ( name ) {
+					var time, key;
+			
+					if ( host ) {
+						if ( !name ) {
+							return;
+						}
+			
+						time = new Date().getTime();
+			
+						key = 'KEY:' + name;
+			
+						timeCounters[key] = time;
+					} else {
+						console.time(name);
+					}
+				},
+			
+			
+				/**
+				 * End specific timer.
+				 * Use to calculate time of some actions.
+				 *
+				 * @param {string} name timer name
+				 *
+				 * @example
+				 * debug.time('function1');
+				 * // some processing...
+				 * debug.timeEnd('function1');
+				 * // print time execution, like 'function1: 934ms'
+				 */
+				timeEnd: function ( name ) {
+					var key, diff, timeCounter;
+			
+					if ( host ) {
+						if ( !name ) {
+							return;
+						}
+			
+						key = 'KEY:' + name;
+						timeCounter = timeCounters[key];
+			
+						if ( timeCounter ) {
+							diff = +new Date() - timeCounter;
+							timeCounters[key] = null;
+							diff += 'ms';
+							log(name + ':\t' + diff.bgBlue);
+						} else {
+							throw 'no started timer for "' + name + '"';
+						}
+			
+						return diff;
+					} else {
+						console.timeEnd(name);
+					}
 				}
+			
 			};
 
 
 /***/ },
-/* 16 */
-/*!**********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/events.js ***!
-  \**********************************************************/
+/* 35 */
+/*!***************************************!*\
+  !*** ../stb/app/js/develop/events.js ***!
+  \***************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4021,9 +5816,9 @@
 			
 			var util    = __webpack_require__(/*! util */ 8),
 				app     = __webpack_require__(/*! stb/app */ 4),
-				request = __webpack_require__(/*! stb/request */ 23),
-				dom     = __webpack_require__(/*! stb/dom */ 9),
-				grid    = __webpack_require__(/*! ./grid */ 17),
+				request = __webpack_require__(/*! stb/request */ 42),
+				dom     = __webpack_require__(/*! stb/dom */ 10),
+				grid    = __webpack_require__(/*! ./grid */ 36),
 				storage = __webpack_require__(/*! ./storage */ 7);
 			
 			
@@ -4040,7 +5835,7 @@
 				}
 			
 				// stress-testing
-				window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 34);
+				window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 53);
 				window.horde    = window.gremlins.createHorde();
 			});
 			
@@ -4181,7 +5976,7 @@
 					document.body.style.display = 'none';
 			
 					// apply new metrics
-					app.setScreen(__webpack_require__(/*! cfg/metrics */ 12)[height]);
+					app.setScreen(__webpack_require__(/*! cfg/metrics */ 9)[height]);
 			
 					// restore visibility
 					document.body.style.display = '';
@@ -4193,10 +5988,10 @@
 
 
 /***/ },
-/* 17 */
-/*!********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/grid.js ***!
-  \********************************************************/
+/* 36 */
+/*!*************************************!*\
+  !*** ../stb/app/js/develop/grid.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4493,10 +6288,10 @@
 
 
 /***/ },
-/* 18 */
-/*!*********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/proxy.js ***!
-  \*********************************************************/
+/* 37 */
+/*!**************************************!*\
+  !*** ../stb/app/js/develop/proxy.js ***!
+  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4511,14 +6306,14 @@
 			
 			var host   = __webpack_require__(/*! stb/app */ 4).data.host,
 				util   = __webpack_require__(/*! util */ 8),
-				config = __webpack_require__(/*! cfg/proxy */ 55);
+				config = __webpack_require__(/*! cfg/proxy */ 31);
 			
 			
 			/**
 			 * Proxy host activation
 			 */
 			function initHost () {
-				var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 33);
+				var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 52);
 			
 				// init and export to globals
 				window.proxy = new ProxyHost({
@@ -4543,7 +6338,7 @@
 			 * Proxy guest activation
 			 */
 			function initGuest () {
-				var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 32),
+				var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 51),
 					stbNames   = ['dvbManager', 'gSTB', 'pvrManager', 'stbDownloadManager', 'stbStorage', 'stbUpdate', 'stbWebWindow', 'stbWindowMgr', 'timeShift'],
 					skipKeys   = ['objectName', 'destroyed', 'deleteLater'];
 			
@@ -4614,10 +6409,10 @@
 
 
 /***/ },
-/* 19 */
-/*!*********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/shims.js ***!
-  \*********************************************************/
+/* 38 */
+/*!**************************************!*\
+  !*** ../stb/app/js/develop/shims.js ***!
+  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4668,10 +6463,10 @@
 
 
 /***/ },
-/* 20 */
-/*!**********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/static.js ***!
-  \**********************************************************/
+/* 39 */
+/*!***************************************!*\
+  !*** ../stb/app/js/develop/static.js ***!
+  \***************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4684,8 +6479,8 @@
 			
 			'use strict';
 			
-			var dom    = __webpack_require__(/*! stb/dom */ 9),
-				config = __webpack_require__(/*! cfg/static */ 56);
+			var dom    = __webpack_require__(/*! stb/dom */ 10),
+				config = __webpack_require__(/*! cfg/static */ 32);
 			
 			
 			// livereload activation
@@ -4699,10 +6494,10 @@
 
 
 /***/ },
-/* 21 */
-/*!**********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/develop/weinre.js ***!
-  \**********************************************************/
+/* 40 */
+/*!***************************************!*\
+  !*** ../stb/app/js/develop/weinre.js ***!
+  \***************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4715,10 +6510,10 @@
 			
 			'use strict';
 			
-			var dom     = __webpack_require__(/*! stb/dom */ 9),
+			var dom     = __webpack_require__(/*! stb/dom */ 10),
 				util    = __webpack_require__(/*! util */ 8),
 				storage = __webpack_require__(/*! ./storage */ 7),
-				config  = __webpack_require__(/*! cfg/weinre */ 57);
+				config  = __webpack_require__(/*! cfg/weinre */ 33);
 			
 			
 			// web inspector is allowed only without SpyJS
@@ -4732,10 +6527,10 @@
 
 
 /***/ },
-/* 22 */
-/*!*************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/model.js ***!
-  \*************************************************/
+/* 41 */
+/*!******************************!*\
+  !*** ../stb/app/js/model.js ***!
+  \******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -4746,7 +6541,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10);
+			var Emitter = __webpack_require__(/*! ./emitter */ 11);
 			
 			
 			/**
@@ -5085,10 +6880,10 @@
 
 
 /***/ },
-/* 23 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/request.js ***!
-  \***************************************************/
+/* 42 */
+/*!********************************!*\
+  !*** ../stb/app/js/request.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -5213,10 +7008,10 @@
 
 
 /***/ },
-/* 24 */
-/*!*************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/shims.js ***!
-  \*************************************************/
+/* 43 */
+/*!******************************!*\
+  !*** ../stb/app/js/shims.js ***!
+  \******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -5289,10 +7084,10 @@
 
 
 /***/ },
-/* 25 */
-/*!********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/check.box.js ***!
-  \********************************************************/
+/* 44 */
+/*!*************************************!*\
+  !*** ../stb/app/js/ui/check.box.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -5449,10 +7244,10 @@
 
 
 /***/ },
-/* 26 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/grid.js ***!
-  \***************************************************/
+/* 45 */
+/*!********************************!*\
+  !*** ../stb/app/js/ui/grid.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -6236,10 +8031,10 @@
 
 
 /***/ },
-/* 27 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/input.js ***!
-  \****************************************************/
+/* 46 */
+/*!*********************************!*\
+  !*** ../stb/app/js/ui/input.js ***!
+  \*********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -6517,11 +8312,12 @@
 			 * Remove char from given position.
 			 * Do nothing if index is out of the range (0, length).
 			 *
-			 * @param {number} index given position
+			 * @param {number} [index=this.$caret.index - 1] index given position
 			 *
 			 * @fires module:stb/ui/input~Input#input
 			 */
 			Input.prototype.removeChar = function ( index ) {
+				index = (index === undefined) ? this.$caret.index - 1 : index;
 				// non-empty string
 				if ( this.value.length > 0 ) {
 					if ( true ) {
@@ -6661,10 +8457,10 @@
 
 
 /***/ },
-/* 28 */
-/*!************************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/modal.message.js ***!
-  \************************************************************/
+/* 47 */
+/*!*****************************************!*\
+  !*** ../stb/app/js/ui/modal.message.js ***!
+  \*****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -6720,10 +8516,10 @@
 
 
 /***/ },
-/* 29 */
-/*!***********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/progress.bar.js ***!
-  \***********************************************************/
+/* 48 */
+/*!****************************************!*\
+  !*** ../stb/app/js/ui/progress.bar.js ***!
+  \****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -6942,10 +8738,10 @@
 
 
 /***/ },
-/* 30 */
-/*!*********************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/scroll.bar.js ***!
-  \*********************************************************/
+/* 49 */
+/*!**************************************!*\
+  !*** ../stb/app/js/ui/scroll.bar.js ***!
+  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -7211,10 +9007,10 @@
 
 
 /***/ },
-/* 31 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/web/stb/app/js/ui/widget.js ***!
-  \*****************************************************/
+/* 50 */
+/*!**********************************!*\
+  !*** ../stb/app/js/ui/widget.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -7277,10 +9073,10 @@
 
 
 /***/ },
-/* 32 */
-/*!**************************************************************!*\
-  !*** /home/dp/Projects/web/stb/~/code-proxy/client/guest.js ***!
-  \**************************************************************/
+/* 51 */
+/*!*******************************************!*\
+  !*** ../stb/~/code-proxy/client/guest.js ***!
+  \*******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -7481,10 +9277,10 @@
 
 
 /***/ },
-/* 33 */
-/*!*************************************************************!*\
-  !*** /home/dp/Projects/web/stb/~/code-proxy/client/host.js ***!
-  \*************************************************************/
+/* 52 */
+/*!******************************************!*\
+  !*** ../stb/~/code-proxy/client/host.js ***!
+  \******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -7663,10 +9459,10 @@
 
 
 /***/ },
-/* 34 */
-/*!***************************************************************!*\
-  !*** /home/dp/Projects/web/stb/~/gremlins.js/gremlins.min.js ***!
-  \***************************************************************/
+/* 53 */
+/*!********************************************!*\
+  !*** ../stb/~/gremlins.js/gremlins.min.js ***!
+  \********************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7693,10 +9489,10 @@
 			(function(e,t){true?!(__WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):typeof exports=="object"?module.exports=t():e.gremlins=t()})(this,function(){var e,t,n;return function(r){function d(e,t){return h.call(e,t)}function v(e,t){var n,r,i,s,o,u,a,f,c,h,p=t&&t.split("/"),d=l.map,v=d&&d["*"]||{};if(e&&e.charAt(0)===".")if(t){p=p.slice(0,p.length-1),e=p.concat(e.split("/"));for(f=0;f<e.length;f+=1){h=e[f];if(h===".")e.splice(f,1),f-=1;else if(h===".."){if(f===1&&(e[2]===".."||e[0]===".."))break;f>0&&(e.splice(f-1,2),f-=2)}}e=e.join("/")}else e.indexOf("./")===0&&(e=e.substring(2));if((p||v)&&d){n=e.split("/");for(f=n.length;f>0;f-=1){r=n.slice(0,f).join("/");if(p)for(c=p.length;c>0;c-=1){i=d[p.slice(0,c).join("/")];if(i){i=i[r];if(i){s=i,o=f;break}}}if(s)break;!u&&v&&v[r]&&(u=v[r],a=f)}!s&&u&&(s=u,o=a),s&&(n.splice(0,o,s),e=n.join("/"))}return e}function m(e,t){return function(){return s.apply(r,p.call(arguments,0).concat([e,t]))}}function g(e){return function(t){return v(t,e)}}function y(e){return function(t){a[e]=t}}function b(e){if(d(f,e)){var t=f[e];delete f[e],c[e]=!0,i.apply(r,t)}if(!d(a,e)&&!d(c,e))throw new Error("No "+e);return a[e]}function w(e){var t,n=e?e.indexOf("!"):-1;return n>-1&&(t=e.substring(0,n),e=e.substring(n+1,e.length)),[t,e]}function E(e){return function(){return l&&l.config&&l.config[e]||{}}}var i,s,o,u,a={},f={},l={},c={},h=Object.prototype.hasOwnProperty,p=[].slice;o=function(e,t){var n,r=w(e),i=r[0];return e=r[1],i&&(i=v(i,t),n=b(i)),i?n&&n.normalize?e=n.normalize(e,g(t)):e=v(e,t):(e=v(e,t),r=w(e),i=r[0],e=r[1],i&&(n=b(i))),{f:i?i+"!"+e:e,n:e,pr:i,p:n}},u={require:function(e){return m(e)},exports:function(e){var t=a[e];return typeof t!="undefined"?t:a[e]={}},module:function(e){return{id:e,uri:"",exports:a[e],config:E(e)}}},i=function(e,t,n,i){var s,l,h,p,v,g=[],w;i=i||e;if(typeof n=="function"){t=!t.length&&n.length?["require","exports","module"]:t;for(v=0;v<t.length;v+=1){p=o(t[v],i),l=p.f;if(l==="require")g[v]=u.require(e);else if(l==="exports")g[v]=u.exports(e),w=!0;else if(l==="module")s=g[v]=u.module(e);else if(d(a,l)||d(f,l)||d(c,l))g[v]=b(l);else{if(!p.p)throw new Error(e+" missing "+l);p.p.load(p.n,m(i,!0),y(l),{}),g[v]=a[l]}}h=n.apply(a[e],g);if(e)if(s&&s.exports!==r&&s.exports!==a[e])a[e]=s.exports;else if(h!==r||!w)a[e]=h}else e&&(a[e]=n)},e=t=s=function(e,t,n,a,f){return typeof e=="string"?u[e]?u[e](t):b(o(e,t).f):(e.splice||(l=e,t.splice?(e=t,t=n,n=null):e=r),t=t||function(){},typeof n=="function"&&(n=a,a=f),a?i(r,e,t,n):setTimeout(function(){i(r,e,t,n)},4),s)},s.config=function(e){return l=e,l.deps&&s(l.deps,l.callback),s},e._defined=a,n=function(e,t,n){t.splice||(n=t,t=[]),!d(a,e)&&!d(f,e)&&(f[e]=[e,t,n])},n.amd={jQuery:!0}}(),n("../src/vendor/almond.js",function(){}),function(){function a(e,t){e||(e={});if(!t)return e;for(var n in t)typeof e[n]=="undefined"&&(e[n]=t[n]);return e}function f(e,t){if(e)throw new RangeError(t)}var e=9007199254740992,t=-e,r="0123456789",i="abcdefghijklmnopqrstuvwxyz",s=i.toUpperCase(),o=r+"abcdef",u=function(e){e!==undefined&&(typeof e=="function"?this.random=e:this.seed=e),typeof this.random=="undefined"&&(this.mt=this.mersenne_twister(e),this.random=function(){return this.mt.random(this.seed)})};u.prototype.bool=function(e){return e=a(e,{likelihood:50}),f(e.likelihood<0||e.likelihood>100,"Chance: Likelihood accepts values from 0 to 100."),this.random()*100<e.likelihood},u.prototype.character=function(e){e=a(e);var t="!@#$%^&*()[]",n,o;return f(e.alpha&&e.symbols,"Chance: Cannot specify both alpha and symbols."),e.casing==="lower"?n=i:e.casing==="upper"?n=s:n=i+s,e.pool?o=e.pool:e.alpha?o=n:e.symbols?o=t:o=n+r+t,o.charAt(this.natural({max:o.length-1}))},u.prototype.floating=function(t){var n,r;t=a(t,{fixed:4});var i=Math.pow(10,t.fixed);f(t.fixed&&t.precision,"Chance: Cannot specify both fixed and precision.");var s=e/i,o=-s;f(t.min&&t.fixed&&t.min<o,"Chance: Min specified is out of range with fixed. Min should be, at least, "+o),f(t.max&&t.fixed&&t.max>s,"Chance: Max specified is out of range with fixed. Max should be, at most, "+s),t=a(t,{min:o,max:s}),n=this.integer({min:t.min*i,max:t.max*i});var u=(n/i).toFixed(t.fixed);return parseFloat(u)},u.prototype.integer=function(n){var r,i;n=a(n,{min:t,max:e}),i=Math.max(Math.abs(n.min),Math.abs(n.max));do r=this.natural({max:i}),r=this.bool()?r:r*-1;while(r<n.min||r>n.max);return r},u.prototype.natural=function(t){return t=a(t,{min:0,max:e}),f(t.min>t.max,"Chance: Min cannot be greater than Max."),Math.floor(this.random()*(t.max-t.min+1)+t.min)},u.prototype.normal=function(e){e=a(e,{mean:0,dev:1});var t,n,r,i,s=e.mean,o=e.dev;do n=this.random()*2-1,r=this.random()*2-1,t=n*n+r*r;while(t>=1);return i=n*Math.sqrt(-2*Math.log(t)/t),o*i+s},u.prototype.string=function(e){e=a(e);var t=e.length||this.natural({min:5,max:20}),n="",r=e.pool;for(var i=0;i<t;i++)n+=this.character({pool:r});return n},u.prototype.capitalize=function(e){return e.charAt(0).toUpperCase()+e.substr(1)},u.prototype.mixin=function(e){var t=this;for(var n in e)u.prototype[n]=e[n];return this},u.prototype.pick=function(e,t){return!t||t===1?e[this.natural({max:e.length-1})]:this.shuffle(e).slice(0,t)},u.prototype.shuffle=function(e){var t=e.slice(0),n=[],r=0,i=Number(t.length);for(var s=0;s<i;s++)r=this.natural({max:t.length-1}),n[s]=t[r],t.splice(r,1);return n},u.prototype.paragraph=function(e){e=a(e);var t=e.sentences||this.natural({min:3,max:7}),n=[];for(var r=0;r<t;r++)n.push(this.sentence());return n.join(" ")},u.prototype.sentence=function(e){e=a(e);var t=e.words||this.natural({min:12,max:18}),n,r=[];for(var i=0;i<t;i++)r.push(this.word());return n=r.join(" "),n=this.capitalize(n)+".",n},u.prototype.syllable=function(e){e=a(e);var t=e.length||this.natural({min:2,max:3}),n="bcdfghjklmnprstvwz",r="aeiou",i=n+r,s="",o;for(var u=0;u<t;u++)u===0?o=this.character({pool:i}):n.indexOf(o)===-1?o=this.character({pool:n}):o=this.character({pool:r}),s+=o;return s},u.prototype.word=function(e){e=a(e),f(e.syllables&&e.length,"Chance: Cannot specify both syllables AND length.");var t=e.syllables||this.natural({min:1,max:3}),n="";if(e.length){do n+=this.syllable();while(n.length<e.length);n=n.substring(0,e.length)}else for(var r=0;r<t;r++)n+=this.syllable();return n},u.prototype.age=function(e){e=a(e);var t;switch(e.type){case"child":t=this.natural({min:1,max:12});break;case"teen":t=this.natural({min:13,max:19});break;case"adult":t=this.natural({min:18,max:120});break;case"senior":t=this.natural({min:65,max:120});break;default:t=this.natural({min:1,max:120})}return t},u.prototype.birthday=function(e){return e=a(e,{year:(new Date).getFullYear()-this.age(e)}),this.date(e)};var l=["Sophia","Emma","Isabella","Jacob","Mason","Ethan","Noah","Olivia","William","Liam","Jayden","Michael","Ava","Alexander","Aiden","Daniel","Matthew","Elijah","Emily","James","Anthony","Benjamin","Abigail","Joshua","Andrew","David","Joseph","Logan","Jackson","Mia","Christopher","Gabriel","Madison","Samuel","Ryan","Lucas","John","Nathan","Isaac","Dylan","Caleb","Elizabeth","Chloe","Christian","Landon","Jonathan","Carter","Ella","Luke","Owen","Brayden","Avery","Gavin","Wyatt","Addison","Isaiah","Aubrey","Henry","Eli","Hunter","Lily","Jack","Natalie","Evan","Sofia","Jordan","Nicholas","Tyler","Aaron","Charlotte","Zoey","Jeremiah","Julian","Cameron","Grace","Hannah","Amelia","Harper","Levi","Lillian","Brandon","Angel","Austin","Connor","Adrian","Robert","Samantha","Charles","Evelyn","Victoria","Thomas","Brooklyn","Sebastian","Zoe","Colton","Jaxon","Layla","Kevin","Zachary","Ayden","Dominic","Blake","Jose","Hailey","Oliver","Justin","Bentley","Leah","Jason","Chase","Ian","Kaylee","Anna","Aaliyah","Gabriella","Josiah","Allison","Parker","Xavier","Nevaeh","Alexis","Adam","Audrey","Cooper","Savannah","Sarah","Alyssa","Claire","Taylor","Riley","Camila","Nathaniel","Arianna","Ashley","Grayson","Jace","Brianna","Carson","Sophie","Peyton","Nolan","Tristan","Luis","Brody","Bella","Khloe","Genesis","Alexa","Juan","Hudson","Serenity","Kylie","Aubree","Scarlett","Bryson","Carlos","Stella","Maya","Easton","Katherine","Julia","Damian","Alex","Kayden","Ryder","Lucy","Madelyn","Jesus","Cole","Autumn","Makayla","Kayla","Mackenzie","Micah","Vincent","Max","Lauren","Jaxson","Gianna","Eric","Ariana","Asher","Hayden","Faith","Alexandra","Melanie","Sydney","Bailey","Caroline","Naomi","Morgan","Kennedy","Ellie","Jasmine","Eva","Skylar","Diego","Kimberly","Violet","Molly","Miles","Steven","Aria","Ivan","Jocelyn","Trinity","Elias","Aidan","Maxwell","London","Bryce","Lydia","Madeline","Antonio","Giovanni","Reagan","Timothy","Bryan","Piper","Andrea","Santiago","Annabelle","Maria","Colin","Richard","Braxton","Kaleb","Brooke","Kyle","Kaden","Preston","Payton","Miguel","Jonah","Paisley","Paige","Lincoln","Ruby","Nora","Riley","Mariah","Leo","Victor","Brady","Jeremy","Mateo","Brian","Jaden","Ashton","Patrick","Rylee","Declan","Lilly","Brielle","Sean","Joel","Gael","Sawyer","Alejandro","Jade","Marcus","Destiny","Leonardo","Jesse","Caden","Jake","Kaiden","Nicole","Mila","Wesley","Kendall","Liliana","Camden","Kaitlyn","Natalia","Sadie","Edward","Brantley","Jordyn","Roman","Vanessa","Mary","Mya","Penelope","Isabelle","Alice","Axel","Silas","Jude","Grant","Reese","Gabrielle","Hadley","Katelyn","Angelina","Rachel","Isabel","Eleanor","Cayden","Emmanuel","George","Clara","Brooklynn","Jessica","Maddox","Malachi","Bradley","Alan","Weston","Elena","Gage","Aliyah","Vivian","Laila","Sara","Amy","Devin","Eliana","Greyson","Lyla","Juliana","Kenneth","Mark","Oscar","Tanner","Rylan","Valeria","Adriana","Nicolas","Makenzie","Harrison","Elise","Mckenzie","Derek","Quinn","Delilah","Peyton","Ezra","Cora","Kylee","Tucker","Emmett","Avery","Cody","Rebecca","Gracie","Izabella","Calvin","Andres","Jorge","Abel","Paul","Abraham","Kai","Josephine","Alaina","Michelle","Jennifer","Collin","Theodore","Ezekiel","Eden","Omar","Jayce","Valentina","Conner","Bennett","Aurora","Catherine","Stephanie","Trevor","Valerie","Eduardo","Peter","Maximus","Jayla","Jaiden","Willow","Jameson","Seth","Daisy","Alana","Melody","Hazel","Kingston","Summer","Melissa","Javier","Margaret","Travis","Kinsley","Kinley","Garrett","Everett","Ariel","Lila","Graham","Giselle","Ryleigh","Xander","Haley","Julianna","Ivy","Alivia","Cristian","Brynn","Damien","Ryker","Griffin","Keira","Daniela","Aniyah","Angela","Kate","Londyn","Corbin","Myles","Hayden","Harmony","Adalyn","Luca","Zane","Francisco","Ricardo","Alexis","Stephen","Zayden","Megan","Allie","Gabriela","Iker","Drake","Alayna","Lukas","Presley","Charlie","Spencer","Zion","Erick","Jenna","Josue","Alexandria","Ashlyn","Adrianna","Jada","Jeffrey","Trenton","Fiona","Chance","Norah","Paxton","Elliot","Emery","Fernando","Maci","Miranda","Keegan","Landen","Ximena","Amaya","Manuel","Amir","Shane","Cecilia","Raymond","Andre","Ana","Shelby","Katie","Hope","Callie","Jordan","Luna","Leilani","Eliza","Mckenna","Angel","Genevieve","Makenna","Isla","Lola","Danielle","Chelsea","Leila","Tessa","Adelyn","Camille","Mikayla","Adeline","Adalynn","Sienna","Esther","Jacqueline","Emerson","Arabella","Maggie","Athena","Lucia","Lexi","Ayla"];u.prototype.first=function(){return this.pick(l)},u.prototype.gender=function(){return this.pick(["Male","Female"])};var c=["Smith","Johnson","Williams","Jones","Brown","Davis","Miller","Wilson","Moore","Taylor","Anderson","Thomas","Jackson","White","Harris","Martin","Thompson","Garcia","Martinez","Robinson","Clark","Rodriguez","Lewis","Lee","Walker","Hall","Allen","Young","Hernandez","King","Wright","Lopez","Hill","Scott","Green","Adams","Baker","Gonzalez","Nelson","Carter","Mitchell","Perez","Roberts","Turner","Phillips","Campbell","Parker","Evans","Edwards","Collins","Stewart","Sanchez","Morris","Rogers","Reed","Cook","Morgan","Bell","Murphy","Bailey","Rivera","Cooper","Richardson","Cox","Howard","Ward","Torres","Peterson","Gray","Ramirez","James","Watson","Brooks","Kelly","Sanders","Price","Bennett","Wood","Barnes","Ross","Henderson","Coleman","Jenkins","Perry","Powell","Long","Patterson","Hughes","Flores","Washington","Butler","Simmons","Foster","Gonzales","Bryant","Alexander","Russell","Griffin","Diaz","Hayes","Myers","Ford","Hamilton","Graham","Sullivan","Wallace","Woods","Cole","West","Jordan","Owens","Reynolds","Fisher","Ellis","Harrison","Gibson","McDonald","Cruz","Marshall","Ortiz","Gomez","Murray","Freeman","Wells","Webb","Simpson","Stevens","Tucker","Porter","Hunter","Hicks","Crawford","Henry","Boyd","Mason","Morales","Kennedy","Warren","Dixon","Ramos","Reyes","Burns","Gordon","Shaw","Holmes","Rice","Robertson","Hunt","Black","Daniels","Palmer","Mills","Nichols","Grant","Knight","Ferguson","Rose","Stone","Hawkins","Dunn","Perkins","Hudson","Spencer","Gardner","Stephens","Payne","Pierce","Berry","Matthews","Arnold","Wagner","Willis","Ray","Watkins","Olson","Carroll","Duncan","Snyder","Hart","Cunningham","Bradley","Lane","Andrews","Ruiz","Harper","Fox","Riley","Armstrong","Carpenter","Weaver","Greene","Lawrence","Elliott","Chavez","Sims","Austin","Peters","Kelley","Franklin","Lawson","Fields","Gutierrez","Ryan","Schmidt","Carr","Vasquez","Castillo","Wheeler","Chapman","Oliver","Montgomery","Richards","Williamson","Johnston","Banks","Meyer","Bishop","McCoy","Howell","Alvarez","Morrison","Hansen","Fernandez","Garza","Harvey","Little","Burton","Stanley","Nguyen","George","Jacobs","Reid","Kim","Fuller","Lynch","Dean","Gilbert","Garrett","Romero","Welch","Larson","Frazier","Burke","Hanson","Day","Mendoza","Moreno","Bowman","Medina","Fowler","Brewer","Hoffman","Carlson","Silva","Pearson","Holland","Douglas","Fleming","Jensen","Vargas","Byrd","Davidson","Hopkins","May","Terry","Herrera","Wade","Soto","Walters","Curtis","Neal","Caldwell","Lowe","Jennings","Barnett","Graves","Jimenez","Horton","Shelton","Barrett","Obrien","Castro","Sutton","Gregory","McKinney","Lucas","Miles","Craig","Rodriquez","Chambers","Holt","Lambert","Fletcher","Watts","Bates","Hale","Rhodes","Pena","Beck","Newman","Haynes","McDaniel","Mendez","Bush","Vaughn","Parks","Dawson","Santiago","Norris","Hardy","Love","Steele","Curry","Powers","Schultz","Barker","Guzman","Page","Munoz","Ball","Keller","Chandler","Weber","Leonard","Walsh","Lyons","Ramsey","Wolfe","Schneider","Mullins","Benson","Sharp","Bowen","Daniel","Barber","Cummings","Hines","Baldwin","Griffith","Valdez","Hubbard","Salazar","Reeves","Warner","Stevenson","Burgess","Santos","Tate","Cross","Garner","Mann","Mack","Moss","Thornton","Dennis","McGee","Farmer","Delgado","Aguilar","Vega","Glover","Manning","Cohen","Harmon","Rodgers","Robbins","Newton","Todd","Blair","Higgins","Ingram","Reese","Cannon","Strickland","Townsend","Potter","Goodwin","Walton","Rowe","Hampton","Ortega","Patton","Swanson","Joseph","Francis","Goodman","Maldonado","Yates","Becker","Erickson","Hodges","Rios","Conner","Adkins","Webster","Norman","Malone","Hammond","Flowers","Cobb","Moody","Quinn","Blake","Maxwell","Pope","Floyd","Osborne","Paul","McCarthy","Guerrero","Lindsey","Estrada","Sandoval","Gibbs","Tyler","Gross","Fitzgerald","Stokes","Doyle","Sherman","Saunders","Wise","Colon","Gill","Alvarado","Greer","Padilla","Simon","Waters","Nunez","Ballard","Schwartz","McBride","Houston","Christensen","Klein","Pratt","Briggs","Parsons","McLaughlin","Zimmerman","French","Buchanan","Moran","Copeland","Roy","Pittman","Brady","McCormick","Holloway","Brock","Poole","Frank","Logan","Owen","Bass","Marsh","Drake","Wong","Jefferson","Park","Morton","Abbott","Sparks","Patrick","Norton","Huff","Clayton","Massey","Lloyd","Figueroa","Carson","Bowers","Roberson","Barton","Tran","Lamb","Harrington","Casey","Boone","Cortez","Clarke","Mathis","Singleton","Wilkins","Cain","Bryan","Underwood","Hogan","McKenzie","Collier","Luna","Phelps","McGuire","Allison","Bridges","Wilkerson","Nash","Summers","Atkins"];u.prototype.last=function(){return this.pick(c)},u.prototype.name=function(e){e=a(e);var t=this.first(),n=this.last(),r;return e.middle?r=t+" "+this.first()+" "+n:e.middle_initial?r=t+" "+this.character({alpha:!0,casing:"upper"})+". "+n:r=t+" "+n,e.prefix&&(r=this.prefix()+" "+r),r},u.prototype.name_prefixes=function(){return[{name:"Doctor",abbreviation:"Dr."},{name:"Miss",abbreviation:"Miss"},{name:"Misses",abbreviation:"Mrs."},{name:"Mister",abbreviation:"Mr."}]},u.prototype.prefix=function(e){return this.name_prefix(e)},u.prototype.name_prefix=function(e){return e=a(e),e.full?this.pick(this.name_prefixes()).name:this.pick(this.name_prefixes()).abbreviation},u.prototype.color=function(e){function t(e,t){return[e,e,e].join(t||"")}e=a(e,{format:this.pick(["hex","shorthex","rgb"]),grayscale:!1});var n=e.grayscale;if(e.format==="hex")return"#"+(n?t(this.hash({length:2})):this.hash({length:6}));if(e.format==="shorthex")return"#"+(n?t(this.hash({length:1})):this.hash({length:3}));if(e.format==="rgb")return n?"rgb("+t(this.natural({max:255}),",")+")":"rgb("+this.natural({max:255})+","+this.natural({max:255})+","+this.natural({max:255})+")";throw new Error('Invalid format provided. Please provide one of "hex", "shorthex", or "rgb"')},u.prototype.domain=function(e){return e=a(e),this.word()+"."+(e.tld||this.tld())},u.prototype.email=function(e){return e=a(e),this.word()+"@"+(e.domain||this.domain())},u.prototype.fbid=function(){return parseInt("10000"+this.natural({max:1e11}),10)},u.prototype.hashtag=function(){return"#"+this.word()},u.prototype.ip=function(){return this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})},u.prototype.ipv6=function(){var e="";for(var t=0;t<8;t++)e+=this.hash({length:4})+":";return e.substr(0,e.length-1)},u.prototype.klout=function(){return this.natural({min:1,max:99})},u.prototype.tlds=function(){return["com","org","edu","gov","co.uk","net","io"]},u.prototype.tld=function(){return this.pick(this.tlds())},u.prototype.twitter=function(){return"@"+this.word()},u.prototype.address=function(e){return e=a(e),this.natural({min:5,max:2e3})+" "+this.street(e)},u.prototype.areacode=function(e){e=a(e,{parens:!0});var t=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:8}).toString()+this.natural({min:0,max:9}).toString();return e.parens?"("+t+")":t},u.prototype.city=function(){return this.capitalize(this.word({syllables:3}))},u.prototype.coordinates=function(e){return e=a(e),this.latitude(e)+", "+this.longitude(e)},u.prototype.latitude=function(e){return e=a(e,{fixed:5}),this.floating({min:-90,max:90,fixed:e.fixed})},u.prototype.longitude=function(e){return e=a(e,{fixed:5}),this.floating({min:0,max:180,fixed:e.fixed})},u.prototype.phone=function(e){e=a(e,{formatted:!0}),e.formatted||(e.parens=!1);var t=this.areacode(e).toString(),n=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:9}).toString()+this.natural({min:0,max:9}).toString(),r=this.natural({min:1e3,max:9999}).toString();return e.formatted?t+" "+n+"-"+r:t+n+r},u.prototype.postal=function(){var e=this.character({pool:"XVTSRPNKLMHJGECBA"}),t=e+this.natural({max:9})+this.character({alpha:!0,casing:"upper"}),n=this.natural({max:9})+this.character({alpha:!0,casing:"upper"})+this.natural({max:9});return t+" "+n},u.prototype.provinces=function(){return[{name:"Alberta",abbreviation:"AB"},{name:"British Columbia",abbreviation:"BC"},{name:"Manitoba",abbreviation:"MB"},{name:"New Brunswick",abbreviation:"NB"},{name:"Newfoundland and Labrador",abbreviation:"NL"},{name:"Nova Scotia",abbreviation:"NS"},{name:"Ontario",abbreviation:"ON"},{name:"Prince Edward Island",abbreviation:"PE"},{name:"Quebec",abbreviation:"QC"},{name:"Saskatchewan",abbreviation:"SK"},{name:"Northwest Territories",abbreviation:"NT"},{name:"Nunavut",abbreviation:"NU"},{name:"Yukon",abbreviation:"YT"}]},u.prototype.province=function(e){return e&&e.full?this.pick(this.provinces()).name:this.pick(this.provinces()).abbreviation},u.prototype.radio=function(e){e=a(e,{side:"?"});var t="";switch(e.side.toLowerCase()){case"east":case"e":t="W";break;case"west":case"w":t="K";break;default:t=this.character({pool:"KW"})}return t+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})},u.prototype.state=function(e){return e&&e.full?this.pick(this.states()).name:this.pick(this.states()).abbreviation},u.prototype.states=function(){return[{name:"Alabama",abbreviation:"AL"},{name:"Alaska",abbreviation:"AK"},{name:"American Samoa",abbreviation:"AS"},{name:"Arizona",abbreviation:"AZ"},{name:"Arkansas",abbreviation:"AR"},{name:"Armed Forces Europe",abbreviation:"AE"},{name:"Armed Forces Pacific",abbreviation:"AP"},{name:"Armed Forces the Americas",abbreviation:"AA"},{name:"California",abbreviation:"CA"},{name:"Colorado",abbreviation:"CO"},{name:"Connecticut",abbreviation:"CT"},{name:"Delaware",abbreviation:"DE"},{name:"District of Columbia",abbreviation:"DC"},{name:"Federated States of Micronesia",abbreviation:"FM"},{name:"Florida",abbreviation:"FL"},{name:"Georgia",abbreviation:"GA"},{name:"Guam",abbreviation:"GU"},{name:"Hawaii",abbreviation:"HI"},{name:"Idaho",abbreviation:"ID"},{name:"Illinois",abbreviation:"IL"},{name:"Indiana",abbreviation:"IN"},{name:"Iowa",abbreviation:"IA"},{name:"Kansas",abbreviation:"KS"},{name:"Kentucky",abbreviation:"KY"},{name:"Louisiana",abbreviation:"LA"},{name:"Maine",abbreviation:"ME"},{name:"Marshall Islands",abbreviation:"MH"},{name:"Maryland",abbreviation:"MD"},{name:"Massachusetts",abbreviation:"MA"},{name:"Michigan",abbreviation:"MI"},{name:"Minnesota",abbreviation:"MN"},{name:"Mississippi",abbreviation:"MS"},{name:"Missouri",abbreviation:"MO"},{name:"Montana",abbreviation:"MT"},{name:"Nebraska",abbreviation:"NE"},{name:"Nevada",abbreviation:"NV"},{name:"New Hampshire",abbreviation:"NH"},{name:"New Jersey",abbreviation:"NJ"},{name:"New Mexico",abbreviation:"NM"},{name:"New York",abbreviation:"NY"},{name:"North Carolina",abbreviation:"NC"},{name:"North Dakota",abbreviation:"ND"},{name:"Northern Mariana Islands",abbreviation:"MP"},{name:"Ohio",abbreviation:"OH"},{name:"Oklahoma",abbreviation:"OK"},{name:"Oregon",abbreviation:"OR"},{name:"Pennsylvania",abbreviation:"PA"},{name:"Puerto Rico",abbreviation:"PR"},{name:"Rhode Island",abbreviation:"RI"},{name:"South Carolina",abbreviation:"SC"},{name:"South Dakota",abbreviation:"SD"},{name:"Tennessee",abbreviation:"TN"},{name:"Texas",abbreviation:"TX"},{name:"Utah",abbreviation:"UT"},{name:"Vermont",abbreviation:"VT"},{name:"Virgin Islands, U.S.",abbreviation:"VI"},{name:"Virginia",abbreviation:"VA"},{name:"Washington",abbreviation:"WA"},{name:"West Virginia",abbreviation:"WV"},{name:"Wisconsin",abbreviation:"WI"},{name:"Wyoming",abbreviation:"WY"}]},u.prototype.street=function(e){e=a(e);var t=this.word({syllables:2});return t=this.capitalize(t),t+=" ",t+=e.short_suffix?this.street_suffix().abbreviation:this.street_suffix().name,t},u.prototype.street_suffix=function(){return this.pick(this.street_suffixes())},u.prototype.street_suffixes=function(){return[{name:"Avenue",abbreviation:"Ave"},{name:"Boulevard",abbreviation:"Blvd"},{name:"Center",abbreviation:"Ctr"},{name:"Circle",abbreviation:"Cir"},{name:"Court",abbreviation:"Ct"},{name:"Drive",abbreviation:"Dr"},{name:"Extension",abbreviation:"Ext"},{name:"Glen",abbreviation:"Gln"},{name:"Grove",abbreviation:"Grv"},{name:"Heights",abbreviation:"Hts"},{name:"Highway",abbreviation:"Hwy"},{name:"Junction",abbreviation:"Jct"},{name:"Key",abbreviation:"Key"},{name:"Lane",abbreviation:"Ln"},{name:"Loop",abbreviation:"Loop"},{name:"Manor",abbreviation:"Mnr"},{name:"Mill",abbreviation:"Mill"},{name:"Park",abbreviation:"Park"},{name:"Parkway",abbreviation:"Pkwy"},{name:"Pass",abbreviation:"Pass"},{name:"Path",abbreviation:"Path"},{name:"Pike",abbreviation:"Pike"},{name:"Place",abbreviation:"Pl"},{name:"Plaza",abbreviation:"Plz"},{name:"Point",abbreviation:"Pt"},{name:"Ridge",abbreviation:"Rdg"},{name:"River",abbreviation:"Riv"},{name:"Road",abbreviation:"Rd"},{name:"Square",abbreviation:"Sq"},{name:"Street",abbreviation:"St"},{name:"Terrace",abbreviation:"Ter"},{name:"Trail",abbreviation:"Trl"},{name:"Turnpike",abbreviation:"Tpke"},{name:"View",abbreviation:"Vw"},{name:"Way",abbreviation:"Way"}]},u.prototype.tv=function(e){return this.radio(e)},u.prototype.zip=function(e){var t="";for(var n=0;n<5;n++)t+=this.natural({max:9}).toString();if(e&&e.plusfour===!0){t+="-";for(n=0;n<4;n++)t+=this.natural({max:9}).toString()}return t},u.prototype.ampm=function(){return this.bool()?"am":"pm"},u.prototype.date=function(e){var t=this.month({raw:!0}),n;e=a(e,{year:parseInt(this.year(),10),month:t.numeric-1,day:this.natural({min:1,max:t.days}),hour:this.hour(),minute:this.minute(),second:this.second(),millisecond:this.millisecond(),american:!0,string:!1});var r=new Date(e.year,e.month,e.day,e.hour,e.minute,e.second,e.millisecond);return e.american?n=r.getMonth()+1+"/"+r.getDate()+"/"+r.getFullYear():n=r.getDate()+"/"+(r.getMonth()+1)+"/"+r.getFullYear(),e.string?n:r},u.prototype.hammertime=function(e){return this.date(e).getTime()},u.prototype.hour=function(e){e=a(e);var t=e.twentyfour?24:12;return this.natural({min:1,max:t})},u.prototype.millisecond=function(){return this.natural({max:999})},u.prototype.minute=u.prototype.second=function(){return this.natural({max:59})},u.prototype.month=function(e){e=a(e);var t=this.pick(this.months());return e.raw?t:t.name},u.prototype.months=function(){return[{name:"January",short_name:"Jan",numeric:"01",days:31},{name:"February",short_name:"Feb",numeric:"02",days:28},{name:"March",short_name:"Mar",numeric:"03",days:31},{name:"April",short_name:"Apr",numeric:"04",days:30},{name:"May",short_name:"May",numeric:"05",days:31},{name:"June",short_name:"Jun",numeric:"06",days:30},{name:"July",short_name:"Jul",numeric:"07",days:31},{name:"August",short_name:"Aug",numeric:"08",days:31},{name:"September",short_name:"Sep",numeric:"09",days:30},{name:"October",short_name:"Oct",numeric:"10",days:31},{name:"November",short_name:"Nov",numeric:"11",days:30},{name:"December",short_name:"Dec",numeric:"12",days:31}]},u.prototype.second=function(){return this.natural({max:59})},u.prototype.timestamp=function(){return this.natural({min:1,max:parseInt((new Date).getTime()/1e3,10)})},u.prototype.year=function(e){return e=a(e,{min:(new Date).getFullYear()}),e.max=typeof e.max!="undefined"?e.max:e.min+100,this.natural(e).toString()},u.prototype.cc=function(e){e=a(e);var t,n,r,i;t=e.type?this.cc_type({name:e.type,raw:!0}):this.cc_type({raw:!0}),n=t.prefix.split(""),r=t.length-t.prefix.length-1;for(var s=0;s<r;s++)n.push(this.integer({min:0,max:9}));return n.push(this.luhn_calculate(n.join(""))),n.join("")},u.prototype.cc_types=function(){return[{name:"American Express",short_name:"amex",prefix:"34",length:15},{name:"Bankcard",short_name:"bankcard",prefix:"5610",length:16},{name:"China UnionPay",short_name:"chinaunion",prefix:"62",length:16},{name:"Diners Club Carte Blanche",short_name:"dccarte",prefix:"300",length:14},{name:"Diners Club enRoute",short_name:"dcenroute",prefix:"2014",length:15},{name:"Diners Club International",short_name:"dcintl",prefix:"36",length:14},{name:"Diners Club United States & Canada",short_name:"dcusc",prefix:"54",length:16},{name:"Discover Card",short_name:"discover",prefix:"6011",length:16},{name:"InstaPayment",short_name:"instapay",prefix:"637",length:16},{name:"JCB",short_name:"jcb",prefix:"3528",length:16},{name:"Laser",short_name:"laser",prefix:"6304",length:16},{name:"Maestro",short_name:"maestro",prefix:"5018",length:16},{name:"Mastercard",short_name:"mc",prefix:"51",length:16},{name:"Solo",short_name:"solo",prefix:"6334",length:16},{name:"Switch",short_name:"switch",prefix:"4903",length:16},{name:"Visa",short_name:"visa",prefix:"4",length:16},{name:"Visa Electron",short_name:"electron",prefix:"4026",length:16}]},u.prototype.cc_type=function(e){e=a(e);var t=this.cc_types(),n=null;if(e.name){for(var r=0;r<t.length;r++)if(t[r].name===e.name||t[r].short_name===e.name){n=t[r];break}if(n===null)throw new Error("Credit card type '"+e.name+"'' is not suppoted")}else n=this.pick(t);return e.raw?n:n.name},u.prototype.dollar=function(e){e=a(e,{max:1e4,min:0});var t=this.floating({min:e.min,max:e.max,fixed:2}).toString(),n=t.split(".")[1];return n===undefined?t+=".00":n.length<2&&(t+="0"),t<0?"-$"+t.replace("-",""):"$"+t},u.prototype.exp=function(e){e=a(e);var t={};return t.year=this.exp_year(),t.year===(new Date).getFullYear()?t.month=this.exp_month({future:!0}):t.month=this.exp_month(),e.raw?t:t.month+"/"+t.year},u.prototype.exp_month=function(e){e=a(e);var t,n;if(e.future){do t=this.month({raw:!0}).numeric,n=parseInt(t,10);while(n<(new Date).getMonth())}else t=this.month({raw:!0}).numeric;return t},u.prototype.exp_year=function(){return this.year({max:(new Date).getFullYear()+10})},u.prototype.d4=function(){return this.natural({min:1,max:4})},u.prototype.d6=function(){return this.natural({min:1,max:6})},u.prototype.d8=function(){return this.natural({min:1,max:8})},u.prototype.d10=function(){return this.natural({min:1,max:10})},u.prototype.d12=function(){return this.natural({min:1,max:12})},u.prototype.d20=function(){return this.natural({min:1,max:20})},u.prototype.d30=function(){return this.natural({min:1,max:30})},u.prototype.d100=function(){return this.natural({min:1,max:100})},u.prototype.rpg=function(e,t){t=a(t);if(e===null)throw new Error("A type of die roll must be included");var n=e.toLowerCase().split("d"),r=[];if(n.length!==2||!parseInt(n[0],10)||!parseInt(n[1],10))throw new Error("Invalid format provided. Please provide #d# where the first # is the number of dice to roll, the second # is the max of each die");for(var i=n[0];i>0;i--)r[i-1]=this.natural({min:1,max:n[1]});return typeof t.sum!="undefined"&&t.sum?r.reduce(function(e,t){return e+t}):r},u.prototype.guid=function(e){e=e||{version:5};var t="ABCDEF1234567890",n="AB89",r=this.string({pool:t,length:8})+"-"+this.string({pool:t,length:4})+"-"+e.version+this.string({pool:t,length:3})+"-"+this.string({pool:n,length:1})+this.string({pool:t,length:3})+"-"+this.string({pool:t,length:12});return r},u.prototype.hash=function(e){e=a(e,{length:40,casing:"lower"});var t=e.casing==="upper"?o.toUpperCase():o;return this.string({pool:t,length:e.length})},u.prototype.luhn_check=function(e){var t=e.toString(),n=+t.substring(t.length-1);return n===this.luhn_calculate(+t.substring(0,t.length-1))},u.prototype.luhn_calculate=function(e){var t=e.toString().split("").reverse(),n=0;for(var r=0,i=t.length;i>r;++r){var s=+t[r];r%2===0&&(s*=2,s>9&&(s-=9)),n+=s}return n*9%10},u.prototype.mersenne_twister=function(e){return new h(e)},u.prototype.VERSION="0.5.4";var h=function(e){e===undefined&&(e=(new Date).getTime()),this.N=624,this.M=397,this.MATRIX_A=2567483615,this.UPPER_MASK=2147483648,this.LOWER_MASK=2147483647,this.mt=new Array(this.N),this.mti=this.N+1,this.init_genrand(e)};h.prototype.init_genrand=function(e){this.mt[0]=e>>>0;for(this.mti=1;this.mti<this.N;this.mti++)e=this.mt[this.mti-1]^this.mt[this.mti-1]>>>30,this.mt[this.mti]=(((e&4294901760)>>>16)*1812433253<<16)+(e&65535)*1812433253+this.mti,this.mt[this.mti]>>>=0},h.prototype.init_by_array=function(e,t){var n=1,r=0,i,s;this.init_genrand(19650218),i=this.N>t?this.N:t;for(;i;i--)s=this.mt[n-1]^this.mt[n-1]>>>30,this.mt[n]=(this.mt[n]^(((s&4294901760)>>>16)*1664525<<16)+(s&65535)*1664525)+e[r]+r,this.mt[n]>>>=0,n++,r++,n>=this.N&&(this.mt[0]=this.mt[this.N-1],n=1),r>=t&&(r=0);for(i=this.N-1;i;i--)s=this.mt[n-1]^this.mt[n-1]>>>30,this.mt[n]=(this.mt[n]^(((s&4294901760)>>>16)*1566083941<<16)+(s&65535)*1566083941)-n,this.mt[n]>>>=0,n++,n>=this.N&&(this.mt[0]=this.mt[this.N-1],n=1);this.mt[0]=2147483648},h.prototype.genrand_int32=function(){var e,t=new Array(0,this.MATRIX_A);if(this.mti>=this.N){var n;this.mti===this.N+1&&this.init_genrand(5489);for(n=0;n<this.N-this.M;n++)e=this.mt[n]&this.UPPER_MASK|this.mt[n+1]&this.LOWER_MASK,this.mt[n]=this.mt[n+this.M]^e>>>1^t[e&1];for(;n<this.N-1;n++)e=this.mt[n]&this.UPPER_MASK|this.mt[n+1]&this.LOWER_MASK,this.mt[n]=this.mt[n+(this.M-this.N)]^e>>>1^t[e&1];e=this.mt[this.N-1]&this.UPPER_MASK|this.mt[0]&this.LOWER_MASK,this.mt[this.N-1]=this.mt[this.M-1]^e>>>1^t[e&1],this.mti=0}return e=this.mt[this.mti++],e^=e>>>11,e^=e<<7&2636928640,e^=e<<15&4022730752,e^=e>>>18,e>>>0},h.prototype.genrand_int31=function(){return this.genrand_int32()>>>1},h.prototype.genrand_real1=function(){return this.genrand_int32()*(1/4294967295)},h.prototype.random=function(){return this.genrand_int32()*(1/4294967296)},h.prototype.genrand_real3=function(){return(this.genrand_int32()+.5)*(1/4294967296)},h.prototype.genrand_res53=function(){var e=this.genrand_int32()>>>5,t=this.genrand_int32()>>>6;return(e*67108864+t)*(1/9007199254740992)},typeof exports!="undefined"&&(typeof module!="undefined"&&module.exports&&(exports=module.exports=u),exports.Chance=u),typeof n=="function"&&n.amd&&n("vendor/chance",[],function(){return u}),typeof window=="object"&&typeof window.document=="object"&&(window.Chance=u,window.chance=new u)}(),n("utils/configurable",["require"],function(e){function t(e,t){for(var n in t)(function(n){e[n]=function(r){return arguments.length?(t[n]=r,e):t[n]}})(n)}return t}),n("species/clicker",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function f(){var t,n,r,i,s=0;do{t=a.positionSelector(),n=t[0],r=t[1],i=e.elementFromPoint(n,r),s++;if(s>a.maxNbTries)return!1}while(!i||!a.canClick(i));var o=e.createEvent("MouseEvents"),u=a.randomizer.pick(a.clickTypes);o.initMouseEvent(u,!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),i.dispatchEvent(o),typeof a.showAction=="function"&&a.showAction(n,r,u),typeof a.logger.log=="function"&&a.logger.log("gremlin","clicker   ",u,"at",n,r)}var e=window.document,r=e.body,i=["click","click","click","click","click","click","dblclick","dblclick","mousedown","mouseup","mouseover","mouseover","mouseover","mousemove","mouseout"],s=function(){return[a.randomizer.natural({max:e.documentElement.clientWidth-1}),a.randomizer.natural({max:e.documentElement.clientHeight-1})]},o=function(t,n){var i=e.createElement("div");i.style.border="3px solid red",i.style["border-radius"]="50%",i.style.width="40px",i.style.height="40px",i.style["box-sizing"]="border-box",i.style.position="absolute",i.style.webkitTransition="opacity 1s ease-out",i.style.mozTransition="opacity 1s ease-out",i.style.transition="opacity 1s ease-out",i.style.left=t-20+"px",i.style.top=n-20+"px";var s=r.appendChild(i);setTimeout(function(){r.removeChild(s)},1e3),setTimeout(function(){s.style.opacity=0},50)},u=function(){return!0},a={clickTypes:i,positionSelector:s,showAction:o,canClick:u,maxNbTries:10,logger:{},randomizer:new n};return t(f,a),f}}),n("species/formFiller",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function u(){var t=[],n=d();for(var r in o.elementMapTypes)o.elementMapTypes.hasOwnProperty(r)&&t.push(r);var i,s=0;do{var u=e.querySelectorAll(t.join(","));if(u.length===0)return!1;i=o.randomizer.pick(u),s++;if(s>o.maxNbTries)return!1}while(!i||!o.canFillElement(i));var a=null;for(var f in o.elementMapTypes)if(i[n](f)){a=f;break}var l=o.elementMapTypes[a](i);typeof o.showAction=="function"&&o.showAction(i),typeof o.logger.log=="function"&&o.logger.log("gremlin","formFiller","input",l,"in",i)}function a(e){var t=o.randomizer.character();return e.value+=t,t}function f(e){var t=o.randomizer.character({pool:"0123456789"});return e.value+=t,t}function l(e){var t=e.querySelectorAll("option"),n=o.randomizer.pick(t);for(var r=0,i=t.length;r<i;r++){var s=t[r];s.selected=s.value==n.value}return n.value}function c(t){var n=e.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),t.dispatchEvent(n),t.value}function h(t){var n=e.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),t.dispatchEvent(n),t.value}function p(e){var t=o.randomizer.email();return e.value=t,t}function d(){var t=e.querySelector("body");return(t.mozMatchesSelector||t.msMatchesSelector||t.oMatchesSelector||t.webkitMatchesSelector).name}var e=window.document,r={'input[type="text"]':a,'input[type="password"]':a,'input[type="number"]':f,select:l,'input[type="radio"]':c,'input[type="checkbox"]':h,'input[type="email"]':p,"input:not([type])":a},i=function(e){typeof e.attributes["data-old-border"]=="undefined"&&(e.attributes["data-old-border"]=e.style.border);var t=e.attributes["data-old-border"];e.style.border="1px solid red",setTimeout(function(){e.style.border=t},500)},s=function(){return!0},o={elementMapTypes:r,showAction:i,canFillElement:s,maxNbTries:10,logger:{},randomizer:new n};return t(u,o),u}}),n("species/scroller",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function a(){var e=u.positionSelector(),t=e[0],n=e[1];window.scrollTo(t,n),typeof u.showAction=="function"&&u.showAction(t,n),typeof u.logger.log=="function"&&u.logger.log("gremlin","scroller  ","scroll to",t,n)}var e=window.document,r=e.documentElement,i=e.body,s=function(){var e=Math.max(i.scrollWidth,i.offsetWidth,r.scrollWidth,r.offsetWidth,r.clientWidth),t=Math.max(i.scrollHeight,i.offsetHeight,r.scrollHeight,r.offsetHeight,r.clientHeight);return[u.randomizer.natural({max:e-r.clientWidth}),u.randomizer.natural({max:t-r.clientHeight})]},o=function(t,n){var s=e.createElement("div");s.style.border="3px solid red",s.style.width=r.clientWidth-25+"px",s.style.height=r.clientHeight-25+"px",s.style.position="absolute",s.style.webkitTransition="opacity 1s ease-out",s.style.mozTransition="opacity 1s ease-out",s.style.transition="opacity 1s ease-out",s.style.left=t+10+"px",s.style.top=n+10+"px";var o=i.appendChild(s);setTimeout(function(){i.removeChild(o)},1e3),setTimeout(function(){o.style.opacity=0},50)},u={positionSelector:s,showAction:o,logger:{},randomizer:new n};return t(a,u),a}}),n("species/typer",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function a(){var t=Math.max(i.scrollWidth,i.offsetWidth,r.scrollWidth,r.offsetWidth,r.clientWidth),n=Math.max(i.scrollHeight,i.offsetHeight,r.scrollHeight,r.offsetHeight,r.clientHeight),s=e.createEvent("KeyboardEvent"),o=typeof s.initKeyboardEvent!="undefined"?"initKeyboardEvent":"initKeyEvent",a=u.randomizer.natural({max:360}),f=u.randomizer.natural({max:r.clientWidth-1}),l=u.randomizer.natural({max:r.clientHeight-1}),c=e.elementFromPoint(f,l);s[o](u.randomizer.pick(u.eventTypes),!0,!0,c,!1,!1,!1,!1,a,0),c.dispatchEvent(s),typeof u.showAction=="function"&&u.showAction(c,f,l,a),typeof u.logger.log=="function"&&u.logger.log("gremlin","typer       type",a,"at",f,l)}var e=window.document,r=e.documentElement,i=e.body,s=["keypress","keyup","keydown"],o=function(t,n,r,s){var o=e.createElement("div");o.style.border="3px solid orange",o.style["border-radius"]="50%",o.style.width="40px",o.style.height="40px",o.style["box-sizing"]="border-box",o.style.position="absolute",o.style.webkitTransition="opacity 1s ease-out",o.style.mozTransition="opacity 1s ease-out",o.style.transition="opacity 1s ease-out",o.style.left=n+"px",o.style.top=r+"px",o.style.textAlign="center",o.style.paddingTop="7px",o.innerHTML=String.fromCharCode(s);var u=i.appendChild(o);setTimeout(function(){i.removeChild(u)},1e3),setTimeout(function(){u.style.opacity=0},50)},u={eventTypes:s,showAction:o,logger:{},randomizer:new n};return t(a,u),a}}),n("mogwais/alert",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function l(){o.watchEvents.indexOf("alert")!==-1&&(window.alert=function(e){o.logger.warn("mogwai ","alert     ",e,"alert")}),o.watchEvents.indexOf("confirm")!==-1&&(window.confirm=function(e){o.confirmResponse(),o.logger.warn("mogwai ","alert     ",e,"confirm")}),o.watchEvents.indexOf("prompt")!==-1&&(window.prompt=function(e){o.promptResponse(),o.logger.warn("mogwai ","alert     ",e,"prompt")})}var e=["alert","confirm","prompt"],r=function(){return o.randomizer.bool()},i=function(){return o.randomizer.sentence()},s={warn:function(){}},o={watchEvents:e,confirmResponse:r,promptResponse:i,logger:s,randomizer:new n},u=window.alert,a=window.confirm,f=window.prompt;return l.cleanUp=function(){return window.alert=u,window.confirm=a,window.prompt=f,l},t(l,o),l}}),n("mogwais/fps",["require","../utils/configurable"],function(e){var t=e("../utils/configurable");return function(){function o(e){e-i>r.delay&&(u(e),i=e);if(!s)return;window.requestAnimationFrame(o)}function u(){function t(t){e=t,window.requestAnimationFrame(n)}function n(t){var n=t-e<16?60:1e3/(t-e),i=r.levelSelector(n);r.logger[i]("mogwai ","fps       ",n)}var e;window.requestAnimationFrame(t)}function a(){s=!0,window.requestAnimationFrame(o)}var e={log:function(){},warn:function(){},error:function(){}},n=function(e){return e<10?"error":e<20?"warn":"log"},r={delay:500,levelSelector:n,logger:e},i=-Infinity,s;return a.cleanUp=function(){return s=!1,a},t(a,r),a}}),n("mogwais/gizmo",["require","../utils/configurable"],function(e){var t=e("../utils/configurable");return function(){function s(){function s(){e++,e==n.maxErrors&&(t.stop(),window.setTimeout(function(){n.logger.warn("mogwai ","gizmo     ","stopped test execution after ",n.maxErrors,"errors")},4))}var e=0,t=this;r=window.onerror,window.onerror=function(e,t,n){return s(),r?r(e,t,n):!1},i=n.logger.error,n.logger.error=function(){s(),i.apply(n.logger,arguments)}}var e={warn:function(){}},n={maxErrors:10,logger:e},r,i;return s.cleanUp=function(){return window.onerror=r,n.logger.error=i.bind(n.logger),s},t(s,n),s}}),n("utils/executeInSeries",["require"],function(e){function t(e,t,n,r){var i=t.length;e=e.slice(0);var s=function(e,t){if(!e.length)return typeof r=="function"?r():!0;var o=e.shift();o.apply(n,t),o.length===i&&s(e,t,r)};t.push(function(){s(e,t,r)}),s(e,t,r)}return t}),n("strategies/allTogether",["require","../utils/executeInSeries","../utils/configurable"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable");return function(){function s(n,s,u){function l(e){t(n,[],f,e)}function c(t){if(r)return;if(t>=a)return o();l(function(){setTimeout(function(){c(++t)},e.delay)})}var a=s&&s.nb?s.nb:e.nb,f=this;r=!1,i=u,c(0)}function o(){typeof i=="function"&&i(),i=null}var e={delay:10,nb:100},r,i;return s.stop=function(){r=!0,setTimeout(o,4)},n(s,e),s}}),n("strategies/bySpecies",["require","../utils/executeInSeries","../utils/configurable"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable");return function(){function s(n,s,u){function l(n,i,s){if(r)return;if(i>=a)return s();t([n],[],f,function(){setTimeout(function(){l(n,++i,s)},e.delay)})}function c(){if(r)return;if(n.length===0)return o();l(n.shift(),0,c)}var a=s&&s.nb?s.nb:e.nb,n=n.slice(0),f=this;r=!1,i=u,c()}function o(){typeof i=="function"&&i(),i=null}var e={delay:10,nb:100},r,i;return s.stop=function(){r=!0,setTimeout(o,4)},n(s,e),s}}),n("strategies/distribution",["require","../utils/executeInSeries","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable"),r=e("../vendor/chance");return function(){function o(n,r,o){function p(r,s,o){if(i)return;if(s>=l)return f();t([r],[],h,function(){setTimeout(function(){p(a(n,c),++s,o)},e.delay)})}var l=r&&r.nb?r.nb:e.nb,n=n.slice(0),c=e.distribution.length===0?u(n):e.distribution,h=this;if(l===0)return o();i=!1,s=o,p(a(n,c),0,p)}function u(e){var t=e.length;if(t===0)return[];var n=[],r=1/t;for(var i=0;i<t;i++)n.push(r);return n}function a(t,n){var r=0,i=e.randomizer.floating({min:0,max:1});for(var s=0,o=t.length;s<o;s++){r+=n[s];if(i<=r)return t[s]}return function(){}}function f(){typeof s=="function"&&s(),s=null}var e={distribution:[],delay:10,nb:100,randomizer:new r},i,s;return o.stop=function(){i=!0,setTimeout(f,4)},n(o,e),o}}),n("main",["require","./vendor/chance","./species/clicker","./species/formFiller","./species/scroller","./species/typer","./mogwais/alert","./mogwais/fps","./mogwais/gizmo","./strategies/allTogether","./strategies/bySpecies","./strategies/distribution","./utils/executeInSeries"],function(e){function s(e,t){for(var n=0,r=t.length;n<r;n++)for(var i in e)typeof t[n][i]=="function"&&t[n][i](e[i])}var t=e("./vendor/chance"),n={species:{clicker:e("./species/clicker"),formFiller:e("./species/formFiller"),scroller:e("./species/scroller"),typer:e("./species/typer")},mogwais:{alert:e("./mogwais/alert"),fps:e("./mogwais/fps"),gizmo:e("./mogwais/gizmo")},strategies:{allTogether:e("./strategies/allTogether"),bySpecies:e("./strategies/bySpecies"),distribution:e("./strategies/distribution")}},r=e("./utils/executeInSeries"),i=function(){this._gremlins=[],this._mogwais=[],this._strategies=[],this._beforeCallbacks=[],this._afterCallbacks=[],this._logger=console,this._randomizer=new t};return i.prototype.gremlin=function(e){return this._gremlins.push(e),this},i.prototype.allGremlins=function(){for(var e in n.species)this.gremlin(n.species[e]());return this},i.prototype.mogwai=function(e){return this._mogwais.push(e),this},i.prototype.allMogwais=function(){for(var e in n.mogwais)this.mogwai(n.mogwais[e]());return this},i.prototype.strategy=function(e){return this._strategies.push(e),this},i.prototype.before=function(e){return this._beforeCallbacks.push(e),this},i.prototype.after=function(e){return this._afterCallbacks.push(e),this},i.prototype.logger=function(e){return arguments.length?(this._logger=e,this):this._logger},i.prototype.log=function(e){this._logger.log(e)},i.prototype.randomizer=function(e){return arguments.length?(this._randomizer=e,this):this._randomizer},i.prototype.seed=function(e){return this._randomizer=new t(e),this},i.prototype.unleash=function(e,t){this._gremlins.length===0&&this.allGremlins(),this._mogwais.length===0&&this.allMogwais(),this._strategies.length===0&&this.strategy(n.strategies.distribution());var i=[].concat(this._gremlins,this._mogwais),o=i.concat(this._strategies,this._beforeCallbacks,this._afterCallbacks);s({logger:this._logger,randomizer:this._randomizer},o);var u=this._beforeCallbacks;u=u.concat(this._mogwais);var a=this._afterCallbacks;for(var f=0,l=i.length;f<l;f++)typeof i[f].cleanUp=="function"&&a.push(i[f].cleanUp);var c=this;r(u,[],c,function(){r(c._strategies,[c._gremlins,e],c,function(){r(a,[],c,function(){typeof t=="function"&&t()})})})},i.prototype.stop=function(){var e=this._strategies;for(var t=0,n=e.length;t<n;t++)e[t].stop()},n.createHorde=function(){return new i},n}),t(["main"]),t("main")});
 
 /***/ },
-/* 35 */
-/*!**********************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/process/browser.js ***!
-  \**********************************************************/
+/* 54 */
+/*!********************************************************************************!*\
+  !*** ../stb/~/gulp-webpack/~/webpack/~/node-libs-browser/~/process/browser.js ***!
+  \********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			// shim for using process in browser
@@ -7760,10 +9556,10 @@
 
 
 /***/ },
-/* 36 */
-/*!***************************************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
-  \***************************************************************************/
+/* 55 */
+/*!*************************************************************************************************!*\
+  !*** ../stb/~/gulp-webpack/~/webpack/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
+  \*************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			if (typeof Object.create === 'function') {
@@ -7792,10 +9588,10 @@
 
 
 /***/ },
-/* 37 */
-/*!***********************************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
-  \***********************************************************************/
+/* 56 */
+/*!*********************************************************************************************!*\
+  !*** ../stb/~/gulp-webpack/~/webpack/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
+  \*********************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			module.exports = function isBuffer(arg) {
@@ -7806,10 +9602,10 @@
 			}
 
 /***/ },
-/* 38 */
-/*!*******************************************************!*\
-  !*** /home/dp/Projects/web/stb/~/tty-colors/index.js ***!
-  \*******************************************************/
+/* 57 */
+/*!************************************!*\
+  !*** ../stb/~/tty-colors/index.js ***!
+  \************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/**
@@ -7867,1579 +9663,6 @@
 					configurable: true
 				});
 			});
-
-
-/***/ },
-/* 39 */
-/*!************************!*\
-  !*** ./app/js/main.js ***!
-  \************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Main application entry point.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var app    = __webpack_require__(/*! stb/app */ 4),
-				router = __webpack_require__(/*! stb/router */ 5),
-				keys   = __webpack_require__(/*! stb/keys */ 3);
-			
-			
-			app.addListeners({
-				// all resources are loaded
-				load: function load () {
-					// set pages
-					router.init([
-						__webpack_require__(/*! ./pages/init */ 41),
-						__webpack_require__(/*! ./pages/main */ 42),
-						__webpack_require__(/*! ./pages/help */ 40)
-					]);
-				},
-			
-				// everything is ready
-				done: function done () {
-					// go to the main page
-					router.navigate('pageMain');
-				},
-			
-				// event
-				keydown: function keydown ( event ) {
-					if ( event.code === keys.back ) {
-						router.back();
-					}
-				}
-			});
-			
-			
-			// new way of string handling
-			// all strings are in UTF-16
-			//gSTB.SetNativeStringMode(true);
-
-
-/***/ },
-/* 40 */
-/*!******************************!*\
-  !*** ./app/js/pages/help.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id     = 'pageHelp',
-				Page   = __webpack_require__(/*! stb/ui/page */ 11),
-				Button = __webpack_require__(/*! stb/ui/button */ 6),
-				router = __webpack_require__(/*! stb/router */ 5),
-				page   = new Page({$node: document.getElementById(id)});
-			
-			
-			page.addListener('load', function load () {
-				page.add(
-					page.back = new Button({
-						value: 'go back',
-						events: {
-							click: function () {
-								router.navigate('pageMain');
-							}
-						}
-					})
-				);
-			});
-			
-			
-			page.addListener('show', function show () {
-				// initial active component
-				page.back.focus();
-			});
-			
-			
-			// public
-			module.exports = page;
-
-
-/***/ },
-/* 41 */
-/*!******************************!*\
-  !*** ./app/js/pages/init.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Loading page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var id   = 'pageInit',
-				Page = __webpack_require__(/*! stb/ui/page */ 11),
-				page = new Page({$node: document.getElementById(id)});
-			
-			
-			// public
-			module.exports = page;
-
-
-/***/ },
-/* 42 */
-/*!******************************!*\
-  !*** ./app/js/pages/main.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Page implementation.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var id   = 'pageMain',
-				List = __webpack_require__(/*! stb/ui/list */ 13),
-				Page = __webpack_require__(/*! stb/ui/page */ 11),
-				page = new Page({$node: document.getElementById(id)});
-			
-			
-			page.addListener('load', function load () {
-				var menuData = [
-						{
-							value: 'Panel',
-							panel: __webpack_require__(/*! ../tabs/main.panel */ 51)
-						},
-						{
-							value: 'Button',
-							panel: __webpack_require__(/*! ../tabs/main.button */ 43)
-						},
-						{
-							value: 'Input',
-							panel: __webpack_require__(/*! ../tabs/main.input */ 47)
-						},
-						{
-							value: 'CheckBox',
-							panel: __webpack_require__(/*! ../tabs/main.check.box */ 44)
-						},
-						{
-							value: 'Grid',
-							panel: __webpack_require__(/*! ../tabs/main.grid */ 46)
-						},
-						{
-							value: 'List',
-							panel: __webpack_require__(/*! ../tabs/main.list */ 48)
-						},
-						{
-							value: 'ProgressBar',
-							panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 52)
-						},
-						{
-							value: 'Page',
-							panel: __webpack_require__(/*! ../tabs/main.page */ 50)
-						},
-						{
-							value: 'Modal',
-							panel: __webpack_require__(/*! ../tabs/main.modal */ 49)
-						},
-						{
-							value: 'Widget',
-							panel: __webpack_require__(/*! ../tabs/main.widget */ 53)
-						}
-					];
-			
-				// attach to page
-				menuData.forEach(function ( item ) {
-					page.add(item.panel);
-				});
-			
-				page.add(
-					page.menu = new List({
-						$node: document.getElementById('pageMainMenu'),
-						data: menuData,
-						focusIndex: 0,
-						size: 10,
-						cycle: true,
-						render: function ( $item, data ) {
-							$item.textContent = data.value;
-						},
-						events: {
-							/*click: function ( data ) {
-								//console.log('click');
-								//data.event.stop = true;
-								//debug.inspect(data, 1);
-							},
-							focus: function ( data ) {
-								//console.log('focus');
-								//debug.inspect(data, 1);
-							},
-							'click:item': function ( data ) {
-								//console.log('click:item');
-								//debug.inspect(data, 1);
-							},*/
-							'focus:item': function ( data ) {
-								//console.log('focus:item');
-								//debug.inspect(data, 1);
-								if ( data.$prev ) {
-									data.$prev.data.panel.hide();
-								}
-								data.$curr.data.panel.show();
-							}
-							/*'blur:item': function ( data ) {
-								//console.log('blur:item');
-								//debug.inspect(data, 1);
-							}*/
-						}
-					})
-					//page.body = new Panel({$node: document.getElementById('pageMainBody')})
-				);
-			
-				page.focusable = false;
-				//page.addListener('click', function ( data ) {
-				//	data.event.stop = true;
-				//});
-			});
-			
-			
-			page.addListener('show', function show () {
-				// initial active component
-				if ( !page.activeComponent ) {
-					page.menu.focus();
-				}
-			});
-			
-			
-			// public
-			module.exports = page;
-
-
-/***/ },
-/* 43 */
-/*!************************************!*\
-  !*** ./app/js/tabs/main.button.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Button = __webpack_require__(/*! stb/ui/button */ 6),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
-				panel  = new Panel({
-					$node: document.getElementById('pageMainTabButton'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabButtonSimple'),
-					children: [
-						new Button({
-							value: 'press me'
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabButtonIcon'),
-					children: [
-						new Button({
-							icon: 'menu'
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabButtonIconText'),
-					children: [
-						new Button({
-							icon: 'menu',
-							value: 'press me'
-						})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 44 */
-/*!***************************************!*\
-  !*** ./app/js/tabs/main.check.box.js ***!
-  \***************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Panel    = __webpack_require__(/*! stb/ui/panel */ 2),
-				CheckBox = __webpack_require__(/*! stb/ui/check.box */ 25),
-				panel    = new Panel({
-					$node: document.getElementById('pageMainTabCheckBox'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabCheckBoxSimple'),
-					children: [
-						new CheckBox()
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabCheckBoxGroup'),
-					children: [
-						new CheckBox({group: 'main', value: false}),
-						new CheckBox({group: 'main', value: true}),
-						new CheckBox({group: 'main', value: false}),
-						new CheckBox({group: 'main', value: false})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 45 */
-/*!***************************************!*\
-  !*** ./app/js/tabs/main.grid.data.js ***!
-  \***************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			module.exports = {
-				'table 1x1 with no merge': {
-					raw: [
-						[1]
-					],
-					check: [[1]]
-				},
-			
-				'table 3x3 with no merge': {
-					raw: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[7, 8, 9]
-					],
-					check: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[7, 8, 9]
-					]
-				},
-			
-				'table 3x3 with merge 2x2 #1': {
-					raw: [
-						[{value: '1;2;4;5', rowSpan: 2, colSpan: 2}, 3],
-						[6],
-						[7, 8, 9]
-					],
-					check: [
-						['1;2;4;5', '1;2;4;5', 3],
-						['1;2;4;5', '1;2;4;5', 6],
-						[7,          8,        9]
-					]
-				},
-			
-				'table 3x3 with merge 2x2 #2': {
-					raw: [
-						[1, {value: '2;3;5;6', rowSpan: 2, colSpan: 2}],
-						[4],
-						[7, 8, 9]
-					],
-					check: [
-						[1, '2;3;5;6', '2;3;5;6'],
-						[4, '2;3;5;6', '2;3;5;6'],
-						[7,  8,         9]
-					]
-				},
-			
-				'table 3x3 with merge 2x2 #3': {
-					raw: [
-						[1, 2, 3],
-						[4, {value: '5;6;8;9', rowSpan: 2, colSpan: 2}],
-						[7]
-					],
-					check: [
-						[1,  2,         3],
-						[4, '5;6;8;9', '5;6;8;9'],
-						[7, '5;6;8;9', '5;6;8;9']
-					]
-				},
-			
-				'table 3x3 with merge 2x2 #4': {
-					raw: [
-						[1, 2, 3],
-						[{value: '4;5;7;8', rowSpan: 2, colSpan: 2}, 6],
-						[9]
-					],
-					check: [
-						[1,          2,        3],
-						['4;5;7;8', '4;5;7;8', 6],
-						['4;5;7;8', '4;5;7;8', 9]
-					]
-				},
-			
-				'table 3x3 with merge 3x1 #1': {
-					raw: [
-						[{value: '1;2;3', colSpan: 3}],
-						[4,       5,      6],
-						[7,       8,      9]
-					],
-					check: [
-						['1;2;3', '1;2;3', '1;2;3'],
-						[4,        5,       6],
-						[7,        8,       9]
-					]
-				},
-			
-				'table 3x3 with merge 3x1 #2': {
-					raw: [
-						[1, 2, 3],
-						[{value: '4;5;6', colSpan: 3}],
-						[7, 8, 9]
-					],
-					check: [
-						[1,        2,       3],
-						['4;5;6', '4;5;6', '4;5;6'],
-						[7,        8,       9]
-					]
-				},
-			
-				'table 3x3 with merge 3x1 #3': {
-					raw: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[{value: '7;8;9', colSpan: 3}]
-					],
-					check: [
-						[1,        2,       3],
-						[4,        5,       6],
-						['7;8;9', '7;8;9', '7;8;9']
-					]
-				},
-			
-				'table 3x3 with merge 1x3 #1': {
-					raw: [
-						[{value: '1;4;7', rowSpan: 3}, 2, 3],
-						[5, 6],
-						[8, 9]
-					],
-					check: [
-						['1;4;7', 2, 3],
-						['1;4;7', 5, 6],
-						['1;4;7', 8, 9]
-					]
-				},
-			
-				'table 3x3 with merge 1x3 #2': {
-					raw: [
-						[1, {value: '2;5;8', rowSpan: 3}, 3],
-						[4, 6],
-						[7, 9]
-					],
-					check: [
-						[1, '2;5;8', 3],
-						[4, '2;5;8', 6],
-						[7, '2;5;8', 9]
-					]
-				},
-			
-				'table 3x3 with merge 1x3 #3': {
-					raw: [
-						[1, 2, {value: '3;6;9', rowSpan: 3}],
-						[4, 5],
-						[7, 8]
-					],
-					check: [
-						[1, 2, '3;6;9'],
-						[4, 5, '3;6;9'],
-						[7, 8, '3;6;9']
-					]
-				},
-			
-				'table 2x2 with all merged cells': {
-					raw: [
-						[{value: '1-4', rowSpan: 2, colSpan: 2}]
-					],
-					check: [
-						['1-4', '1-4'],
-						['1-4', '1-4']
-					]
-				},
-			
-				'table 3x3 with all merged cells': {
-					raw: [
-						[{value: '1-9', rowSpan: 3, colSpan: 3}]
-					],
-					check: [
-						['1-9', '1-9', '1-9'],
-						['1-9', '1-9', '1-9'],
-						['1-9', '1-9', '1-9']
-					]
-				},
-			
-				'table 3x3 with horizontal stripes #1': {
-					raw: [
-						[{value: '1;2', colSpan: 2}, 3],
-						[4, {value: '5;6', colSpan: 2}],
-						[{value: '7;8', colSpan: 2}, 9]
-					],
-					check: [
-						['1;2', '1;2',  3],
-						[4,     '5;6', '5;6'],
-						['7;8', '7;8',  9]
-					]
-				},
-			
-				'table 3x3 with horizontal stripes #2': {
-					raw: [
-						[1, {value: '2;3', colSpan: 2}],
-						[{value: '4;5', colSpan: 2}, 6],
-						[7, {value: '8;9', colSpan: 2}]
-					],
-					check: [
-						[1,     '2;3', '2;3'],
-						['4;5', '4;5',  6],
-						[7,     '8;9', '8;9']
-					]
-				},
-			
-				'table 3x3 with vertical stripes #1': {
-					raw: [
-						[{value: '1;4', rowSpan: 2}, 2, {value: '3;6', rowSpan: 2}],
-						[{value: '5;8', rowSpan: 2}],
-						[7, 9]
-					],
-					check: [
-						['1;4',  2,    '3;6'],
-						['1;4', '5;8', '3;6'],
-						[7,     '5;8',  9]
-					]
-				},
-			
-				'table 3x3 with vertical stripes #2': {
-					raw: [
-						[1, {value: '2;5', rowSpan: 2}, 3],
-						[{value: '4;7', rowSpan: 2}, {value: '6;9', rowSpan: 2}],
-						[8]
-					],
-					check: [
-						[1,     '2;5',  3],
-						['4;7', '2;5', '6;9'],
-						['4;7',  8,    '6;9']
-					]
-				},
-			
-				'table 3x3 with spiral merge #1': {
-					raw: [
-						[{value: '1;2', rowSpan: 1, colSpan: 2}, {value: '3;6', rowSpan: 2, colSpan: 1}],
-						[{value: '4;7', rowSpan: 2, colSpan: 1}, 5],
-						[{value: '8;9', rowSpan: 1, colSpan: 2}]
-					],
-					check: [
-						['1;2', '1;2', '3;6'],
-						['4;7',  5,    '3;6'],
-						['4;7', '8;9', '8;9']
-					]
-				},
-			
-				'table 3x3 with spiral merge #2': {
-					raw: [
-						[{value: '1;4', rowSpan: 2, colSpan: 1}, {value: '2;3', rowSpan: 1, colSpan: 2}],
-						[5, {value: '6;9', rowSpan: 2, colSpan: 1}],
-						[{value: '7;8', rowSpan: 1, colSpan: 2}]
-					],
-					check: [
-						['1;4', '2;3', '2;3'],
-						['1;4',  5,    '6;9'],
-						['7;8', '7;8', '6;9']
-					]
-				},
-			
-				'table 5x5 with merge #1': {
-					raw: [
-						[1, 2, 3, 4, 5],
-						[6, {value: '7-9', colSpan: 3}, 10],
-						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14, {value: '15;20', rowSpan: 2}],
-						[18, 19],
-						[{value: '26-30', colSpan: 5}],
-						[{value: '31-40', colSpan: 5, rowSpan: 2}]
-					],
-					check: [
-						[1,              2,            3,       4,       5],
-						[6,             '7-9',        '7-9',   '7-9',    10],
-						['11;12;16;17', '11;12;16;17', 13,      14,     '15;20'],
-						['11;12;16;17', '11;12;16;17', 18,      19,     '15;20'],
-						['26-30',       '26-30',      '26-30', '26-30', '26-30'],
-						['31-40',       '31-40',      '31-40', '31-40', '31-40'],
-						['31-40',       '31-40',      '31-40', '31-40', '31-40']
-					]
-				},
-			
-				'table 5x5 with merge #2': {
-					raw: [
-						[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
-						[6, {value: '7-9', colSpan: 3}],
-						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
-						[18, 19],
-						[{value: '21-25', colSpan: 5}],
-						[{value: '26-35', colSpan: 5, rowSpan: 2}]
-					],
-					check: [
-						[1,              2,            3,       4,      '5;10;15;20'],
-						[6,             '7-9',        '7-9',   '7-9',   '5;10;15;20'],
-						['11;12;16;17', '11;12;16;17', 13,      14,     '5;10;15;20'],
-						['11;12;16;17', '11;12;16;17', 18,      19,     '5;10;15;20'],
-						['21-25',       '21-25',      '21-25', '21-25', '21-25'],
-						['26-35',       '26-35',      '26-35', '26-35', '26-35'],
-						['26-35',       '26-35',      '26-35', '26-35', '26-35']
-					]
-				},
-			
-				'table 4x2 with tricky long columns #1': {
-					raw: [
-						[{value: '1;3;5', rowSpan: 3}, 2],
-						[{value: '4;6;8', rowSpan: 3}],
-						[],  // have to be specified
-						[7]
-					],
-					check: [
-						['1;3;5',  2],
-						['1;3;5', '4;6;8'],
-						['1;3;5', '4;6;8'],
-						[7,       '4;6;8']
-					]
-				},
-			
-				'table 4x2 with tricky long columns #2': {
-					raw: [
-						[1, {value: '2;4;6', rowSpan: 3}],
-						[{value: '3;5;7', rowSpan: 3}],
-						[],  // have to be specified
-						[8]
-					],
-					check: [
-						[1,       '2;4;6'],
-						['3;5;7', '2;4;6'],
-						['3;5;7', '2;4;6'],
-						['3;5;7',  8]
-					]
-				}
-			};
-
-
-/***/ },
-/* 46 */
-/*!**********************************!*\
-  !*** ./app/js/tabs/main.grid.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Panel    = __webpack_require__(/*! stb/ui/panel */ 2),
-				Button   = __webpack_require__(/*! stb/ui/button */ 6),
-				Grid     = __webpack_require__(/*! stb/ui/grid */ 26),
-				keys     = __webpack_require__(/*! stb/keys */ 3),
-				gridData = __webpack_require__(/*! ./main.grid.data */ 45),
-				panel    = new Panel({
-					$node: document.getElementById('pageMainTabGrid'),
-					visible: false
-				}),
-				gridDataIndex = 0,
-				grid1, grid2;
-			
-			
-			// add random disabled cells
-			Object.keys(gridData).forEach(function ( key ) {
-				gridData[key].raw.forEach(function ( row ) {
-					row = row.map(function ( cell ) {
-						if ( typeof cell !== 'object' ) {
-							cell = {value: cell};
-						}
-						return cell;
-					});
-					row.forEach(function ( cell ) {
-						if ( Math.random() > 0.7 ) {
-							cell.disable = true;
-						}
-					});
-				});
-			});
-			
-			
-			panel.add(
-				new Button({
-					$node: document.getElementById('pageMainTabGridBtnPrev'),
-					value: '<< prev grid data',
-					events: {
-						click: function () {
-							var key;
-			
-							if ( gridDataIndex > 0 ) {
-								gridDataIndex--;
-								key = Object.keys(gridData)[gridDataIndex];
-								grid1.parent.$node.children[0].innerText = key;
-								grid1.init({
-									data: gridData[key].raw
-								});
-							}
-						}
-					}
-				}),
-			
-				new Button({
-					$node: document.getElementById('pageMainTabGridBtnNext'),
-					value: 'next grid data >>',
-					events: {
-						click: function () {
-							var key;
-			
-							if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
-								gridDataIndex++;
-								key = Object.keys(gridData)[gridDataIndex];
-								grid1.parent.$node.children[0].innerText = key;
-								grid1.init({
-									data: gridData[key].raw
-								});
-							}
-						}
-					}
-				}),
-			
-				new Button({
-					$node: document.getElementById('pageMainTabGridBtnCycle'),
-					value: 'toggle cycle mode',
-					events: {
-						click: function () {
-							grid1.init({
-								cycleX: !grid1.cycleX,
-								cycleY: !grid1.cycleY
-							});
-						}
-					}
-				}),
-			
-			
-				new Panel({
-					$node: document.getElementById('pageMainTabGridMain'),
-					$body: document.getElementById('pageMainTabGridMainBody'),
-					children: [
-						grid1 = new Grid({
-							data: [
-								[{value: 1, disable: true}, 2,  3,  4],
-								[5, {value: 6, disable: true},  7,  8],
-								[9,  10, 11, 12],
-								[13, 14, 15, {value: 16, focus: true}]
-							],
-							render: function ( $cell, data ) {
-								$cell.innerHTML = '<div>' + (data.value) + '</div>';
-							},
-							cycleX: false,
-							cycleY: false
-						})
-					]
-				}),
-			
-				new Panel({
-					$node: document.getElementById('pageMainTabGridJoin'),
-					children: [
-						grid2 = new Grid({
-							data: [
-								[1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
-								[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
-								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
-								[18, 19],
-								[{value: '21-25', colSpan: 5}],
-								[{value: '26-35', colSpan: 5, rowSpan: 2}]
-							],
-							events: {
-								'click:item': function ( data ) {
-									grid2.markItem(data.$item, !data.$item.data.mark);
-								}
-							},
-							navigate: function ( event ) {
-								if ( event.code === keys.up    ) { this.move(keys.down); }
-								if ( event.code === keys.down  ) { this.move(keys.up); }
-								if ( event.code === keys.right ) { this.move(keys.left); }
-								if ( event.code === keys.left  ) { this.move(keys.right); }
-							}
-						})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 47 */
-/*!***********************************!*\
-  !*** ./app/js/tabs/main.input.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Input = __webpack_require__(/*! stb/ui/input */ 27),
-				Panel = __webpack_require__(/*! stb/ui/panel */ 2),
-				panel = new Panel({
-					$node: document.getElementById('pageMainTabInput'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabInputEmpty'),
-					children: [
-						new Input()
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabInputSimple'),
-					children: [
-						new Input({
-							value: 'some text',
-							events: {
-								click: function () {
-			
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabInputPassword'),
-					children: [
-						new Input({
-							value: 'some text',
-							type: Input.prototype.TYPE_PASSWORD,
-							events: {
-								click: function () {
-			
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabInputPlaceholder'),
-					children: [
-						new Input({
-							//value: 'some text',
-							placeholder: 'hint text',
-							events: {
-								click: function () {
-			
-								}
-							}
-						})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 48 */
-/*!**********************************!*\
-  !*** ./app/js/tabs/main.list.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Panel     = __webpack_require__(/*! stb/ui/panel */ 2),
-				List      = __webpack_require__(/*! stb/ui/list */ 13),
-				ScrollBar = __webpack_require__(/*! stb/ui/scroll.bar */ 30),
-				panel     = new Panel({
-					$node: document.getElementById('pageMainTabList'),
-					visible: false
-				}),
-				listScrollN = new ScrollBar({
-					$node: document.getElementById('pageMainTabListCustomScrollN'),
-					viewSize: 5,
-					realSize: 4
-				}),
-				listScrollV = new ScrollBar({
-					$node: document.getElementById('pageMainTabListCustomScrollV'),
-					viewSize: 5,
-					realSize: 25
-				}),
-				listScrollH = new ScrollBar({
-					$node: document.getElementById('pageMainTabListCustomScrollH'),
-					type: ScrollBar.prototype.TYPE_HORIZONTAL,
-					viewSize: 5,
-					realSize: 100
-				}),
-				list2;
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabListSimple'),
-					children: [
-						new List({
-							$node: document.getElementById('pageMainTabListSimpleList'),
-							scroll: listScrollN,
-							//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
-							data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
-							size: 5,
-							//render: function ( $item, data ) {
-							//	$item.innerHTML = '[' + (data) + ']';
-							//},
-							cycle: true,
-							events: {
-								click: function ( data ) {
-									//data.event.stop = true;
-									debug.log('click');
-									debug.inspect(data, 1);
-								},
-								focus: function ( data ) {
-									debug.log('focus');
-									debug.inspect(data, 1);
-								},
-								cycle: function () {
-									debug.log('cycle');
-								},
-								overflow: function () {
-									debug.log('overflow');
-								},
-								'click:item': function ( data ) {
-									debug.log('click:item');
-									debug.inspect(data, 1);
-								},
-								'focus:item': function ( data ) {
-									debug.log('focus:item');
-									debug.inspect(data, 1);
-								},
-								'blur:item': function ( data ) {
-									debug.log('blur:item');
-									debug.inspect(data, 1);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabListCustom'),
-					children: [
-						list2 = new List({
-							$node: document.getElementById('pageMainTabListCustomList'),
-							scroll: listScrollV,
-							data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
-							//data: [1,2,3],
-							viewIndex: 8,
-							size: 5,
-							render: function ( $item, data ) {
-								$item.innerHTML = '[' + (data.value) + ']';
-							},
-							cycle: false,
-							events: {
-								click: function () {
-									//data.event.stop = true;
-									//debug.log('click');
-									//debug.inspect(data, 1);
-								},
-								focus: function () {
-									//debug.log('focus');
-									//debug.inspect(data, 1);
-								},
-								cycle: function () {
-									debug.log('cycle');
-								},
-								overflow: function () {
-									debug.log('overflow');
-								},
-								'click:item': function ( data ) {
-									//debug.log('click:item');
-									//debug.inspect(data, 1);
-			
-									list2.markItem(data.$item, !data.$item.data.mark);
-								},
-								'focus:item': function () {
-									//debug.log('focus:item');
-									//debug.inspect(data, 1);
-								},
-								'blur:item': function () {
-									//debug.log('blur:item');
-									//debug.inspect(data, 1);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabListHoriz'),
-					children: [
-						new List({
-							$node: document.getElementById('pageMainTabListHList'),
-							data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
-							scroll: listScrollH,
-							type: List.prototype.TYPE_HORIZONTAL,
-							cycle: true,
-							events: {
-								overflow: function () {
-									debug.log('overflow');
-								}
-							}
-						})
-					]
-				})
-			
-			
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 49 */
-/*!***********************************!*\
-  !*** ./app/js/tabs/main.modal.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Button       = __webpack_require__(/*! stb/ui/button */ 6),
-				Panel        = __webpack_require__(/*! stb/ui/panel */ 2),
-				ModalBox     = __webpack_require__(/*! stb/ui/modal.box */ 14),
-				ModalMessage = __webpack_require__(/*! stb/ui/modal.message */ 28),
-				panel        = new Panel({
-					$node: document.getElementById('pageMainTabModal'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Button({
-					value: 'show simple modal window',
-					events: {
-						click: function () {
-							panel.add(
-								panel.modal = new ModalBox({
-									events: {
-										click: function () {
-											console.log(panel.modal);
-											panel.modal.remove();
-										}
-									}
-								})
-							);
-							panel.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
-							panel.modal.focus();
-						}
-					}
-				}),
-				new Button({
-					value: 'show modal window with a lot of text',
-					events: {
-						click: function () {
-							panel.add(
-								panel.modal = new ModalBox({
-									events: {
-										click: function () {
-											console.log(panel.modal);
-											panel.modal.remove();
-										}
-									}
-								})
-							);
-							panel.modal.$body.innerText = new Array(300).join('text ');
-							panel.modal.focus();
-						}
-					}
-				}),
-				new Button({
-					value: 'show modal message',
-					events: {
-						click: function () {
-							panel.add(
-								panel.modal = new ModalMessage({
-									events: {
-										click: function () {
-											console.log(panel.modal);
-											panel.modal.remove();
-										}
-									}
-								})
-							);
-							//panel.modal.$body.innerText = new Array(300).join('text ');
-							panel.modal.focus();
-						}
-					}
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 50 */
-/*!**********************************!*\
-  !*** ./app/js/tabs/main.page.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Button = __webpack_require__(/*! stb/ui/button */ 6),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
-				router = __webpack_require__(/*! stb/router */ 5),
-				panel  = new Panel({
-					$node: document.getElementById('pageMainTabPage'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Button({
-					value: 'switch to page Help',
-					events: {
-						click: function () {
-							router.navigate('pageHelp');
-						}
-					}
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 51 */
-/*!***********************************!*\
-  !*** ./app/js/tabs/main.panel.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Panel = __webpack_require__(/*! stb/ui/panel */ 2),
-				panel = new Panel({
-					$node: document.getElementById('pageMainTabPanel'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabPanelSimple')
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabPanelMulti')
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabPanelParent'),
-					children: [
-						new Panel({
-							$node: document.getElementById('pageMainTabPanelChild')
-						})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 52 */
-/*!******************************************!*\
-  !*** ./app/js/tabs/main.progress.bar.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Panel       = __webpack_require__(/*! stb/ui/panel */ 2),
-				ProgressBar = __webpack_require__(/*! stb/ui/progress.bar */ 29),
-				keys        = __webpack_require__(/*! stb/keys */ 3),
-				panel       = new Panel({
-					$node: document.getElementById('pageMainTabProgressBar'),
-					visible: false
-				});
-			
-			
-			panel.add(
-				new Panel({
-					$node: document.getElementById('pageMainTabProgressBarEmpty'),
-					children: [
-						new ProgressBar({
-							value: 0
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabProgressBarFull'),
-					children: [
-						new ProgressBar({
-							value: 100
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabProgressBarStep1'),
-					children: [
-						new ProgressBar({
-							min: -5,
-							max: 5,
-							value: -2,
-							focusable: true,
-							events: {
-								keydown: function ( event ) {
-									if ( event.code === keys.right ) { this.set(this.value + 1); }
-									if ( event.code === keys.left  ) { this.set(this.value - 1); }
-								},
-								done: function () {
-									debug.log('ProgressBar: done');
-								},
-								change: function ( data ) {
-									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabProgressBarStep2'),
-					children: [
-						new ProgressBar({
-							min: -200,
-							max: 200,
-							value: 0,
-							focusable: true,
-							events: {
-								keydown: function ( event ) {
-									if ( event.code === keys.right ) { this.set(this.value + 1); }
-									if ( event.code === keys.left  ) { this.set(this.value - 1); }
-								},
-								done: function () {
-									debug.log('ProgressBar: done');
-								},
-								change: function ( data ) {
-									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: document.getElementById('pageMainTabProgressBarStyle'),
-					children: [
-						new ProgressBar({
-							value: 70
-						})
-					]
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 53 */
-/*!************************************!*\
-  !*** ./app/js/tabs/main.widget.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Tab content.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 */
-			
-			'use strict';
-			
-			var Button = __webpack_require__(/*! stb/ui/button */ 6),
-				Panel  = __webpack_require__(/*! stb/ui/panel */ 2),
-				Widget = __webpack_require__(/*! stb/ui/widget */ 31),
-				panel  = new Panel({
-					$node: document.getElementById('pageMainTabWidget'),
-					visible: false
-				}),
-				w1 = new Widget({
-					$node: document.getElementById('pageMainTabWidgetW1'),
-					events: {
-						click: function () { w1.hide(); }
-					}
-				}),
-				w2 = new Widget({
-					$node: document.getElementById('pageMainTabWidgetW2'),
-					events: {
-						click: function () { w2.hide(); }
-					}
-				}),
-				w3 = new Widget({
-					$node: document.getElementById('pageMainTabWidgetW3'),
-					events: {
-						click: function () { w3.hide(); }
-					}
-				});
-			
-			
-			panel.add(
-				new Button({
-					value: 'show local tab widget',
-					events: {
-						click: function () {
-							w1.show();
-						}
-					}
-				}),
-				new Button({
-					value: 'show local page widget',
-					events: {
-						click: function () {
-							w2.show();
-						}
-					}
-				}),
-				new Button({
-					value: 'show global app widget',
-					events: {
-						click: function () {
-							w3.show();
-						}
-					}
-				})
-			);
-			
-			
-			// public
-			module.exports = panel;
-
-
-/***/ },
-/* 54 */
-/*!**************************!*\
-  !*** ./config/logger.js ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * WebSocket logging server configuration.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public
-			module.exports = {
-				// turn on/off server
-				active: false,
-			
-				// listening port
-				port: 8010
-			};
-
-
-/***/ },
-/* 55 */
-/*!*************************!*\
-  !*** ./config/proxy.js ***!
-  \*************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Code-proxy server configuration.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public
-			module.exports = {
-				// turn on/off server
-				active: true,
-			
-				// listening HTTP port to serve proxy files
-				portHttp: 8800,
-			
-				// listening WebSocket port to serve requests
-				portWs: 8900,
-			
-				// time between connection/sending attempts (in ms)
-				retryDelay: 100,
-			
-				// amount of connection/sending attempts before give up
-				retryLimit: 30,
-			
-				// full logging
-				logging: false,
-			
-				// session name
-				name: 'anonymous',
-			
-				// use localStorage to get/save requests data
-				cache: true
-			};
-
-
-/***/ },
-/* 56 */
-/*!**************************!*\
-  !*** ./config/static.js ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * HTTP static server configuration.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public
-			module.exports = {
-				// turn on/off server
-				active: true,
-			
-				// listening HTTP port to serve project files
-				port: 8000,
-			
-				// static file server cache activation
-				// false to disable of amount of seconds to cache
-				cache: false,
-			
-				// full logging
-				logging: true,
-			
-				// enable automatic reload on file changes mode
-				livereload: true
-			};
-
-
-/***/ },
-/* 57 */
-/*!**************************!*\
-  !*** ./config/weinre.js ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * WEb INspector REmote debugger server configuration.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			// public
-			module.exports = {
-				// turn on/off server
-				active: true,
-			
-				// listening HTTP port to provide client interface
-				port: 8080,
-			
-				// address to listen
-				host: '-all-',
-			
-				// full logging
-				logging: false,
-			
-				// debug servers session id
-				name: 'anonymous'
-			};
 
 
 /***/ }
