@@ -8,6 +8,10 @@
 	<style>
 		html, body { background:#000; color:#fff; font-size:20px; font-family:Verdana,sans-serif; }
 
+		body {
+			text-align: center;
+		}
+
 		/* table cell spacing/padding reset */
 		table { border:0; border-collapse:collapse }
 		table td { padding:0 }
@@ -16,11 +20,14 @@
 		.maxh { height:100% }
 		.maxw { width:100% }
 
-		.list { margin: 10px auto }
+		/*.list { margin: 10px auto }*/
+		.list { display: inline-block; margin: 10px; }
 		.list tr { height:80px; cursor: pointer; }
 		.list tr:hover { background-color:#8b7f0c; }
+		.list tr.head:hover { background-color:#000; }
 		.list tr:hover td.link { color: #000 }
 		.list td { padding:0 20px; border:1px solid #222; }
+		.list tr.head td { background-color:#222; color: chocolate; cursor: default }
 		.list td.icon { width:40px; text-align:center; }
 		.list td.name { font-weight: bold }
 		.list td.link { color: grey }
@@ -34,17 +41,37 @@
 <body>
 
 	<table class="list">
-		<tr onclick="location.href = 'develop/#pageMain'">
-			<td class="icon"><img src="develop/favicon.png"></td>
+		<tr onclick="location.href = location.protocol + '//localhost:8080/client/#anonymous'">
+			<td class="icon"><img src="develop/browser/favicon.png"></td>
+			<td class="name">weinre</td>
+		</tr>
+	</table>
+
+	<table class="list">
+		<tr class="head">
+			<td colspan="2">browser</td>
+		</tr>
+		<tr onclick="location.href = 'develop/browser/'">
+			<td class="icon"><img src="develop/browser/favicon.png"></td>
 			<td class="name">develop</td>
 		</tr>
-		<tr onclick="location.href = 'release/#pageMain'">
-			<td class="icon"><img src="release/favicon.png"></td>
+		<tr onclick="location.href = 'release/browser/'">
+			<td class="icon"><img src="release/browser/favicon.png"></td>
 			<td class="name">release</td>
 		</tr>
-		<tr onclick="location.href = location.protocol + '//localhost:8080/client/#anonymous'">
-			<td class="icon"><img src="develop/favicon.png"></td>
-			<td class="name">weinre</td>
+	</table>
+
+	<table class="list">
+		<tr class="head">
+			<td colspan="2">infomir</td>
+		</tr>
+		<tr onclick="location.href = 'develop/infomir/'">
+			<td class="icon"><img src="develop/infomir/favicon.png"></td>
+			<td class="name">develop</td>
+		</tr>
+		<tr onclick="location.href = 'release/infomir/'">
+			<td class="icon"><img src="release/infomir/favicon.png"></td>
+			<td class="name">release</td>
 		</tr>
 	</table>
 
