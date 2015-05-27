@@ -7,9 +7,9 @@
 
 'use strict';
 
-var Button = require('stb/ui/button'),
-	Panel  = require('stb/ui/panel'),
-	Widget = require('stb/ui/widget'),
+var Button = require('../stb/ui/button'),
+	Panel  = require('../stb/ui/panel'),
+	Widget = require('../stb/ui/widget'),
 	panel  = new Panel({
 		$node: document.getElementById('pageMainTabWidget'),
 		visible: false

@@ -7,9 +7,9 @@
 
 'use strict';
 
-var app    = require('stb/app'),
-	router = require('stb/router'),
-	keys   = require('stb/keys');
+var app    = require('./stb/app'),
+	router = require('./stb/router'),
+	keys   = require('./stb/keys');
 
 
 app.addListeners({
@@ -36,8 +36,3 @@ app.addListeners({
 		}
 	}
 });
-
-
-// new way of string handling
-// all strings are in UTF-16
-//gSTB.SetNativeStringMode(true);

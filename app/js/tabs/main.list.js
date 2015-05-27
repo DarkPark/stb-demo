@@ -7,9 +7,9 @@
 
 'use strict';
 
-var Panel     = require('stb/ui/panel'),
-	List      = require('stb/ui/list'),
-	ScrollBar = require('stb/ui/scroll.bar'),
+var Panel     = require('../stb/ui/panel'),
+	List      = require('../stb/ui/list'),
+	ScrollBar = require('../stb/ui/scroll.bar'),
 	panel     = new Panel({
 		$node: document.getElementById('pageMainTabList'),
 		visible: false

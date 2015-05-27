@@ -7,9 +7,9 @@
 
 'use strict';
 
-var Panel       = require('stb/ui/panel'),
-	ProgressBar = require('stb/ui/progress.bar'),
-	keys        = require('stb/keys'),
+var Panel       = require('../stb/ui/panel'),
+	ProgressBar = require('../stb/ui/progress.bar'),
+	keys        = require('../stb/keys'),
 	panel       = new Panel({
 		$node: document.getElementById('pageMainTabProgressBar'),
 		visible: false

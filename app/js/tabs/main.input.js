@@ -7,8 +7,8 @@
 
 'use strict';
 
-var Input = require('stb/ui/input'),
-	Panel = require('stb/ui/panel'),
+var Input = require('../stb/ui/input'),
+	Panel = require('../stb/ui/panel'),
 	panel = new Panel({
 		$node: document.getElementById('pageMainTabInput'),
 		visible: false

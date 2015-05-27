@@ -8,9 +8,9 @@
 'use strict';
 
 var id     = 'pageHelp',
-	Page   = require('stb/ui/page'),
-	Button = require('stb/ui/button'),
-	router = require('stb/router'),
+	Page   = require('../stb/ui/page'),
+	Button = require('../stb/ui/button'),
+	router = require('../stb/router'),
 	page   = new Page({$node: document.getElementById(id)});
 
 
