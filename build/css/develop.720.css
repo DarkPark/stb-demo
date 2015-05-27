@@ -374,6 +374,10 @@ a {
   background-color: blue;
   right: 0;
 }
+#pageHelp {
+  text-align: center;
+  line-height: 720px;
+}
 html {
   background-color: transparent;
   overflow: auto;
