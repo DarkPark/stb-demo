@@ -532,6 +532,8 @@
 					// notify the current active component
 					if ( activeItem ) { activeItem.blur(); }
 			
+					/* eslint consistent-this: 0 */
+			
 					// apply
 					activePage.activeComponent = activeItem = this;
 					activeItem.$node.classList.add('focus');
@@ -2540,6 +2542,8 @@
 			
 			'use strict';
 			
+			/* eslint no-unused-vars: 0 */
+			
 			/**
 			 * DOM manipulation module
 			 */
@@ -4186,6 +4190,8 @@
 			
 			'use strict';
 			
+			/* eslint new-cap: 0 */
+			
 			var host   = __webpack_require__(/*! ../app */ 4).data.host,
 				config = __webpack_require__(/*! ../../../../config/logger */ 47),
 				util   = __webpack_require__(/*! util */ 8),
@@ -4469,8 +4475,6 @@
 						} else {
 							throw 'no started timer for "' + name + '"';
 						}
-			
-						return diff;
 					} else {
 						console.timeEnd(name);
 					}
@@ -4495,6 +4499,8 @@
 			 */
 			
 			'use strict';
+			
+			/* eslint new-cap: 0 */
 			
 			var util    = __webpack_require__(/*! util */ 8),
 				app     = __webpack_require__(/*! ../app */ 4),
@@ -4986,6 +4992,8 @@
 			
 			'use strict';
 			
+			/* eslint new-cap: 0 */
+			
 			var host   = __webpack_require__(/*! ../app */ 4).data.host,
 				util   = __webpack_require__(/*! util */ 8),
 				config = __webpack_require__(/*! ../../../../config/proxy */ 48);
@@ -5105,6 +5113,7 @@
 			
 			'use strict';
 			
+			/* eslint-disable */
 			
 			if ( !Function.prototype.bind ) {
 				Function.prototype.bind = function ( oThis ) {
@@ -5613,7 +5622,7 @@
 					// plain object is given as param
 					if ( options && typeof options === 'object') {
 						// extend with default options
-						for ( i = 0 ; i < defaultsKeys.length ; i++ ) {
+						for ( i = 0; i < defaultsKeys.length; i++ ) {
 							// in case not redefined
 							if ( options[defaultsKeys[i]] === undefined ) {
 								options[defaultsKeys[i]] = defaults[defaultsKeys[i]];
@@ -5703,6 +5712,7 @@
 			
 			'use strict';
 			
+			/* eslint-disable */
 			
 			if ( !('classList' in document.documentElement) ) {
 				var prototype = Array.prototype,
@@ -6947,9 +6957,9 @@
 				index = (index === undefined) ? this.$caret.index : index;
 			
 				if ( true ) {
-					if ( index < 0 ) { throw 'index must be more than 0 or equal to 0'}
-					if ( typeof char !== 'string' ) { throw 'char must be a string'}
-					if ( char.length !== 1 ) { throw 'char must be a string with length = 1'}
+					if ( index < 0 ) { throw 'index must be more than 0 or equal to 0'; }
+					if ( typeof char !== 'string' ) { throw 'char must be a string'; }
+					if ( char.length !== 1 ) { throw 'char must be a string with length = 1'; }
 				}
 			
 				// remove hint
