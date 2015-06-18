@@ -9,6 +9,12 @@
 
 // public
 module.exports = {
+	// turn on/off localization support
+	active: true,
+
+	// list of languages to generate localization files for
+	languages: ['ru'],
+
 	// Specifies the encoding of the input files.
 	// This option is needed only if some untranslated message strings or their corresponding comments
 	// contain non-ASCII characters.
@@ -23,7 +29,7 @@ module.exports = {
 
 	// Write the .po file using indented style.
 	// @flag --indent
-	indent: true,
+	indent: false,
 
 	// Write "#: filename:line" lines.
 	// @flag --no-location
@@ -46,8 +52,5 @@ module.exports = {
 
 	// Increase verbosity level.
 	// @flag --verbose
-	verbose: false,
-
-	//
-	languages: ['ru', 'de']
+	verbose: false
 };
