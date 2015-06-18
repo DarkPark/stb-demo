@@ -112,7 +112,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10),
+			var Emitter = __webpack_require__(/*! ./emitter */ 8),
 				router  = __webpack_require__(/*! ./router */ 5),
 				counter = 0;
 			
@@ -511,11 +511,13 @@
 			 * Activate the component.
 			 * Notify the owner-page and apply CSS class.
 			 *
+			 * @param {Object} data custom data which passed into handlers
+			 *
 			 * @return {boolean} operation status
 			 *
 			 * @fires module:stb/component~Component#focus
 			 */
-			Component.prototype.focus = function () {
+			Component.prototype.focus = function ( data ) {
 				var activePage = router.current,
 					activeItem = activePage.activeComponent;
 			
@@ -545,7 +547,7 @@
 						 *
 						 * @event module:stb/component~Component#focus
 						 */
-						activeItem.emit('focus');
+						activeItem.emit('focus', data);
 					}
 			
 					debug.log('component ' + this.constructor.name + '.' + this.id + ' focus');
@@ -599,6 +601,7 @@
 			 * Make the component visible and notify subscribers.
 			 *
 			 * @param {Object} data custom data which passed into handlers
+			 *
 			 * @return {boolean} operation status
 			 *
 			 * @fires module:stb/component~Component#show
@@ -824,14 +827,14 @@
 			
 			'use strict';
 			
-			var Model    = __webpack_require__(/*! ./model */ 26),
+			var Model    = __webpack_require__(/*! ./model */ 27),
 				router   = __webpack_require__(/*! ./router */ 5),
 				keys     = __webpack_require__(/*! ./keys */ 3),
 				keyCodes = {},
 				app, key;
 			
 			
-			__webpack_require__(/*! ./shims */ 28);
+			__webpack_require__(/*! ./shims */ 29);
 			
 			
 			/**
@@ -1620,7 +1623,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10),
+			var Emitter = __webpack_require__(/*! ./emitter */ 8),
 				router;
 			
 			
@@ -2099,6 +2102,245 @@
 
 /***/ },
 /* 8 */
+/*!*******************************!*\
+  !*** ./app/js/stb/emitter.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/emitter
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			
+			/**
+			 * Base Events Emitter implementation.
+			 *
+			 * @see http://nodejs.org/api/events.html
+			 * @constructor
+			 */
+			function Emitter () {
+				/**
+				 * Inner hash table for event names and linked callbacks.
+				 * Manual editing should be avoided.
+				 *
+				 * @member {Object.<string, function[]>}
+				 *
+				 * @example
+				 * {
+				 *     click: [
+				 *         function click1 () { ... },
+				 *         function click2 () { ... }
+				 *     ],
+				 *     keydown: [
+				 *         function () { ... }
+				 *     ]
+				 * }
+				 **/
+				this.events = {};
+			}
+			
+			
+			Emitter.prototype = {
+				/**
+				 * Bind an event to the given callback function.
+				 * The same callback function can be added multiple times for the same event name.
+				 *
+				 * @param {string} name event identifier
+				 * @param {function} callback function to call on this event
+				 *
+				 * @example
+				 * var obj = new Emitter();
+				 * obj.addListener('click', function ( data ) { ... });
+				 * // one more click handler
+				 * obj.addListener('click', function ( data ) { ... });
+				 */
+				addListener: function ( name, callback ) {
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+					}
+			
+					// initialization may be required
+					this.events[name] = this.events[name] || [];
+					// append this new event to the list
+					this.events[name].push(callback);
+				},
+			
+			
+				/**
+				 * Add a one time listener for the event.
+				 * This listener is invoked only the next time the event is fired, after which it is removed.
+				 *
+				 * @param {string} name event identifier
+				 * @param {function} callback function to call on this event
+				 */
+				once: function ( name, callback ) {
+					// current execution context
+					var self = this;
+			
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+					}
+			
+					// initialization may be required
+					this.events[name] = this.events[name] || [];
+					// append this new event to the list
+					this.events[name].push(function onceWrapper ( data ) {
+						callback(data);
+						self.removeListener(name, onceWrapper);
+					});
+				},
+			
+			
+				/**
+				 * Apply multiple listeners at once.
+				 *
+				 * @param {Object} callbacks event names with callbacks
+				 *
+				 * @example
+				 * var obj = new Emitter();
+				 * obj.addListeners({click: function ( data ) {}, close: function ( data ) {}});
+				 */
+				addListeners: function ( callbacks ) {
+					var name;
+			
+					if ( true ) {
+						if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
+						if ( typeof callbacks !== 'object' ) { throw 'wrong callbacks type'; }
+						if ( Object.keys(callbacks).length === 0 ) { throw 'no callbacks given'; }
+					}
+			
+					// valid input
+					if ( typeof callbacks === 'object' ) {
+						for ( name in callbacks ) {
+							if ( callbacks.hasOwnProperty(name) ) {
+								this.addListener(name, callbacks[name]);
+							}
+						}
+					}
+				},
+			
+			
+				/**
+				 * Remove all instances of the given callback.
+				 *
+				 * @param {string} name event identifier
+				 * @param {function} callback function to remove
+				 *
+				 * @example
+				 * obj.removeListener('click', func1);
+				 */
+				removeListener: function ( name, callback ) {
+					if ( true ) {
+						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+						if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw 'corrupted inner data'; }
+					}
+			
+					// the event exists and should have some callbacks
+					if ( this.events[name] !== undefined ) {
+						// rework the callback list to exclude the given one
+						this.events[name] = this.events[name].filter(function callbacksFilter ( fn ) { return fn !== callback; });
+						// event has no more callbacks so clean it
+						if ( this.events[name].length === 0 ) {
+							// as if there were no listeners at all
+							this.events[name] = undefined;
+						}
+					}
+				},
+			
+			
+				/**
+				 * Remove all callbacks for the given event name.
+				 * Without event name clears all events.
+				 *
+				 * @param {string} [name] event identifier
+				 *
+				 * @example
+				 * obj.removeAllListeners('click');
+				 * obj.removeAllListeners();
+				 */
+				removeAllListeners: function ( name ) {
+					if ( true ) {
+						if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw 'wrong or empty name'; }
+					}
+			
+					// check input
+					if ( arguments.length === 0 ) {
+						// no arguments so remove everything
+						this.events = {};
+					} else if ( name ) {
+						if ( true ) {
+							if ( this.events[name] !== undefined ) { throw 'event is not removed'; }
+						}
+			
+						// only name is given so remove all callbacks for the given event
+						// but object structure modification should be avoided
+						this.events[name] = undefined;
+					}
+				},
+			
+			
+				/**
+				 * Execute each of the listeners in the given order with the supplied arguments.
+				 *
+				 * @param {string} name event identifier
+				 * @param {Object} [data] options to send
+				 *
+				 * @todo consider use context
+				 *
+				 * @example
+				 * obj.emit('init');
+				 * obj.emit('click', {src:panel1, dst:panel2});
+				 *
+				 * // it's a good idea to emit event only when there are some listeners
+				 * if ( this.events['click'] !== undefined ) {
+				 *     this.emit('click', {event: event});
+				 * }
+				 */
+				emit: function ( name, data ) {
+					var event = this.events[name],
+						i;
+			
+					if ( true ) {
+						if ( arguments.length < 1 ) { throw 'wrong arguments number'; }
+						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
+					}
+			
+					// the event exists and should have some callbacks
+					if ( event !== undefined ) {
+						if ( true ) {
+							if ( !Array.isArray(event) ) { throw 'wrong event type'; }
+						}
+			
+						for ( i = 0; i < event.length; i++ ) {
+							if ( true ) {
+								if ( typeof event[i] !== 'function' ) { throw 'wrong event callback type'; }
+							}
+			
+							// invoke the callback with parameters
+							// http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
+							event[i].call(this, data);
+						}
+					}
+				}
+			};
+			
+			
+			// public
+			module.exports = Emitter;
+
+
+/***/ },
+/* 9 */
 /*!***********************************************************!*\
   !*** ./~/gulp-webpack/~/node-libs-browser/~/util/util.js ***!
   \***********************************************************/
@@ -2629,7 +2871,7 @@
 			}
 			exports.isPrimitive = isPrimitive;
 			
-			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 56);
+			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 58);
 			
 			function objectToString(o) {
 			  return Object.prototype.toString.call(o);
@@ -2673,7 +2915,7 @@
 			 *     prototype.
 			 * @param {function} superCtor Constructor function to inherit prototype from.
 			 */
-			exports.inherits = __webpack_require__(/*! inherits */ 55);
+			exports.inherits = __webpack_require__(/*! inherits */ 57);
 			
 			exports._extend = function(origin, add) {
 			  // Don't do anything if add isn't an object
@@ -2691,10 +2933,10 @@
 			  return Object.prototype.hasOwnProperty.call(obj, prop);
 			}
 			
-			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/gulp-webpack/~/node-libs-browser/~/process/browser.js */ 54)))
+			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/gulp-webpack/~/node-libs-browser/~/process/browser.js */ 56)))
 
 /***/ },
-/* 9 */
+/* 10 */
 /*!***************************!*\
   !*** ./app/js/stb/dom.js ***!
   \***************************/
@@ -2871,245 +3113,6 @@
 			
 			// public
 			module.exports = dom;
-
-
-/***/ },
-/* 10 */
-/*!*******************************!*\
-  !*** ./app/js/stb/emitter.js ***!
-  \*******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * @module stb/emitter
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			
-			/**
-			 * Base Events Emitter implementation.
-			 *
-			 * @see http://nodejs.org/api/events.html
-			 * @constructor
-			 */
-			function Emitter () {
-				/**
-				 * Inner hash table for event names and linked callbacks.
-				 * Manual editing should be avoided.
-				 *
-				 * @member {Object.<string, function[]>}
-				 *
-				 * @example
-				 * {
-				 *     click: [
-				 *         function click1 () { ... },
-				 *         function click2 () { ... }
-				 *     ],
-				 *     keydown: [
-				 *         function () { ... }
-				 *     ]
-				 * }
-				 **/
-				this.events = {};
-			}
-			
-			
-			Emitter.prototype = {
-				/**
-				 * Bind an event to the given callback function.
-				 * The same callback function can be added multiple times for the same event name.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to call on this event
-				 *
-				 * @example
-				 * var obj = new Emitter();
-				 * obj.addListener('click', function ( data ) { ... });
-				 * // one more click handler
-				 * obj.addListener('click', function ( data ) { ... });
-				 */
-				addListener: function ( name, callback ) {
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-					}
-			
-					// initialization may be required
-					this.events[name] = this.events[name] || [];
-					// append this new event to the list
-					this.events[name].push(callback);
-				},
-			
-			
-				/**
-				 * Add a one time listener for the event.
-				 * This listener is invoked only the next time the event is fired, after which it is removed.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to call on this event
-				 */
-				once: function ( name, callback ) {
-					// current execution context
-					var self = this;
-			
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-					}
-			
-					// initialization may be required
-					this.events[name] = this.events[name] || [];
-					// append this new event to the list
-					this.events[name].push(function onceWrapper ( data ) {
-						callback(data);
-						self.removeListener(name, onceWrapper);
-					});
-				},
-			
-			
-				/**
-				 * Apply multiple listeners at once.
-				 *
-				 * @param {Object} callbacks event names with callbacks
-				 *
-				 * @example
-				 * var obj = new Emitter();
-				 * obj.addListeners({click: function ( data ) {}, close: function ( data ) {}});
-				 */
-				addListeners: function ( callbacks ) {
-					var name;
-			
-					if ( true ) {
-						if ( arguments.length !== 1 ) { throw 'wrong arguments number'; }
-						if ( typeof callbacks !== 'object' ) { throw 'wrong callbacks type'; }
-						if ( Object.keys(callbacks).length === 0 ) { throw 'no callbacks given'; }
-					}
-			
-					// valid input
-					if ( typeof callbacks === 'object' ) {
-						for ( name in callbacks ) {
-							if ( callbacks.hasOwnProperty(name) ) {
-								this.addListener(name, callbacks[name]);
-							}
-						}
-					}
-				},
-			
-			
-				/**
-				 * Remove all instances of the given callback.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to remove
-				 *
-				 * @example
-				 * obj.removeListener('click', func1);
-				 */
-				removeListener: function ( name, callback ) {
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw 'wrong arguments number'; }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-						if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
-						if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw 'corrupted inner data'; }
-					}
-			
-					// the event exists and should have some callbacks
-					if ( this.events[name] !== undefined ) {
-						// rework the callback list to exclude the given one
-						this.events[name] = this.events[name].filter(function callbacksFilter ( fn ) { return fn !== callback; });
-						// event has no more callbacks so clean it
-						if ( this.events[name].length === 0 ) {
-							// as if there were no listeners at all
-							this.events[name] = undefined;
-						}
-					}
-				},
-			
-			
-				/**
-				 * Remove all callbacks for the given event name.
-				 * Without event name clears all events.
-				 *
-				 * @param {string} [name] event identifier
-				 *
-				 * @example
-				 * obj.removeAllListeners('click');
-				 * obj.removeAllListeners();
-				 */
-				removeAllListeners: function ( name ) {
-					if ( true ) {
-						if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw 'wrong or empty name'; }
-					}
-			
-					// check input
-					if ( arguments.length === 0 ) {
-						// no arguments so remove everything
-						this.events = {};
-					} else if ( name ) {
-						if ( true ) {
-							if ( this.events[name] !== undefined ) { throw 'event is not removed'; }
-						}
-			
-						// only name is given so remove all callbacks for the given event
-						// but object structure modification should be avoided
-						this.events[name] = undefined;
-					}
-				},
-			
-			
-				/**
-				 * Execute each of the listeners in the given order with the supplied arguments.
-				 *
-				 * @param {string} name event identifier
-				 * @param {Object} [data] options to send
-				 *
-				 * @todo consider use context
-				 *
-				 * @example
-				 * obj.emit('init');
-				 * obj.emit('click', {src:panel1, dst:panel2});
-				 *
-				 * // it's a good idea to emit event only when there are some listeners
-				 * if ( this.events['click'] !== undefined ) {
-				 *     this.emit('click', {event: event});
-				 * }
-				 */
-				emit: function ( name, data ) {
-					var event = this.events[name],
-						i;
-			
-					if ( true ) {
-						if ( arguments.length < 1 ) { throw 'wrong arguments number'; }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw 'wrong or empty name'; }
-					}
-			
-					// the event exists and should have some callbacks
-					if ( event !== undefined ) {
-						if ( true ) {
-							if ( !Array.isArray(event) ) { throw 'wrong event type'; }
-						}
-			
-						for ( i = 0; i < event.length; i++ ) {
-							if ( true ) {
-								if ( typeof event[i] !== 'function' ) { throw 'wrong event callback type'; }
-							}
-			
-							// invoke the callback with parameters
-							// http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
-							event[i].call(this, data);
-						}
-					}
-				}
-			};
-			
-			
-			// public
-			module.exports = Emitter;
 
 
 /***/ },
@@ -4109,12 +4112,29 @@
 			
 			var app    = __webpack_require__(/*! ./stb/app */ 4),
 				router = __webpack_require__(/*! ./stb/router */ 5),
-				keys   = __webpack_require__(/*! ./stb/keys */ 3);
+				keys   = __webpack_require__(/*! ./stb/keys */ 3),
+				format = __webpack_require__(/*! ./stb/tools */ 30).format;
 			
 			
 			app.addListeners({
 				// all resources are loaded
 				load: function load () {
+					// localization
+					__webpack_require__(/*! ./stb/gettext */ 26).load({name: 'ru'}, function ( error ) {
+						if ( error ) {
+							debug.inspect(error, 3);
+						}
+			
+						/* gettext: comment for a translator */
+						debug.info(gettext('qwe'), 'translation');
+			
+						debug.info(pgettext('some context', 'some text'), 'translation');
+			
+						debug.info(format(ngettext('{0} cat', '{0} cats', 1), 1), 'translation');
+			
+						debug.info(format(ngettext('{0} dog', '{0} dogs', 3), 3), 'translation');
+					});
+			
 					// set pages
 					router.init([
 						__webpack_require__(/*! ./pages/init */ 17),
@@ -4236,43 +4256,43 @@
 				var menuData = [
 						{
 							value: 'Panel',
-							panel: __webpack_require__(/*! ../tabs/main.panel */ 44)
+							panel: __webpack_require__(/*! ../tabs/main.panel */ 46)
 						},
 						{
 							value: 'Button',
-							panel: __webpack_require__(/*! ../tabs/main.button */ 36)
+							panel: __webpack_require__(/*! ../tabs/main.button */ 38)
 						},
 						{
 							value: 'Input',
-							panel: __webpack_require__(/*! ../tabs/main.input */ 40)
+							panel: __webpack_require__(/*! ../tabs/main.input */ 42)
 						},
 						{
 							value: 'CheckBox',
-							panel: __webpack_require__(/*! ../tabs/main.check.box */ 37)
+							panel: __webpack_require__(/*! ../tabs/main.check.box */ 39)
 						},
 						{
 							value: 'Grid',
-							panel: __webpack_require__(/*! ../tabs/main.grid */ 39)
+							panel: __webpack_require__(/*! ../tabs/main.grid */ 41)
 						},
 						{
 							value: 'List',
-							panel: __webpack_require__(/*! ../tabs/main.list */ 41)
+							panel: __webpack_require__(/*! ../tabs/main.list */ 43)
 						},
 						{
 							value: 'ProgressBar',
-							panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 45)
+							panel: __webpack_require__(/*! ../tabs/main.progress.bar */ 47)
 						},
 						{
 							value: 'Page',
-							panel: __webpack_require__(/*! ../tabs/main.page */ 43)
+							panel: __webpack_require__(/*! ../tabs/main.page */ 45)
 						},
 						{
 							value: 'Modal',
-							panel: __webpack_require__(/*! ../tabs/main.modal */ 42)
+							panel: __webpack_require__(/*! ../tabs/main.modal */ 44)
 						},
 						{
 							value: 'Widget',
-							panel: __webpack_require__(/*! ../tabs/main.widget */ 46)
+							panel: __webpack_require__(/*! ../tabs/main.widget */ 48)
 						}
 					];
 			
@@ -4361,8 +4381,8 @@
 			/* eslint new-cap: 0 */
 			
 			var host   = __webpack_require__(/*! ../app */ 4).data.host,
-				config = __webpack_require__(/*! ../../../../config/logger */ 47),
-				util   = __webpack_require__(/*! util */ 8),
+				config = __webpack_require__(/*! ../../../../config/logger */ 49),
+				util   = __webpack_require__(/*! util */ 9),
 				buffer = [],
 				/**
 				 * Storage for timers (time, timeEnd).
@@ -4372,7 +4392,7 @@
 			
 			
 			// enable colors in console
-			__webpack_require__(/*! tty-colors */ 57);
+			__webpack_require__(/*! tty-colors */ 59);
 			
 			
 			(function connect () {
@@ -4487,7 +4507,7 @@
 				 */
 				inspect: function ( data, depth ) {
 					if ( host ) {
-						log('inspect:\n' + util.inspect(data, {depth: depth || 0, colors: true}));
+						log('inspect:\n' + util.inspect(data, {depth: depth || 3, colors: true}));
 					} else {
 						console.log(data);
 					}
@@ -4670,10 +4690,10 @@
 			
 			/* eslint new-cap: 0 */
 			
-			var util    = __webpack_require__(/*! util */ 8),
+			var util    = __webpack_require__(/*! util */ 9),
 				app     = __webpack_require__(/*! ../app */ 4),
-				request = __webpack_require__(/*! ../request */ 27),
-				dom     = __webpack_require__(/*! ../dom */ 9),
+				request = __webpack_require__(/*! ../request */ 28),
+				dom     = __webpack_require__(/*! ../dom */ 10),
 				grid    = __webpack_require__(/*! ./grid */ 21),
 				storage = __webpack_require__(/*! ./storage */ 7);
 			
@@ -4691,7 +4711,7 @@
 				}
 			
 				// stress-testing
-				window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 53);
+				window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 55);
 				window.horde    = window.gremlins.createHorde();
 			});
 			
@@ -5163,15 +5183,15 @@
 			/* eslint new-cap: 0 */
 			
 			var host   = __webpack_require__(/*! ../app */ 4).data.host,
-				util   = __webpack_require__(/*! util */ 8),
-				config = __webpack_require__(/*! ../../../../config/proxy */ 48);
+				util   = __webpack_require__(/*! util */ 9),
+				config = __webpack_require__(/*! ../../../../config/proxy */ 50);
 			
 			
 			/**
 			 * Proxy host activation
 			 */
 			function initHost () {
-				var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 52);
+				var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 54);
 			
 				// init and export to globals
 				window.proxy = new ProxyHost({
@@ -5196,7 +5216,7 @@
 			 * Proxy guest activation
 			 */
 			function initGuest () {
-				var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 51),
+				var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 53),
 					stbNames   = ['dvbManager', 'gSTB', 'pvrManager', 'stbDownloadManager', 'stbStorage', 'stbUpdate', 'stbWebWindow', 'stbWindowMgr', 'timeShift'],
 					skipKeys   = ['objectName', 'destroyed', 'deleteLater'];
 			
@@ -5338,8 +5358,8 @@
 			
 			'use strict';
 			
-			var dom    = __webpack_require__(/*! ../dom */ 9),
-				config = __webpack_require__(/*! ../../../../config/static */ 49);
+			var dom    = __webpack_require__(/*! ../dom */ 10),
+				config = __webpack_require__(/*! ../../../../config/static */ 51);
 			
 			
 			// livereload activation
@@ -5369,10 +5389,10 @@
 			
 			'use strict';
 			
-			var dom     = __webpack_require__(/*! ../dom */ 9),
-				util    = __webpack_require__(/*! util */ 8),
+			var dom     = __webpack_require__(/*! ../dom */ 10),
+				util    = __webpack_require__(/*! util */ 9),
 				storage = __webpack_require__(/*! ./storage */ 7),
-				config  = __webpack_require__(/*! ../../../../config/weinre */ 50);
+				config  = __webpack_require__(/*! ../../../../config/weinre */ 52);
 			
 			
 			// web inspector is allowed only without SpyJS
@@ -5387,6 +5407,166 @@
 
 /***/ },
 /* 26 */
+/*!*******************************!*\
+  !*** ./app/js/stb/gettext.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/gettext
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var Emitter = __webpack_require__(/*! ./emitter */ 8),
+				gettext = new Emitter(),
+				meta    = null,
+				data    = null;
+			
+			
+			/**
+			 * Simple gettext implementation.
+			 *
+			 * @param {Object} config options
+			 * @param {string} config.path relative path to project root
+			 * @param {string} config.name language name
+			 * @param {string} config.ext language file extension
+			 * @param {function} callback hook on ready
+			 *
+			 * @example
+			 * gettext.load({name: 'ru'}, function ( error, data ) {
+			 *     debug.log(error);
+			 *     debug.inspect(data);
+			 * });
+			 */
+			gettext.load = function ( config, callback ) {
+				var xhr = new XMLHttpRequest();
+			
+				if ( true ) {
+					if ( !config.name || typeof config.name !== 'string' ) { throw 'config.name must be a nonempty string'; }
+					if ( typeof callback !== 'function' ) { throw 'wrong callback type'; }
+				}
+			
+				// defaults
+				config.ext  = config.ext  || 'json';
+				config.path = config.path || 'lang';
+			
+				/* todo: get rid of JSON.parse in future
+				xhr.overrideMimeType('application/json');
+				xhr.responseType = 'json';/**/
+			
+				xhr.responseType = 'text';
+			
+				xhr.onload = function () {
+					var json;
+			
+					try {
+						json = JSON.parse(xhr.responseText);
+						meta = json.meta;
+						data = json.data;
+						callback(null, data);
+					} catch ( error ) {
+						meta = null;
+						data = null;
+						xhr.onerror(error);
+					}
+			
+					// there are some listeners
+					if ( gettext.events['load'] !== undefined ) {
+						// notify listeners
+						gettext.emit('load');
+					}
+				};
+			
+				xhr.onerror = function ( error ) {
+					callback(error);
+			
+					// there are some listeners
+					if ( gettext.events['error'] !== undefined ) {
+						// notify listeners
+						gettext.emit('error');
+					}
+				};
+			
+				xhr.open('GET', config.path + '/' + config.name + '.' + config.ext, true);
+				xhr.send(null);
+			};
+			
+			
+			/**
+			 * Display the native language translation of a textual message.
+			 *
+			 * @param {string} msgId textual message
+			 *
+			 * @return {string} translated text
+			 *
+			 * @global
+			 *
+			 * @example
+			 * console.log(gettext('some line to be localized'));
+			 */
+			window.gettext = function ( msgId ) {
+				return data && data[''][msgId] ? data[''][msgId] : msgId;
+			};
+			
+			
+			/**
+			 * The "p" in "pgettext" stands for "particular": fetches a particular translation of the textual message.
+			 *
+			 * @param {string} context message context
+			 * @param {string} msgId textual message
+			 *
+			 * @return {string} translated text
+			 *
+			 * @global
+			 *
+			 * @example
+			 * console.log(pgettext('some context', 'some text'));
+			 */
+			window.pgettext = function ( context, msgId ) {
+				return data && data[context][msgId] ? data[context][msgId] : msgId;
+			};
+			
+			
+			/**
+			 * Display the native language translation of a textual message whose grammatical form depends on a number.
+			 *
+			 * @param {string} msgId textual message in a singular form
+			 * @param {string} plural textual message in a plural form
+			 * @param {number} value message number
+			 *
+			 * @return {string} translated text
+			 *
+			 * @global
+			 *
+			 * @example
+			 * console.log(ngettext('{0} cat', '{0} cats', 1));
+			 */
+			window.ngettext = function ( msgId, plural, value ) {
+				/* eslint no-eval: 0 */
+			
+				if ( true ) {
+					if ( Number(value) !== value ) { throw 'value must be a number'; }
+				}
+			
+				if ( data && meta ) {
+					// translation
+					return data[''][msgId][eval('var n = ' + value + '; ' + meta.plural)];
+				}
+			
+				// english
+				return value === 1 ? msgId : plural;
+			};
+			
+			
+			// public
+			module.exports = gettext;
+
+
+/***/ },
+/* 27 */
 /*!*****************************!*\
   !*** ./app/js/stb/model.js ***!
   \*****************************/
@@ -5400,7 +5580,7 @@
 			
 			'use strict';
 			
-			var Emitter = __webpack_require__(/*! ./emitter */ 10);
+			var Emitter = __webpack_require__(/*! ./emitter */ 8);
 			
 			
 			/**
@@ -5739,7 +5919,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /*!*******************************!*\
   !*** ./app/js/stb/request.js ***!
   \*******************************/
@@ -5867,7 +6047,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /*!*****************************!*\
   !*** ./app/js/stb/shims.js ***!
   \*****************************/
@@ -5944,7 +6124,45 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
+/*!*****************************!*\
+  !*** ./app/js/stb/tools.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+			/**
+			 * @module stb/tools
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			
+			/**
+			 * Do string substitution according to the given format.
+			 * http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+			 *
+			 * @param {string} format string substitution format
+			 *
+			 * @return {string} result data
+			 *
+			 * @example
+			 * format('This is a {0}', 'cat');
+			 * format('This is a {0} and a {1}', 'cat', 'dog');
+			 * format('This is a {0} and a {1} and another {0}', 'cat', 'dog');
+			 */
+			module.exports.format = function ( format ) {
+				var args = Array.prototype.slice.call(arguments, 1);
+			
+				return format.replace(/{(\d+)}/g, function ( match, number ) {
+					return args[number] !== undefined ? args[number] : match;
+				});
+			};
+
+
+/***/ },
+/* 31 */
 /*!************************************!*\
   !*** ./app/js/stb/ui/check.box.js ***!
   \************************************/
@@ -6104,7 +6322,7 @@
 
 
 /***/ },
-/* 30 */
+/* 32 */
 /*!*******************************!*\
   !*** ./app/js/stb/ui/grid.js ***!
   \*******************************/
@@ -6891,7 +7109,7 @@
 
 
 /***/ },
-/* 31 */
+/* 33 */
 /*!********************************!*\
   !*** ./app/js/stb/ui/input.js ***!
   \********************************/
@@ -6920,13 +7138,15 @@
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 * @param {string} [config.value='text'] input text value
 			 * @param {string} [config.placeholder='password'] placeholder text value
+			 * @param {string} [config.type=Input.TYPE_TEXT] input type
+			 * @param {string} [config.direction='ltr'] symbol direction ('rtl' - right to left, 'ltr' - left to right)
 			 *
 			 * @example
 			 * var Input = require('stb/ui/input'),
 			 *     input = new Input({
 			 *         placeholder: 'input password'
 			 *         events: {
-			 *             change: function ( event ) {
+			 *             input: function ( event ) {
 			 *                 debug.log(event.value);
 			 *             }
 			 *         }
@@ -6971,6 +7191,13 @@
 				 * @type {number}
 				 */
 				this.type = this.TYPE_TEXT;
+			
+				/**
+				 * Direction of the symbols in input.
+				 *
+				 * @type {string}
+				 */
+				this.direction = 'ltr';
 			
 				// parent init
 				Component.call(this, config);
@@ -7106,6 +7333,17 @@
 					// apply
 					this.$placeholder.innerText = config.placeholder;
 				}
+			
+				// char direction
+				if ( config.direction !== undefined ) {
+					// apply
+					if ( true ) {
+						if ( typeof config.direction !== 'string' ) { throw 'config.direction must be a string'; }
+						if ( config.direction !== 'ltr' && config.direction !== 'rtl' ) { throw 'config.direction wrong value'; }
+					}
+					this.direction = config.direction;
+				}
+				this.$body.dir = this.direction;
 			};
 			
 			
@@ -7177,6 +7415,8 @@
 			 * @fires module:stb/ui/input~Input#input
 			 */
 			Input.prototype.removeChar = function ( index ) {
+				var prevValue = this.value;
+			
 				index = (index === undefined) ? this.$caret.index - 1 : index;
 				// non-empty string
 				if ( this.value.length > 0 ) {
@@ -7197,8 +7437,8 @@
 					// cut one char from the value
 					this.value = this.value.substring(0, index) + this.value.substring(index + 1, this.value.length);
 			
-					// there are some listeners
-					if ( this.events['input'] !== undefined ) {
+					// there are some listeners and value was changed
+					if ( this.events['input'] !== undefined && prevValue !== this.value ) {
 						// notify listeners
 						this.emit('input', {value: this.value});
 					}
@@ -7249,6 +7489,11 @@
 			
 				if ( true ) {
 					if ( typeof value !== 'string' ) { throw 'value must be a string'; }
+				}
+			
+				// return if no changes
+				if ( value === this.value ) {
+					return;
 				}
 			
 				// non-empty string
@@ -7317,7 +7562,7 @@
 
 
 /***/ },
-/* 32 */
+/* 34 */
 /*!****************************************!*\
   !*** ./app/js/stb/ui/modal.message.js ***!
   \****************************************/
@@ -7376,7 +7621,7 @@
 
 
 /***/ },
-/* 33 */
+/* 35 */
 /*!***************************************!*\
   !*** ./app/js/stb/ui/progress.bar.js ***!
   \***************************************/
@@ -7598,7 +7843,7 @@
 
 
 /***/ },
-/* 34 */
+/* 36 */
 /*!*************************************!*\
   !*** ./app/js/stb/ui/scroll.bar.js ***!
   \*************************************/
@@ -7867,7 +8112,7 @@
 
 
 /***/ },
-/* 35 */
+/* 37 */
 /*!*********************************!*\
   !*** ./app/js/stb/ui/widget.js ***!
   \*********************************/
@@ -7933,7 +8178,7 @@
 
 
 /***/ },
-/* 36 */
+/* 38 */
 /*!************************************!*\
   !*** ./app/js/tabs/main.button.js ***!
   \************************************/
@@ -7990,7 +8235,7 @@
 
 
 /***/ },
-/* 37 */
+/* 39 */
 /*!***************************************!*\
   !*** ./app/js/tabs/main.check.box.js ***!
   \***************************************/
@@ -8006,7 +8251,7 @@
 			'use strict';
 			
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 2),
-				CheckBox = __webpack_require__(/*! ../stb/ui/check.box */ 29),
+				CheckBox = __webpack_require__(/*! ../stb/ui/check.box */ 31),
 				panel    = new Panel({
 					$node: document.getElementById('pageMainTabCheckBox'),
 					visible: false
@@ -8037,7 +8282,7 @@
 
 
 /***/ },
-/* 38 */
+/* 40 */
 /*!***************************************!*\
   !*** ./app/js/tabs/main.grid.data.js ***!
   \***************************************/
@@ -8375,7 +8620,7 @@
 
 
 /***/ },
-/* 39 */
+/* 41 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.grid.js ***!
   \**********************************/
@@ -8392,9 +8637,9 @@
 			
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 2),
 				Button   = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Grid     = __webpack_require__(/*! ../stb/ui/grid */ 30),
+				Grid     = __webpack_require__(/*! ../stb/ui/grid */ 32),
 				keys     = __webpack_require__(/*! ../stb/keys */ 3),
-				gridData = __webpack_require__(/*! ./main.grid.data */ 38),
+				gridData = __webpack_require__(/*! ./main.grid.data */ 40),
 				panel    = new Panel({
 					$node: document.getElementById('pageMainTabGrid'),
 					visible: false
@@ -8528,7 +8773,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /*!***********************************!*\
   !*** ./app/js/tabs/main.input.js ***!
   \***********************************/
@@ -8543,7 +8788,7 @@
 			
 			'use strict';
 			
-			var Input = __webpack_require__(/*! ../stb/ui/input */ 31),
+			var Input = __webpack_require__(/*! ../stb/ui/input */ 33),
 				Panel = __webpack_require__(/*! ../stb/ui/panel */ 2),
 				panel = new Panel({
 					$node: document.getElementById('pageMainTabInput'),
@@ -8607,7 +8852,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.list.js ***!
   \**********************************/
@@ -8624,7 +8869,7 @@
 			
 			var Panel     = __webpack_require__(/*! ../stb/ui/panel */ 2),
 				List      = __webpack_require__(/*! ../stb/ui/list */ 13),
-				ScrollBar = __webpack_require__(/*! ../stb/ui/scroll.bar */ 34),
+				ScrollBar = __webpack_require__(/*! ../stb/ui/scroll.bar */ 36),
 				panel     = new Panel({
 					$node: document.getElementById('pageMainTabList'),
 					visible: false
@@ -8769,7 +9014,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /*!***********************************!*\
   !*** ./app/js/tabs/main.modal.js ***!
   \***********************************/
@@ -8787,7 +9032,7 @@
 			var Button       = __webpack_require__(/*! ../stb/ui/button */ 6),
 				Panel        = __webpack_require__(/*! ../stb/ui/panel */ 2),
 				ModalBox     = __webpack_require__(/*! ../stb/ui/modal.box */ 14),
-				ModalMessage = __webpack_require__(/*! ../stb/ui/modal.message */ 32),
+				ModalMessage = __webpack_require__(/*! ../stb/ui/modal.message */ 34),
 				panel        = new Panel({
 					$node: document.getElementById('pageMainTabModal'),
 					visible: false
@@ -8860,7 +9105,7 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /*!**********************************!*\
   !*** ./app/js/tabs/main.page.js ***!
   \**********************************/
@@ -8901,7 +9146,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /*!***********************************!*\
   !*** ./app/js/tabs/main.panel.js ***!
   \***********************************/
@@ -8946,7 +9191,7 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /*!******************************************!*\
   !*** ./app/js/tabs/main.progress.bar.js ***!
   \******************************************/
@@ -8962,7 +9207,7 @@
 			'use strict';
 			
 			var Panel       = __webpack_require__(/*! ../stb/ui/panel */ 2),
-				ProgressBar = __webpack_require__(/*! ../stb/ui/progress.bar */ 33),
+				ProgressBar = __webpack_require__(/*! ../stb/ui/progress.bar */ 35),
 				keys        = __webpack_require__(/*! ../stb/keys */ 3),
 				panel       = new Panel({
 					$node: document.getElementById('pageMainTabProgressBar'),
@@ -9049,7 +9294,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /*!************************************!*\
   !*** ./app/js/tabs/main.widget.js ***!
   \************************************/
@@ -9066,7 +9311,7 @@
 			
 			var Button = __webpack_require__(/*! ../stb/ui/button */ 6),
 				Panel  = __webpack_require__(/*! ../stb/ui/panel */ 2),
-				Widget = __webpack_require__(/*! ../stb/ui/widget */ 35),
+				Widget = __webpack_require__(/*! ../stb/ui/widget */ 37),
 				panel  = new Panel({
 					$node: document.getElementById('pageMainTabWidget'),
 					visible: false
@@ -9124,7 +9369,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /*!**************************!*\
   !*** ./config/logger.js ***!
   \**************************/
@@ -9150,7 +9395,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /*!*************************!*\
   !*** ./config/proxy.js ***!
   \*************************/
@@ -9194,7 +9439,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /*!**************************!*\
   !*** ./config/static.js ***!
   \**************************/
@@ -9230,7 +9475,7 @@
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /*!**************************!*\
   !*** ./config/weinre.js ***!
   \**************************/
@@ -9265,7 +9510,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /*!**************************************!*\
   !*** ./~/code-proxy/client/guest.js ***!
   \**************************************/
@@ -9469,7 +9714,7 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /*!*************************************!*\
   !*** ./~/code-proxy/client/host.js ***!
   \*************************************/
@@ -9651,7 +9896,7 @@
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /*!***************************************!*\
   !*** ./~/gremlins.js/gremlins.min.js ***!
   \***************************************/
@@ -9681,7 +9926,7 @@
 			(function(e,t){true?!(__WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):typeof exports=="object"?module.exports=t():e.gremlins=t()})(this,function(){var e,t,n;return function(r){function d(e,t){return h.call(e,t)}function v(e,t){var n,r,i,s,o,u,a,f,c,h,p=t&&t.split("/"),d=l.map,v=d&&d["*"]||{};if(e&&e.charAt(0)===".")if(t){p=p.slice(0,p.length-1),e=p.concat(e.split("/"));for(f=0;f<e.length;f+=1){h=e[f];if(h===".")e.splice(f,1),f-=1;else if(h===".."){if(f===1&&(e[2]===".."||e[0]===".."))break;f>0&&(e.splice(f-1,2),f-=2)}}e=e.join("/")}else e.indexOf("./")===0&&(e=e.substring(2));if((p||v)&&d){n=e.split("/");for(f=n.length;f>0;f-=1){r=n.slice(0,f).join("/");if(p)for(c=p.length;c>0;c-=1){i=d[p.slice(0,c).join("/")];if(i){i=i[r];if(i){s=i,o=f;break}}}if(s)break;!u&&v&&v[r]&&(u=v[r],a=f)}!s&&u&&(s=u,o=a),s&&(n.splice(0,o,s),e=n.join("/"))}return e}function m(e,t){return function(){return s.apply(r,p.call(arguments,0).concat([e,t]))}}function g(e){return function(t){return v(t,e)}}function y(e){return function(t){a[e]=t}}function b(e){if(d(f,e)){var t=f[e];delete f[e],c[e]=!0,i.apply(r,t)}if(!d(a,e)&&!d(c,e))throw new Error("No "+e);return a[e]}function w(e){var t,n=e?e.indexOf("!"):-1;return n>-1&&(t=e.substring(0,n),e=e.substring(n+1,e.length)),[t,e]}function E(e){return function(){return l&&l.config&&l.config[e]||{}}}var i,s,o,u,a={},f={},l={},c={},h=Object.prototype.hasOwnProperty,p=[].slice;o=function(e,t){var n,r=w(e),i=r[0];return e=r[1],i&&(i=v(i,t),n=b(i)),i?n&&n.normalize?e=n.normalize(e,g(t)):e=v(e,t):(e=v(e,t),r=w(e),i=r[0],e=r[1],i&&(n=b(i))),{f:i?i+"!"+e:e,n:e,pr:i,p:n}},u={require:function(e){return m(e)},exports:function(e){var t=a[e];return typeof t!="undefined"?t:a[e]={}},module:function(e){return{id:e,uri:"",exports:a[e],config:E(e)}}},i=function(e,t,n,i){var s,l,h,p,v,g=[],w;i=i||e;if(typeof n=="function"){t=!t.length&&n.length?["require","exports","module"]:t;for(v=0;v<t.length;v+=1){p=o(t[v],i),l=p.f;if(l==="require")g[v]=u.require(e);else if(l==="exports")g[v]=u.exports(e),w=!0;else if(l==="module")s=g[v]=u.module(e);else if(d(a,l)||d(f,l)||d(c,l))g[v]=b(l);else{if(!p.p)throw new Error(e+" missing "+l);p.p.load(p.n,m(i,!0),y(l),{}),g[v]=a[l]}}h=n.apply(a[e],g);if(e)if(s&&s.exports!==r&&s.exports!==a[e])a[e]=s.exports;else if(h!==r||!w)a[e]=h}else e&&(a[e]=n)},e=t=s=function(e,t,n,a,f){return typeof e=="string"?u[e]?u[e](t):b(o(e,t).f):(e.splice||(l=e,t.splice?(e=t,t=n,n=null):e=r),t=t||function(){},typeof n=="function"&&(n=a,a=f),a?i(r,e,t,n):setTimeout(function(){i(r,e,t,n)},4),s)},s.config=function(e){return l=e,l.deps&&s(l.deps,l.callback),s},e._defined=a,n=function(e,t,n){t.splice||(n=t,t=[]),!d(a,e)&&!d(f,e)&&(f[e]=[e,t,n])},n.amd={jQuery:!0}}(),n("../src/vendor/almond.js",function(){}),function(){function a(e,t){e||(e={});if(!t)return e;for(var n in t)typeof e[n]=="undefined"&&(e[n]=t[n]);return e}function f(e,t){if(e)throw new RangeError(t)}var e=9007199254740992,t=-e,r="0123456789",i="abcdefghijklmnopqrstuvwxyz",s=i.toUpperCase(),o=r+"abcdef",u=function(e){e!==undefined&&(typeof e=="function"?this.random=e:this.seed=e),typeof this.random=="undefined"&&(this.mt=this.mersenne_twister(e),this.random=function(){return this.mt.random(this.seed)})};u.prototype.bool=function(e){return e=a(e,{likelihood:50}),f(e.likelihood<0||e.likelihood>100,"Chance: Likelihood accepts values from 0 to 100."),this.random()*100<e.likelihood},u.prototype.character=function(e){e=a(e);var t="!@#$%^&*()[]",n,o;return f(e.alpha&&e.symbols,"Chance: Cannot specify both alpha and symbols."),e.casing==="lower"?n=i:e.casing==="upper"?n=s:n=i+s,e.pool?o=e.pool:e.alpha?o=n:e.symbols?o=t:o=n+r+t,o.charAt(this.natural({max:o.length-1}))},u.prototype.floating=function(t){var n,r;t=a(t,{fixed:4});var i=Math.pow(10,t.fixed);f(t.fixed&&t.precision,"Chance: Cannot specify both fixed and precision.");var s=e/i,o=-s;f(t.min&&t.fixed&&t.min<o,"Chance: Min specified is out of range with fixed. Min should be, at least, "+o),f(t.max&&t.fixed&&t.max>s,"Chance: Max specified is out of range with fixed. Max should be, at most, "+s),t=a(t,{min:o,max:s}),n=this.integer({min:t.min*i,max:t.max*i});var u=(n/i).toFixed(t.fixed);return parseFloat(u)},u.prototype.integer=function(n){var r,i;n=a(n,{min:t,max:e}),i=Math.max(Math.abs(n.min),Math.abs(n.max));do r=this.natural({max:i}),r=this.bool()?r:r*-1;while(r<n.min||r>n.max);return r},u.prototype.natural=function(t){return t=a(t,{min:0,max:e}),f(t.min>t.max,"Chance: Min cannot be greater than Max."),Math.floor(this.random()*(t.max-t.min+1)+t.min)},u.prototype.normal=function(e){e=a(e,{mean:0,dev:1});var t,n,r,i,s=e.mean,o=e.dev;do n=this.random()*2-1,r=this.random()*2-1,t=n*n+r*r;while(t>=1);return i=n*Math.sqrt(-2*Math.log(t)/t),o*i+s},u.prototype.string=function(e){e=a(e);var t=e.length||this.natural({min:5,max:20}),n="",r=e.pool;for(var i=0;i<t;i++)n+=this.character({pool:r});return n},u.prototype.capitalize=function(e){return e.charAt(0).toUpperCase()+e.substr(1)},u.prototype.mixin=function(e){var t=this;for(var n in e)u.prototype[n]=e[n];return this},u.prototype.pick=function(e,t){return!t||t===1?e[this.natural({max:e.length-1})]:this.shuffle(e).slice(0,t)},u.prototype.shuffle=function(e){var t=e.slice(0),n=[],r=0,i=Number(t.length);for(var s=0;s<i;s++)r=this.natural({max:t.length-1}),n[s]=t[r],t.splice(r,1);return n},u.prototype.paragraph=function(e){e=a(e);var t=e.sentences||this.natural({min:3,max:7}),n=[];for(var r=0;r<t;r++)n.push(this.sentence());return n.join(" ")},u.prototype.sentence=function(e){e=a(e);var t=e.words||this.natural({min:12,max:18}),n,r=[];for(var i=0;i<t;i++)r.push(this.word());return n=r.join(" "),n=this.capitalize(n)+".",n},u.prototype.syllable=function(e){e=a(e);var t=e.length||this.natural({min:2,max:3}),n="bcdfghjklmnprstvwz",r="aeiou",i=n+r,s="",o;for(var u=0;u<t;u++)u===0?o=this.character({pool:i}):n.indexOf(o)===-1?o=this.character({pool:n}):o=this.character({pool:r}),s+=o;return s},u.prototype.word=function(e){e=a(e),f(e.syllables&&e.length,"Chance: Cannot specify both syllables AND length.");var t=e.syllables||this.natural({min:1,max:3}),n="";if(e.length){do n+=this.syllable();while(n.length<e.length);n=n.substring(0,e.length)}else for(var r=0;r<t;r++)n+=this.syllable();return n},u.prototype.age=function(e){e=a(e);var t;switch(e.type){case"child":t=this.natural({min:1,max:12});break;case"teen":t=this.natural({min:13,max:19});break;case"adult":t=this.natural({min:18,max:120});break;case"senior":t=this.natural({min:65,max:120});break;default:t=this.natural({min:1,max:120})}return t},u.prototype.birthday=function(e){return e=a(e,{year:(new Date).getFullYear()-this.age(e)}),this.date(e)};var l=["Sophia","Emma","Isabella","Jacob","Mason","Ethan","Noah","Olivia","William","Liam","Jayden","Michael","Ava","Alexander","Aiden","Daniel","Matthew","Elijah","Emily","James","Anthony","Benjamin","Abigail","Joshua","Andrew","David","Joseph","Logan","Jackson","Mia","Christopher","Gabriel","Madison","Samuel","Ryan","Lucas","John","Nathan","Isaac","Dylan","Caleb","Elizabeth","Chloe","Christian","Landon","Jonathan","Carter","Ella","Luke","Owen","Brayden","Avery","Gavin","Wyatt","Addison","Isaiah","Aubrey","Henry","Eli","Hunter","Lily","Jack","Natalie","Evan","Sofia","Jordan","Nicholas","Tyler","Aaron","Charlotte","Zoey","Jeremiah","Julian","Cameron","Grace","Hannah","Amelia","Harper","Levi","Lillian","Brandon","Angel","Austin","Connor","Adrian","Robert","Samantha","Charles","Evelyn","Victoria","Thomas","Brooklyn","Sebastian","Zoe","Colton","Jaxon","Layla","Kevin","Zachary","Ayden","Dominic","Blake","Jose","Hailey","Oliver","Justin","Bentley","Leah","Jason","Chase","Ian","Kaylee","Anna","Aaliyah","Gabriella","Josiah","Allison","Parker","Xavier","Nevaeh","Alexis","Adam","Audrey","Cooper","Savannah","Sarah","Alyssa","Claire","Taylor","Riley","Camila","Nathaniel","Arianna","Ashley","Grayson","Jace","Brianna","Carson","Sophie","Peyton","Nolan","Tristan","Luis","Brody","Bella","Khloe","Genesis","Alexa","Juan","Hudson","Serenity","Kylie","Aubree","Scarlett","Bryson","Carlos","Stella","Maya","Easton","Katherine","Julia","Damian","Alex","Kayden","Ryder","Lucy","Madelyn","Jesus","Cole","Autumn","Makayla","Kayla","Mackenzie","Micah","Vincent","Max","Lauren","Jaxson","Gianna","Eric","Ariana","Asher","Hayden","Faith","Alexandra","Melanie","Sydney","Bailey","Caroline","Naomi","Morgan","Kennedy","Ellie","Jasmine","Eva","Skylar","Diego","Kimberly","Violet","Molly","Miles","Steven","Aria","Ivan","Jocelyn","Trinity","Elias","Aidan","Maxwell","London","Bryce","Lydia","Madeline","Antonio","Giovanni","Reagan","Timothy","Bryan","Piper","Andrea","Santiago","Annabelle","Maria","Colin","Richard","Braxton","Kaleb","Brooke","Kyle","Kaden","Preston","Payton","Miguel","Jonah","Paisley","Paige","Lincoln","Ruby","Nora","Riley","Mariah","Leo","Victor","Brady","Jeremy","Mateo","Brian","Jaden","Ashton","Patrick","Rylee","Declan","Lilly","Brielle","Sean","Joel","Gael","Sawyer","Alejandro","Jade","Marcus","Destiny","Leonardo","Jesse","Caden","Jake","Kaiden","Nicole","Mila","Wesley","Kendall","Liliana","Camden","Kaitlyn","Natalia","Sadie","Edward","Brantley","Jordyn","Roman","Vanessa","Mary","Mya","Penelope","Isabelle","Alice","Axel","Silas","Jude","Grant","Reese","Gabrielle","Hadley","Katelyn","Angelina","Rachel","Isabel","Eleanor","Cayden","Emmanuel","George","Clara","Brooklynn","Jessica","Maddox","Malachi","Bradley","Alan","Weston","Elena","Gage","Aliyah","Vivian","Laila","Sara","Amy","Devin","Eliana","Greyson","Lyla","Juliana","Kenneth","Mark","Oscar","Tanner","Rylan","Valeria","Adriana","Nicolas","Makenzie","Harrison","Elise","Mckenzie","Derek","Quinn","Delilah","Peyton","Ezra","Cora","Kylee","Tucker","Emmett","Avery","Cody","Rebecca","Gracie","Izabella","Calvin","Andres","Jorge","Abel","Paul","Abraham","Kai","Josephine","Alaina","Michelle","Jennifer","Collin","Theodore","Ezekiel","Eden","Omar","Jayce","Valentina","Conner","Bennett","Aurora","Catherine","Stephanie","Trevor","Valerie","Eduardo","Peter","Maximus","Jayla","Jaiden","Willow","Jameson","Seth","Daisy","Alana","Melody","Hazel","Kingston","Summer","Melissa","Javier","Margaret","Travis","Kinsley","Kinley","Garrett","Everett","Ariel","Lila","Graham","Giselle","Ryleigh","Xander","Haley","Julianna","Ivy","Alivia","Cristian","Brynn","Damien","Ryker","Griffin","Keira","Daniela","Aniyah","Angela","Kate","Londyn","Corbin","Myles","Hayden","Harmony","Adalyn","Luca","Zane","Francisco","Ricardo","Alexis","Stephen","Zayden","Megan","Allie","Gabriela","Iker","Drake","Alayna","Lukas","Presley","Charlie","Spencer","Zion","Erick","Jenna","Josue","Alexandria","Ashlyn","Adrianna","Jada","Jeffrey","Trenton","Fiona","Chance","Norah","Paxton","Elliot","Emery","Fernando","Maci","Miranda","Keegan","Landen","Ximena","Amaya","Manuel","Amir","Shane","Cecilia","Raymond","Andre","Ana","Shelby","Katie","Hope","Callie","Jordan","Luna","Leilani","Eliza","Mckenna","Angel","Genevieve","Makenna","Isla","Lola","Danielle","Chelsea","Leila","Tessa","Adelyn","Camille","Mikayla","Adeline","Adalynn","Sienna","Esther","Jacqueline","Emerson","Arabella","Maggie","Athena","Lucia","Lexi","Ayla"];u.prototype.first=function(){return this.pick(l)},u.prototype.gender=function(){return this.pick(["Male","Female"])};var c=["Smith","Johnson","Williams","Jones","Brown","Davis","Miller","Wilson","Moore","Taylor","Anderson","Thomas","Jackson","White","Harris","Martin","Thompson","Garcia","Martinez","Robinson","Clark","Rodriguez","Lewis","Lee","Walker","Hall","Allen","Young","Hernandez","King","Wright","Lopez","Hill","Scott","Green","Adams","Baker","Gonzalez","Nelson","Carter","Mitchell","Perez","Roberts","Turner","Phillips","Campbell","Parker","Evans","Edwards","Collins","Stewart","Sanchez","Morris","Rogers","Reed","Cook","Morgan","Bell","Murphy","Bailey","Rivera","Cooper","Richardson","Cox","Howard","Ward","Torres","Peterson","Gray","Ramirez","James","Watson","Brooks","Kelly","Sanders","Price","Bennett","Wood","Barnes","Ross","Henderson","Coleman","Jenkins","Perry","Powell","Long","Patterson","Hughes","Flores","Washington","Butler","Simmons","Foster","Gonzales","Bryant","Alexander","Russell","Griffin","Diaz","Hayes","Myers","Ford","Hamilton","Graham","Sullivan","Wallace","Woods","Cole","West","Jordan","Owens","Reynolds","Fisher","Ellis","Harrison","Gibson","McDonald","Cruz","Marshall","Ortiz","Gomez","Murray","Freeman","Wells","Webb","Simpson","Stevens","Tucker","Porter","Hunter","Hicks","Crawford","Henry","Boyd","Mason","Morales","Kennedy","Warren","Dixon","Ramos","Reyes","Burns","Gordon","Shaw","Holmes","Rice","Robertson","Hunt","Black","Daniels","Palmer","Mills","Nichols","Grant","Knight","Ferguson","Rose","Stone","Hawkins","Dunn","Perkins","Hudson","Spencer","Gardner","Stephens","Payne","Pierce","Berry","Matthews","Arnold","Wagner","Willis","Ray","Watkins","Olson","Carroll","Duncan","Snyder","Hart","Cunningham","Bradley","Lane","Andrews","Ruiz","Harper","Fox","Riley","Armstrong","Carpenter","Weaver","Greene","Lawrence","Elliott","Chavez","Sims","Austin","Peters","Kelley","Franklin","Lawson","Fields","Gutierrez","Ryan","Schmidt","Carr","Vasquez","Castillo","Wheeler","Chapman","Oliver","Montgomery","Richards","Williamson","Johnston","Banks","Meyer","Bishop","McCoy","Howell","Alvarez","Morrison","Hansen","Fernandez","Garza","Harvey","Little","Burton","Stanley","Nguyen","George","Jacobs","Reid","Kim","Fuller","Lynch","Dean","Gilbert","Garrett","Romero","Welch","Larson","Frazier","Burke","Hanson","Day","Mendoza","Moreno","Bowman","Medina","Fowler","Brewer","Hoffman","Carlson","Silva","Pearson","Holland","Douglas","Fleming","Jensen","Vargas","Byrd","Davidson","Hopkins","May","Terry","Herrera","Wade","Soto","Walters","Curtis","Neal","Caldwell","Lowe","Jennings","Barnett","Graves","Jimenez","Horton","Shelton","Barrett","Obrien","Castro","Sutton","Gregory","McKinney","Lucas","Miles","Craig","Rodriquez","Chambers","Holt","Lambert","Fletcher","Watts","Bates","Hale","Rhodes","Pena","Beck","Newman","Haynes","McDaniel","Mendez","Bush","Vaughn","Parks","Dawson","Santiago","Norris","Hardy","Love","Steele","Curry","Powers","Schultz","Barker","Guzman","Page","Munoz","Ball","Keller","Chandler","Weber","Leonard","Walsh","Lyons","Ramsey","Wolfe","Schneider","Mullins","Benson","Sharp","Bowen","Daniel","Barber","Cummings","Hines","Baldwin","Griffith","Valdez","Hubbard","Salazar","Reeves","Warner","Stevenson","Burgess","Santos","Tate","Cross","Garner","Mann","Mack","Moss","Thornton","Dennis","McGee","Farmer","Delgado","Aguilar","Vega","Glover","Manning","Cohen","Harmon","Rodgers","Robbins","Newton","Todd","Blair","Higgins","Ingram","Reese","Cannon","Strickland","Townsend","Potter","Goodwin","Walton","Rowe","Hampton","Ortega","Patton","Swanson","Joseph","Francis","Goodman","Maldonado","Yates","Becker","Erickson","Hodges","Rios","Conner","Adkins","Webster","Norman","Malone","Hammond","Flowers","Cobb","Moody","Quinn","Blake","Maxwell","Pope","Floyd","Osborne","Paul","McCarthy","Guerrero","Lindsey","Estrada","Sandoval","Gibbs","Tyler","Gross","Fitzgerald","Stokes","Doyle","Sherman","Saunders","Wise","Colon","Gill","Alvarado","Greer","Padilla","Simon","Waters","Nunez","Ballard","Schwartz","McBride","Houston","Christensen","Klein","Pratt","Briggs","Parsons","McLaughlin","Zimmerman","French","Buchanan","Moran","Copeland","Roy","Pittman","Brady","McCormick","Holloway","Brock","Poole","Frank","Logan","Owen","Bass","Marsh","Drake","Wong","Jefferson","Park","Morton","Abbott","Sparks","Patrick","Norton","Huff","Clayton","Massey","Lloyd","Figueroa","Carson","Bowers","Roberson","Barton","Tran","Lamb","Harrington","Casey","Boone","Cortez","Clarke","Mathis","Singleton","Wilkins","Cain","Bryan","Underwood","Hogan","McKenzie","Collier","Luna","Phelps","McGuire","Allison","Bridges","Wilkerson","Nash","Summers","Atkins"];u.prototype.last=function(){return this.pick(c)},u.prototype.name=function(e){e=a(e);var t=this.first(),n=this.last(),r;return e.middle?r=t+" "+this.first()+" "+n:e.middle_initial?r=t+" "+this.character({alpha:!0,casing:"upper"})+". "+n:r=t+" "+n,e.prefix&&(r=this.prefix()+" "+r),r},u.prototype.name_prefixes=function(){return[{name:"Doctor",abbreviation:"Dr."},{name:"Miss",abbreviation:"Miss"},{name:"Misses",abbreviation:"Mrs."},{name:"Mister",abbreviation:"Mr."}]},u.prototype.prefix=function(e){return this.name_prefix(e)},u.prototype.name_prefix=function(e){return e=a(e),e.full?this.pick(this.name_prefixes()).name:this.pick(this.name_prefixes()).abbreviation},u.prototype.color=function(e){function t(e,t){return[e,e,e].join(t||"")}e=a(e,{format:this.pick(["hex","shorthex","rgb"]),grayscale:!1});var n=e.grayscale;if(e.format==="hex")return"#"+(n?t(this.hash({length:2})):this.hash({length:6}));if(e.format==="shorthex")return"#"+(n?t(this.hash({length:1})):this.hash({length:3}));if(e.format==="rgb")return n?"rgb("+t(this.natural({max:255}),",")+")":"rgb("+this.natural({max:255})+","+this.natural({max:255})+","+this.natural({max:255})+")";throw new Error('Invalid format provided. Please provide one of "hex", "shorthex", or "rgb"')},u.prototype.domain=function(e){return e=a(e),this.word()+"."+(e.tld||this.tld())},u.prototype.email=function(e){return e=a(e),this.word()+"@"+(e.domain||this.domain())},u.prototype.fbid=function(){return parseInt("10000"+this.natural({max:1e11}),10)},u.prototype.hashtag=function(){return"#"+this.word()},u.prototype.ip=function(){return this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})},u.prototype.ipv6=function(){var e="";for(var t=0;t<8;t++)e+=this.hash({length:4})+":";return e.substr(0,e.length-1)},u.prototype.klout=function(){return this.natural({min:1,max:99})},u.prototype.tlds=function(){return["com","org","edu","gov","co.uk","net","io"]},u.prototype.tld=function(){return this.pick(this.tlds())},u.prototype.twitter=function(){return"@"+this.word()},u.prototype.address=function(e){return e=a(e),this.natural({min:5,max:2e3})+" "+this.street(e)},u.prototype.areacode=function(e){e=a(e,{parens:!0});var t=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:8}).toString()+this.natural({min:0,max:9}).toString();return e.parens?"("+t+")":t},u.prototype.city=function(){return this.capitalize(this.word({syllables:3}))},u.prototype.coordinates=function(e){return e=a(e),this.latitude(e)+", "+this.longitude(e)},u.prototype.latitude=function(e){return e=a(e,{fixed:5}),this.floating({min:-90,max:90,fixed:e.fixed})},u.prototype.longitude=function(e){return e=a(e,{fixed:5}),this.floating({min:0,max:180,fixed:e.fixed})},u.prototype.phone=function(e){e=a(e,{formatted:!0}),e.formatted||(e.parens=!1);var t=this.areacode(e).toString(),n=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:9}).toString()+this.natural({min:0,max:9}).toString(),r=this.natural({min:1e3,max:9999}).toString();return e.formatted?t+" "+n+"-"+r:t+n+r},u.prototype.postal=function(){var e=this.character({pool:"XVTSRPNKLMHJGECBA"}),t=e+this.natural({max:9})+this.character({alpha:!0,casing:"upper"}),n=this.natural({max:9})+this.character({alpha:!0,casing:"upper"})+this.natural({max:9});return t+" "+n},u.prototype.provinces=function(){return[{name:"Alberta",abbreviation:"AB"},{name:"British Columbia",abbreviation:"BC"},{name:"Manitoba",abbreviation:"MB"},{name:"New Brunswick",abbreviation:"NB"},{name:"Newfoundland and Labrador",abbreviation:"NL"},{name:"Nova Scotia",abbreviation:"NS"},{name:"Ontario",abbreviation:"ON"},{name:"Prince Edward Island",abbreviation:"PE"},{name:"Quebec",abbreviation:"QC"},{name:"Saskatchewan",abbreviation:"SK"},{name:"Northwest Territories",abbreviation:"NT"},{name:"Nunavut",abbreviation:"NU"},{name:"Yukon",abbreviation:"YT"}]},u.prototype.province=function(e){return e&&e.full?this.pick(this.provinces()).name:this.pick(this.provinces()).abbreviation},u.prototype.radio=function(e){e=a(e,{side:"?"});var t="";switch(e.side.toLowerCase()){case"east":case"e":t="W";break;case"west":case"w":t="K";break;default:t=this.character({pool:"KW"})}return t+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})},u.prototype.state=function(e){return e&&e.full?this.pick(this.states()).name:this.pick(this.states()).abbreviation},u.prototype.states=function(){return[{name:"Alabama",abbreviation:"AL"},{name:"Alaska",abbreviation:"AK"},{name:"American Samoa",abbreviation:"AS"},{name:"Arizona",abbreviation:"AZ"},{name:"Arkansas",abbreviation:"AR"},{name:"Armed Forces Europe",abbreviation:"AE"},{name:"Armed Forces Pacific",abbreviation:"AP"},{name:"Armed Forces the Americas",abbreviation:"AA"},{name:"California",abbreviation:"CA"},{name:"Colorado",abbreviation:"CO"},{name:"Connecticut",abbreviation:"CT"},{name:"Delaware",abbreviation:"DE"},{name:"District of Columbia",abbreviation:"DC"},{name:"Federated States of Micronesia",abbreviation:"FM"},{name:"Florida",abbreviation:"FL"},{name:"Georgia",abbreviation:"GA"},{name:"Guam",abbreviation:"GU"},{name:"Hawaii",abbreviation:"HI"},{name:"Idaho",abbreviation:"ID"},{name:"Illinois",abbreviation:"IL"},{name:"Indiana",abbreviation:"IN"},{name:"Iowa",abbreviation:"IA"},{name:"Kansas",abbreviation:"KS"},{name:"Kentucky",abbreviation:"KY"},{name:"Louisiana",abbreviation:"LA"},{name:"Maine",abbreviation:"ME"},{name:"Marshall Islands",abbreviation:"MH"},{name:"Maryland",abbreviation:"MD"},{name:"Massachusetts",abbreviation:"MA"},{name:"Michigan",abbreviation:"MI"},{name:"Minnesota",abbreviation:"MN"},{name:"Mississippi",abbreviation:"MS"},{name:"Missouri",abbreviation:"MO"},{name:"Montana",abbreviation:"MT"},{name:"Nebraska",abbreviation:"NE"},{name:"Nevada",abbreviation:"NV"},{name:"New Hampshire",abbreviation:"NH"},{name:"New Jersey",abbreviation:"NJ"},{name:"New Mexico",abbreviation:"NM"},{name:"New York",abbreviation:"NY"},{name:"North Carolina",abbreviation:"NC"},{name:"North Dakota",abbreviation:"ND"},{name:"Northern Mariana Islands",abbreviation:"MP"},{name:"Ohio",abbreviation:"OH"},{name:"Oklahoma",abbreviation:"OK"},{name:"Oregon",abbreviation:"OR"},{name:"Pennsylvania",abbreviation:"PA"},{name:"Puerto Rico",abbreviation:"PR"},{name:"Rhode Island",abbreviation:"RI"},{name:"South Carolina",abbreviation:"SC"},{name:"South Dakota",abbreviation:"SD"},{name:"Tennessee",abbreviation:"TN"},{name:"Texas",abbreviation:"TX"},{name:"Utah",abbreviation:"UT"},{name:"Vermont",abbreviation:"VT"},{name:"Virgin Islands, U.S.",abbreviation:"VI"},{name:"Virginia",abbreviation:"VA"},{name:"Washington",abbreviation:"WA"},{name:"West Virginia",abbreviation:"WV"},{name:"Wisconsin",abbreviation:"WI"},{name:"Wyoming",abbreviation:"WY"}]},u.prototype.street=function(e){e=a(e);var t=this.word({syllables:2});return t=this.capitalize(t),t+=" ",t+=e.short_suffix?this.street_suffix().abbreviation:this.street_suffix().name,t},u.prototype.street_suffix=function(){return this.pick(this.street_suffixes())},u.prototype.street_suffixes=function(){return[{name:"Avenue",abbreviation:"Ave"},{name:"Boulevard",abbreviation:"Blvd"},{name:"Center",abbreviation:"Ctr"},{name:"Circle",abbreviation:"Cir"},{name:"Court",abbreviation:"Ct"},{name:"Drive",abbreviation:"Dr"},{name:"Extension",abbreviation:"Ext"},{name:"Glen",abbreviation:"Gln"},{name:"Grove",abbreviation:"Grv"},{name:"Heights",abbreviation:"Hts"},{name:"Highway",abbreviation:"Hwy"},{name:"Junction",abbreviation:"Jct"},{name:"Key",abbreviation:"Key"},{name:"Lane",abbreviation:"Ln"},{name:"Loop",abbreviation:"Loop"},{name:"Manor",abbreviation:"Mnr"},{name:"Mill",abbreviation:"Mill"},{name:"Park",abbreviation:"Park"},{name:"Parkway",abbreviation:"Pkwy"},{name:"Pass",abbreviation:"Pass"},{name:"Path",abbreviation:"Path"},{name:"Pike",abbreviation:"Pike"},{name:"Place",abbreviation:"Pl"},{name:"Plaza",abbreviation:"Plz"},{name:"Point",abbreviation:"Pt"},{name:"Ridge",abbreviation:"Rdg"},{name:"River",abbreviation:"Riv"},{name:"Road",abbreviation:"Rd"},{name:"Square",abbreviation:"Sq"},{name:"Street",abbreviation:"St"},{name:"Terrace",abbreviation:"Ter"},{name:"Trail",abbreviation:"Trl"},{name:"Turnpike",abbreviation:"Tpke"},{name:"View",abbreviation:"Vw"},{name:"Way",abbreviation:"Way"}]},u.prototype.tv=function(e){return this.radio(e)},u.prototype.zip=function(e){var t="";for(var n=0;n<5;n++)t+=this.natural({max:9}).toString();if(e&&e.plusfour===!0){t+="-";for(n=0;n<4;n++)t+=this.natural({max:9}).toString()}return t},u.prototype.ampm=function(){return this.bool()?"am":"pm"},u.prototype.date=function(e){var t=this.month({raw:!0}),n;e=a(e,{year:parseInt(this.year(),10),month:t.numeric-1,day:this.natural({min:1,max:t.days}),hour:this.hour(),minute:this.minute(),second:this.second(),millisecond:this.millisecond(),american:!0,string:!1});var r=new Date(e.year,e.month,e.day,e.hour,e.minute,e.second,e.millisecond);return e.american?n=r.getMonth()+1+"/"+r.getDate()+"/"+r.getFullYear():n=r.getDate()+"/"+(r.getMonth()+1)+"/"+r.getFullYear(),e.string?n:r},u.prototype.hammertime=function(e){return this.date(e).getTime()},u.prototype.hour=function(e){e=a(e);var t=e.twentyfour?24:12;return this.natural({min:1,max:t})},u.prototype.millisecond=function(){return this.natural({max:999})},u.prototype.minute=u.prototype.second=function(){return this.natural({max:59})},u.prototype.month=function(e){e=a(e);var t=this.pick(this.months());return e.raw?t:t.name},u.prototype.months=function(){return[{name:"January",short_name:"Jan",numeric:"01",days:31},{name:"February",short_name:"Feb",numeric:"02",days:28},{name:"March",short_name:"Mar",numeric:"03",days:31},{name:"April",short_name:"Apr",numeric:"04",days:30},{name:"May",short_name:"May",numeric:"05",days:31},{name:"June",short_name:"Jun",numeric:"06",days:30},{name:"July",short_name:"Jul",numeric:"07",days:31},{name:"August",short_name:"Aug",numeric:"08",days:31},{name:"September",short_name:"Sep",numeric:"09",days:30},{name:"October",short_name:"Oct",numeric:"10",days:31},{name:"November",short_name:"Nov",numeric:"11",days:30},{name:"December",short_name:"Dec",numeric:"12",days:31}]},u.prototype.second=function(){return this.natural({max:59})},u.prototype.timestamp=function(){return this.natural({min:1,max:parseInt((new Date).getTime()/1e3,10)})},u.prototype.year=function(e){return e=a(e,{min:(new Date).getFullYear()}),e.max=typeof e.max!="undefined"?e.max:e.min+100,this.natural(e).toString()},u.prototype.cc=function(e){e=a(e);var t,n,r,i;t=e.type?this.cc_type({name:e.type,raw:!0}):this.cc_type({raw:!0}),n=t.prefix.split(""),r=t.length-t.prefix.length-1;for(var s=0;s<r;s++)n.push(this.integer({min:0,max:9}));return n.push(this.luhn_calculate(n.join(""))),n.join("")},u.prototype.cc_types=function(){return[{name:"American Express",short_name:"amex",prefix:"34",length:15},{name:"Bankcard",short_name:"bankcard",prefix:"5610",length:16},{name:"China UnionPay",short_name:"chinaunion",prefix:"62",length:16},{name:"Diners Club Carte Blanche",short_name:"dccarte",prefix:"300",length:14},{name:"Diners Club enRoute",short_name:"dcenroute",prefix:"2014",length:15},{name:"Diners Club International",short_name:"dcintl",prefix:"36",length:14},{name:"Diners Club United States & Canada",short_name:"dcusc",prefix:"54",length:16},{name:"Discover Card",short_name:"discover",prefix:"6011",length:16},{name:"InstaPayment",short_name:"instapay",prefix:"637",length:16},{name:"JCB",short_name:"jcb",prefix:"3528",length:16},{name:"Laser",short_name:"laser",prefix:"6304",length:16},{name:"Maestro",short_name:"maestro",prefix:"5018",length:16},{name:"Mastercard",short_name:"mc",prefix:"51",length:16},{name:"Solo",short_name:"solo",prefix:"6334",length:16},{name:"Switch",short_name:"switch",prefix:"4903",length:16},{name:"Visa",short_name:"visa",prefix:"4",length:16},{name:"Visa Electron",short_name:"electron",prefix:"4026",length:16}]},u.prototype.cc_type=function(e){e=a(e);var t=this.cc_types(),n=null;if(e.name){for(var r=0;r<t.length;r++)if(t[r].name===e.name||t[r].short_name===e.name){n=t[r];break}if(n===null)throw new Error("Credit card type '"+e.name+"'' is not suppoted")}else n=this.pick(t);return e.raw?n:n.name},u.prototype.dollar=function(e){e=a(e,{max:1e4,min:0});var t=this.floating({min:e.min,max:e.max,fixed:2}).toString(),n=t.split(".")[1];return n===undefined?t+=".00":n.length<2&&(t+="0"),t<0?"-$"+t.replace("-",""):"$"+t},u.prototype.exp=function(e){e=a(e);var t={};return t.year=this.exp_year(),t.year===(new Date).getFullYear()?t.month=this.exp_month({future:!0}):t.month=this.exp_month(),e.raw?t:t.month+"/"+t.year},u.prototype.exp_month=function(e){e=a(e);var t,n;if(e.future){do t=this.month({raw:!0}).numeric,n=parseInt(t,10);while(n<(new Date).getMonth())}else t=this.month({raw:!0}).numeric;return t},u.prototype.exp_year=function(){return this.year({max:(new Date).getFullYear()+10})},u.prototype.d4=function(){return this.natural({min:1,max:4})},u.prototype.d6=function(){return this.natural({min:1,max:6})},u.prototype.d8=function(){return this.natural({min:1,max:8})},u.prototype.d10=function(){return this.natural({min:1,max:10})},u.prototype.d12=function(){return this.natural({min:1,max:12})},u.prototype.d20=function(){return this.natural({min:1,max:20})},u.prototype.d30=function(){return this.natural({min:1,max:30})},u.prototype.d100=function(){return this.natural({min:1,max:100})},u.prototype.rpg=function(e,t){t=a(t);if(e===null)throw new Error("A type of die roll must be included");var n=e.toLowerCase().split("d"),r=[];if(n.length!==2||!parseInt(n[0],10)||!parseInt(n[1],10))throw new Error("Invalid format provided. Please provide #d# where the first # is the number of dice to roll, the second # is the max of each die");for(var i=n[0];i>0;i--)r[i-1]=this.natural({min:1,max:n[1]});return typeof t.sum!="undefined"&&t.sum?r.reduce(function(e,t){return e+t}):r},u.prototype.guid=function(e){e=e||{version:5};var t="ABCDEF1234567890",n="AB89",r=this.string({pool:t,length:8})+"-"+this.string({pool:t,length:4})+"-"+e.version+this.string({pool:t,length:3})+"-"+this.string({pool:n,length:1})+this.string({pool:t,length:3})+"-"+this.string({pool:t,length:12});return r},u.prototype.hash=function(e){e=a(e,{length:40,casing:"lower"});var t=e.casing==="upper"?o.toUpperCase():o;return this.string({pool:t,length:e.length})},u.prototype.luhn_check=function(e){var t=e.toString(),n=+t.substring(t.length-1);return n===this.luhn_calculate(+t.substring(0,t.length-1))},u.prototype.luhn_calculate=function(e){var t=e.toString().split("").reverse(),n=0;for(var r=0,i=t.length;i>r;++r){var s=+t[r];r%2===0&&(s*=2,s>9&&(s-=9)),n+=s}return n*9%10},u.prototype.mersenne_twister=function(e){return new h(e)},u.prototype.VERSION="0.5.4";var h=function(e){e===undefined&&(e=(new Date).getTime()),this.N=624,this.M=397,this.MATRIX_A=2567483615,this.UPPER_MASK=2147483648,this.LOWER_MASK=2147483647,this.mt=new Array(this.N),this.mti=this.N+1,this.init_genrand(e)};h.prototype.init_genrand=function(e){this.mt[0]=e>>>0;for(this.mti=1;this.mti<this.N;this.mti++)e=this.mt[this.mti-1]^this.mt[this.mti-1]>>>30,this.mt[this.mti]=(((e&4294901760)>>>16)*1812433253<<16)+(e&65535)*1812433253+this.mti,this.mt[this.mti]>>>=0},h.prototype.init_by_array=function(e,t){var n=1,r=0,i,s;this.init_genrand(19650218),i=this.N>t?this.N:t;for(;i;i--)s=this.mt[n-1]^this.mt[n-1]>>>30,this.mt[n]=(this.mt[n]^(((s&4294901760)>>>16)*1664525<<16)+(s&65535)*1664525)+e[r]+r,this.mt[n]>>>=0,n++,r++,n>=this.N&&(this.mt[0]=this.mt[this.N-1],n=1),r>=t&&(r=0);for(i=this.N-1;i;i--)s=this.mt[n-1]^this.mt[n-1]>>>30,this.mt[n]=(this.mt[n]^(((s&4294901760)>>>16)*1566083941<<16)+(s&65535)*1566083941)-n,this.mt[n]>>>=0,n++,n>=this.N&&(this.mt[0]=this.mt[this.N-1],n=1);this.mt[0]=2147483648},h.prototype.genrand_int32=function(){var e,t=new Array(0,this.MATRIX_A);if(this.mti>=this.N){var n;this.mti===this.N+1&&this.init_genrand(5489);for(n=0;n<this.N-this.M;n++)e=this.mt[n]&this.UPPER_MASK|this.mt[n+1]&this.LOWER_MASK,this.mt[n]=this.mt[n+this.M]^e>>>1^t[e&1];for(;n<this.N-1;n++)e=this.mt[n]&this.UPPER_MASK|this.mt[n+1]&this.LOWER_MASK,this.mt[n]=this.mt[n+(this.M-this.N)]^e>>>1^t[e&1];e=this.mt[this.N-1]&this.UPPER_MASK|this.mt[0]&this.LOWER_MASK,this.mt[this.N-1]=this.mt[this.M-1]^e>>>1^t[e&1],this.mti=0}return e=this.mt[this.mti++],e^=e>>>11,e^=e<<7&2636928640,e^=e<<15&4022730752,e^=e>>>18,e>>>0},h.prototype.genrand_int31=function(){return this.genrand_int32()>>>1},h.prototype.genrand_real1=function(){return this.genrand_int32()*(1/4294967295)},h.prototype.random=function(){return this.genrand_int32()*(1/4294967296)},h.prototype.genrand_real3=function(){return(this.genrand_int32()+.5)*(1/4294967296)},h.prototype.genrand_res53=function(){var e=this.genrand_int32()>>>5,t=this.genrand_int32()>>>6;return(e*67108864+t)*(1/9007199254740992)},typeof exports!="undefined"&&(typeof module!="undefined"&&module.exports&&(exports=module.exports=u),exports.Chance=u),typeof n=="function"&&n.amd&&n("vendor/chance",[],function(){return u}),typeof window=="object"&&typeof window.document=="object"&&(window.Chance=u,window.chance=new u)}(),n("utils/configurable",["require"],function(e){function t(e,t){for(var n in t)(function(n){e[n]=function(r){return arguments.length?(t[n]=r,e):t[n]}})(n)}return t}),n("species/clicker",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function f(){var t,n,r,i,s=0;do{t=a.positionSelector(),n=t[0],r=t[1],i=e.elementFromPoint(n,r),s++;if(s>a.maxNbTries)return!1}while(!i||!a.canClick(i));var o=e.createEvent("MouseEvents"),u=a.randomizer.pick(a.clickTypes);o.initMouseEvent(u,!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),i.dispatchEvent(o),typeof a.showAction=="function"&&a.showAction(n,r,u),typeof a.logger.log=="function"&&a.logger.log("gremlin","clicker   ",u,"at",n,r)}var e=window.document,r=e.body,i=["click","click","click","click","click","click","dblclick","dblclick","mousedown","mouseup","mouseover","mouseover","mouseover","mousemove","mouseout"],s=function(){return[a.randomizer.natural({max:e.documentElement.clientWidth-1}),a.randomizer.natural({max:e.documentElement.clientHeight-1})]},o=function(t,n){var i=e.createElement("div");i.style.border="3px solid red",i.style["border-radius"]="50%",i.style.width="40px",i.style.height="40px",i.style["box-sizing"]="border-box",i.style.position="absolute",i.style.webkitTransition="opacity 1s ease-out",i.style.mozTransition="opacity 1s ease-out",i.style.transition="opacity 1s ease-out",i.style.left=t-20+"px",i.style.top=n-20+"px";var s=r.appendChild(i);setTimeout(function(){r.removeChild(s)},1e3),setTimeout(function(){s.style.opacity=0},50)},u=function(){return!0},a={clickTypes:i,positionSelector:s,showAction:o,canClick:u,maxNbTries:10,logger:{},randomizer:new n};return t(f,a),f}}),n("species/formFiller",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function u(){var t=[],n=d();for(var r in o.elementMapTypes)o.elementMapTypes.hasOwnProperty(r)&&t.push(r);var i,s=0;do{var u=e.querySelectorAll(t.join(","));if(u.length===0)return!1;i=o.randomizer.pick(u),s++;if(s>o.maxNbTries)return!1}while(!i||!o.canFillElement(i));var a=null;for(var f in o.elementMapTypes)if(i[n](f)){a=f;break}var l=o.elementMapTypes[a](i);typeof o.showAction=="function"&&o.showAction(i),typeof o.logger.log=="function"&&o.logger.log("gremlin","formFiller","input",l,"in",i)}function a(e){var t=o.randomizer.character();return e.value+=t,t}function f(e){var t=o.randomizer.character({pool:"0123456789"});return e.value+=t,t}function l(e){var t=e.querySelectorAll("option"),n=o.randomizer.pick(t);for(var r=0,i=t.length;r<i;r++){var s=t[r];s.selected=s.value==n.value}return n.value}function c(t){var n=e.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),t.dispatchEvent(n),t.value}function h(t){var n=e.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),t.dispatchEvent(n),t.value}function p(e){var t=o.randomizer.email();return e.value=t,t}function d(){var t=e.querySelector("body");return(t.mozMatchesSelector||t.msMatchesSelector||t.oMatchesSelector||t.webkitMatchesSelector).name}var e=window.document,r={'input[type="text"]':a,'input[type="password"]':a,'input[type="number"]':f,select:l,'input[type="radio"]':c,'input[type="checkbox"]':h,'input[type="email"]':p,"input:not([type])":a},i=function(e){typeof e.attributes["data-old-border"]=="undefined"&&(e.attributes["data-old-border"]=e.style.border);var t=e.attributes["data-old-border"];e.style.border="1px solid red",setTimeout(function(){e.style.border=t},500)},s=function(){return!0},o={elementMapTypes:r,showAction:i,canFillElement:s,maxNbTries:10,logger:{},randomizer:new n};return t(u,o),u}}),n("species/scroller",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function a(){var e=u.positionSelector(),t=e[0],n=e[1];window.scrollTo(t,n),typeof u.showAction=="function"&&u.showAction(t,n),typeof u.logger.log=="function"&&u.logger.log("gremlin","scroller  ","scroll to",t,n)}var e=window.document,r=e.documentElement,i=e.body,s=function(){var e=Math.max(i.scrollWidth,i.offsetWidth,r.scrollWidth,r.offsetWidth,r.clientWidth),t=Math.max(i.scrollHeight,i.offsetHeight,r.scrollHeight,r.offsetHeight,r.clientHeight);return[u.randomizer.natural({max:e-r.clientWidth}),u.randomizer.natural({max:t-r.clientHeight})]},o=function(t,n){var s=e.createElement("div");s.style.border="3px solid red",s.style.width=r.clientWidth-25+"px",s.style.height=r.clientHeight-25+"px",s.style.position="absolute",s.style.webkitTransition="opacity 1s ease-out",s.style.mozTransition="opacity 1s ease-out",s.style.transition="opacity 1s ease-out",s.style.left=t+10+"px",s.style.top=n+10+"px";var o=i.appendChild(s);setTimeout(function(){i.removeChild(o)},1e3),setTimeout(function(){o.style.opacity=0},50)},u={positionSelector:s,showAction:o,logger:{},randomizer:new n};return t(a,u),a}}),n("species/typer",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function a(){var t=Math.max(i.scrollWidth,i.offsetWidth,r.scrollWidth,r.offsetWidth,r.clientWidth),n=Math.max(i.scrollHeight,i.offsetHeight,r.scrollHeight,r.offsetHeight,r.clientHeight),s=e.createEvent("KeyboardEvent"),o=typeof s.initKeyboardEvent!="undefined"?"initKeyboardEvent":"initKeyEvent",a=u.randomizer.natural({max:360}),f=u.randomizer.natural({max:r.clientWidth-1}),l=u.randomizer.natural({max:r.clientHeight-1}),c=e.elementFromPoint(f,l);s[o](u.randomizer.pick(u.eventTypes),!0,!0,c,!1,!1,!1,!1,a,0),c.dispatchEvent(s),typeof u.showAction=="function"&&u.showAction(c,f,l,a),typeof u.logger.log=="function"&&u.logger.log("gremlin","typer       type",a,"at",f,l)}var e=window.document,r=e.documentElement,i=e.body,s=["keypress","keyup","keydown"],o=function(t,n,r,s){var o=e.createElement("div");o.style.border="3px solid orange",o.style["border-radius"]="50%",o.style.width="40px",o.style.height="40px",o.style["box-sizing"]="border-box",o.style.position="absolute",o.style.webkitTransition="opacity 1s ease-out",o.style.mozTransition="opacity 1s ease-out",o.style.transition="opacity 1s ease-out",o.style.left=n+"px",o.style.top=r+"px",o.style.textAlign="center",o.style.paddingTop="7px",o.innerHTML=String.fromCharCode(s);var u=i.appendChild(o);setTimeout(function(){i.removeChild(u)},1e3),setTimeout(function(){u.style.opacity=0},50)},u={eventTypes:s,showAction:o,logger:{},randomizer:new n};return t(a,u),a}}),n("mogwais/alert",["require","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/configurable"),n=e("../vendor/chance");return function(){function l(){o.watchEvents.indexOf("alert")!==-1&&(window.alert=function(e){o.logger.warn("mogwai ","alert     ",e,"alert")}),o.watchEvents.indexOf("confirm")!==-1&&(window.confirm=function(e){o.confirmResponse(),o.logger.warn("mogwai ","alert     ",e,"confirm")}),o.watchEvents.indexOf("prompt")!==-1&&(window.prompt=function(e){o.promptResponse(),o.logger.warn("mogwai ","alert     ",e,"prompt")})}var e=["alert","confirm","prompt"],r=function(){return o.randomizer.bool()},i=function(){return o.randomizer.sentence()},s={warn:function(){}},o={watchEvents:e,confirmResponse:r,promptResponse:i,logger:s,randomizer:new n},u=window.alert,a=window.confirm,f=window.prompt;return l.cleanUp=function(){return window.alert=u,window.confirm=a,window.prompt=f,l},t(l,o),l}}),n("mogwais/fps",["require","../utils/configurable"],function(e){var t=e("../utils/configurable");return function(){function o(e){e-i>r.delay&&(u(e),i=e);if(!s)return;window.requestAnimationFrame(o)}function u(){function t(t){e=t,window.requestAnimationFrame(n)}function n(t){var n=t-e<16?60:1e3/(t-e),i=r.levelSelector(n);r.logger[i]("mogwai ","fps       ",n)}var e;window.requestAnimationFrame(t)}function a(){s=!0,window.requestAnimationFrame(o)}var e={log:function(){},warn:function(){},error:function(){}},n=function(e){return e<10?"error":e<20?"warn":"log"},r={delay:500,levelSelector:n,logger:e},i=-Infinity,s;return a.cleanUp=function(){return s=!1,a},t(a,r),a}}),n("mogwais/gizmo",["require","../utils/configurable"],function(e){var t=e("../utils/configurable");return function(){function s(){function s(){e++,e==n.maxErrors&&(t.stop(),window.setTimeout(function(){n.logger.warn("mogwai ","gizmo     ","stopped test execution after ",n.maxErrors,"errors")},4))}var e=0,t=this;r=window.onerror,window.onerror=function(e,t,n){return s(),r?r(e,t,n):!1},i=n.logger.error,n.logger.error=function(){s(),i.apply(n.logger,arguments)}}var e={warn:function(){}},n={maxErrors:10,logger:e},r,i;return s.cleanUp=function(){return window.onerror=r,n.logger.error=i.bind(n.logger),s},t(s,n),s}}),n("utils/executeInSeries",["require"],function(e){function t(e,t,n,r){var i=t.length;e=e.slice(0);var s=function(e,t){if(!e.length)return typeof r=="function"?r():!0;var o=e.shift();o.apply(n,t),o.length===i&&s(e,t,r)};t.push(function(){s(e,t,r)}),s(e,t,r)}return t}),n("strategies/allTogether",["require","../utils/executeInSeries","../utils/configurable"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable");return function(){function s(n,s,u){function l(e){t(n,[],f,e)}function c(t){if(r)return;if(t>=a)return o();l(function(){setTimeout(function(){c(++t)},e.delay)})}var a=s&&s.nb?s.nb:e.nb,f=this;r=!1,i=u,c(0)}function o(){typeof i=="function"&&i(),i=null}var e={delay:10,nb:100},r,i;return s.stop=function(){r=!0,setTimeout(o,4)},n(s,e),s}}),n("strategies/bySpecies",["require","../utils/executeInSeries","../utils/configurable"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable");return function(){function s(n,s,u){function l(n,i,s){if(r)return;if(i>=a)return s();t([n],[],f,function(){setTimeout(function(){l(n,++i,s)},e.delay)})}function c(){if(r)return;if(n.length===0)return o();l(n.shift(),0,c)}var a=s&&s.nb?s.nb:e.nb,n=n.slice(0),f=this;r=!1,i=u,c()}function o(){typeof i=="function"&&i(),i=null}var e={delay:10,nb:100},r,i;return s.stop=function(){r=!0,setTimeout(o,4)},n(s,e),s}}),n("strategies/distribution",["require","../utils/executeInSeries","../utils/configurable","../vendor/chance"],function(e){var t=e("../utils/executeInSeries"),n=e("../utils/configurable"),r=e("../vendor/chance");return function(){function o(n,r,o){function p(r,s,o){if(i)return;if(s>=l)return f();t([r],[],h,function(){setTimeout(function(){p(a(n,c),++s,o)},e.delay)})}var l=r&&r.nb?r.nb:e.nb,n=n.slice(0),c=e.distribution.length===0?u(n):e.distribution,h=this;if(l===0)return o();i=!1,s=o,p(a(n,c),0,p)}function u(e){var t=e.length;if(t===0)return[];var n=[],r=1/t;for(var i=0;i<t;i++)n.push(r);return n}function a(t,n){var r=0,i=e.randomizer.floating({min:0,max:1});for(var s=0,o=t.length;s<o;s++){r+=n[s];if(i<=r)return t[s]}return function(){}}function f(){typeof s=="function"&&s(),s=null}var e={distribution:[],delay:10,nb:100,randomizer:new r},i,s;return o.stop=function(){i=!0,setTimeout(f,4)},n(o,e),o}}),n("main",["require","./vendor/chance","./species/clicker","./species/formFiller","./species/scroller","./species/typer","./mogwais/alert","./mogwais/fps","./mogwais/gizmo","./strategies/allTogether","./strategies/bySpecies","./strategies/distribution","./utils/executeInSeries"],function(e){function s(e,t){for(var n=0,r=t.length;n<r;n++)for(var i in e)typeof t[n][i]=="function"&&t[n][i](e[i])}var t=e("./vendor/chance"),n={species:{clicker:e("./species/clicker"),formFiller:e("./species/formFiller"),scroller:e("./species/scroller"),typer:e("./species/typer")},mogwais:{alert:e("./mogwais/alert"),fps:e("./mogwais/fps"),gizmo:e("./mogwais/gizmo")},strategies:{allTogether:e("./strategies/allTogether"),bySpecies:e("./strategies/bySpecies"),distribution:e("./strategies/distribution")}},r=e("./utils/executeInSeries"),i=function(){this._gremlins=[],this._mogwais=[],this._strategies=[],this._beforeCallbacks=[],this._afterCallbacks=[],this._logger=console,this._randomizer=new t};return i.prototype.gremlin=function(e){return this._gremlins.push(e),this},i.prototype.allGremlins=function(){for(var e in n.species)this.gremlin(n.species[e]());return this},i.prototype.mogwai=function(e){return this._mogwais.push(e),this},i.prototype.allMogwais=function(){for(var e in n.mogwais)this.mogwai(n.mogwais[e]());return this},i.prototype.strategy=function(e){return this._strategies.push(e),this},i.prototype.before=function(e){return this._beforeCallbacks.push(e),this},i.prototype.after=function(e){return this._afterCallbacks.push(e),this},i.prototype.logger=function(e){return arguments.length?(this._logger=e,this):this._logger},i.prototype.log=function(e){this._logger.log(e)},i.prototype.randomizer=function(e){return arguments.length?(this._randomizer=e,this):this._randomizer},i.prototype.seed=function(e){return this._randomizer=new t(e),this},i.prototype.unleash=function(e,t){this._gremlins.length===0&&this.allGremlins(),this._mogwais.length===0&&this.allMogwais(),this._strategies.length===0&&this.strategy(n.strategies.distribution());var i=[].concat(this._gremlins,this._mogwais),o=i.concat(this._strategies,this._beforeCallbacks,this._afterCallbacks);s({logger:this._logger,randomizer:this._randomizer},o);var u=this._beforeCallbacks;u=u.concat(this._mogwais);var a=this._afterCallbacks;for(var f=0,l=i.length;f<l;f++)typeof i[f].cleanUp=="function"&&a.push(i[f].cleanUp);var c=this;r(u,[],c,function(){r(c._strategies,[c._gremlins,e],c,function(){r(a,[],c,function(){typeof t=="function"&&t()})})})},i.prototype.stop=function(){var e=this._strategies;for(var t=0,n=e.length;t<n;t++)e[t].stop()},n.createHorde=function(){return new i},n}),t(["main"]),t("main")});
 
 /***/ },
-/* 54 */
+/* 56 */
 /*!*****************************************************************!*\
   !*** ./~/gulp-webpack/~/node-libs-browser/~/process/browser.js ***!
   \*****************************************************************/
@@ -9780,7 +10025,7 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /*!**********************************************************************************!*\
   !*** ./~/gulp-webpack/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
   \**********************************************************************************/
@@ -9812,7 +10057,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /*!******************************************************************************!*\
   !*** ./~/gulp-webpack/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
   \******************************************************************************/
@@ -9826,7 +10071,7 @@
 			}
 
 /***/ },
-/* 57 */
+/* 59 */
 /*!*******************************!*\
   !*** ./~/tty-colors/index.js ***!
   \*******************************/
