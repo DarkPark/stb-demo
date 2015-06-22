@@ -1,14 +1,15 @@
 /**
- * Page implementation.
+ * Main page implementation.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
 var id   = 'pageMain',
-	List = require('stb/ui/list'),
-	Page = require('stb/ui/page'),
+	List = require('../stb/ui/list'),
+	Page = require('../stb/ui/page'),
 	page = new Page({$node: document.getElementById(id)});
 
 
@@ -65,6 +66,7 @@ page.addListener('load', function load () {
 		page.menu = new List({
 			$node: document.getElementById('pageMainMenu'),
 			data: menuData,
+			focusIndex: 0,
 			size: 10,
 			cycle: true,
 			render: function ( $item, data ) {
@@ -100,9 +102,6 @@ page.addListener('load', function load () {
 		})
 		//page.body = new Panel({$node: document.getElementById('pageMainBody')})
 	);
-
-	page.menu.focusItem(page.menu.$body.firstChild);
-
 
 	page.focusable = false;
 	//page.addListener('click', function ( data ) {

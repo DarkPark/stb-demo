@@ -2,12 +2,13 @@
  * Tab content.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
-var Input = require('stb/ui/input'),
-	Panel = require('stb/ui/panel'),
+var Input = require('../stb/ui/input'),
+	Panel = require('../stb/ui/panel'),
 	panel = new Panel({
 		$node: document.getElementById('pageMainTabInput'),
 		visible: false

@@ -2,14 +2,15 @@
  * Tab content.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
-var Panel    = require('stb/ui/panel'),
-	Button   = require('stb/ui/button'),
-	Grid     = require('stb/ui/grid'),
-	keys     = require('stb/keys'),
+var Panel    = require('../stb/ui/panel'),
+	Button   = require('../stb/ui/button'),
+	Grid     = require('../stb/ui/grid'),
+	keys     = require('../stb/keys'),
 	gridData = require('./main.grid.data'),
 	panel    = new Panel({
 		$node: document.getElementById('pageMainTabGrid'),

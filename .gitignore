@@ -1,6 +1,4 @@
 .idea
 node_modules
-build/release/*.map
-build/develop/*.map
-build/release/css/*.map
-build/develop/css/*.map
+build/js/*.map
+build/css/*.map

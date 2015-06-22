@@ -1,0 +1,41 @@
+// component styles
+//
+// @author Stanislav Kalashnik <sk@infomir.eu>
+// @license GNU GENERAL PUBLIC LICENSE Version 3
+
+.component.button {
+	background-color: #002042;
+	display:          inline-block;
+	height:           unit(@buttonHeight, px);
+	line-height:      unit(@buttonHeight, px);
+	vertical-align:   middle;
+	cursor:           pointer;
+
+	&:hover {
+		background-color: #005b9c;
+	}
+
+	&.focus {
+		background-color: #005b9c;
+	}
+
+	&.click {
+		background-color: #0073c4;
+	}
+
+	.icon {
+		height:     unit(@buttonHeight, px);
+		width:      unit(@buttonHeight, px);
+		display:    inline-block;
+		background: no-repeat center center;
+	}
+
+	.text {
+		display:        inline-block;
+		padding:        0 unit(@buttonPaddingX, px);
+		vertical-align: top;
+	}
+	.text:not(:only-child) {
+		padding-left: 0;
+	}
+}

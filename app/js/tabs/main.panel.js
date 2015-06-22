@@ -2,11 +2,12 @@
  * Tab content.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
-var Panel = require('stb/ui/panel'),
+var Panel = require('../stb/ui/panel'),
 	panel = new Panel({
 		$node: document.getElementById('pageMainTabPanel'),
 		visible: false

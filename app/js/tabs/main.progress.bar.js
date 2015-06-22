@@ -2,13 +2,14 @@
  * Tab content.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
-var Panel       = require('stb/ui/panel'),
-	ProgressBar = require('stb/ui/progress.bar'),
-	keys        = require('stb/keys'),
+var Panel       = require('../stb/ui/panel'),
+	ProgressBar = require('../stb/ui/progress.bar'),
+	keys        = require('../stb/keys'),
 	panel       = new Panel({
 		$node: document.getElementById('pageMainTabProgressBar'),
 		visible: false

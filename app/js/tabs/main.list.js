@@ -2,13 +2,14 @@
  * Tab content.
  *
  * @author Stanislav Kalashnik <sk@infomir.eu>
+ * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
 'use strict';
 
-var Panel     = require('stb/ui/panel'),
-	List      = require('stb/ui/list'),
-	ScrollBar = require('stb/ui/scroll.bar'),
+var Panel     = require('../stb/ui/panel'),
+	List      = require('../stb/ui/list'),
+	ScrollBar = require('../stb/ui/scroll.bar'),
 	panel     = new Panel({
 		$node: document.getElementById('pageMainTabList'),
 		visible: false
@@ -86,6 +87,7 @@ panel.add(
 				scroll: listScrollV,
 				data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
+				viewIndex: 8,
 				size: 5,
 				render: function ( $item, data ) {
 					$item.innerHTML = '[' + (data.value) + ']';

@@ -1,52 +1,111 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Entry point</title>
-	<meta charset="utf-8">
-	<link rel="icon" type="image/png" href="favicon.png">
-
-	<style>
-		html, body { background:#000; color:#fff; font-size:20px; font-family:Verdana,sans-serif; }
-
-		/* table cell spacing/padding reset */
-		table { border:0; border-collapse:collapse }
-		table td { padding:0 }
-
-		/* meta-classes */
-		.maxh { height:100% }
-		.maxw { width:100% }
-
-		.list { margin: 10px auto }
-		.list tr { height:80px; cursor: pointer; }
-		.list tr:hover { background-color:#8b7f0c; }
-		.list tr:hover td.link { color: #000 }
-		.list td { padding:0 20px; border:1px solid #222; }
-		.list td.icon { width:40px; text-align:center; }
-		.list td.name { font-weight: bold }
-		.list td.link { color: grey }
-	</style>
-
-	<script type="text/javascript">
-		window.moveTo(0, 0);
-		window.resizeTo(screen.width, screen.height);
-	</script>
-</head>
-<body>
-
-	<table class="list">
-		<tr onclick="location.href = 'develop/#pageMain'">
-			<td class="icon"><img src="develop/favicon.png"></td>
-			<td class="name">develop</td>
-		</tr>
-		<tr onclick="location.href = 'release/#pageMain'">
-			<td class="icon"><img src="release/favicon.png"></td>
-			<td class="name">release</td>
-		</tr>
-		<tr onclick="location.href = location.protocol + '//localhost:8080/client/#anonymous'">
-			<td class="icon"><img src="develop/favicon.png"></td>
-			<td class="name">weinre</td>
-		</tr>
-	</table>
-
-</body>
+	<head>
+		<title>[release] stb-demo</title>
+		<meta charset="utf-8">
+		<link rel="icon" type="image/png" href="img/favicon.png">
+		<script type="text/javascript" src="js/release.js"></script>
+	</head>
+	<body>
+		<!-- top-level page block (visible by default)-->
+		<div id="pageInit" class="component page active">
+			<div class="main">Loading ...</div>
+			<div class="version"><span class="title">v.</span><span class="value">0.1.1</span></div>
+		</div>
+		<!-- top-level page block-->
+		<div id="pageMain" class="component page">
+			<table>
+				<tr>
+					<td class="menu">
+						<div id="pageMainMenu"></div>
+					</td>
+					<td class="body">
+						<div id="pageMainTabPanel">
+							<div id="pageMainTabPanelSimple">panel with simple text inside</div>
+							<div id="pageMainTabPanelMulti">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+								labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+								nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+								velit esse cillum dolore eu fugiat nulla pariatur.
+							</div>
+							<div id="pageMainTabPanelParent">panel with another panel inside<br><br>
+								<div id="pageMainTabPanelChild">example of a nested panel</div>
+							</div>
+						</div>
+						<div id="pageMainTabButton">
+							<div id="pageMainTabButtonSimple">simple button with no customization<br><br></div>
+							<div id="pageMainTabButtonIcon">button with only icon added<br><br></div>
+							<div id="pageMainTabButtonIconText">button with icon and text added<br><br></div>
+						</div>
+						<div id="pageMainTabInput">
+							<div id="pageMainTabInputEmpty">empty text input<br><br></div>
+							<div id="pageMainTabInputSimple">simple text input<br><br></div>
+							<div id="pageMainTabInputPassword">hidden password text input<br><br></div>
+							<div id="pageMainTabInputPlaceholder">text input with placeholder string<br><br></div>
+						</div>
+						<div id="pageMainTabCheckBox">
+							<div id="pageMainTabCheckBoxSimple">simple check box with turned off default state<br><br></div>
+							<div id="pageMainTabCheckBoxGroup">group of check boxes with synchronized behaviour (group name - "main")<br><br></div>
+						</div>
+						<div id="pageMainTabGrid">
+							<div id="pageMainTabGridBtnPrev"></div>
+							<div id="pageMainTabGridBtnNext"></div>
+							<div id="pageMainTabGridBtnCycle"></div>
+							<div id="pageMainTabGridMain">
+								<div class="title">init test grid</div>
+								<div id="pageMainTabGridMainBody"></div>
+							</div>
+							<div id="pageMainTabGridJoin">grid with joined rows and colums<br><br></div>
+						</div>
+						<div id="pageMainTabList">
+							<div id="pageMainTabListSimple">simple list<br><br>
+								<table>
+									<tr>
+										<td>
+											<div id="pageMainTabListSimpleList"></div>
+										</td>
+										<td class="scroll">
+											<div id="pageMainTabListCustomScrollN"></div>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div id="pageMainTabListCustom">list with custom rows renderer<br><br>
+								<table>
+									<tr>
+										<td>
+											<div id="pageMainTabListCustomList"></div>
+										</td>
+										<td class="scroll">
+											<div id="pageMainTabListCustomScrollV"></div>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div id="pageMainTabListHoriz">horizontal list with custom rows renderer<br><br>
+								<div id="pageMainTabListHList"></div>
+								<div id="pageMainTabListCustomScrollH"></div>
+							</div>
+						</div>
+						<div id="pageMainTabModal"></div>
+						<div id="pageMainTabPage"></div>
+						<div id="pageMainTabProgressBar">
+							<div id="pageMainTabProgressBarEmpty">simple progress bar with initial value 0<br><br></div>
+							<div id="pageMainTabProgressBarFull">simple progress bar with initial value 100%<br><br></div>
+							<div id="pageMainTabProgressBarStep1">focusable progress bar with range from -5 to 5 (arrows can change value)<br><br></div>
+							<div id="pageMainTabProgressBarStep2">focusable progress bar with range from -200 to 200 (arrows can change value)<br><br></div>
+							<div id="pageMainTabProgressBarStyle">styled progress bar<br><br></div>
+						</div>
+						<div id="pageMainTabWidget">
+							<div id="pageMainTabWidgetW1"></div>
+						</div>
+					</td>
+					<div id="pageMainTabWidgetW2"></div>
+				</tr>
+			</table>
+		</div>
+		<div id="pageMainTabWidgetW3"></div>
+		<!-- top-level page block-->
+		<div id="pageHelp" class="component page"></div>
+	</body>
 </html>

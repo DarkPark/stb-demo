@@ -1,0 +1,19 @@
+// component styles
+//
+// @author Stanislav Kalashnik <sk@infomir.eu>
+// @license GNU GENERAL PUBLIC LICENSE Version 3
+
+.component.page {
+	width:      unit(@width, px);
+	height:     unit(@height, px);
+	position:   absolute;
+	left:       0;
+	top:        0;
+	visibility: hidden;
+	overflow:   hidden;
+
+	// only one active page is visible
+	&.active {
+		visibility: visible
+	}
+}
