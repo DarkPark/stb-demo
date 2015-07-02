@@ -743,7 +743,7 @@
 /*!****************************!*\
   !*** ./app/js/stb/keys.js ***!
   \****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Global list of non-printable control key codes.
@@ -2366,9 +2366,9 @@
 
 /***/ },
 /* 9 */
-/*!***********************************************************!*\
-  !*** ./~/gulp-webpack/~/node-libs-browser/~/util/util.js ***!
-  \***********************************************************/
+/*!*************************************************************!*\
+  !*** ./~/webpack-stream/~/node-libs-browser/~/util/util.js ***!
+  \*************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2896,7 +2896,7 @@
 			}
 			exports.isPrimitive = isPrimitive;
 			
-			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 59);
+			exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 60);
 			
 			function objectToString(o) {
 			  return Object.prototype.toString.call(o);
@@ -2940,7 +2940,7 @@
 			 *     prototype.
 			 * @param {function} superCtor Constructor function to inherit prototype from.
 			 */
-			exports.inherits = __webpack_require__(/*! inherits */ 58);
+			exports.inherits = __webpack_require__(/*! inherits */ 59);
 			
 			exports._extend = function(origin, add) {
 			  // Don't do anything if add isn't an object
@@ -2958,14 +2958,14 @@
 			  return Object.prototype.hasOwnProperty.call(obj, prop);
 			}
 			
-			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/gulp-webpack/~/node-libs-browser/~/process/browser.js */ 57)))
+			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/webpack-stream/~/node-libs-browser/~/process/browser.js */ 58)))
 
 /***/ },
 /* 10 */
 /*!***************************!*\
   !*** ./app/js/stb/dom.js ***!
   \***************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * HTML elements low-level handling.
@@ -3240,7 +3240,7 @@
 /*!***************************!*\
   !*** ./config/metrics.js ***!
   \***************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Application geometry options for js/less.
@@ -4417,7 +4417,7 @@
 			
 			
 			// enable colors in console
-			__webpack_require__(/*! tty-colors */ 60);
+			__webpack_require__(/*! tty-colors */ 57);
 			
 			
 			(function connect () {
@@ -5326,7 +5326,7 @@
 /*!*************************************!*\
   !*** ./app/js/stb/develop/shims.js ***!
   \*************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
@@ -6107,7 +6107,7 @@
 /*!*******************************!*\
   !*** ./app/js/stb/request.js ***!
   \*******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Ajax request wrapper.
@@ -6235,7 +6235,7 @@
 /*!*****************************!*\
   !*** ./app/js/stb/shims.js ***!
   \*****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * @author Stanislav Kalashnik <sk@infomir.eu>
@@ -6312,7 +6312,7 @@
 /*!*****************************!*\
   !*** ./app/js/stb/tools.js ***!
   \*****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * @module stb/tools
@@ -8499,7 +8499,7 @@
 /*!***************************************!*\
   !*** ./app/js/tabs/main.grid.data.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Tab content.
@@ -9586,7 +9586,7 @@
 /*!**************************!*\
   !*** ./config/logger.js ***!
   \**************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * WebSocket logging server configuration.
@@ -9612,7 +9612,7 @@
 /*!*************************!*\
   !*** ./config/proxy.js ***!
   \*************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Code-proxy server configuration.
@@ -9656,7 +9656,7 @@
 /*!**************************!*\
   !*** ./config/static.js ***!
   \**************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * HTTP static server configuration.
@@ -9692,7 +9692,7 @@
 /*!**************************!*\
   !*** ./config/weinre.js ***!
   \**************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * WEb INspector REmote debugger server configuration.
@@ -9727,7 +9727,7 @@
 /*!**************************************!*\
   !*** ./~/code-proxy/client/guest.js ***!
   \**************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Client-side guest part.
@@ -9931,7 +9931,7 @@
 /*!*************************************!*\
   !*** ./~/code-proxy/client/host.js ***!
   \*************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 			/**
 			 * Client-side host part.
@@ -10140,10 +10140,74 @@
 
 /***/ },
 /* 57 */
-/*!*****************************************************************!*\
-  !*** ./~/gulp-webpack/~/node-libs-browser/~/process/browser.js ***!
-  \*****************************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/*!*******************************!*\
+  !*** ./~/tty-colors/index.js ***!
+  \*******************************/
+/***/ function(module, exports) {
+
+			/**
+			 * Extend strings with ANSI escape codes for styling strings in the terminal.
+			 *
+			 * @author Stanislav Kalashnik <sk@infomir.eu>
+			 * @license GNU GENERAL PUBLIC LICENSE Version 3
+			 */
+			
+			'use strict';
+			
+			var styles = {
+					reset:     [0,   0],
+					bold:      [1,  22],
+					dim:       [2,  22],
+					italic:    [3,  23],
+					underline: [4,  24],
+					inverse:   [7,  27],
+					hidden:    [8,  28],
+					strike:    [9,  29],
+					black:     [30, 39],
+					red:       [31, 39],
+					green:     [32, 39],
+					yellow:    [33, 39],
+					blue:      [34, 39],
+					magenta:   [35, 39],
+					cyan:      [36, 39],
+					white:     [37, 39],
+					grey:      [90, 39],
+					bgBlack:   [40, 49],
+					bgRed:     [41, 49],
+					bgGreen:   [42, 49],
+					bgYellow:  [43, 49],
+					bgBlue:    [44, 49],
+					bgMagenta: [45, 49],
+					bgCyan:    [46, 49],
+					bgWhite:   [47, 49]
+				};
+			
+			
+			// apply all styles to String prototype
+			Object.keys(styles).forEach(function ( name ) {
+				// rework values to avoid unnecessary concatenations
+				styles[name][0] = '\u001b[' + styles[name][0] + 'm';
+				styles[name][1] = '\u001b[' + styles[name][1] + 'm';
+			
+				// add getter by style name
+				Object.defineProperty(String.prototype, name, {
+					get: function () {
+						return styles[name][0] + this + styles[name][1];
+					},
+					// hide from iteration
+					enumerable: false,
+					// allow to change or remove this property
+					configurable: true
+				});
+			});
+
+
+/***/ },
+/* 58 */
+/*!*******************************************************************!*\
+  !*** ./~/webpack-stream/~/node-libs-browser/~/process/browser.js ***!
+  \*******************************************************************/
+/***/ function(module, exports) {
 
 			// shim for using process in browser
 			
@@ -10238,11 +10302,11 @@
 
 
 /***/ },
-/* 58 */
-/*!**********************************************************************************!*\
-  !*** ./~/gulp-webpack/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
-  \**********************************************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/* 59 */
+/*!************************************************************************************!*\
+  !*** ./~/webpack-stream/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
+  \************************************************************************************/
+/***/ function(module, exports) {
 
 			if (typeof Object.create === 'function') {
 			  // implementation from standard node.js 'util' module
@@ -10270,11 +10334,11 @@
 
 
 /***/ },
-/* 59 */
-/*!******************************************************************************!*\
-  !*** ./~/gulp-webpack/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
-  \******************************************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/* 60 */
+/*!********************************************************************************!*\
+  !*** ./~/webpack-stream/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
+  \********************************************************************************/
+/***/ function(module, exports) {
 
 			module.exports = function isBuffer(arg) {
 			  return arg && typeof arg === 'object'
@@ -10282,70 +10346,6 @@
 			    && typeof arg.fill === 'function'
 			    && typeof arg.readUInt8 === 'function';
 			}
-
-/***/ },
-/* 60 */
-/*!*******************************!*\
-  !*** ./~/tty-colors/index.js ***!
-  \*******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-			/**
-			 * Extend strings with ANSI escape codes for styling strings in the terminal.
-			 *
-			 * @author Stanislav Kalashnik <sk@infomir.eu>
-			 * @license GNU GENERAL PUBLIC LICENSE Version 3
-			 */
-			
-			'use strict';
-			
-			var styles = {
-					reset:     [0,   0],
-					bold:      [1,  22],
-					dim:       [2,  22],
-					italic:    [3,  23],
-					underline: [4,  24],
-					inverse:   [7,  27],
-					hidden:    [8,  28],
-					strike:    [9,  29],
-					black:     [30, 39],
-					red:       [31, 39],
-					green:     [32, 39],
-					yellow:    [33, 39],
-					blue:      [34, 39],
-					magenta:   [35, 39],
-					cyan:      [36, 39],
-					white:     [37, 39],
-					grey:      [90, 39],
-					bgBlack:   [40, 49],
-					bgRed:     [41, 49],
-					bgGreen:   [42, 49],
-					bgYellow:  [43, 49],
-					bgBlue:    [44, 49],
-					bgMagenta: [45, 49],
-					bgCyan:    [46, 49],
-					bgWhite:   [47, 49]
-				};
-			
-			
-			// apply all styles to String prototype
-			Object.keys(styles).forEach(function ( name ) {
-				// rework values to avoid unnecessary concatenations
-				styles[name][0] = '\u001b[' + styles[name][0] + 'm';
-				styles[name][1] = '\u001b[' + styles[name][1] + 'm';
-			
-				// add getter by style name
-				Object.defineProperty(String.prototype, name, {
-					get: function () {
-						return styles[name][0] + this + styles[name][1];
-					},
-					// hide from iteration
-					enumerable: false,
-					// allow to change or remove this property
-					configurable: true
-				});
-			});
-
 
 /***/ }
 /******/ ]);
