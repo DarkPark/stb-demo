@@ -5,7 +5,7 @@
  * Header entries description: https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
  * Plural-forms parameter:     https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html
  *
- * @author DarkPark
+ * @author Stanislav Kalashnik <sk@infomir.eu>
  * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
 
@@ -134,6 +134,8 @@ function msgmerge ( langName, potFile, poFile, callback ) {
 	}
 
 	exec(command, function ( error, stdout, stderr ) {
+		/* eslint no-unused-vars: 0 */
+
 		if ( error ) {
 			log(title, error.toString().trim().red);
 		} else {
@@ -150,6 +152,7 @@ function xgettext ( callback ) {
 		title   = 'xgettext'.inverse,
 		params  = [
 			'xgettext',
+			'--force-po',
 			'--output="' + dstFile + '"',
 			'--language="JavaScript"',
 			'--from-code="' + config.fromCode + '"',

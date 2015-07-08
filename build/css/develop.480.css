@@ -379,12 +379,7 @@ a {
   line-height: 480px;
 }
 html {
-  background-color: transparent;
   overflow: auto;
-}
-body {
-  outline: 1px solid #333;
-  outline-offset: -1px;
 }
 div.develop canvas {
   cursor: none;
@@ -397,33 +392,41 @@ div.develop canvas.active {
   visibility: visible;
   z-index: 1000;
 }
-.component {
+body.develop {
   outline: 1px dashed #005000;
   outline-offset: -1px;
 }
-.component.focus {
+body.develop .component {
+  outline: 1px dashed #005000;
+  outline-offset: -1px;
+}
+body.develop .component.focus {
   outline: 1px dashed red;
 }
-.component.list > .item {
+body.develop .component.focus div {
+  outline: 1px dashed grey;
+  outline-offset: -1px;
+}
+body.develop .component.list > .item {
   outline: 1px dashed #000000;
   outline-offset: -1px;
 }
-.component.list > .item.focus {
+body.develop .component.list > .item.focus {
   outline: 1px dashed orange;
   outline-offset: -1px;
 }
-.component.grid td.item {
+body.develop .component.grid td.item {
   outline: 1px dashed #000000;
   outline-offset: -1px;
 }
-.component.grid td.item.focus {
+body.develop .component.grid td.item.focus {
   outline: 1px dashed orange;
   outline-offset: -1px;
 }
-.component.input > .body {
+body.develop .component.input > .body {
   outline: 1px dashed #000;
 }
-.component.focus.input > .body {
+body.develop .component.focus.input > .body {
   outline: 1px dashed red;
 }
 
