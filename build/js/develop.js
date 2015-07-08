@@ -926,7 +926,7 @@
 					// load CSS file base on resolution
 					linkCSS = document.createElement('link');
 					linkCSS.rel  = 'stylesheet';
-					linkCSS.href = 'css/' + (true ? 'develop.' : 'release.') + metrics.height + '.css';
+					linkCSS.href = 'css/' + (true ? 'develop.' : 'release.') + metrics.height + '.css?' + +new Date();
 					document.head.appendChild(linkCSS);
 			
 					// provide global access
@@ -2102,6 +2102,10 @@
 			 * @constructor
 			 */
 			function Emitter () {
+				if ( true ) {
+					if ( typeof this !== 'object' ) { throw 'must be constructed via new'; }
+				}
+			
 				/**
 				 * Inner hash table for event names and linked callbacks.
 				 * Manual editing should be avoided.
@@ -3271,7 +3275,7 @@
 					// safe zone margins
 					availTop   : 24,
 					availBottom: 24,
-					availRight : 28,
+					availRight : 26,
 					availLeft  : 54
 				},
 			
@@ -3280,10 +3284,10 @@
 					height: 720,
 					width : 1280,
 					// safe zone margins
-					availTop   : 10,
-					availBottom: 10,
-					availRight : 10,
-					availLeft  : 10
+					availTop   : 30,
+					availBottom: 30,
+					availRight : 40,
+					availLeft  : 40
 				},
 			
 				1080: {
@@ -3291,10 +3295,10 @@
 					height: 1080,
 					width : 1920,
 					// safe zone margins
-					availTop   : 15,
-					availBottom: 15,
-					availRight : 15,
-					availLeft  : 15
+					availTop   : 45,
+					availBottom: 45,
+					availRight : 60,
+					availLeft  : 60
 				}
 			};
 
@@ -5632,6 +5636,7 @@
 			 */
 			function Model ( data ) {
 				if ( true ) {
+					if ( typeof this !== 'object' ) { throw 'must be constructed via new'; }
 					if ( data !== undefined && typeof data !== 'object' ) { throw 'wrong data type'; }
 				}
 			
@@ -6324,6 +6329,48 @@
 			
 			
 			/**
+			 * URL parsing tool
+			 * (c) Steven Levithan <stevenlevithan.com>
+			 * MIT License
+			 *
+			 * @param {string} str string to parse
+			 *
+			 * @return {string} result data
+			 */
+			function parseUri ( str ) {
+				var o   = parseUri.options,
+					m   = o.parser[o.strictMode ? 'strict' : 'loose'].exec(str),
+					uri = {},
+					i   = 14;
+			
+				while ( i-- ) { uri[o.key[i]] = m[i] || ''; }
+			
+				uri[o.q.name] = {};
+				uri[o.key[12]].replace(o.q.parser, function ( $0, $1, $2 ) {
+					if ( $1 ) { uri[o.q.name][$1] = $2; }
+				});
+			
+				return uri;
+			}
+			
+			parseUri.options = {
+				strictMode: false,
+				key       : ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
+				q         : {
+					name  : 'queryKey',
+					parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+				},
+				parser    : {
+					strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+					loose : /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+				}
+			};
+			
+			
+			module.exports.parseUri = parseUri;
+			
+			
+			/**
 			 * Do string substitution according to the given format.
 			 * http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
 			 *
@@ -6342,6 +6389,33 @@
 				return format.replace(/{(\d+)}/g, function ( match, number ) {
 					return args[number] !== undefined ? args[number] : match;
 				});
+			};
+			
+			
+			/**
+			 * Parse the given location search string into object.
+			 *
+			 * @param {string} query string to parse
+			 *
+			 * @return {Object} result data
+			 *
+			 * @example
+			 * console.log(parseQuery(document.location.search.substring(1)));
+			 * console.log(parseQuery('param=value&another_param=another_value'));
+			 */
+			module.exports.parseQuery = function ( query ) {
+				var data = {};
+			
+				// parse and fill the data
+				query.split('&').forEach(function ( part ) {
+					part = part.split('=');
+					// valid number on params
+					if ( part.length === 2 ) {
+						data[part[0]] = decodeURIComponent(part[1]);
+					}
+				});
+			
+				return data;
 			};
 
 
@@ -6773,7 +6847,7 @@
 						}
 			
 						if ( true ) {
-							if ( !('value' in item) ) { throw 'field "value" is missing'; }
+							//if ( !('value' in item) ) { throw 'field "value" is missing'; }
 							if ( Number(item.colSpan) !== item.colSpan ) { throw 'item.colSpan must be a number'; }
 							if ( Number(item.rowSpan) !== item.rowSpan ) { throw 'item.rowSpan must be a number'; }
 							if ( item.colSpan <= 0 ) { throw 'item.colSpan should be positive'; }

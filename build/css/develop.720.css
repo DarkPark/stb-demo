@@ -283,7 +283,7 @@ a {
 }
 #pageInit .main {
   margin-top: 44px;
-  line-height: 612px;
+  line-height: 572px;
   font-size: 150%;
 }
 #pageInit .version {
@@ -303,14 +303,14 @@ a {
   width: 20%;
   vertical-align: top;
   background-color: #222;
-  padding: 10px 10px 10px 10px;
+  padding: 30px 22px 30px 40px;
 }
 #pageMain td.body {
-  padding: 10px 10px 10px 10px;
+  padding: 30px 40px 30px 22px;
   vertical-align: top;
 }
 #pageMain td.body > div {
-  height: 700px;
+  height: 660px;
   padding: 0;
   background-color: black;
 }
