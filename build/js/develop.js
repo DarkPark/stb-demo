@@ -295,6 +295,11 @@
 				// apply component id if given, generate otherwise
 				this.id = config.id || this.$node.id || 'id' + counter++;
 			
+				if ( true ) {
+					// expose inner ID to global scope
+					window[self.id] = self.$node;
+				}
+			
 				// apply the given children components
 				if ( config.children ) {
 					if ( true ) {
@@ -334,9 +339,10 @@
 					if ( true ) {
 						// middle mouse button
 						if ( event.button === 1 ) {
-							debug.inspect(self);
-							debug.log('this component is now available by window.link');
+							debug.inspect(self, 0);
+							debug.info('"window.link" or "' + self.id + '.component"', 'this component is now available in global scope');
 							window.link = self;
+							self.$node.classList.toggle('wired');
 						}
 					}
 			
@@ -1073,6 +1079,7 @@
 			// apply screen size, position and margins
 			app.setScreen(__webpack_require__(/*! ../../../config/metrics */ 12)[screen.height]);
 			
+			
 			// extract key codes
 			for ( key in keys ) {
 				if ( key === 'volumeUp' || key === 'volumeDown' ) {
@@ -1081,6 +1088,7 @@
 				// no need to save key names
 				keyCodes[keys[key]] = true;
 			}
+			
 			
 			/**
 			 * The load event is fired when a resource and its dependent resources have finished loading.
@@ -1095,7 +1103,7 @@
 			 * @param {Event} event generated object with event data
 			 */
 			window.addEventListener('load', function globalEventListenerLoad ( event ) {
-				var path;
+				//var path;
 			
 				debug.event(event);
 			
@@ -1120,11 +1128,12 @@
 					}
 				});
 			
+				/* disable as nobody uses this and it works not as desired
 				// go to the given page if set
 				if ( location.hash ) {
 					path = router.parse(location.hash);
 					router.navigate(path.name, path.data);
-				}
+				}/**/
 			
 				// time mark
 				app.data.time.done = +new Date();
@@ -4536,7 +4545,7 @@
 				 */
 				inspect: function ( data, depth ) {
 					if ( host ) {
-						log('inspect:\n' + util.inspect(data, {depth: depth || 3, colors: true}));
+						log('inspect:\n' + util.inspect(data, {depth: depth === undefined ? 3 : depth, colors: true}));
 					} else {
 						console.log(data);
 					}
@@ -5978,7 +5987,8 @@
 			var Emitter   = __webpack_require__(/*! ./emitter */ 7),
 				preloader = new Emitter(),
 				queueSize = 0,
-				groups    = {};
+				groups    = {},
+				verbose   = false;
 			
 			
 			/**
@@ -6021,7 +6031,9 @@
 				if ( event.type === 'error' ) {
 					debug.log('[preloader] group "' + this.group + '" link "' + this.src + '"', 'red');
 				} else {
-					debug.log('[preloader] group "' + this.group + '" link "' + this.src + '" (' + this.width + 'x' + this.height + ')');
+					if ( verbose ) {
+						debug.log('[preloader] group "' + this.group + '" link "' + this.src + '" (' + this.width + 'x' + this.height + ')');
+					}
 				}
 			
 				queueSize--;
