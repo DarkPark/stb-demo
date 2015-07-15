@@ -10,7 +10,7 @@
 var app    = require('./stb/app'),
 	router = require('./stb/router'),
 	keys   = require('./stb/keys'),
-	format = require('./stb/tools').format;
+	format = require('./stb/tools/format');
 
 
 app.addListeners({
