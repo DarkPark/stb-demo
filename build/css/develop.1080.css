@@ -403,7 +403,12 @@ body.develop .component {
 body.develop .component.focus {
   outline: 1px dashed red;
 }
-body.develop .component.focus div {
+body.develop .component.wired {
+  outline-width: 3px;
+  outline-style: dotted;
+}
+body.develop .component.wired div,
+body.develop .component.wired td {
   outline: 1px dashed grey;
   outline-offset: -1px;
 }
