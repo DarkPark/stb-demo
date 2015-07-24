@@ -115,6 +115,12 @@ page.addListener('show', function show () {
 	if ( !page.activeComponent ) {
 		page.menu.focus();
 	}
+
+	// time marks examples
+	debug.time('test');
+	debug.time('test', 1);
+	debug.time('test', 2);
+	debug.timeEnd('test', 'everything is ready');
 });
 
 
