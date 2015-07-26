@@ -66,7 +66,17 @@ panel.add(
 		children: [
 			new Button({
 				icon: 'menu',
-				value: 'press me'
+				value: 'press me',
+				events: {
+					click: function () {
+						debug.log('click');
+						this.defaultEvents.click.call(this);
+					},
+					keydown: function ( event ) {
+						debug.log('keydown');
+						this.defaultEvents.keydown.call(this, event);
+					}
+				}
 			})
 		]
 	})
