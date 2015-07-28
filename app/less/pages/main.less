@@ -112,6 +112,36 @@
 	height: 100px;
 }
 
+.component.button {
+	margin-right: 1%;
+
+	&.wide {
+		width: 30%;
+	}
+
+	&.iconTop {
+		.icon {
+			display: table-caption;
+			background-color: inherit;
+			width: auto;
+		}
+	}
+
+	&.iconBottom {
+		.text {
+			display: table-caption;
+			background-color: inherit;
+			white-space: nowrap;
+			//width: auto;
+		}
+		.icon {
+			//display: table-caption;
+			//background-color: inherit;
+			//width: auto;
+		}
+	}
+}
+
 #pageMainTabWidgetW1 {
 	background-color: red;
 }

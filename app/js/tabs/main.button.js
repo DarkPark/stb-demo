@@ -21,12 +21,16 @@ preloader.addListener('done', function () {
 });
 
 
+Button.prototype.clickDuration = 1000;
+
+
 panel.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabButtonSimple'),
 		children: [
 			new Button({
 				value: 'preload images',
+				className: 'wide',
 				events: {
 					click: function () {
 						debug.log('click');
@@ -50,6 +54,10 @@ panel.add(
 						panel.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
 					}
 				}
+			}),
+			new Button({
+				value: 'a button with a lot of text a button with a lot of text a button with a lot of text',
+				className: 'wide'
 			})
 		]
 	}),
@@ -57,16 +65,7 @@ panel.add(
 		$node: document.getElementById('pageMainTabButtonIcon'),
 		children: [
 			new Button({
-				icon: 'menu'
-			})
-		]
-	}),
-	new Panel({
-		$node: document.getElementById('pageMainTabButtonIconText'),
-		children: [
-			new Button({
 				icon: 'menu',
-				value: 'press me',
 				events: {
 					click: function () {
 						debug.log('click');
@@ -77,6 +76,30 @@ panel.add(
 						this.defaultEvents.keydown.call(this, event);
 					}
 				}
+			})
+		]
+	}),
+	new Panel({
+		$node: document.getElementById('pageMainTabButtonIconText'),
+		children: [
+			new Button({
+				icon: 'menu',
+				value: 'press me'
+			}),
+			new Button({
+				icon: 'menu',
+				value: 'press me',
+				className: 'iconTop'
+			}),
+			new Button({
+				icon: 'menu',
+				value: 'press me',
+				className: 'iconBottom'
+			}),
+			new Button({
+				icon: 'menu',
+				value: 'press me',
+				className: 'wide'
 			})
 		]
 	})
