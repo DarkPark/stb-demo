@@ -3,7 +3,6 @@ body {
   width: 720px;
   height: 576px;
   overflow: hidden;
-  background-color: #000;
   color: #fff;
   margin: 0;
   padding: 0;
@@ -36,10 +35,8 @@ a {
 }
 .component.button {
   background-color: #002042;
-  display: inline-block;
+  display: inline-table;
   height: 36px;
-  line-height: 36px;
-  vertical-align: middle;
   cursor: pointer;
 }
 .component.button:hover {
@@ -54,16 +51,17 @@ a {
 .component.button .icon {
   height: 36px;
   width: 36px;
-  display: inline-block;
+  display: table-cell;
   background: no-repeat center center;
 }
 .component.button .text {
-  display: inline-block;
-  padding: 0 7px;
-  vertical-align: top;
+  display: table-cell;
+  padding: 4.8px 7px;
+  vertical-align: middle;
+  text-align: center;
 }
-.component.button .text:not(:only-child) {
-  padding-left: 0;
+.component.button .text:empty {
+  padding: 0;
 }
 .component.checkBox {
   cursor: pointer;
@@ -116,7 +114,7 @@ a {
   display: table;
   table-layout: fixed;
 }
-.component.input > .body {
+.component.input .line {
   cursor: text;
   display: table-cell;
   vertical-align: middle;
@@ -124,21 +122,21 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
-.component.input > .body > .char,
-.component.input > .body > .placeholder,
-.component.input > .body > .caret {
+.component.input .line > .char,
+.component.input .line > .placeholder,
+.component.input .line > .caret {
   display: inline-block;
   vertical-align: middle;
 }
-.component.input > .body > .caret {
+.component.input .line > .caret {
   height: 80%;
   width: 2px;
   margin-left: -2px;
 }
-.component.input > .body > .placeholder {
+.component.input .line > .placeholder {
   color: #999;
 }
-.component.input.focus > .body > .caret {
+.component.input.focus .line > .caret {
   background-color: #000000;
   -webkit-animation: inputCursor 1s;
   -webkit-animation-iteration-count: infinite;
@@ -240,7 +238,7 @@ a {
   height: 19.2px;
   background-color: grey;
 }
-.component.progressBar > .value {
+.component.progressBar .value {
   height: 100%;
   background-color: orange;
 }
@@ -251,13 +249,13 @@ a {
   width: 4px;
   vertical-align: bottom;
 }
-.component.scrollBar > .thumb {
+.component.scrollBar .thumb {
   display: block;
   width: 4px;
   min-height: 4px;
   background-color: white;
 }
-.component.scrollBar > .thumb.hidden {
+.component.scrollBar .thumb.hidden {
   display: none;
 }
 .component.scrollBar.horizontal {
@@ -265,7 +263,7 @@ a {
   height: 4.8px;
   width: 100%;
 }
-.component.scrollBar.horizontal > .thumb {
+.component.scrollBar.horizontal .thumb {
   display: inline-block;
   vertical-align: top;
   height: 4.8px;
@@ -364,6 +362,22 @@ a {
   width: 100px;
   height: 100px;
 }
+.component.button {
+  margin-right: 1%;
+}
+.component.button.wide {
+  width: 30%;
+}
+.component.button.iconTop .icon {
+  display: table-caption;
+  background-color: inherit;
+  width: auto;
+}
+.component.button.iconBottom .text {
+  display: table-caption;
+  background-color: inherit;
+  white-space: nowrap;
+}
 #pageMainTabWidgetW1 {
   background-color: red;
 }
@@ -411,6 +425,18 @@ body.develop .component.wired div,
 body.develop .component.wired td {
   outline: 1px dashed grey;
   outline-offset: -1px;
+}
+body.develop .component.button {
+  outline: none;
+}
+body.develop .component.button .text,
+body.develop .component.button .icon {
+  outline: 1px dashed #005000;
+  outline-offset: -1px;
+}
+body.develop .component.button.focus .text,
+body.develop .component.button.focus .icon {
+  outline: 1px dashed red;
 }
 body.develop .component.list > .item {
   outline: 1px dashed #000000;
