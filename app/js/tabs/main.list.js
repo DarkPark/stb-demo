@@ -11,21 +11,21 @@ var Panel     = require('../stb/ui/panel'),
 	List      = require('../stb/ui/list'),
 	ScrollBar = require('../stb/ui/scroll.bar'),
 	panel     = new Panel({
-		$node: document.getElementById('pageMainTabList'),
+		$node: window.pageMainTabList,
 		visible: false
 	}),
 	listScrollN = new ScrollBar({
-		$node: document.getElementById('pageMainTabListCustomScrollN'),
+		$node: window.pageMainTabListCustomScrollN,
 		viewSize: 5,
 		realSize: 4
 	}),
 	listScrollV = new ScrollBar({
-		$node: document.getElementById('pageMainTabListCustomScrollV'),
+		$node: window.pageMainTabListCustomScrollV,
 		viewSize: 5,
 		realSize: 25
 	}),
 	listScrollH = new ScrollBar({
-		$node: document.getElementById('pageMainTabListCustomScrollH'),
+		$node: window.pageMainTabListCustomScrollH,
 		type: ScrollBar.prototype.TYPE_HORIZONTAL,
 		viewSize: 5,
 		realSize: 100
@@ -35,10 +35,10 @@ var Panel     = require('../stb/ui/panel'),
 
 panel.add(
 	new Panel({
-		$node: document.getElementById('pageMainTabListSimple'),
+		$node: window.pageMainTabListSimple,
 		children: [
 			new List({
-				$node: document.getElementById('pageMainTabListSimpleList'),
+				$node: window.pageMainTabListSimpleList,
 				scroll: listScrollN,
 				//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
 				data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
@@ -80,10 +80,10 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabListCustom'),
+		$node: window.pageMainTabListCustom,
 		children: [
 			list2 = new List({
-				$node: document.getElementById('pageMainTabListCustomList'),
+				$node: window.pageMainTabListCustomList,
 				scroll: listScrollV,
 				data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
@@ -128,10 +128,10 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabListHoriz'),
+		$node: window.pageMainTabListHoriz,
 		children: [
 			new List({
-				$node: document.getElementById('pageMainTabListHList'),
+				$node: window.pageMainTabListHList,
 				data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
 				scroll: listScrollH,
 				type: List.prototype.TYPE_HORIZONTAL,

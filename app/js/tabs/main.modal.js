@@ -12,7 +12,7 @@ var Button       = require('../stb/ui/button'),
 	ModalBox     = require('../stb/ui/modal.box'),
 	ModalMessage = require('../stb/ui/modal.message'),
 	panel        = new Panel({
-		$node: document.getElementById('pageMainTabModal'),
+		$node: window.pageMainTabModal,
 		visible: false
 	});
 

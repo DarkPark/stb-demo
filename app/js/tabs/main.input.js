@@ -10,20 +10,20 @@
 var Input = require('../stb/ui/input'),
 	Panel = require('../stb/ui/panel'),
 	panel = new Panel({
-		$node: document.getElementById('pageMainTabInput'),
+		$node: window.pageMainTabInput,
 		visible: false
 	});
 
 
 panel.add(
 	new Panel({
-		$node: document.getElementById('pageMainTabInputEmpty'),
+		$node: window.pageMainTabInputEmpty,
 		children: [
 			new Input()
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabInputSimple'),
+		$node: window.pageMainTabInputSimple,
 		children: [
 			new Input({
 				value: 'some text',
@@ -36,7 +36,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabInputPassword'),
+		$node: window.pageMainTabInputPassword,
 		children: [
 			new Input({
 				value: 'some text',
@@ -50,7 +50,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabInputPlaceholder'),
+		$node: window.pageMainTabInputPlaceholder,
 		children: [
 			new Input({
 				//value: 'some text',

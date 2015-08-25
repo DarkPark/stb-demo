@@ -10,20 +10,20 @@
 var Panel    = require('../stb/ui/panel'),
 	CheckBox = require('../stb/ui/check.box'),
 	panel    = new Panel({
-		$node: document.getElementById('pageMainTabCheckBox'),
+		$node: window.pageMainTabCheckBox,
 		visible: false
 	});
 
 
 panel.add(
 	new Panel({
-		$node: document.getElementById('pageMainTabCheckBoxSimple'),
+		$node: window.pageMainTabCheckBoxSimple,
 		children: [
 			new CheckBox()
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabCheckBoxGroup'),
+		$node: window.pageMainTabCheckBoxGroup,
 		children: [
 			new CheckBox({group: 'main', value: false}),
 			new CheckBox({group: 'main', value: true}),

@@ -11,23 +11,23 @@ var Button = require('../stb/ui/button'),
 	Panel  = require('../stb/ui/panel'),
 	Widget = require('../stb/ui/widget'),
 	panel  = new Panel({
-		$node: document.getElementById('pageMainTabWidget'),
+		$node: window.pageMainTabWidget,
 		visible: false
 	}),
 	w1 = new Widget({
-		$node: document.getElementById('pageMainTabWidgetW1'),
+		$node: window.pageMainTabWidgetW1,
 		events: {
 			click: function () { w1.hide(); }
 		}
 	}),
 	w2 = new Widget({
-		$node: document.getElementById('pageMainTabWidgetW2'),
+		$node: window.pageMainTabWidgetW2,
 		events: {
 			click: function () { w2.hide(); }
 		}
 	}),
 	w3 = new Widget({
-		$node: document.getElementById('pageMainTabWidgetW3'),
+		$node: window.pageMainTabWidgetW3,
 		events: {
 			click: function () { w3.hide(); }
 		}

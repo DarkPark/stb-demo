@@ -13,7 +13,7 @@ var Panel    = require('../stb/ui/panel'),
 	keys     = require('../stb/keys'),
 	gridData = require('./main.grid.data'),
 	panel    = new Panel({
-		$node: document.getElementById('pageMainTabGrid'),
+		$node: window.pageMainTabGrid,
 		visible: false
 	}),
 	gridDataIndex = 0,
@@ -40,7 +40,7 @@ Object.keys(gridData).forEach(function ( key ) {
 
 panel.add(
 	new Button({
-		$node: document.getElementById('pageMainTabGridBtnPrev'),
+		$node: window.pageMainTabGridBtnPrev,
 		value: '<< prev grid data',
 		events: {
 			click: function () {
@@ -59,7 +59,7 @@ panel.add(
 	}),
 
 	new Button({
-		$node: document.getElementById('pageMainTabGridBtnNext'),
+		$node: window.pageMainTabGridBtnNext,
 		value: 'next grid data >>',
 		events: {
 			click: function () {
@@ -78,7 +78,7 @@ panel.add(
 	}),
 
 	new Button({
-		$node: document.getElementById('pageMainTabGridBtnCycle'),
+		$node: window.pageMainTabGridBtnCycle,
 		value: 'toggle cycle mode',
 		events: {
 			click: function () {
@@ -92,8 +92,8 @@ panel.add(
 
 
 	new Panel({
-		$node: document.getElementById('pageMainTabGridMain'),
-		$body: document.getElementById('pageMainTabGridMainBody'),
+		$node: window.pageMainTabGridMain,
+		$body: window.pageMainTabGridMainBody,
 		children: [
 			grid1 = new Grid({
 				data: [
@@ -112,7 +112,7 @@ panel.add(
 	}),
 
 	new Panel({
-		$node: document.getElementById('pageMainTabGridJoin'),
+		$node: window.pageMainTabGridJoin,
 		children: [
 			grid2 = new Grid({
 				data: [

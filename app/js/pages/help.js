@@ -7,11 +7,10 @@
 
 'use strict';
 
-var id     = 'pageHelp',
-	Page   = require('../stb/ui/page'),
+var Page   = require('../stb/ui/page'),
 	Button = require('../stb/ui/button'),
 	router = require('../stb/router'),
-	page   = new Page({$node: document.getElementById(id)});
+	page   = new Page({$node: window.pageHelp});
 
 
 page.addListener('load', function load () {

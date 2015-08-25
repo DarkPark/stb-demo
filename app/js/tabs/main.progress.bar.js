@@ -11,14 +11,14 @@ var Panel       = require('../stb/ui/panel'),
 	ProgressBar = require('../stb/ui/progress.bar'),
 	keys        = require('../stb/keys'),
 	panel       = new Panel({
-		$node: document.getElementById('pageMainTabProgressBar'),
+		$node: window.pageMainTabProgressBar,
 		visible: false
 	});
 
 
 panel.add(
 	new Panel({
-		$node: document.getElementById('pageMainTabProgressBarEmpty'),
+		$node: window.pageMainTabProgressBarEmpty,
 		children: [
 			new ProgressBar({
 				value: 0
@@ -26,7 +26,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabProgressBarFull'),
+		$node: window.pageMainTabProgressBarFull,
 		children: [
 			new ProgressBar({
 				value: 100
@@ -34,7 +34,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabProgressBarStep1'),
+		$node: window.pageMainTabProgressBarStep1,
 		children: [
 			new ProgressBar({
 				min: -5,
@@ -57,7 +57,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabProgressBarStep2'),
+		$node: window.pageMainTabProgressBarStep2,
 		children: [
 			new ProgressBar({
 				min: -200,
@@ -80,7 +80,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabProgressBarStyle'),
+		$node: window.pageMainTabProgressBarStyle,
 		children: [
 			new ProgressBar({
 				value: 70

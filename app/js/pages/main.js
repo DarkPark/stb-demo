@@ -7,10 +7,9 @@
 
 'use strict';
 
-var id   = 'pageMain',
-	List = require('../stb/ui/list'),
+var List = require('../stb/ui/list'),
 	Page = require('../stb/ui/page'),
-	page = new Page({$node: document.getElementById(id)});
+	page = new Page({$node: window.pageMain});
 
 
 page.addListener('load', function load () {
@@ -64,7 +63,7 @@ page.addListener('load', function load () {
 
 	page.add(
 		page.menu = new List({
-			$node: document.getElementById('pageMainMenu'),
+			$node: window.pageMainMenu,
 			data: menuData,
 			focusIndex: 0,
 			size: 10,

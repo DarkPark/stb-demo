@@ -11,7 +11,7 @@ var Button    = require('../stb/ui/button'),
 	Panel     = require('../stb/ui/panel'),
 	preloader = require('../stb/preloader'),
 	panel     = new Panel({
-		$node: document.getElementById('pageMainTabButton'),
+		$node: window.pageMainTabButton,
 		visible: false
 	});
 
@@ -26,7 +26,7 @@ Button.prototype.clickDuration = 1000;
 
 panel.add(
 	new Panel({
-		$node: document.getElementById('pageMainTabButtonSimple'),
+		$node: window.pageMainTabButtonSimple,
 		children: [
 			new Button({
 				value: 'preload images',
@@ -62,7 +62,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabButtonIcon'),
+		$node: window.pageMainTabButtonIcon,
 		children: [
 			new Button({
 				icon: 'menu',
@@ -80,7 +80,7 @@ panel.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabButtonIconText'),
+		$node: window.pageMainTabButtonIconText,
 		children: [
 			new Button({
 				icon: 'menu',
