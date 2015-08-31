@@ -11,7 +11,7 @@ var Input = require('../stb/ui/input'),
 	Panel = require('../stb/ui/panel'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabInput')
+		$node: window.pageMainTabInput
 	});
 
 

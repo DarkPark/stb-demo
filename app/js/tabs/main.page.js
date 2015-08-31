@@ -12,7 +12,7 @@ var Button = require('../stb/ui/button'),
 	router = require('../stb/router'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabPage')
+		$node: window.pageMainTabPage
 	});
 
 

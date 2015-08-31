@@ -14,8 +14,7 @@ var Panel    = require('../stb/ui/panel'),
 	keys     = require('../stb/keys'),
 	gridData = require('./main.grid.data'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabGrid'),
-		isActive: true
+		$node: window.pageMainTabGrid
 	}),
 	gridDataIndex = 0,
 	grid1, grid2;

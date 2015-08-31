@@ -12,7 +12,7 @@ var Button = require('../stb/ui/button'),
 	Widget = require('../stb/ui/widget'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabWidget')
+		$node: window.pageMainTabWidget
 	}),
 	w1 = new Widget({
 		$node: window.pageMainTabWidgetW1,

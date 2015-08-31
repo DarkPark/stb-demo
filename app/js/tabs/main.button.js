@@ -12,7 +12,7 @@ var Button    = require('../stb/ui/button'),
 	TabItem = require('../stb/ui/tab.item'),
 	preloader = require('../stb/preloader'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabButton')
+		$node: window.pageMainTabButton
 	});
 
 
@@ -27,7 +27,7 @@ preloader.addListener('done', function () {
 Button.prototype.clickDuration = 1000;
 
 
-panel.add(
+tab.add(
 	new Panel({
 		$node: window.pageMainTabButtonSimple,
 		children: [

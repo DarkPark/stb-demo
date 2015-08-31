@@ -10,7 +10,7 @@
 var Panel = require('../stb/ui/panel'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabPanel')
+		$node: window.pageMainTabPanel
 	});
 
 

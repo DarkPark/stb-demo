@@ -11,7 +11,7 @@ var Panel    = require('../stb/ui/panel'),
 	CheckBox = require('../stb/ui/check.box'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabCheckBox')
+		$node: window.pageMainTabCheckBox
 	});
 
 

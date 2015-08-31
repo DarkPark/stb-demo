@@ -12,7 +12,7 @@ var Panel       = require('../stb/ui/panel'),
 	TabItem = require('../stb/ui/tab.item'),
 	keys        = require('../stb/keys'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabProgressBar')
+		$node: window.pageMainTabProgressBar
 	});
 
 

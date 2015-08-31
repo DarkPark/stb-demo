@@ -13,7 +13,7 @@ var Button       = require('../stb/ui/button'),
 	ModalMessage = require('../stb/ui/modal.message'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabModal')
+		$node: window.pageMainTabModal
 	});
 
 

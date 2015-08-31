@@ -12,7 +12,7 @@ var Panel     = require('../stb/ui/panel'),
 	ScrollBar = require('../stb/ui/scroll.bar'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({
-		$node: document.getElementById('pageMainTabList')
+		$node: window.pageMainTabList
 	}),
 	listScrollN = new ScrollBar({
 		$node: window.pageMainTabListCustomScrollN,
@@ -83,10 +83,10 @@ tab.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabListCustom'),
+		$node: window.pageMainTabListCustom,
 		children: [
 			list2 = new List({
-				$node: document.getElementById('pageMainTabListCustomList'),
+				$node: window.pageMainTabListCustomList,
 				scroll: listScrollV,
 				data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 				//data: [1,2,3],
@@ -131,10 +131,10 @@ tab.add(
 		]
 	}),
 	new Panel({
-		$node: document.getElementById('pageMainTabListHoriz'),
+		$node: window.pageMainTabListHoriz,
 		children: [
 			new List({
-				$node: document.getElementById('pageMainTabListHList'),
+				$node: window.pageMainTabListHList,
 				data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
 				scroll: listScrollH,
 				type: List.prototype.TYPE_HORIZONTAL,
@@ -153,4 +153,4 @@ tab.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;
