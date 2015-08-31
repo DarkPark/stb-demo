@@ -9,11 +9,14 @@
 
 var Button    = require('../stb/ui/button'),
 	Panel     = require('../stb/ui/panel'),
+	TabItem = require('../stb/ui/tab.item'),
 	preloader = require('../stb/preloader'),
-	panel     = new Panel({
-		$node: window.pageMainTabButton,
-		visible: false
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabButton')
 	});
+
+
+tab.title = 'Button';
 
 
 preloader.addListener('done', function () {
@@ -107,4 +110,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

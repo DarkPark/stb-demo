@@ -10,13 +10,16 @@
 var Button = require('../stb/ui/button'),
 	Panel  = require('../stb/ui/panel'),
 	router = require('../stb/router'),
-	panel  = new Panel({
-		$node: window.pageMainTabPage,
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabPage')
 	});
 
 
-panel.add(
+tab.title = 'Page';
+
+
+tab.add(
 	new Button({
 		value: 'switch to page Help',
 		events: {
@@ -29,4 +32,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

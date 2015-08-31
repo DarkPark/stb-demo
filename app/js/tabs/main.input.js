@@ -9,13 +9,16 @@
 
 var Input = require('../stb/ui/input'),
 	Panel = require('../stb/ui/panel'),
-	panel = new Panel({
-		$node: window.pageMainTabInput,
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabInput')
 	});
 
 
-panel.add(
+tab.title = 'Input';
+
+
+tab.add(
 	new Panel({
 		$node: window.pageMainTabInputEmpty,
 		children: [
@@ -67,4 +70,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

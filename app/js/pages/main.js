@@ -7,69 +7,43 @@
 
 'use strict';
 
-var List = require('../stb/ui/list'),
+var id   = 'pageMain',
+	List = require('../stb/ui/list'),
+	TabList = require('../stb/ui/tab.list'),
 	Page = require('../stb/ui/page'),
-	page = new Page({$node: window.pageMain});
+	page = new Page({$node: document.getElementById(id)});
 
 
 page.addListener('load', function load () {
-	var menuData = [
-			{
-				value: 'Panel',
-				panel: require('../tabs/main.panel')
-			},
-			{
-				value: 'Button',
-				panel: require('../tabs/main.button')
-			},
-			{
-				value: 'Input',
-				panel: require('../tabs/main.input')
-			},
-			{
-				value: 'CheckBox',
-				panel: require('../tabs/main.check.box')
-			},
-			{
-				value: 'Grid',
-				panel: require('../tabs/main.grid')
-			},
-			{
-				value: 'List',
-				panel: require('../tabs/main.list')
-			},
-			{
-				value: 'ProgressBar',
-				panel: require('../tabs/main.progress.bar')
-			},
-			{
-				value: 'Page',
-				panel: require('../tabs/main.page')
-			},
-			{
-				value: 'Modal',
-				panel: require('../tabs/main.modal')
-			},
-			{
-				value: 'Widget',
-				panel: require('../tabs/main.widget')
-			}
+	var tabsList = [
+			require('../tabs/main.panel'),
+			require('../tabs/main.button'),
+			require('../tabs/main.input'),
+			require('../tabs/main.check.box'),
+			require('../tabs/main.grid'),
+			require('../tabs/main.list'),
+			require('../tabs/main.progress.bar'),
+			require('../tabs/main.page'),
+			require('../tabs/main.modal'),
+			require('../tabs/main.widget')
 		];
 
 	// attach to page
-	menuData.forEach(function ( item ) {
-		page.add(item.panel);
-	});
+	page.add(page.tabList = new TabList({
+		$node: window.pageMainTabsList,
+		children: tabsList,
+		current: tabsList[0]
+	}));
 
 	page.add(
 		page.menu = new List({
 			$node: window.pageMainMenu,
-			data: menuData,
+			data: tabsList,
 			focusIndex: 0,
 			size: 10,
 			cycle: true,
 			render: function ( $item, data ) {
-				$item.textContent = data.value;
+				$item.textContent = data.title;
 			},
 			events: {
 				/*click: function ( data ) {
@@ -85,13 +59,8 @@ page.addListener('load', function load () {
 					//console.log('click:item');
 					//debug.inspect(data, 1);
 				},*/
-				'focus:item': function ( data ) {
-					//console.log('focus:item');
-					//debug.inspect(data, 1);
-					if ( data.$prev ) {
-						data.$prev.data.panel.hide();
-					}
-					data.$curr.data.panel.show();
+				'focus:item': function ( event ) {
+					tabsList[event.$curr.index].activate();
 				}
 				/*'blur:item': function ( data ) {
 					//console.log('blur:item');
