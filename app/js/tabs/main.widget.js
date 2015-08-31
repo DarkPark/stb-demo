@@ -10,9 +10,9 @@
 var Button = require('../stb/ui/button'),
 	Panel  = require('../stb/ui/panel'),
 	Widget = require('../stb/ui/widget'),
-	panel  = new Panel({
-		$node: document.getElementById('pageMainTabWidget'),
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabWidget')
 	}),
 	w1 = new Widget({
 		$node: document.getElementById('pageMainTabWidgetW1'),
@@ -34,7 +34,10 @@ var Button = require('../stb/ui/button'),
 	});
 
 
-panel.add(
+tab.title = 'Widget';
+
+
+tab.add(
 	new Button({
 		value: 'show local tab widget',
 		events: {
@@ -63,4 +66,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

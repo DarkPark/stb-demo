@@ -9,13 +9,15 @@
 
 var Panel    = require('../stb/ui/panel'),
 	CheckBox = require('../stb/ui/check.box'),
-	panel    = new Panel({
-		$node: document.getElementById('pageMainTabCheckBox'),
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabCheckBox')
 	});
 
 
-panel.add(
+tab.title = 'CheckBox';
+
+tab.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabCheckBoxSimple'),
 		children: [
@@ -35,4 +37,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

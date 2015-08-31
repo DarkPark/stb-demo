@@ -8,13 +8,16 @@
 'use strict';
 
 var Panel = require('../stb/ui/panel'),
-	panel = new Panel({
-		$node: document.getElementById('pageMainTabPanel'),
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabPanel')
 	});
 
 
-panel.add(
+tab.title = 'Panel';
+
+
+tab.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabPanelSimple')
 	}),
@@ -33,4 +36,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

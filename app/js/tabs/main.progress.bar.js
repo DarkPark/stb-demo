@@ -9,14 +9,17 @@
 
 var Panel       = require('../stb/ui/panel'),
 	ProgressBar = require('../stb/ui/progress.bar'),
+	TabItem = require('../stb/ui/tab.item'),
 	keys        = require('../stb/keys'),
-	panel       = new Panel({
-		$node: document.getElementById('pageMainTabProgressBar'),
-		visible: false
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabProgressBar')
 	});
 
 
-panel.add(
+tab.title = 'ProgressBar';
+
+
+tab.add(
 	new Panel({
 		$node: document.getElementById('pageMainTabProgressBarEmpty'),
 		children: [
@@ -91,4 +94,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;

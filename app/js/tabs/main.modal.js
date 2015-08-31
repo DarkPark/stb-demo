@@ -11,13 +11,16 @@ var Button       = require('../stb/ui/button'),
 	Panel        = require('../stb/ui/panel'),
 	ModalBox     = require('../stb/ui/modal.box'),
 	ModalMessage = require('../stb/ui/modal.message'),
-	panel        = new Panel({
-		$node: document.getElementById('pageMainTabModal'),
-		visible: false
+	TabItem = require('../stb/ui/tab.item'),
+	tab = new TabItem({
+		$node: document.getElementById('pageMainTabModal')
 	});
 
 
-panel.add(
+tab.title = 'Modal';
+
+
+tab.add(
 	new Button({
 		value: 'show simple modal window',
 		events: {
@@ -79,4 +82,4 @@ panel.add(
 
 
 // public
-module.exports = panel;
+module.exports = tab;
