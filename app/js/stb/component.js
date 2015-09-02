@@ -32,6 +32,7 @@ var Emitter = require('./emitter'),
  * @param {Object.<string, function>} [config.events={}] list of event callbacks
  * @param {boolean} [config.visible=true] component initial visibility state flag
  * @param {boolean} [config.focusable=true] component can accept focus or not
+ * @param {boolean} [config.propagate=false] allow to emit events to the parent component
  *
  * @fires module:stb/component~Component#click
  *
@@ -108,6 +109,14 @@ function Component ( config ) {
 	 * @type {Component[]}
 	 */
 	this.children = [];
+
+	/**
+	 * allow to emit events to the parent component
+	 *
+	 * @readonly
+	 * @type {boolean}
+	 */
+	this.propagate = !!config.propagate;
 
 	// parent constructor call
 	Emitter.call(this, config.data);
@@ -384,9 +393,11 @@ Component.prototype.blur = function () {
 	var activePage = router.current,
 		activeItem = activePage.activeComponent;
 
+	// apply visuals anyway
+	this.$node.classList.remove('focus');
+
 	// this is the active component
 	if ( this === activeItem ) {
-		this.$node.classList.remove('focus');
 		activePage.activeComponent = null;
 
 		// there are some listeners
@@ -403,6 +414,8 @@ Component.prototype.blur = function () {
 
 		return true;
 	}
+
+	debug.log('component ' + this.constructor.name + '.' + this.id + ' attempt to blur without link to a page', 'red');
 
 	// nothing was done
 	return false;
