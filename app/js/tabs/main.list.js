@@ -151,6 +151,13 @@ tab.add(
 
 );
 
+setTimeout(function () {
+	listScrollN.init({
+		viewSize: 5,
+		realSize: 25
+	})
+}, 0);
+
 
 // public
 module.exports = tab;

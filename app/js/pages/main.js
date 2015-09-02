@@ -25,7 +25,8 @@ page.addListener('load', function load () {
 			require('../tabs/main.progress.bar'),
 			require('../tabs/main.page'),
 			require('../tabs/main.modal'),
-			require('../tabs/main.widget')
+			require('../tabs/main.widget'),
+			require('../tabs/main.layer.list')
 		];
 
 	// attach to page
@@ -40,7 +41,7 @@ page.addListener('load', function load () {
 			$node: window.pageMainMenu,
 			data: tabsList,
 			focusIndex: 0,
-			size: 10,
+			size: tabsList.length,
 			cycle: true,
 			render: function ( $item, data ) {
 				$item.textContent = data.title;

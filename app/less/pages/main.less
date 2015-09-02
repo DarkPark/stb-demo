@@ -74,6 +74,25 @@
 			}
 		}
 	}
+
+	.testBlock {
+		float:left;
+		height: 10px;
+		width: 10px;
+		font-size: 10px;
+		&.t1 {
+			border: 1px dashed #cf0;
+		}
+		&.t2 {
+			border: 1px dashed #fc0;
+		}
+		&.t3 {
+			border: 1px dashed #0fc;
+		}
+		&.t4 {
+			border: 1px dashed #c0f;
+		}
+	}
 }
 
 #pageMainTabGridMain {
@@ -95,6 +114,9 @@
 			text-align: right;
 		}
 	}
+}
+#pageMainTabListCustomScrollV {
+	height: unit(@listItemHeight * 5, px);
 }
 
 #pageMainTabProgressBarStyle {
