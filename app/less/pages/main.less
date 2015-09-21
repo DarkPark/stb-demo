@@ -21,13 +21,13 @@
 	}
 
 	td.body {
-		padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
 		vertical-align: top;
+		width: 80%;
 		//height: 100%;
 		//display: inline-block;
 		> div {
 			height: unit(@height - @availTop - @availBottom, px);
-			padding: 0;
+			padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
 			background-color: black;
 
 			.component {
