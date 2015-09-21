@@ -49,6 +49,13 @@ function LayerItem ( config ) {
 		}
 	}
 
+
+	/**
+	 * Component z-index value.
+	 * @type {(boolean|number)}
+	 */
+	this.zIndex = false;
+
 	// can't accept focus
 	config.focusable = config.focusable || false;
 
@@ -82,8 +89,8 @@ if ( DEBUG ) {
  *
  * @return {boolean} apply result
  *
- * @fires module:stb/ui/tab.item~LayerItem#move:up
- * @fires module:stb/ui/tab.list~LayerList#item:change
+ * @fires module:stb/ui/layer.item~LayerItem#move:up
+ * @fires module:stb/ui/layer.list~LayerList#item:change
  */
 LayerItem.prototype.moveUp = function ( data ) {
 	if ( DEBUG ) {
@@ -91,8 +98,32 @@ LayerItem.prototype.moveUp = function ( data ) {
 		if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
 	}
 
-	if ( this.$node.previousSibling ) {
-		this.parent.$body.insertBefore(this.$node, this.$node.previousSibling);
+	if ( typeof this.zIndex === 'number' ) {
+		// z-index was provided
+		if ( this.zIndex < ( this.parent.children.length - 1 + this.parent.zIndex ) ) {
+			this.parent.map[this.zIndex] = this.parent.map[this.zIndex + 1];
+			this.parent.map[this.zIndex].$node.style.zIndex = this.zIndex;
+			++this.zIndex;
+			this.$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex] = this;
+
+			if ( this.events['move:up'] ) {
+				this.emit('move:up', {data: data});
+			}
+
+			if ( this.parent.events['item:change'] ) {
+				this.emit('item:change', {state: 'move:up', component: this});
+			}
+
+			return true;
+		}
+	} else if ( this.$node.nextSibling ) {
+		if ( this.$node.nextSibling === this.parent.$body.lastChild ) {
+			this.parent.$body.appendChild(this.$node);
+		} else {
+			this.parent.$body.insertBefore(this.$node, this.$node.nextSibling.nextSibling);
+		}
+
 
 		if ( this.events['move:up'] ) {
 			this.emit('move:up', {data: data});
@@ -101,7 +132,6 @@ LayerItem.prototype.moveUp = function ( data ) {
 		if ( this.parent.events['item:change'] ) {
 			this.parent.emit('item:change', {state: 'move:up', component: this});
 		}
-
 		return true;
 	}
 	return false;
@@ -116,8 +146,8 @@ LayerItem.prototype.moveUp = function ( data ) {
  *
  * @return {boolean} apply result
  *
- * @fires module:stb/ui/tab.item~LayerItem#move:down
- * @fires module:stb/ui/tab.list~LayerList#item:change
+ * @fires module:stb/ui/layer.item~LayerItem#move:down
+ * @fires module:stb/ui/layer.list~LayerList#item:change
  */
 LayerItem.prototype.moveDown = function ( data ) {
 	if ( DEBUG ) {
@@ -125,13 +155,28 @@ LayerItem.prototype.moveDown = function ( data ) {
 		if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
 	}
 
-	if ( this.$node.nextSibling ) {
-		if ( this.$node.nextSibling === this.parent.$body.lastChild ) {
-			this.parent.$body.appendChild(this.$node);
-		} else {
-			this.parent.$body.insertBefore(this.$node, this.$node.nextSibling.nextSibling);
-		}
+	if ( typeof this.zIndex === 'number' ) {
+		// z-index was provided
+		if ( this.zIndex > this.parent.zIndex ) {
+			this.parent.map[this.zIndex] = this.parent.map[this.zIndex - 1];
+			this.parent.map[this.zIndex].$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex].zIndex = this.zIndex;
+			--this.zIndex;
+			this.$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex] = this;
 
+			if ( this.events['move:up'] ) {
+				this.emit('move:up', {data: data});
+			}
+
+			if ( this.parent.events['item:change'] ) {
+				this.emit('item:change', {state: 'move:down', component: this});
+			}
+
+			return true;
+		}
+	} else if ( this.$node.previousSibling ) {
+		this.parent.$body.insertBefore(this.$node, this.$node.previousSibling);
 
 		if ( this.events['move:down'] ) {
 			this.emit('move:down', {data: data});
@@ -140,6 +185,7 @@ LayerItem.prototype.moveDown = function ( data ) {
 		if ( this.parent.events['item:change'] ) {
 			this.parent.emit('item:change', {state: 'move:down', component: this});
 		}
+
 		return true;
 	}
 	return false;
@@ -154,17 +200,47 @@ LayerItem.prototype.moveDown = function ( data ) {
  *
  * @return {boolean} apply result
  *
- * @fires module:stb/ui/tab.item~LayerItem#move:top
- * @fires module:stb/ui/tab.list~LayerList#item:change
+ * @fires module:stb/ui/layer.item~LayerItem#move:top
+ * @fires module:stb/ui/layer.list~LayerList#item:change
  */
 LayerItem.prototype.moveTop = function ( data ) {
+	var i, size;
+
 	if ( DEBUG ) {
 		if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
 		if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
 	}
 
-	if ( this.$node !== this.parent.$body.firstChild ) {
-		this.parent.$body.insertBefore(this.$node, this.parent.$body.firstChild);
+	if ( typeof this.zIndex === 'number' ) {
+		// z-index was provided
+		debug.info([this.zIndex, this.parent.children.length, this.parent.zIndex]);
+
+		if ( this.zIndex < ( this.parent.children.length + this.parent.zIndex - 1 ) ) {
+			// not on the top
+
+			// loop through the layers which are upper then current
+			for ( i = this.zIndex, size = this.parent.zIndex + this.parent.children.length - 1; i < size; ++i ) {
+				debug.log('moving layer from ' + (i + 1) + ' to ' + i + ' zIndex');
+				this.parent.map[i] = this.parent.map[i + 1];
+				this.parent.map[i].$node.style.zIndex = i;
+				this.parent.map[i].zIndex = i;
+			}
+			this.zIndex = this.parent.children.length + this.parent.zIndex - 1;
+			this.$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex] = this;
+
+			if ( this.events['move:top'] ) {
+				this.emit('move:top', {data: data});
+			}
+
+			if ( this.parent.events['item:change'] ) {
+				this.emit('item:change', {state: 'move:top', component: this});
+			}
+
+			return true;
+		}
+	} else if ( this.$node !== this.parent.$body.lastChild ) {
+		this.parent.$body.appendChild(this.$node);
 
 		if ( this.events['move:top'] ) {
 			this.emit('move:top', {data: data});
@@ -177,7 +253,7 @@ LayerItem.prototype.moveTop = function ( data ) {
 		return true;
 	}
 
-	return true;
+	return false;
 };
 
 
@@ -189,17 +265,46 @@ LayerItem.prototype.moveTop = function ( data ) {
  *
  * @return {boolean} apply result
  *
- * @fires module:stb/ui/tab.item~LayerItem#move:bottom
- * @fires module:stb/ui/tab.list~LayerList#item:change
+ * @fires module:stb/ui/layer.item~LayerItem#move:bottom
+ * @fires module:stb/ui/layer.list~LayerList#item:change
  */
 LayerItem.prototype.moveBottom = function ( data ) {
+	var i, size;
+
 	if ( DEBUG ) {
 		if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
 		if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
 	}
 
-	if ( this.$node !== this.parent.$body.lastChild ) {
-		this.parent.$body.appendChild(this.$node);
+	if ( typeof this.zIndex === 'number' ) {
+		// z-index was provided
+
+		if ( this.zIndex > this.parent.zIndex ) {
+			// not on the top
+
+			// loop through the layers which are below then current
+			for ( i = this.zIndex, size = this.parent.zIndex; i > size; --i ) {
+				debug.log('moving layer from ' + (i - 1) + ' to ' + i + ' zIndex');
+				this.parent.map[i] = this.parent.map[i - 1];
+				this.parent.map[i].$node.style.zIndex = i;
+				this.parent.map[i].zIndex = i;
+			}
+			this.zIndex = this.parent.zIndex;
+			this.$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex] = this;
+
+			if ( this.events['move:bottom'] ) {
+				this.emit('move:bottom', {data: data});
+			}
+
+			if ( this.parent.events['item:change'] ) {
+				this.emit('item:change', {state: 'move:bottom', component: this});
+			}
+
+			return true;
+		}
+	} else if ( this.$node !== this.parent.$body.firstChild ) {
+		this.parent.$body.insertBefore(this.$node, this.parent.$body.firstChild);
 
 		if ( this.events['move:bottom'] ) {
 			this.emit('move:bottom', {data: data});

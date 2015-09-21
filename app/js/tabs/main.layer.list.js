@@ -7,43 +7,73 @@
 
 'use strict';
 
-var TabItem = require('../stb/ui/tab.item'),
-	Button = require('../stb/ui/button'),
+var keys = require('../stb/keys'),
+
+	TabItem   = require('../stb/ui/tab.item'),
+	Button    = require('../stb/ui/button'),
+	Input     = require('../stb/ui/input'),
+	Panel     = require('../stb/ui/panel'),
 	LayerList = require('../stb/ui/layer.list.js'),
 	LayerItem = require('../stb/ui/layer.item.js'),
 
 	tab = new TabItem({
 		$node: window.pageMainTabLayerList
 	}),
+
 	layers = [
-		new LayerItem(),
-		new LayerItem(),
 		new LayerItem(),
 		new LayerItem(),
 		new LayerItem()
 	],
+
 	layerAffectedIndex = 0;
+
+
+function parseLayerOrder () {
+	var order = 'Layers order: <ul>',
+		i;
+
+	for ( i = 0; i < tab.layerList.children.length; ++i ) {
+		order += '<li>' + tab.layerList.children[i].$body.innerHTML + ' at '+ (tab.layerList.children[i].zIndex - tab.layerList.zIndex) + '</li>';
+	}
+
+	order += '</ul>';
+
+	return order;
+}
 
 
 tab.title = 'LayerList';
 
-
 layers.forEach(function ( layer, index ) {
-	layer.$body.innerText = 'layer #' + index;
+	layer.$body.innerHTML = 'layer #' + index;
 });
 
-
 tab.add(
-	new Button({
-		value: 'increment next affected layer index, current: ' + layerAffectedIndex,
+	tab.input = new Input({
 		events: {
-			click: function () {
-				debug.log('click');
-				++layerAffectedIndex;
-				if ( layerAffectedIndex === layers.length ) {
-					layerAffectedIndex = 0;
+			input: function ( event ) {
+				var value;
+
+				if ( event.value.length === 0 ) {
+					value = layerAffectedIndex;
+				} else if ( isNaN(Number(event.value)) ) {
+					value = parseInt(event.value.substr(3, 1), 10);
+				} else if ( event.value.length > 1 ) {
+					value = parseInt(event.value.substr(1, 1), 10);
+				} else {
+					value = parseInt(event.value, 10);
 				}
-				this.$text.innerText = 'increment next affected layer index, current: ' + layerAffectedIndex;
+
+				if ( value < 0 ) {
+					this.setValue(layerAffectedIndex + '');
+				} else if ( value > layers.length - 1 ) {
+					layerAffectedIndex = layers.length - 1;
+					this.setValue((layers.length - 1) + '');
+				} else {
+					layerAffectedIndex = value;
+					this.setValue(value + '');
+				}
 			}
 		}
 	}),
@@ -51,19 +81,17 @@ tab.add(
 		value: 'set layer to top',
 		events: {
 			click: function () {
-				debug.log('click');
-
 				layers[layerAffectedIndex].moveTop();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
 	new Button({
-		value: 'set layer to down',
+		value: 'set layer to bottom',
 		events: {
 			click: function () {
-				debug.log('click');
-
-				layers[layerAffectedIndex].moveDown();
+				layers[layerAffectedIndex].moveBottom();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -71,9 +99,8 @@ tab.add(
 		value: 'up layer',
 		events: {
 			click: function () {
-				debug.log('click');
-
 				layers[layerAffectedIndex].moveUp();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -81,142 +108,53 @@ tab.add(
 		value: 'down layer',
 		events: {
 			click: function () {
-				debug.log('click');
-
 				layers[layerAffectedIndex].moveDown();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
-	tab.list = new LayerList({
+	new Button({
+		value: 'hide layer',
+		events: {
+			click: function () {
+				layers[layerAffectedIndex].hide();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+			}
+		}
+	}),
+	new Button({
+		value: 'show layer',
+		events: {
+			click: function () {
+				layers[layerAffectedIndex].show();
+				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+			}
+		}
+	}),
+	tab.layerOrder = new Panel(),
+	tab.layerList = new LayerList({
+		zIndex: 20,
 		children: layers
 	})
 );
 
-(function () {
-	var size = 1000;
-	var el = document.createElement('div');
-	var i = size;
-	while ( i > 0 ) {
-		el.appendChild(document.createElement('div'));
-		el.lastChild.className = 'testBlock t' + ( i % 4);
-		el.lastChild.innerHTML = i;
-		--i;
-	}
-	layers[0].$body.innerHTML = '#0<br>' + el.innerHTML;
 
-	el = document.createElement('div');
-	i = size;
-	while ( i > 0 ) {
-		el.appendChild(document.createElement('div'));
-		el.lastChild.className = 'testBlock t' + ( (i + 1) % 4);
-		el.lastChild.innerHTML = i;
-		--i;
-	}
-	layers[1].$body.innerHTML = '#1<br>' + el.innerHTML;
-
-	el = document.createElement('div');
-	i = size;
-	while ( i > 0 ) {
-		el.appendChild(document.createElement('div'));
-		el.lastChild.className = 'testBlock t' + ( (i + 2) % 4);
-		el.lastChild.innerHTML = i;
-		--i;
-	}
-	layers[2].$body.innerHTML = '#2<br>' + el.innerHTML;
-
-	el = document.createElement('testBlock');
-	i = size;
-	while ( i > 0 ) {
-		el.appendChild(document.createElement('div'));
-		el.lastChild.className = 'testBlock t' + ( (i + 3) % 4);
-		el.lastChild.innerHTML = i;
-		--i;
-	}
-	layers[3].$body.innerHTML = '#3<br>' + el.innerHTML;
-
-	el = document.createElement('div');
-	i = size;
-	while ( i > 0 ) {
-		el.appendChild(document.createElement('div'));
-		el.lastChild.className = 'testBlock t' + ( (i + 4) % 4);
-		el.lastChild.innerHTML = i;
-		--i;
-	}
-	layers[4].$body.innerHTML = '#4<br>' + el.innerHTML;
-})();
-
-
-function hide ( event ) {
-	if ( event.prev === tab ) {
-		tab.parent.removeListener('item:change', hide);
-		tab.list.hide();
-	}
-}
-
-var time = 1000, current = 0, animations = [
-	function () {
-		layers[0].show();
-		layers[0].moveTop();
-		layers[1].moveUp();
-		layers[0].hide();
-		layers[1].show();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[0].moveUp();
-		layers[1].hide();
-		layers[0].show();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[2].moveTop();
-		layers[0].hide();
-		layers[2].show();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[2].$node.style.opacity = '0.5';
-		layers[0].show();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[0].$node.style.opacity = '0.5';
-		layers[1].show();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[2].$node.style.opacity = '1';
-		layers[0].$node.style.opacity = '1';
-		layers[2].hide();
-		layers[0].hide();
-
-		++current;
-		setTimeout(animations[current], time);
-	}, function () {
-		layers[3].moveUp();
-		layers[1].hide();
-		layers[3].show();
-
-		++current;
-		setTimeout(animations[current], 0);
-	}, function () {
-		debug.timeEnd('ANIMATION');
-	}
-];
+//function hide ( event ) {
+//	if ( event.prev === tab ) {
+//		tab.parent.removeListener('item:change', hide);
+//		tab.layerList.hide();
+//	}
+//}
 
 tab.addListener('activate', function () {
-	tab.list.show();
-	layers[0].moveTop();
+	tab.layerOrder.$body.innerHTML = parseLayerOrder();
+	//tab.parent.addListener('item:change', hide);
+});
 
-	tab.parent.addListener('item:change', hide);
-
-	debug.time('ANIMATION');
-	window.setTimeout(animations[0], 1000);
+tab.input.addListener('keydown', function ( event ) {
+	if ( event.code === keys.back ) {
+		event.stop = true;
+	}
 });
 
 
