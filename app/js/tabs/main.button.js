@@ -54,7 +54,7 @@ tab.add(
 					click: function () {
 						debug.log('click');
 
-						panel.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
+						tab.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
 					}
 				}
 			}),

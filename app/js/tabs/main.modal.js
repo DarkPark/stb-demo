@@ -8,7 +8,6 @@
 'use strict';
 
 var Button       = require('../stb/ui/button'),
-	Panel        = require('../stb/ui/panel'),
 	ModalBox     = require('../stb/ui/modal.box'),
 	ModalMessage = require('../stb/ui/modal.message'),
 	TabItem = require('../stb/ui/tab.item'),
@@ -25,18 +24,18 @@ tab.add(
 		value: 'show simple modal window',
 		events: {
 			click: function () {
-				panel.add(
-					panel.modal = new ModalBox({
+				tab.add(
+					tab.modal = new ModalBox({
 						events: {
 							click: function () {
-								console.log(panel.modal);
-								panel.modal.remove();
+								console.log(tab.modal);
+								tab.modal.remove();
 							}
 						}
 					})
 				);
-				panel.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
-				panel.modal.focus();
+				tab.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
+				tab.modal.focus();
 			}
 		}
 	}),
@@ -44,18 +43,18 @@ tab.add(
 		value: 'show modal window with a lot of text',
 		events: {
 			click: function () {
-				panel.add(
-					panel.modal = new ModalBox({
+				tab.add(
+					tab.modal = new ModalBox({
 						events: {
 							click: function () {
-								console.log(panel.modal);
-								panel.modal.remove();
+								console.log(tab.modal);
+								tab.modal.remove();
 							}
 						}
 					})
 				);
-				panel.modal.$body.innerText = new Array(300).join('text ');
-				panel.modal.focus();
+				tab.modal.$body.innerText = new Array(300).join('text ');
+				tab.modal.focus();
 			}
 		}
 	}),
@@ -63,18 +62,17 @@ tab.add(
 		value: 'show modal message',
 		events: {
 			click: function () {
-				panel.add(
-					panel.modal = new ModalMessage({
+				tab.add(
+					tab.modal = new ModalMessage({
 						events: {
 							click: function () {
-								console.log(panel.modal);
-								panel.modal.remove();
+								console.log(tab.modal);
+								tab.modal.remove();
 							}
 						}
 					})
 				);
-				//panel.modal.$body.innerText = new Array(300).join('text ');
-				panel.modal.focus();
+				tab.modal.focus();
 			}
 		}
 	})

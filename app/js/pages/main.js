@@ -16,18 +16,18 @@ var id   = 'pageMain',
 
 page.addListener('load', function load () {
 	var tabsList = [
-			require('../tabs/main.panel'),
-			require('../tabs/main.button'),
-			require('../tabs/main.input'),
-			require('../tabs/main.check.box'),
-			require('../tabs/main.grid'),
-			require('../tabs/main.list'),
-			require('../tabs/main.progress.bar'),
-			require('../tabs/main.page'),
-			require('../tabs/main.modal'),
-			require('../tabs/main.widget'),
-			require('../tabs/main.layer.list')
-		];
+		require('../tabs/main.panel'),
+		require('../tabs/main.button'),
+		require('../tabs/main.input'),
+		require('../tabs/main.check.box'),
+		require('../tabs/main.grid'),
+		require('../tabs/main.list'),
+		require('../tabs/main.progress.bar'),
+		require('../tabs/main.page'),
+		require('../tabs/main.modal'),
+		require('../tabs/main.widget'),
+		require('../tabs/main.layer.list')
+	];
 
 	// attach to page
 	page.add(page.tabList = new TabList({

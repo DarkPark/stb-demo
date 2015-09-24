@@ -8,7 +8,6 @@
 'use strict';
 
 var Button = require('../stb/ui/button'),
-	Panel  = require('../stb/ui/panel'),
 	router = require('../stb/router'),
 	TabItem = require('../stb/ui/tab.item'),
 	tab = new TabItem({

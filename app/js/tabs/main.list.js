@@ -157,8 +157,8 @@ setTimeout(function () {
 		realSize: 25
 	});
 	listScrollN.init({
-			viewSize: 5,
-			realSize: 4
+		viewSize: 5,
+		realSize: 4
 	});
 	listScrollH.$node.style.verticalAlign = 'middle';
 	listScrollH.init({

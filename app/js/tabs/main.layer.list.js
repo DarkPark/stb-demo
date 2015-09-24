@@ -34,7 +34,7 @@ function parseLayerOrder () {
 		i;
 
 	for ( i = 0; i < tab.layerList.children.length; ++i ) {
-		order += '<li>' + tab.layerList.children[i].$body.innerHTML + ' at '+ (tab.layerList.children[i].zIndex - tab.layerList.zIndex) + '</li>';
+		order += '<li>' + tab.layerList.children[i].$body.innerHTML + ' at ' + (tab.layerList.children[i].zIndex - tab.layerList.zIndex) + '</li>';
 	}
 
 	order += '</ul>';
