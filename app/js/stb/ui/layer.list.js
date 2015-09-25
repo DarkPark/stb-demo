@@ -16,6 +16,7 @@ var Component = require('../component');
  * @extends Component
  *
  * @param {Object} [config={}] init parameters (all inherited from the parent)
+ * @param {number} [config.zIndex] if you need z-index layer logic, provide config.zIndex to the constructor
  *
  * @example
  * var LayerList = require('stb/ui/layer.list'),
@@ -32,6 +33,7 @@ var Component = require('../component');
  */
 function LayerList ( config ) {
 	var self = this;
+
 	// sanitize
 	config = config || {};
 
@@ -42,13 +44,13 @@ function LayerList ( config ) {
 	}
 
 	/**
-	 * If you need z-index layer logic, provide config.zIndex to the constructor
+	 * z-index value.
 	 * @type {(boolean|number)}
 	 */
 	this.zIndex = false;
 
 	/**
-	 * Hash table for
+	 * Hash table for z-index layers.
 	 * @type {Array}
 	 */
 	this.map = {};
@@ -59,7 +61,7 @@ function LayerList ( config ) {
 		this.zIndex = config.zIndex;
 
 		if ( config.children ) {
-			// if children provided setup their z-index
+			// if children provided, setup their z-index
 			config.children.forEach(function ( item, index ) {
 				item.zIndex = index + self.zIndex;
 				item.$node.style.zIndex = item.zIndex;
@@ -84,7 +86,7 @@ function LayerList ( config ) {
 			event.item.$node.style.zIndex = event.item.zIndex;
 			debug.info(event.item.zIndex, 'adding layer with z index');
 			self.map[event.item.zIndex] = event.item;
-		})
+		});
 	}
 }
 

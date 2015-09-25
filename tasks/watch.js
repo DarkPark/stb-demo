@@ -28,14 +28,14 @@ gulp.task('watch', function ( done ) {
 	watch([
 		path.join(global.paths.app, 'font', '**', '*')
 	], function () {
-		gulp.start('font:develop');
+		gulp.start('font');
 	});
 
 	// webpack
 	watch([
 		path.join(global.paths.app, 'js', '**', '*.js'),
-		path.join(global.paths.config, 'app.js'),
-		path.join(global.paths.config, 'metrics.js')
+		path.join(global.paths.config, 'app[.]js'),
+		path.join(global.paths.config, 'metrics[.]js')
 	], function () {
 		gulp.start('webpack:develop');
 	});
@@ -50,7 +50,7 @@ gulp.task('watch', function ( done ) {
 	// less
 	watch([
 		path.join(global.paths.app, 'less', '**', '*.{less,js}'),
-		path.join(global.paths.config, 'metrics.js')
+		path.join(global.paths.config, 'metrics[.]js')
 	], function () {
 		gulp.start('less:develop');
 	});

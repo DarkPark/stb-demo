@@ -41,12 +41,8 @@ function LayerItem ( config ) {
 	config = config || {};
 
 	if ( DEBUG ) {
-		if ( typeof config !== 'object' ) {
-			throw new Error(__filename + ': wrong config type');
-		}
-		if ( config.className && typeof config.className !== 'string' ) {
-			throw new Error(__filename + ': wrong or empty config.className');
-		}
+		if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+		if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
 	}
 
 
@@ -103,6 +99,7 @@ LayerItem.prototype.moveUp = function ( data ) {
 		if ( this.zIndex < ( this.parent.children.length - 1 + this.parent.zIndex ) ) {
 			this.parent.map[this.zIndex] = this.parent.map[this.zIndex + 1];
 			this.parent.map[this.zIndex].$node.style.zIndex = this.zIndex;
+			this.parent.map[this.zIndex].zIndex = this.zIndex;
 			++this.zIndex;
 			this.$node.style.zIndex = this.zIndex;
 			this.parent.map[this.zIndex] = this;
@@ -118,7 +115,11 @@ LayerItem.prototype.moveUp = function ( data ) {
 			return true;
 		}
 	} else if ( this.$node.nextSibling ) {
+		// logic with DOM level manipulation
+		// not in the end
+
 		if ( this.$node.nextSibling === this.parent.$body.lastChild ) {
+			// penultimate element
 			this.parent.$body.appendChild(this.$node);
 		} else {
 			this.parent.$body.insertBefore(this.$node, this.$node.nextSibling.nextSibling);
@@ -132,8 +133,10 @@ LayerItem.prototype.moveUp = function ( data ) {
 		if ( this.parent.events['item:change'] ) {
 			this.parent.emit('item:change', {state: 'move:up', component: this});
 		}
+
 		return true;
 	}
+
 	return false;
 };
 
@@ -176,6 +179,9 @@ LayerItem.prototype.moveDown = function ( data ) {
 			return true;
 		}
 	} else if ( this.$node.previousSibling ) {
+		// logic with DOM level manipulation
+		// not in the start
+
 		this.parent.$body.insertBefore(this.$node, this.$node.previousSibling);
 
 		if ( this.events['move:down'] ) {
@@ -188,6 +194,7 @@ LayerItem.prototype.moveDown = function ( data ) {
 
 		return true;
 	}
+
 	return false;
 };
 
@@ -240,6 +247,9 @@ LayerItem.prototype.moveTop = function ( data ) {
 			return true;
 		}
 	} else if ( this.$node !== this.parent.$body.lastChild ) {
+		// logic with DOM level manipulation
+		// not in the end
+
 		this.parent.$body.appendChild(this.$node);
 
 		if ( this.events['move:top'] ) {
@@ -304,6 +314,9 @@ LayerItem.prototype.moveBottom = function ( data ) {
 			return true;
 		}
 	} else if ( this.$node !== this.parent.$body.firstChild ) {
+		// logic with DOM level manipulation
+		// not at the start
+
 		this.parent.$body.insertBefore(this.$node, this.parent.$body.firstChild);
 
 		if ( this.events['move:bottom'] ) {
