@@ -7,15 +7,14 @@
 
 'use strict';
 
-var id   = 'pageMain',
-	List = require('../stb/ui/list'),
+var List    = require('../stb/ui/list'),
 	TabList = require('../stb/ui/tab.list'),
-	Page = require('../stb/ui/page'),
-	page = new Page({$node: document.getElementById(id)});
+	Page    = require('../stb/ui/page'),
+	page    = new Page({$node: window.pageMain});
 
 
 page.addListener('load', function load () {
-	var tabsList = [
+	var tabData = [
 		require('../tabs/main.panel'),
 		require('../tabs/main.button'),
 		require('../tabs/main.input'),
@@ -30,18 +29,20 @@ page.addListener('load', function load () {
 	];
 
 	// attach to page
-	page.add(page.tabList = new TabList({
-		$node: window.pageMainTabsList,
-		children: tabsList,
-		current: tabsList[0]
-	}));
+	page.add(
+		page.tabList = new TabList({
+			$node: window.pageMainTabListContainer,
+			children: tabData,
+			current: tabData[0]
+		})
+	);
 
 	page.add(
 		page.menu = new List({
 			$node: window.pageMainMenu,
-			data: tabsList,
+			data: tabData,
 			focusIndex: 0,
-			size: tabsList.length,
+			size: tabData.length,
 			cycle: true,
 			render: function ( $item, data ) {
 				$item.textContent = data.title;
@@ -61,7 +62,7 @@ page.addListener('load', function load () {
 					//debug.inspect(data, 1);
 				},*/
 				'focus:item': function ( event ) {
-					tabsList[event.$curr.index].activate();
+					tabData[event.$curr.index].show();
 				}
 				/*'blur:item': function ( data ) {
 					//console.log('blur:item');
