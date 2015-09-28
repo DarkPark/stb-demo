@@ -7,18 +7,18 @@
 
 'use strict';
 
-var Input = require('../stb/ui/input'),
-	Panel = require('../stb/ui/panel'),
+var Input   = require('../stb/ui/input'),
+	Panel   = require('../stb/ui/panel'),
 	TabItem = require('../stb/ui/tab.item'),
-	tab = new TabItem({
+	tabItem = new TabItem({
 		$node: window.pageMainTabInput
 	});
 
 
-tab.title = 'Input';
+tabItem.title = 'Input';
 
 
-tab.add(
+tabItem.add(
 	new Panel({
 		$node: window.pageMainTabInputEmpty,
 		children: [
@@ -70,4 +70,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

@@ -9,14 +9,14 @@
 
 var Button    = require('../stb/ui/button'),
 	Panel     = require('../stb/ui/panel'),
-	TabItem = require('../stb/ui/tab.item'),
+	TabItem   = require('../stb/ui/tab.item'),
 	preloader = require('../stb/preloader'),
-	tab = new TabItem({
+	tabItem   = new TabItem({
 		$node: window.pageMainTabButton
 	});
 
 
-tab.title = 'Button';
+tabItem.title = 'Button';
 
 
 preloader.addListener('done', function () {
@@ -27,7 +27,7 @@ preloader.addListener('done', function () {
 Button.prototype.clickDuration = 1000;
 
 
-tab.add(
+tabItem.add(
 	new Panel({
 		$node: window.pageMainTabButtonSimple,
 		children: [
@@ -54,7 +54,7 @@ tab.add(
 					click: function () {
 						debug.log('click');
 
-						tab.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
+						tabItem.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
 					}
 				}
 			}),
@@ -110,4 +110,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

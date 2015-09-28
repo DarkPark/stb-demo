@@ -10,17 +10,17 @@
 var Panel    = require('../stb/ui/panel'),
 	Button   = require('../stb/ui/button'),
 	Grid     = require('../stb/ui/grid'),
-	TabItem = require('../stb/ui/tab.item'),
+	TabItem  = require('../stb/ui/tab.item'),
 	keys     = require('../stb/keys'),
 	gridData = require('./main.grid.data'),
-	tab = new TabItem({
+	tabItem  = new TabItem({
 		$node: window.pageMainTabGrid
 	}),
 	gridDataIndex = 0,
 	grid1, grid2;
 
 
-tab.title = 'Grid';
+tabItem.title = 'Grid';
 
 
 // add random disabled cells
@@ -41,7 +41,7 @@ Object.keys(gridData).forEach(function ( key ) {
 });
 
 
-tab.add(
+tabItem.add(
 	new Button({
 		$node: window.pageMainTabGridBtnPrev,
 		value: '<< prev grid data',
@@ -144,4 +144,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

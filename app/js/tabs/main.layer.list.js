@@ -16,7 +16,7 @@ var keys = require('../stb/keys'),
 	LayerList = require('../stb/ui/layer.list.js'),
 	LayerItem = require('../stb/ui/layer.item.js'),
 
-	tab = new TabItem({
+	tabItem = new TabItem({
 		$node: window.pageMainTabLayerList
 	}),
 
@@ -33,8 +33,8 @@ function parseLayerOrder () {
 	var order = 'Layers order: <ul>',
 		i;
 
-	for ( i = 0; i < tab.layerList.children.length; ++i ) {
-		order += '<li>' + tab.layerList.children[i].$body.innerHTML + ' at ' + (tab.layerList.children[i].zIndex - tab.layerList.zIndex) + '</li>';
+	for ( i = 0; i < tabItem.layerList.children.length; ++i ) {
+		order += '<li>' + tabItem.layerList.children[i].$body.innerHTML + ' at ' + (tabItem.layerList.children[i].zIndex - tabItem.layerList.zIndex) + '</li>';
 	}
 
 	order += '</ul>';
@@ -43,14 +43,15 @@ function parseLayerOrder () {
 }
 
 
-tab.title = 'LayerList';
+tabItem.title = 'LayerList';
+
 
 layers.forEach(function ( layer, index ) {
 	layer.$body.innerHTML = 'layer #' + index;
 });
 
-tab.add(
-	tab.input = new Input({
+tabItem.add(
+	tabItem.input = new Input({
 		events: {
 			input: function ( event ) {
 				var value;
@@ -82,7 +83,7 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].moveTop();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -91,7 +92,7 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].moveBottom();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -100,7 +101,7 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].moveUp();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -109,7 +110,7 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].moveDown();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -118,7 +119,7 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].hide();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
@@ -127,12 +128,12 @@ tab.add(
 		events: {
 			click: function () {
 				layers[layerAffectedIndex].show();
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
-	tab.layerOrder = new Panel(),
-	tab.layerList = new LayerList({
+	tabItem.layerOrder = new Panel(),
+	tabItem.layerList = new LayerList({
 		zIndex: 20,
 		children: layers
 	})
@@ -140,18 +141,18 @@ tab.add(
 
 
 //function hide ( event ) {
-//	if ( event.prev === tab ) {
-//		tab.parent.removeListener('item:change', hide);
-//		tab.layerList.hide();
+//	if ( event.prev === tabItem ) {
+//		tabItem.parent.removeListener('item:change', hide);
+//		tabItem.layerList.hide();
 //	}
 //}
 
-tab.addListener('activate', function () {
-	tab.layerOrder.$body.innerHTML = parseLayerOrder();
-	//tab.parent.addListener('item:change', hide);
+tabItem.addListener('activate', function () {
+	tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+	//tabItem.parent.addListener('item:change', hide);
 });
 
-tab.input.addListener('keydown', function ( event ) {
+tabItem.input.addListener('keydown', function ( event ) {
 	if ( event.code === keys.back ) {
 		event.stop = true;
 	}
@@ -159,4 +160,4 @@ tab.input.addListener('keydown', function ( event ) {
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

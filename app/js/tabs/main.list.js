@@ -10,8 +10,8 @@
 var Panel     = require('../stb/ui/panel'),
 	List      = require('../stb/ui/list'),
 	ScrollBar = require('../stb/ui/scroll.bar'),
-	TabItem = require('../stb/ui/tab.item'),
-	tab = new TabItem({
+	TabItem   = require('../stb/ui/tab.item'),
+	tabItem   = new TabItem({
 		$node: window.pageMainTabList
 	}),
 	listScrollN = new ScrollBar({
@@ -33,10 +33,10 @@ var Panel     = require('../stb/ui/panel'),
 	list2;
 
 
-tab.title = 'List';
+tabItem.title = 'List';
 
 
-tab.add(
+tabItem.add(
 	new Panel({
 		$node: window.pageMainTabListSimple,
 		children: [
@@ -170,4 +170,4 @@ setTimeout(function () {
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

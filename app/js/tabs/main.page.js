@@ -7,18 +7,18 @@
 
 'use strict';
 
-var Button = require('../stb/ui/button'),
-	router = require('../stb/router'),
+var Button  = require('../stb/ui/button'),
+	router  = require('../stb/router'),
 	TabItem = require('../stb/ui/tab.item'),
-	tab = new TabItem({
+	tabItem = new TabItem({
 		$node: window.pageMainTabPage
 	});
 
 
-tab.title = 'Page';
+tabItem.title = 'Page';
 
 
-tab.add(
+tabItem.add(
 	new Button({
 		value: 'switch to page Help',
 		events: {
@@ -31,4 +31,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

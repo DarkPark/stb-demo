@@ -10,32 +10,32 @@
 var Button       = require('../stb/ui/button'),
 	ModalBox     = require('../stb/ui/modal.box'),
 	ModalMessage = require('../stb/ui/modal.message'),
-	TabItem = require('../stb/ui/tab.item'),
-	tab = new TabItem({
+	TabItem      = require('../stb/ui/tab.item'),
+	tabItem      = new TabItem({
 		$node: window.pageMainTabModal
 	});
 
 
-tab.title = 'Modal';
+tabItem.title = 'Modal';
 
 
-tab.add(
+tabItem.add(
 	new Button({
 		value: 'show simple modal window',
 		events: {
 			click: function () {
-				tab.add(
-					tab.modal = new ModalBox({
+				tabItem.add(
+					tabItem.modal = new ModalBox({
 						events: {
 							click: function () {
-								console.log(tab.modal);
-								tab.modal.remove();
+								console.log(tabItem.modal);
+								tabItem.modal.remove();
 							}
 						}
 					})
 				);
-				tab.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
-				tab.modal.focus();
+				tabItem.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
+				tabItem.modal.focus();
 			}
 		}
 	}),
@@ -43,18 +43,18 @@ tab.add(
 		value: 'show modal window with a lot of text',
 		events: {
 			click: function () {
-				tab.add(
-					tab.modal = new ModalBox({
+				tabItem.add(
+					tabItem.modal = new ModalBox({
 						events: {
 							click: function () {
-								console.log(tab.modal);
-								tab.modal.remove();
+								console.log(tabItem.modal);
+								tabItem.modal.remove();
 							}
 						}
 					})
 				);
-				tab.modal.$body.innerText = new Array(300).join('text ');
-				tab.modal.focus();
+				tabItem.modal.$body.innerText = new Array(300).join('text ');
+				tabItem.modal.focus();
 			}
 		}
 	}),
@@ -62,17 +62,17 @@ tab.add(
 		value: 'show modal message',
 		events: {
 			click: function () {
-				tab.add(
-					tab.modal = new ModalMessage({
+				tabItem.add(
+					tabItem.modal = new ModalMessage({
 						events: {
 							click: function () {
-								console.log(tab.modal);
-								tab.modal.remove();
+								console.log(tabItem.modal);
+								tabItem.modal.remove();
 							}
 						}
 					})
 				);
-				tab.modal.focus();
+				tabItem.modal.focus();
 			}
 		}
 	})
@@ -80,4 +80,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;

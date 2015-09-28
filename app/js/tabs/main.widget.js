@@ -7,10 +7,10 @@
 
 'use strict';
 
-var Button = require('../stb/ui/button'),
-	Widget = require('../stb/ui/widget'),
+var Button  = require('../stb/ui/button'),
+	Widget  = require('../stb/ui/widget'),
 	TabItem = require('../stb/ui/tab.item'),
-	tab = new TabItem({
+	tabItem = new TabItem({
 		$node: window.pageMainTabWidget
 	}),
 	w1 = new Widget({
@@ -33,10 +33,10 @@ var Button = require('../stb/ui/button'),
 	});
 
 
-tab.title = 'Widget';
+tabItem.title = 'Widget';
 
 
-tab.add(
+tabItem.add(
 	new Button({
 		value: 'show local tab widget',
 		events: {
@@ -65,4 +65,4 @@ tab.add(
 
 
 // public
-module.exports = tab;
+module.exports = tabItem;
