@@ -382,7 +382,7 @@
 						 * @event module:stb/component~Component#add
 						 *
 						 * @type {Object}
-						 * @property {Component} child new component added
+						 * @property {Component} item new component added
 						 */
 						this.emit('add', {item: child});
 					}
@@ -725,7 +725,6 @@
 			 * @return {boolean} operation status
 			 *
 			 * @fires module:stb/ui/tab.item~TabItem#show
-			 * @fires module:stb/ui/tab.list~TabList#item:change
 			 */
 			TabItem.prototype.show = function ( data ) {
 				var prev = null;
@@ -747,10 +746,10 @@
 					Component.prototype.show.call(this, data);
 					this.parent.current = this;
 			
-					// there are some listeners
-					if ( this.parent.events['item:change'] ) {
-						this.parent.emit('item:change', {prev: prev, curr: this});
-					}
+					/*// there are some listeners
+					if ( this.parent.events['switch'] ) {
+						this.parent.emit('switch', {prev: prev, curr: this});
+					}*/
 			
 					return true;
 				}
@@ -2670,9 +2669,9 @@
 
 /***/ },
 /* 10 */
-/*!****************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/util.js ***!
-  \****************************************************/
+/*!************************!*\
+  !*** ./~/util/util.js ***!
+  \************************/
 /***/ function(module, exports, __webpack_require__) {
 
 			/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -3244,7 +3243,7 @@
 			 *     prototype.
 			 * @param {function} superCtor Constructor function to inherit prototype from.
 			 */
-			exports.inherits = __webpack_require__(/*! inherits */ 65);
+			exports.inherits = __webpack_require__(/*! inherits */ 63);
 			
 			exports._extend = function(origin, add) {
 			  // Don't do anything if add isn't an object
@@ -3262,7 +3261,7 @@
 			  return Object.prototype.hasOwnProperty.call(obj, prop);
 			}
 			
-			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! (webpack)/~/node-libs-browser/~/process/browser.js */ 64)))
+			/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/process/browser.js */ 64)))
 
 /***/ },
 /* 11 */
@@ -5212,7 +5211,7 @@
 			
 			
 			// enable colors in console
-			__webpack_require__(/*! tty-colors */ 63);
+			__webpack_require__(/*! tty-colors */ 65);
 			
 			
 			(function connect () {
@@ -6249,7 +6248,7 @@
 				// load external script
 				document.head.appendChild(dom.tag('script', {
 					type: 'text/javascript',
-					src: '//' + location.hostname + ':35729/livereload.js'
+					src: '//' + location.hostname + ':' + (config.livereload === true ? 35729 : config.livereload) + '/livereload.js'
 				}));
 			}
 
@@ -8265,6 +8264,7 @@
 			
 			/**
 			 * Layer item implementation.
+			 * All layer items are created visible by default.
 			 *
 			 * @constructor
 			 * @extends Component
@@ -8273,11 +8273,11 @@
 			 *
 			 * @example
 			 * var LayerItem = require('stb/ui/layer.item'),
-			 *     layer = new LayerItem({
-			 *         $node: document.getElementById('someId'),
+			 *     layerItem = new LayerItem({
+			 *         $node: window.someId,
 			 *         children: [
 			 *             new Panel({
-			 *                 $node: document.getElementById('anotherId')
+			 *                 $node: window.anotherId
 			 *             })
 			 *         ],
 			 *         events: {
@@ -8288,7 +8288,7 @@
 			 *         }
 			 *     });
 			 *
-			 * page.add(layer);
+			 * layerList.add(layerItem);
 			 */
 			function LayerItem ( config ) {
 				// sanitize
@@ -8299,18 +8299,8 @@
 					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
 				}
 			
-			
-				/**
-				 * Component z-index value.
-				 * @type {(boolean|number)}
-				 */
-				this.zIndex = false;
-			
 				// can't accept focus
 				config.focusable = config.focusable || false;
-			
-				// hidden by default
-				config.visible = config.visible || false;
 			
 				// set default className if classList property empty or undefined
 				config.className = 'layerItem ' + (config.className || '');
@@ -8325,267 +8315,112 @@
 			LayerItem.prototype.constructor = LayerItem;
 			
 			
-			if ( true ) {
-				// expose to the global scope
-				window.ComponentLayerItem = LayerItem;
-			}
+			/**
+			 * Delete this component and clear all associated events.
+			 */
+			LayerItem.prototype.remove = function () {
+				var map    = this.parent.map,
+					zIndex = this.$node.style.zIndex,
+					mapSize, i;
+			
+				// remove
+				map.splice(zIndex, 1);
+			
+				// reindex
+				for ( i = 0, mapSize = map.length; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
+			
+				// parent invoke
+				Component.prototype.remove.call(this);
+			
+				/*// there are some listeners
+				if ( this.parent.events['change'] ) {
+					// notify listeners
+					this.emit('change', {state: 'remove', item: this});
+				}*/
+			};
+			
+			
+			/**
+			 * Move layer by the given shift value.
+			 *
+			 * @private
+			 *
+			 * @param {number} shift direction and shift size
+			 * @param {string} type movement type
+			 *
+			 * @fires module:stb/ui/layer.item~LayerItem#move
+			 */
+			LayerItem.prototype.move = function ( shift, type ) {
+				var map     = this.parent.map,
+					mapSize = map.length,
+					zIndex  = Number(this.$node.style.zIndex),
+					i;
+			
+				if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+				if ( Number(shift) !== shift ) { throw new Error(__filename + ': shift must be a number'); }
+				if ( typeof type !== 'string' || type.length === 0 ) { throw new Error(__filename + ': wrong or empty type'); }
+			
+				// move
+				map.splice(zIndex, 1);
+				map.splice(zIndex + shift, 0, this);
+			
+				// reindex
+				for ( i = 0; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
+			
+				// there are some listeners
+				if ( this.events['move'] ) {
+					// notify listeners
+					this.emit('move', {shift: shift, type: type});
+				}
+			
+				/*// there are some listeners
+				if ( this.parent.events['change'] ) {
+					// notify listeners
+					this.emit('change', {state: event, item: this});
+				}*/
+			};
 			
 			
 			/**
 			 * Move layer up in the order of the list.
-			 * Does nothing if layer already at top.
 			 *
-			 * @param {object} [data] data for layer
-			 *
-			 * @return {boolean} apply result
-			 *
-			 * @fires module:stb/ui/layer.item~LayerItem#move:up
-			 * @fires module:stb/ui/layer.list~LayerList#item:change
+			 * @param {number} [step=1] shift size
 			 */
-			LayerItem.prototype.moveUp = function ( data ) {
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
-					if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
-				}
-			
-				if ( typeof this.zIndex === 'number' ) {
-					// z-index was provided
-					if ( this.zIndex < ( this.parent.children.length - 1 + this.parent.zIndex ) ) {
-						this.parent.map[this.zIndex] = this.parent.map[this.zIndex + 1];
-						this.parent.map[this.zIndex].$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex].zIndex = this.zIndex;
-						++this.zIndex;
-						this.$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex] = this;
-			
-						if ( this.events['move:up'] ) {
-							this.emit('move:up', {data: data});
-						}
-			
-						if ( this.parent.events['item:change'] ) {
-							this.emit('item:change', {state: 'move:up', component: this});
-						}
-			
-						return true;
-					}
-				} else if ( this.$node.nextSibling ) {
-					// logic with DOM level manipulation
-					// not in the end
-			
-					if ( this.$node.nextSibling === this.parent.$body.lastChild ) {
-						// penultimate element
-						this.parent.$body.appendChild(this.$node);
-					} else {
-						this.parent.$body.insertBefore(this.$node, this.$node.nextSibling.nextSibling);
-					}
-			
-			
-					if ( this.events['move:up'] ) {
-						this.emit('move:up', {data: data});
-					}
-			
-					if ( this.parent.events['item:change'] ) {
-						this.parent.emit('item:change', {state: 'move:up', component: this});
-					}
-			
-					return true;
-				}
-			
-				return false;
+			LayerItem.prototype.moveUp = function ( step ) {
+				this.move(step || 1, 'up');
 			};
 			
 			
 			/**
 			 * Move layer down in the order of the list.
-			 * Does nothing if layer already at bottom.
 			 *
-			 * @param {object} [data] data for layer
-			 *
-			 * @return {boolean} apply result
-			 *
-			 * @fires module:stb/ui/layer.item~LayerItem#move:down
-			 * @fires module:stb/ui/layer.list~LayerList#item:change
+			 * @param {number} [step=-1] shift size
 			 */
-			LayerItem.prototype.moveDown = function ( data ) {
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
-					if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
-				}
-			
-				if ( typeof this.zIndex === 'number' ) {
-					// z-index was provided
-					if ( this.zIndex > this.parent.zIndex ) {
-						this.parent.map[this.zIndex] = this.parent.map[this.zIndex - 1];
-						this.parent.map[this.zIndex].$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex].zIndex = this.zIndex;
-						--this.zIndex;
-						this.$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex] = this;
-			
-						if ( this.events['move:up'] ) {
-							this.emit('move:up', {data: data});
-						}
-			
-						if ( this.parent.events['item:change'] ) {
-							this.emit('item:change', {state: 'move:down', component: this});
-						}
-			
-						return true;
-					}
-				} else if ( this.$node.previousSibling ) {
-					// logic with DOM level manipulation
-					// not in the start
-			
-					this.parent.$body.insertBefore(this.$node, this.$node.previousSibling);
-			
-					if ( this.events['move:down'] ) {
-						this.emit('move:down', {data: data});
-					}
-			
-					if ( this.parent.events['item:change'] ) {
-						this.parent.emit('item:change', {state: 'move:down', component: this});
-					}
-			
-					return true;
-				}
-			
-				return false;
+			LayerItem.prototype.moveDown = function ( step ) {
+				this.move(-step || -1, 'down');
 			};
 			
 			
 			/**
 			 * Move layer to the top of the layers list.
-			 * Does nothing if layer already at bottom.
-			 *
-			 * @param {object} [data] data for layer
-			 *
-			 * @return {boolean} apply result
-			 *
-			 * @fires module:stb/ui/layer.item~LayerItem#move:top
-			 * @fires module:stb/ui/layer.list~LayerList#item:change
 			 */
-			LayerItem.prototype.moveTop = function ( data ) {
-				var i, size;
-			
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
-					if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
-				}
-			
-				if ( typeof this.zIndex === 'number' ) {
-					// z-index was provided
-					debug.info([this.zIndex, this.parent.children.length, this.parent.zIndex]);
-			
-					if ( this.zIndex < ( this.parent.children.length + this.parent.zIndex - 1 ) ) {
-						// not on the top
-			
-						// loop through the layers which are upper then current
-						for ( i = this.zIndex, size = this.parent.zIndex + this.parent.children.length - 1; i < size; ++i ) {
-							debug.log('moving layer from ' + (i + 1) + ' to ' + i + ' zIndex');
-							this.parent.map[i] = this.parent.map[i + 1];
-							this.parent.map[i].$node.style.zIndex = i;
-							this.parent.map[i].zIndex = i;
-						}
-						this.zIndex = this.parent.children.length + this.parent.zIndex - 1;
-						this.$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex] = this;
-			
-						if ( this.events['move:top'] ) {
-							this.emit('move:top', {data: data});
-						}
-			
-						if ( this.parent.events['item:change'] ) {
-							this.emit('item:change', {state: 'move:top', component: this});
-						}
-			
-						return true;
-					}
-				} else if ( this.$node !== this.parent.$body.lastChild ) {
-					// logic with DOM level manipulation
-					// not in the end
-			
-					this.parent.$body.appendChild(this.$node);
-			
-					if ( this.events['move:top'] ) {
-						this.emit('move:top', {data: data});
-					}
-			
-					if ( this.parent.events['item:change'] ) {
-						this.parent.emit('item:change', {state: 'move:top', component: this});
-					}
-			
-					return true;
-				}
-			
-				return false;
+			LayerItem.prototype.moveTop = function () {
+				this.move(this.parent.map.length, 'top');
 			};
 			
 			
 			/**
 			 * Move layer to the bottom of the layers list.
-			 * Does nothing if layer already at top.
-			 *
-			 * @param {object} [data] data for layer
-			 *
-			 * @return {boolean} apply result
-			 *
-			 * @fires module:stb/ui/layer.item~LayerItem#move:bottom
-			 * @fires module:stb/ui/layer.list~LayerList#item:change
 			 */
-			LayerItem.prototype.moveBottom = function ( data ) {
-				var i, size;
-			
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for layer item'); }
-					if ( this.parent.constructor.name !== 'LayerList' ) { throw new Error(__filename + ': no parent for layer item'); }
-				}
-			
-				if ( typeof this.zIndex === 'number' ) {
-					// z-index was provided
-			
-					if ( this.zIndex > this.parent.zIndex ) {
-						// not on the top
-			
-						// loop through the layers which are below then current
-						for ( i = this.zIndex, size = this.parent.zIndex; i > size; --i ) {
-							debug.log('moving layer from ' + (i - 1) + ' to ' + i + ' zIndex');
-							this.parent.map[i] = this.parent.map[i - 1];
-							this.parent.map[i].$node.style.zIndex = i;
-							this.parent.map[i].zIndex = i;
-						}
-						this.zIndex = this.parent.zIndex;
-						this.$node.style.zIndex = this.zIndex;
-						this.parent.map[this.zIndex] = this;
-			
-						if ( this.events['move:bottom'] ) {
-							this.emit('move:bottom', {data: data});
-						}
-			
-						if ( this.parent.events['item:change'] ) {
-							this.emit('item:change', {state: 'move:bottom', component: this});
-						}
-			
-						return true;
-					}
-				} else if ( this.$node !== this.parent.$body.firstChild ) {
-					// logic with DOM level manipulation
-					// not at the start
-			
-					this.parent.$body.insertBefore(this.$node, this.parent.$body.firstChild);
-			
-					if ( this.events['move:bottom'] ) {
-						this.emit('move:bottom', {data: data});
-					}
-			
-					if ( this.parent.events['item:change'] ) {
-						this.parent.emit('item:change', {state: 'move:bottom', component: this});
-					}
-			
-					return true;
-				}
-			
-				return false;
+			LayerItem.prototype.moveBottom = function () {
+				this.move(-this.$node.style.zIndex, 'bottom');
 			};
+			
+			
+			if ( true ) {
+				// expose to the global scope
+				window.ComponentLayerItem = LayerItem;
+			}
 			
 			
 			// public
@@ -8618,59 +8453,35 @@
 			 * @extends Component
 			 *
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
-			 * @param {number} [config.zIndex] if you need z-index layer logic, provide config.zIndex to the constructor
 			 *
 			 * @example
 			 * var LayerList = require('stb/ui/layer.list'),
-			 *     ll = new LayerList({
+			 *     layerList = new LayerList({
 			 *         $node: window.someElementId,
 			 *         children: [
 			 *             new LayerItem({
-			 *                 $node: document.anotherElementId
+			 *                 $node: window.anotherElementId
 			 *             })
 			 *         ]
 			 *     });
 			 *
-			 * page.add(ll);
+			 * page.add(layerList);
 			 */
 			function LayerList ( config ) {
-				var self = this;
-			
 				// sanitize
 				config = config || {};
 			
 				if ( true ) {
 					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
 					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.current && config.current.constructor.name !== 'LayerItem' ) { throw new Error(__filename + ': wrong config.current type'); }
 				}
 			
 				/**
-				 * z-index value.
-				 * @type {(boolean|number)}
-				 */
-				this.zIndex = false;
-			
-				/**
-				 * Hash table for z-index layers.
+				 * z-index to layer items map.
+				 *
 				 * @type {Array}
 				 */
-				this.map = {};
-			
-				// navigation
-				if ( typeof config.zIndex === 'number' ) {
-					// apply
-					this.zIndex = config.zIndex;
-			
-					if ( config.children ) {
-						// if children provided, setup their z-index
-						config.children.forEach(function ( item, index ) {
-							item.zIndex = index + self.zIndex;
-							item.$node.style.zIndex = item.zIndex;
-							self.map[item.zIndex] = item;
-						});
-					}
-				}
+				this.map = [];
 			
 				// can't accept focus
 				config.focusable = config.focusable || false;
@@ -8680,22 +8491,32 @@
 			
 				// parent constructor call
 				Component.call(this, config);
-			
-				if ( typeof this.zIndex === 'number' ) {
-					// setup z-index property to each children
-					this.addListener('add', function ( event ) {
-						event.item.zIndex = this.children.length + this.zIndex - 1;
-						event.item.$node.style.zIndex = event.item.zIndex;
-						debug.info(event.item.zIndex, 'adding layer with z index');
-						self.map[event.item.zIndex] = event.item;
-					});
-				}
 			}
 			
 			
 			// inheritance
 			LayerList.prototype = Object.create(Component.prototype);
 			LayerList.prototype.constructor = LayerList;
+			
+			
+			/**
+			 * Add a new component(s) as a child.
+			 */
+			LayerList.prototype.add = function () {
+				var i, child;
+			
+				// parent invoke
+				Component.prototype.add.apply(this, arguments);
+			
+				// walk through all the given elements
+				for ( i = 0; i < arguments.length; i++ ) {
+					child = arguments[i];
+			
+					// rework map and indexes
+					child.$node.style.zIndex = this.map.length;
+					this.map[this.map.length] = child;
+				}
+			};
 			
 			
 			if ( true ) {
@@ -9369,8 +9190,8 @@
 				// parent constructor call
 				Component.call(this, config);
 			
-				// make some tab active
 				if ( config.current ) {
+					// make the given tab active
 					config.current.show();
 				}
 			}
@@ -9379,42 +9200,6 @@
 			// inheritance
 			TabList.prototype = Object.create(Component.prototype);
 			TabList.prototype.constructor = TabList;
-			
-			
-			/**
-			 * Insert tab into specific index.
-			 * If index not provided, insert tab into the end.
-			 *
-			 * @param tab
-			 * @param index
-			 */
-			TabList.prototype.insert = function ( tab, index ) {
-				var prevIndex;
-			
-				if ( true ) {
-					if ( tab.constructor.name !== 'TabItem' ) { throw 'not a tab'; }
-				}
-			
-				prevIndex = this.children.indexOf(tab);
-			
-				if ( prevIndex !== -1 ) {
-					this.children.splice(prevIndex, 1);
-					this.$body.removeChild(tab.$node);
-				}
-			
-				debug.log('insert tab into ' + index);
-			
-				if ( index === this.children.length ) {
-					this.$body.appendChild(tab.$node);
-				} else {
-					this.$body.insertBefore(tab.$node, this.$body.children[index]);
-				}
-				this.children.splice(index, 0, tab);
-			
-				if ( !tab.parent ) {
-					tab.parent = this;
-				}
-			};
 			
 			
 			if ( true ) {
@@ -9525,14 +9310,14 @@
 			
 			var Button    = __webpack_require__(/*! ../stb/ui/button */ 6),
 				Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
 				preloader = __webpack_require__(/*! ../stb/preloader */ 31),
-				tab = new TabItem({
+				tabItem   = new TabItem({
 					$node: window.pageMainTabButton
 				});
 			
 			
-			tab.title = 'Button';
+			tabItem.title = 'Button';
 			
 			
 			preloader.addListener('done', function () {
@@ -9543,7 +9328,7 @@
 			Button.prototype.clickDuration = 1000;
 			
 			
-			tab.add(
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabButtonSimple,
 					children: [
@@ -9570,7 +9355,7 @@
 								click: function () {
 									debug.log('click');
 			
-									tab.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
+									tabItem.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
 								}
 							}
 						}),
@@ -9626,7 +9411,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -9647,15 +9432,16 @@
 			
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				CheckBox = __webpack_require__(/*! ../stb/ui/check.box */ 35),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				tabItem  = new TabItem({
 					$node: window.pageMainTabCheckBox
 				});
 			
 			
-			tab.title = 'CheckBox';
+			tabItem.title = 'CheckBox';
 			
-			tab.add(
+			
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabCheckBoxSimple,
 					children: [
@@ -9675,7 +9461,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10035,17 +9821,17 @@
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				Button   = __webpack_require__(/*! ../stb/ui/button */ 6),
 				Grid     = __webpack_require__(/*! ../stb/ui/grid */ 36),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
 				keys     = __webpack_require__(/*! ../stb/keys */ 3),
 				gridData = __webpack_require__(/*! ./main.grid.data */ 46),
-				tab = new TabItem({
+				tabItem  = new TabItem({
 					$node: window.pageMainTabGrid
 				}),
 				gridDataIndex = 0,
 				grid1, grid2;
 			
 			
-			tab.title = 'Grid';
+			tabItem.title = 'Grid';
 			
 			
 			// add random disabled cells
@@ -10066,7 +9852,7 @@
 			});
 			
 			
-			tab.add(
+			tabItem.add(
 				new Button({
 					$node: window.pageMainTabGridBtnPrev,
 					value: '<< prev grid data',
@@ -10169,7 +9955,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10188,18 +9974,18 @@
 			
 			'use strict';
 			
-			var Input = __webpack_require__(/*! ../stb/ui/input */ 14),
-				Panel = __webpack_require__(/*! ../stb/ui/panel */ 4),
+			var Input   = __webpack_require__(/*! ../stb/ui/input */ 14),
+				Panel   = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				tabItem = new TabItem({
 					$node: window.pageMainTabInput
 				});
 			
 			
-			tab.title = 'Input';
+			tabItem.title = 'Input';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabInputEmpty,
 					children: [
@@ -10251,7 +10037,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10279,25 +10065,28 @@
 				LayerList = __webpack_require__(/*! ../stb/ui/layer.list.js */ 38),
 				LayerItem = __webpack_require__(/*! ../stb/ui/layer.item.js */ 37),
 			
-				tab = new TabItem({
+				tabItem = new TabItem({
 					$node: window.pageMainTabLayerList
 				}),
 			
 				layers = [
-					new LayerItem(),
-					new LayerItem(),
-					new LayerItem()
+					new LayerItem({id: 'layer-0'}),
+					new LayerItem({id: 'layer-1'}),
+					new LayerItem({id: 'layer-2'}),
+					new LayerItem({id: 'layer-3'}),
+					new LayerItem({id: 'layer-4'}),
+					new LayerItem({id: 'layer-5'})
 				],
 			
-				layerAffectedIndex = 0;
+				layerAffectedIndex = 2;
 			
 			
 			function parseLayerOrder () {
 				var order = 'Layers order: <ul>',
 					i;
 			
-				for ( i = 0; i < tab.layerList.children.length; ++i ) {
-					order += '<li>' + tab.layerList.children[i].$body.innerHTML + ' at ' + (tab.layerList.children[i].zIndex - tab.layerList.zIndex) + '</li>';
+				for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
+					order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
 				}
 			
 				order += '</ul>';
@@ -10306,14 +10095,17 @@
 			}
 			
 			
-			tab.title = 'LayerList';
+			tabItem.title = 'LayerList';
+			
 			
 			layers.forEach(function ( layer, index ) {
 				layer.$body.innerHTML = 'layer #' + index;
 			});
 			
-			tab.add(
-				tab.input = new Input({
+			
+			tabItem.add(
+				tabItem.input = new Input({
+					value: String(layerAffectedIndex),
 					events: {
 						input: function ( event ) {
 							var value;
@@ -10341,80 +10133,118 @@
 					}
 				}),
 				new Button({
-					value: 'set layer to top',
+					value: 'move top',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].moveTop();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].moveTop();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
 				new Button({
-					value: 'set layer to bottom',
+					value: 'move bottom',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].moveBottom();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].moveBottom();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
 				new Button({
-					value: 'up layer',
+					value: 'move up',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].moveUp();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].moveUp();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
 				new Button({
-					value: 'down layer',
+					value: 'move down',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].moveDown();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].moveDown();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
 				new Button({
-					value: 'hide layer',
+					value: 'hide',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].hide();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].hide();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
 				new Button({
-					value: 'show layer',
+					value: 'show',
 					events: {
 						click: function () {
-							layers[layerAffectedIndex].show();
-							tab.layerOrder.$body.innerHTML = parseLayerOrder();
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].show();
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
 						}
 					}
 				}),
-				tab.layerOrder = new Panel(),
-				tab.layerList = new LayerList({
-					zIndex: 20,
+				new Button({
+					value: 'add',
+					events: {
+						click: function () {
+							var layerItem = new LayerItem({id: 'layer-' + layers.length});
+			
+							layers.push(layerItem);
+							tabItem.layerList.add(layerItem);
+			
+							layerItem.$body.innerHTML = 'layer #' + (layers.length - 1);
+			
+							tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+						}
+					}
+				}),
+				new Button({
+					value: 'remove',
+					events: {
+						click: function () {
+							if ( layers[layerAffectedIndex] ) {
+								layers[layerAffectedIndex].remove();
+								layers[layerAffectedIndex] = null;
+			
+								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+							}
+						}
+					}
+				}),
+				tabItem.layerOrder = new Panel(),
+				tabItem.layerList = new LayerList({
 					children: layers
 				})
 			);
 			
 			
-			//function hide ( event ) {
-			//	if ( event.prev === tab ) {
-			//		tab.parent.removeListener('item:change', hide);
-			//		tab.layerList.hide();
-			//	}
-			//}
-			
-			tab.addListener('activate', function () {
-				tab.layerOrder.$body.innerHTML = parseLayerOrder();
-				//tab.parent.addListener('item:change', hide);
+			tabItem.addListener('show', function () {
+				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				//tabItem.parent.addListener('item:change', hide);
 			});
 			
-			tab.input.addListener('keydown', function ( event ) {
+			tabItem.input.addListener('keydown', function ( event ) {
 				if ( event.code === keys.back ) {
 					event.stop = true;
 				}
@@ -10422,7 +10252,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10444,8 +10274,8 @@
 			var Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				List      = __webpack_require__(/*! ../stb/ui/list */ 15),
 				ScrollBar = __webpack_require__(/*! ../stb/ui/scroll.bar */ 41),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				tabItem   = new TabItem({
 					$node: window.pageMainTabList
 				}),
 				listScrollN = new ScrollBar({
@@ -10467,10 +10297,10 @@
 				list2;
 			
 			
-			tab.title = 'List';
+			tabItem.title = 'List';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabListSimple,
 					children: [
@@ -10604,7 +10434,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10626,32 +10456,32 @@
 			var Button       = __webpack_require__(/*! ../stb/ui/button */ 6),
 				ModalBox     = __webpack_require__(/*! ../stb/ui/modal.box */ 16),
 				ModalMessage = __webpack_require__(/*! ../stb/ui/modal.message */ 39),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				TabItem      = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				tabItem      = new TabItem({
 					$node: window.pageMainTabModal
 				});
 			
 			
-			tab.title = 'Modal';
+			tabItem.title = 'Modal';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Button({
 					value: 'show simple modal window',
 					events: {
 						click: function () {
-							tab.add(
-								tab.modal = new ModalBox({
+							tabItem.add(
+								tabItem.modal = new ModalBox({
 									events: {
 										click: function () {
-											console.log(tab.modal);
-											tab.modal.remove();
+											console.log(tabItem.modal);
+											tabItem.modal.remove();
 										}
 									}
 								})
 							);
-							tab.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
-							tab.modal.focus();
+							tabItem.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
+							tabItem.modal.focus();
 						}
 					}
 				}),
@@ -10659,18 +10489,18 @@
 					value: 'show modal window with a lot of text',
 					events: {
 						click: function () {
-							tab.add(
-								tab.modal = new ModalBox({
+							tabItem.add(
+								tabItem.modal = new ModalBox({
 									events: {
 										click: function () {
-											console.log(tab.modal);
-											tab.modal.remove();
+											console.log(tabItem.modal);
+											tabItem.modal.remove();
 										}
 									}
 								})
 							);
-							tab.modal.$body.innerText = new Array(300).join('text ');
-							tab.modal.focus();
+							tabItem.modal.$body.innerText = new Array(300).join('text ');
+							tabItem.modal.focus();
 						}
 					}
 				}),
@@ -10678,17 +10508,17 @@
 					value: 'show modal message',
 					events: {
 						click: function () {
-							tab.add(
-								tab.modal = new ModalMessage({
+							tabItem.add(
+								tabItem.modal = new ModalMessage({
 									events: {
 										click: function () {
-											console.log(tab.modal);
-											tab.modal.remove();
+											console.log(tabItem.modal);
+											tabItem.modal.remove();
 										}
 									}
 								})
 							);
-							tab.modal.focus();
+							tabItem.modal.focus();
 						}
 					}
 				})
@@ -10696,7 +10526,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10715,18 +10545,18 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! ../stb/ui/button */ 6),
-				router = __webpack_require__(/*! ../stb/router */ 8),
+			var Button  = __webpack_require__(/*! ../stb/ui/button */ 6),
+				router  = __webpack_require__(/*! ../stb/router */ 8),
 				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				tabItem = new TabItem({
 					$node: window.pageMainTabPage
 				});
 			
 			
-			tab.title = 'Page';
+			tabItem.title = 'Page';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Button({
 					value: 'switch to page Help',
 					events: {
@@ -10739,7 +10569,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10758,17 +10588,17 @@
 			
 			'use strict';
 			
-			var Panel = __webpack_require__(/*! ../stb/ui/panel */ 4),
+			var Panel   = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				tabItem = new TabItem({
 					$node: window.pageMainTabPanel
 				});
 			
 			
-			tab.title = 'Panel';
+			tabItem.title = 'Panel';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabPanelSimple
 				}),
@@ -10787,7 +10617,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10808,17 +10638,17 @@
 			
 			var Panel       = __webpack_require__(/*! ../stb/ui/panel */ 4),
 				ProgressBar = __webpack_require__(/*! ../stb/ui/progress.bar */ 40),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+				TabItem     = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
 				keys        = __webpack_require__(/*! ../stb/keys */ 3),
-				tab = new TabItem({
+				tabItem     = new TabItem({
 					$node: window.pageMainTabProgressBar
 				});
 			
 			
-			tab.title = 'ProgressBar';
+			tabItem.title = 'ProgressBar';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Panel({
 					$node: window.pageMainTabProgressBarEmpty,
 					children: [
@@ -10893,7 +10723,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -10912,10 +10742,10 @@
 			
 			'use strict';
 			
-			var Button = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Widget = __webpack_require__(/*! ../stb/ui/widget */ 43),
+			var Button  = __webpack_require__(/*! ../stb/ui/button */ 6),
+				Widget  = __webpack_require__(/*! ../stb/ui/widget */ 43),
 				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tab = new TabItem({
+				tabItem = new TabItem({
 					$node: window.pageMainTabWidget
 				}),
 				w1 = new Widget({
@@ -10938,10 +10768,10 @@
 				});
 			
 			
-			tab.title = 'Widget';
+			tabItem.title = 'Widget';
 			
 			
-			tab.add(
+			tabItem.add(
 				new Button({
 					value: 'show local tab widget',
 					events: {
@@ -10970,7 +10800,7 @@
 			
 			
 			// public
-			module.exports = tab;
+			module.exports = tabItem;
 
 
 /***/ },
@@ -11548,6 +11378,138 @@
 
 /***/ },
 /* 63 */
+/*!****************************************!*\
+  !*** ./~/inherits/inherits_browser.js ***!
+  \****************************************/
+/***/ function(module, exports) {
+
+			if (typeof Object.create === 'function') {
+			  // implementation from standard node.js 'util' module
+			  module.exports = function inherits(ctor, superCtor) {
+			    ctor.super_ = superCtor
+			    ctor.prototype = Object.create(superCtor.prototype, {
+			      constructor: {
+			        value: ctor,
+			        enumerable: false,
+			        writable: true,
+			        configurable: true
+			      }
+			    });
+			  };
+			} else {
+			  // old school shim for old browsers
+			  module.exports = function inherits(ctor, superCtor) {
+			    ctor.super_ = superCtor
+			    var TempCtor = function () {}
+			    TempCtor.prototype = superCtor.prototype
+			    ctor.prototype = new TempCtor()
+			    ctor.prototype.constructor = ctor
+			  }
+			}
+
+
+/***/ },
+/* 64 */
+/*!******************************!*\
+  !*** ./~/process/browser.js ***!
+  \******************************/
+/***/ function(module, exports) {
+
+			// shim for using process in browser
+			
+			var process = module.exports = {};
+			var queue = [];
+			var draining = false;
+			var currentQueue;
+			var queueIndex = -1;
+			
+			function cleanUpNextTick() {
+			    draining = false;
+			    if (currentQueue.length) {
+			        queue = currentQueue.concat(queue);
+			    } else {
+			        queueIndex = -1;
+			    }
+			    if (queue.length) {
+			        drainQueue();
+			    }
+			}
+			
+			function drainQueue() {
+			    if (draining) {
+			        return;
+			    }
+			    var timeout = setTimeout(cleanUpNextTick);
+			    draining = true;
+			
+			    var len = queue.length;
+			    while(len) {
+			        currentQueue = queue;
+			        queue = [];
+			        while (++queueIndex < len) {
+			            if (currentQueue) {
+			                currentQueue[queueIndex].run();
+			            }
+			        }
+			        queueIndex = -1;
+			        len = queue.length;
+			    }
+			    currentQueue = null;
+			    draining = false;
+			    clearTimeout(timeout);
+			}
+			
+			process.nextTick = function (fun) {
+			    var args = new Array(arguments.length - 1);
+			    if (arguments.length > 1) {
+			        for (var i = 1; i < arguments.length; i++) {
+			            args[i - 1] = arguments[i];
+			        }
+			    }
+			    queue.push(new Item(fun, args));
+			    if (queue.length === 1 && !draining) {
+			        setTimeout(drainQueue, 0);
+			    }
+			};
+			
+			// v8 likes predictible objects
+			function Item(fun, array) {
+			    this.fun = fun;
+			    this.array = array;
+			}
+			Item.prototype.run = function () {
+			    this.fun.apply(null, this.array);
+			};
+			process.title = 'browser';
+			process.browser = true;
+			process.env = {};
+			process.argv = [];
+			process.version = ''; // empty string to avoid regexp issues
+			process.versions = {};
+			
+			function noop() {}
+			
+			process.on = noop;
+			process.addListener = noop;
+			process.once = noop;
+			process.off = noop;
+			process.removeListener = noop;
+			process.removeAllListeners = noop;
+			process.emit = noop;
+			
+			process.binding = function (name) {
+			    throw new Error('process.binding is not supported');
+			};
+			
+			process.cwd = function () { return '/' };
+			process.chdir = function (dir) {
+			    throw new Error('process.chdir is not supported');
+			};
+			process.umask = function() { return 0; };
+
+
+/***/ },
+/* 65 */
 /*!*******************************!*\
   !*** ./~/tty-colors/index.js ***!
   \*******************************/
@@ -11611,141 +11573,10 @@
 
 
 /***/ },
-/* 64 */
-/*!**********************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/process/browser.js ***!
-  \**********************************************************/
-/***/ function(module, exports) {
-
-			// shim for using process in browser
-			
-			var process = module.exports = {};
-			var queue = [];
-			var draining = false;
-			var currentQueue;
-			var queueIndex = -1;
-			
-			function cleanUpNextTick() {
-			    draining = false;
-			    if (currentQueue.length) {
-			        queue = currentQueue.concat(queue);
-			    } else {
-			        queueIndex = -1;
-			    }
-			    if (queue.length) {
-			        drainQueue();
-			    }
-			}
-			
-			function drainQueue() {
-			    if (draining) {
-			        return;
-			    }
-			    var timeout = setTimeout(cleanUpNextTick);
-			    draining = true;
-			
-			    var len = queue.length;
-			    while(len) {
-			        currentQueue = queue;
-			        queue = [];
-			        while (++queueIndex < len) {
-			            currentQueue[queueIndex].run();
-			        }
-			        queueIndex = -1;
-			        len = queue.length;
-			    }
-			    currentQueue = null;
-			    draining = false;
-			    clearTimeout(timeout);
-			}
-			
-			process.nextTick = function (fun) {
-			    var args = new Array(arguments.length - 1);
-			    if (arguments.length > 1) {
-			        for (var i = 1; i < arguments.length; i++) {
-			            args[i - 1] = arguments[i];
-			        }
-			    }
-			    queue.push(new Item(fun, args));
-			    if (queue.length === 1 && !draining) {
-			        setTimeout(drainQueue, 0);
-			    }
-			};
-			
-			// v8 likes predictible objects
-			function Item(fun, array) {
-			    this.fun = fun;
-			    this.array = array;
-			}
-			Item.prototype.run = function () {
-			    this.fun.apply(null, this.array);
-			};
-			process.title = 'browser';
-			process.browser = true;
-			process.env = {};
-			process.argv = [];
-			process.version = ''; // empty string to avoid regexp issues
-			process.versions = {};
-			
-			function noop() {}
-			
-			process.on = noop;
-			process.addListener = noop;
-			process.once = noop;
-			process.off = noop;
-			process.removeListener = noop;
-			process.removeAllListeners = noop;
-			process.emit = noop;
-			
-			process.binding = function (name) {
-			    throw new Error('process.binding is not supported');
-			};
-			
-			// TODO(shtylman)
-			process.cwd = function () { return '/' };
-			process.chdir = function (dir) {
-			    throw new Error('process.chdir is not supported');
-			};
-			process.umask = function() { return 0; };
-
-
-/***/ },
-/* 65 */
-/*!***************************************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/~/inherits/inherits_browser.js ***!
-  \***************************************************************************/
-/***/ function(module, exports) {
-
-			if (typeof Object.create === 'function') {
-			  // implementation from standard node.js 'util' module
-			  module.exports = function inherits(ctor, superCtor) {
-			    ctor.super_ = superCtor
-			    ctor.prototype = Object.create(superCtor.prototype, {
-			      constructor: {
-			        value: ctor,
-			        enumerable: false,
-			        writable: true,
-			        configurable: true
-			      }
-			    });
-			  };
-			} else {
-			  // old school shim for old browsers
-			  module.exports = function inherits(ctor, superCtor) {
-			    ctor.super_ = superCtor
-			    var TempCtor = function () {}
-			    TempCtor.prototype = superCtor.prototype
-			    ctor.prototype = new TempCtor()
-			    ctor.prototype.constructor = ctor
-			  }
-			}
-
-
-/***/ },
 /* 66 */
-/*!***********************************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/util/support/isBufferBrowser.js ***!
-  \***********************************************************************/
+/*!*******************************************!*\
+  !*** ./~/util/support/isBufferBrowser.js ***!
+  \*******************************************/
 /***/ function(module, exports) {
 
 			module.exports = function isBuffer(arg) {

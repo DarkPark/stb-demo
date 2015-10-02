@@ -281,7 +281,6 @@ a {
   visibility: inherit;
   width: inherit;
   height: inherit;
-  display: block;
 }
 .component.tabItem.hidden {
   visibility: hidden;
@@ -425,6 +424,14 @@ a {
   width: 100%;
   height: 100px;
   line-height: 100px;
+}
+#pageMainTabLayerList ul {
+  margin: 0;
+  margin-top: 2%;
+}
+#pageMainTabLayerList li > div {
+  display: inline;
+  color: #555;
 }
 #pageHelp {
   text-align: center;
