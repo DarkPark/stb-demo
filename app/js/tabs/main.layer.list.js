@@ -21,20 +21,23 @@ var keys = require('../stb/keys'),
 	}),
 
 	layers = [
-		new LayerItem(),
-		new LayerItem(),
-		new LayerItem()
+		new LayerItem({id: 'layer-0'}),
+		new LayerItem({id: 'layer-1'}),
+		new LayerItem({id: 'layer-2'}),
+		new LayerItem({id: 'layer-3'}),
+		new LayerItem({id: 'layer-4'}),
+		new LayerItem({id: 'layer-5'})
 	],
 
-	layerAffectedIndex = 0;
+	layerAffectedIndex = 2;
 
 
 function parseLayerOrder () {
 	var order = 'Layers order: <ul>',
 		i;
 
-	for ( i = 0; i < tabItem.layerList.children.length; ++i ) {
-		order += '<li>' + tabItem.layerList.children[i].$body.innerHTML + ' at ' + (tabItem.layerList.children[i].zIndex - tabItem.layerList.zIndex) + '</li>';
+	for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
+		order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
 	}
 
 	order += '</ul>';
@@ -50,8 +53,10 @@ layers.forEach(function ( layer, index ) {
 	layer.$body.innerHTML = 'layer #' + index;
 });
 
+
 tabItem.add(
 	tabItem.input = new Input({
+		value: String(layerAffectedIndex),
 		events: {
 			input: function ( event ) {
 				var value;
@@ -79,75 +84,113 @@ tabItem.add(
 		}
 	}),
 	new Button({
-		value: 'set layer to top',
+		value: 'move top',
 		events: {
 			click: function () {
-				layers[layerAffectedIndex].moveTop();
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].moveTop();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'move bottom',
+		events: {
+			click: function () {
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].moveBottom();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'move up',
+		events: {
+			click: function () {
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].moveUp();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'move down',
+		events: {
+			click: function () {
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].moveDown();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'hide',
+		events: {
+			click: function () {
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].hide();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'show',
+		events: {
+			click: function () {
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].show();
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
+			}
+		}
+	}),
+	new Button({
+		value: 'add',
+		events: {
+			click: function () {
+				var layerItem = new LayerItem({id: 'layer-' + layers.length});
+
+				layers.push(layerItem);
+				tabItem.layerList.add(layerItem);
+
+				layerItem.$body.innerHTML = 'layer #' + (layers.length - 1);
+
 				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 			}
 		}
 	}),
 	new Button({
-		value: 'set layer to bottom',
+		value: 'remove',
 		events: {
 			click: function () {
-				layers[layerAffectedIndex].moveBottom();
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-			}
-		}
-	}),
-	new Button({
-		value: 'up layer',
-		events: {
-			click: function () {
-				layers[layerAffectedIndex].moveUp();
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-			}
-		}
-	}),
-	new Button({
-		value: 'down layer',
-		events: {
-			click: function () {
-				layers[layerAffectedIndex].moveDown();
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-			}
-		}
-	}),
-	new Button({
-		value: 'hide layer',
-		events: {
-			click: function () {
-				layers[layerAffectedIndex].hide();
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-			}
-		}
-	}),
-	new Button({
-		value: 'show layer',
-		events: {
-			click: function () {
-				layers[layerAffectedIndex].show();
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				if ( layers[layerAffectedIndex] ) {
+					layers[layerAffectedIndex].remove();
+					layers[layerAffectedIndex] = null;
+
+					tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+				}
 			}
 		}
 	}),
 	tabItem.layerOrder = new Panel(),
 	tabItem.layerList = new LayerList({
-		zIndex: 20,
 		children: layers
 	})
 );
 
 
-//function hide ( event ) {
-//	if ( event.prev === tabItem ) {
-//		tabItem.parent.removeListener('item:change', hide);
-//		tabItem.layerList.hide();
-//	}
-//}
-
-tabItem.addListener('activate', function () {
+tabItem.addListener('show', function () {
 	tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
 	//tabItem.parent.addListener('item:change', hide);
 });
