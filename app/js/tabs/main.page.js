@@ -8,25 +8,25 @@
 'use strict';
 
 var Button  = require('../stb/ui/button'),
-	router  = require('../stb/router'),
-	TabItem = require('../stb/ui/tab.item'),
-	tabItem = new TabItem({
-		$node: window.pageMainTabPage
-	});
+    router  = require('../stb/router'),
+    TabItem = require('../stb/ui/tab.item'),
+    tabItem = new TabItem({
+        $node: window.pageMainTabPage
+    });
 
 
 tabItem.title = 'Page';
 
 
 tabItem.add(
-	new Button({
-		value: 'switch to page Help',
-		events: {
-			click: function () {
-				router.navigate('pageHelp');
-			}
-		}
-	})
+    new Button({
+        value: 'switch to page Help',
+        events: {
+            click: function () {
+                router.navigate('pageHelp');
+            }
+        }
+    })
 );
 
 

@@ -8,30 +8,30 @@
 'use strict';
 
 var Panel   = require('../stb/ui/panel'),
-	TabItem = require('../stb/ui/tab.item'),
-	tabItem = new TabItem({
-		$node: window.pageMainTabPanel
-	});
+    TabItem = require('../stb/ui/tab.item'),
+    tabItem = new TabItem({
+        $node: window.pageMainTabPanel
+    });
 
 
 tabItem.title = 'Panel';
 
 
 tabItem.add(
-	new Panel({
-		$node: window.pageMainTabPanelSimple
-	}),
-	new Panel({
-		$node: window.pageMainTabPanelMulti
-	}),
-	new Panel({
-		$node: window.pageMainTabPanelParent,
-		children: [
-			new Panel({
-				$node: window.pageMainTabPanelChild
-			})
-		]
-	})
+    new Panel({
+        $node: window.pageMainTabPanelSimple
+    }),
+    new Panel({
+        $node: window.pageMainTabPanelMulti
+    }),
+    new Panel({
+        $node: window.pageMainTabPanelParent,
+        children: [
+            new Panel({
+                $node: window.pageMainTabPanelChild
+            })
+        ]
+    })
 );
 
 

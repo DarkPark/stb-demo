@@ -8,64 +8,64 @@
 'use strict';
 
 var Input   = require('../stb/ui/input'),
-	Panel   = require('../stb/ui/panel'),
-	TabItem = require('../stb/ui/tab.item'),
-	tabItem = new TabItem({
-		$node: window.pageMainTabInput
-	});
+    Panel   = require('../stb/ui/panel'),
+    TabItem = require('../stb/ui/tab.item'),
+    tabItem = new TabItem({
+        $node: window.pageMainTabInput
+    });
 
 
 tabItem.title = 'Input';
 
 
 tabItem.add(
-	new Panel({
-		$node: window.pageMainTabInputEmpty,
-		children: [
-			new Input()
-		]
-	}),
-	new Panel({
-		$node: window.pageMainTabInputSimple,
-		children: [
-			new Input({
-				value: 'some text',
-				events: {
-					click: function () {
+    new Panel({
+        $node: window.pageMainTabInputEmpty,
+        children: [
+            new Input()
+        ]
+    }),
+    new Panel({
+        $node: window.pageMainTabInputSimple,
+        children: [
+            new Input({
+                value: 'some text',
+                events: {
+                    click: function () {
 
-					}
-				}
-			})
-		]
-	}),
-	new Panel({
-		$node: window.pageMainTabInputPassword,
-		children: [
-			new Input({
-				value: 'some text',
-				type: Input.prototype.TYPE_PASSWORD,
-				events: {
-					click: function () {
+                    }
+                }
+            })
+        ]
+    }),
+    new Panel({
+        $node: window.pageMainTabInputPassword,
+        children: [
+            new Input({
+                value: 'some text',
+                type: Input.prototype.TYPE_PASSWORD,
+                events: {
+                    click: function () {
 
-					}
-				}
-			})
-		]
-	}),
-	new Panel({
-		$node: window.pageMainTabInputPlaceholder,
-		children: [
-			new Input({
-				//value: 'some text',
-				placeholder: 'hint text',
-				events: {
-					click: function () {
+                    }
+                }
+            })
+        ]
+    }),
+    new Panel({
+        $node: window.pageMainTabInputPlaceholder,
+        children: [
+            new Input({
+                //value: 'some text',
+                placeholder: 'hint text',
+                events: {
+                    click: function () {
 
-					}
-				}
-			})
-		]
-	})
+                    }
+                }
+            })
+        ]
+    })
 );
 
 

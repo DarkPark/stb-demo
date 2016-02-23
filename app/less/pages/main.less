@@ -5,174 +5,174 @@
 
 
 #pageMain {
-	> table {
-		width: 100%;
-		height: 100%;
-	}
+    > table {
+        width: 100%;
+        height: 100%;
+    }
 
-	td.menu {
-		//height: unit(@height - @availTop - @availBottom, px);
-		width: 20%;
-		vertical-align: top;
-		//float: left;
-		background-color: #222;
-		padding: unit(@availTop, px) unit(min(@fontSize, @availRight), px) unit(@availBottom, px) unit(@availLeft, px);
-		//display: inline-block;
-	}
+    td.menu {
+        //height: unit(@height - @availTop - @availBottom, px);
+        width: 20%;
+        vertical-align: top;
+        //float: left;
+        background-color: #222;
+        padding: unit(@availTop, px) unit(min(@fontSize, @availRight), px) unit(@availBottom, px) unit(@availLeft, px);
+        //display: inline-block;
+    }
 
-	td.body {
-		vertical-align: top;
-		width: 80%;
-		//height: 100%;
-		//display: inline-block;
-		> div {
-			height: unit(@height - @availTop - @availBottom, px);
-			padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
-			background-color: black;
+    td.body {
+        vertical-align: top;
+        width: 80%;
+        //height: 100%;
+        //display: inline-block;
+        > div {
+            height: unit(@height - @availTop - @availBottom, px);
+            padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
+            background-color: black;
 
-			.component {
-				&.button .menu {
-					background-image: data-uri('@{pathImg}/menu.png');
-				}
+            .component {
+                &.button .menu {
+                    background-image: data-uri('@{pathImg}/menu.png');
+                }
 
-				&.panel {
-					//padding : unit(@panelPaddingY, px) unit(@panelPaddingX, px);
-					//background-color: #222;
-					margin-bottom: unit(@panelPaddingY, px);
+                &.panel {
+                    //padding : unit(@panelPaddingY, px) unit(@panelPaddingX, px);
+                    //background-color: #222;
+                    margin-bottom: unit(@panelPaddingY, px);
 
-					.component.panel {
-						//margin-top: unit(@panelPaddingY, px);
-						background-color: #111;
-					}
+                    .component.panel {
+                        //margin-top: unit(@panelPaddingY, px);
+                        background-color: #111;
+                    }
 
-					.component.progressBar {
-						//margin-top: unit(@panelPaddingY, px);
-					}
-				}
-				&.panel:last-child {
-					margin-bottom: 0;
-				}
+                    .component.progressBar {
+                        //margin-top: unit(@panelPaddingY, px);
+                    }
+                }
+                &.panel:last-child {
+                    margin-bottom: 0;
+                }
 
-				&.modalBox {
-					background: url('../img/bg.black.50.png');
-				}
-//				&.infoPanel {
-//					margin-bottom: unit(@panelPaddingY, px);
-//					.component.panel {
-//						background-color: #111;
-//					}
-//				}
-//				&.infoPanel:last-child {
-//					margin-bottom: 0;
-//				}
+                &.modalBox {
+                    background: url('../img/bg.black.50.png');
+                }
+//                &.infoPanel {
+//                    margin-bottom: unit(@panelPaddingY, px);
+//                    .component.panel {
+//                        background-color: #111;
+//                    }
+//                }
+//                &.infoPanel:last-child {
+//                    margin-bottom: 0;
+//                }
 
-				&.grid {
-					td.item {
-						padding: unit(@gridItemPaddingY*2, px) unit(@gridItemPaddingX*2, px);
-					}
-				}
-			}
-		}
-	}
+                &.grid {
+                    td.item {
+                        padding: unit(@gridItemPaddingY*2, px) unit(@gridItemPaddingX*2, px);
+                    }
+                }
+            }
+        }
+    }
 }
 
 #pageMainTabGridMain {
-	.title {
-		margin-bottom: 1%;
-	}
+    .title {
+        margin-bottom: 1%;
+    }
 }
 #pageMainTabListSimple, #pageMainTabListCustom {
-	display: inline-block;
-	width: 40%;
+    display: inline-block;
+    width: 40%;
 }
 #pageMainTabListSimple, #pageMainTabListCustom {
-	vertical-align: top;
-	> table {
-		width: 100%;
+    vertical-align: top;
+    > table {
+        width: 100%;
 
-		.scroll {
-			width: 1%;
-			text-align: right;
-		}
-	}
+        .scroll {
+            width: 1%;
+            text-align: right;
+        }
+    }
 }
 #pageMainTabListCustomScrollV {
-	height: unit(@listItemHeight * 5, px);
+    height: unit(@listItemHeight * 5, px);
 }
 
 #pageMainTabProgressBarStyle {
-	.component.progressBar {
-		height: 10px;
-		background-color: #ffffff;
-		.value {
-			background-color: green;
-		}
-	}
+    .component.progressBar {
+        height: 10px;
+        background-color: #ffffff;
+        .value {
+            background-color: green;
+        }
+    }
 }
 
 .component.widget {
-	width: 100px;
-	height: 100px;
+    width: 100px;
+    height: 100px;
 }
 
 .component.button {
-	margin-right: 1%;
+    margin-right: 1%;
 
-	&.wide {
-		width: 30%;
-	}
+    &.wide {
+        width: 30%;
+    }
 
-	&.iconTop {
-		.icon {
-			display: table-caption;
-			background-color: inherit;
-			width: auto;
-		}
-	}
+    &.iconTop {
+        .icon {
+            display: table-caption;
+            background-color: inherit;
+            width: auto;
+        }
+    }
 
-	&.iconBottom {
-		.text {
-			display: table-caption;
-			background-color: inherit;
-			white-space: nowrap;
-			//width: auto;
-		}
-		.icon {
-			//display: table-caption;
-			//background-color: inherit;
-			//width: auto;
-		}
-	}
+    &.iconBottom {
+        .text {
+            display: table-caption;
+            background-color: inherit;
+            white-space: nowrap;
+            //width: auto;
+        }
+        .icon {
+            //display: table-caption;
+            //background-color: inherit;
+            //width: auto;
+        }
+    }
 }
 
 #pageMainTabWidgetW1 {
-	background-color: red;
+    background-color: red;
 }
 #pageMainTabWidgetW2 {
-	background-color: green;
+    background-color: green;
 }
 #pageMainTabWidgetW3 {
-	background-color: blue;
-	right: 0;
+    background-color: blue;
+    right: 0;
 }
 
 #pageMainTabLayerList {
-	.layerItem {
-		text-align:center;
-		background-color: #333;
-		opacity: 0.7;
-		width: 100%;
-		height: 100px;
-		line-height: 100px;
-	}
+    .layerItem {
+        text-align:center;
+        background-color: #333;
+        opacity: 0.7;
+        width: 100%;
+        height: 100px;
+        line-height: 100px;
+    }
 
-	ul {
-		margin: 0;
-		margin-top: 2%;
-	}
+    ul {
+        margin: 0;
+        margin-top: 2%;
+    }
 
-	li > div {
-		display: inline;
-		color: #555;
-	}
+    li > div {
+        display: inline;
+        color: #555;
+    }
 }

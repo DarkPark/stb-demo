@@ -8,7 +8,7 @@
 'use strict';
 
 var Page = require('../stb/ui/page'),
-	page = new Page({$node: window.pageInit});
+    page = new Page({$node: window.pageInit});
 
 
 // public

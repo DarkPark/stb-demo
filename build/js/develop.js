@@ -58,8 +58,8 @@
 			'use strict';
 			
 			var app     = __webpack_require__(/*! ../app */ 5),
-				storage = __webpack_require__(/*! ./storage */ 9),
-				metrics = __webpack_require__(/*! ../../../../config/metrics */ 13);
+			    storage = __webpack_require__(/*! ./storage */ 9),
+			    metrics = __webpack_require__(/*! ../../../../config/metrics */ 13);
 			
 			
 			// set global mode
@@ -70,15 +70,15 @@
 			
 			// platform?
 			if ( app.data.host ) {
-				// web inspector
-				__webpack_require__(/*! ./weinre */ 28);
+			    // web inspector
+			    __webpack_require__(/*! ./weinre */ 28);
 			}
 			
 			// apply screen size, position, margins and styles
 			app.setScreen(
-				metrics[storage.get('screen.height')] ||
-				metrics[screen.height] ||
-				metrics[720]
+			    metrics[storage.get('screen.height')] ||
+			    metrics[screen.height] ||
+			    metrics[720]
 			);
 			
 			
@@ -110,8 +110,8 @@
 			'use strict';
 			
 			var Emitter = __webpack_require__(/*! ./emitter */ 7),
-				router  = __webpack_require__(/*! ./router */ 8),
-				counter = 0;
+			    router  = __webpack_require__(/*! ./router */ 8),
+			    counter = 0;
 			
 			
 			/**
@@ -151,180 +151,180 @@
 			 * component.focus();
 			 */
 			function Component ( config ) {
-				// current execution context
-				var self = this,
-					name;
+			    // current execution context
+			    var self = this,
+			        name;
 			
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
-					if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
-					if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
-					if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
-					if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
+			        if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
+			        if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
+			        if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
+			        if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
+			    }
 			
-				/**
-				 * Component visibility state flag.
-				 *
-				 * @readonly
-				 * @type {boolean}
-				 */
-				this.visible = true;
+			    /**
+			     * Component visibility state flag.
+			     *
+			     * @readonly
+			     * @type {boolean}
+			     */
+			    this.visible = true;
 			
-				/**
-				 * Component can accept focus or not.
-				 *
-				 * @type {boolean}
-				 */
-				this.focusable = true;
+			    /**
+			     * Component can accept focus or not.
+			     *
+			     * @type {boolean}
+			     */
+			    this.focusable = true;
 			
-				/**
-				 * DOM outer handle.
-				 *
-				 * @type {Element}
-				 */
-				this.$node = null;
+			    /**
+			     * DOM outer handle.
+			     *
+			     * @type {Element}
+			     */
+			    this.$node = null;
 			
-				/**
-				 * DOM inner handle.
-				 * In simple cases is the same as $node.
-				 *
-				 * @type {Element}
-				 */
-				this.$body = null;
+			    /**
+			     * DOM inner handle.
+			     * In simple cases is the same as $node.
+			     *
+			     * @type {Element}
+			     */
+			    this.$body = null;
 			
-				/**
-				 * Link to the parent component which has this component as a child.
-				 *
-				 * @type {Component}
-				 */
-				this.parent = null;
+			    /**
+			     * Link to the parent component which has this component as a child.
+			     *
+			     * @type {Component}
+			     */
+			    this.parent = null;
 			
-				/**
-				 * List of all children components.
-				 *
-				 * @type {Component[]}
-				 */
-				this.children = [];
+			    /**
+			     * List of all children components.
+			     *
+			     * @type {Component[]}
+			     */
+			    this.children = [];
 			
-				/**
-				 * allow to emit events to the parent component
-				 *
-				 * @readonly
-				 * @type {boolean}
-				 */
-				this.propagate = !!config.propagate;
+			    /**
+			     * allow to emit events to the parent component
+			     *
+			     * @readonly
+			     * @type {boolean}
+			     */
+			    this.propagate = !!config.propagate;
 			
-				// parent constructor call
-				Emitter.call(this, config.data);
+			    // parent constructor call
+			    Emitter.call(this, config.data);
 			
-				// outer handle - empty div in case nothing is given
-				this.$node = config.$node || document.createElement('div');
+			    // outer handle - empty div in case nothing is given
+			    this.$node = config.$node || document.createElement('div');
 			
-				// inner handle - the same as outer handler in case nothing is given
-				this.$body = config.$body || this.$node;
+			    // inner handle - the same as outer handler in case nothing is given
+			    this.$body = config.$body || this.$node;
 			
-				// set CSS class names
-				this.$node.className += ' component ' + (config.className || '');
+			    // set CSS class names
+			    this.$node.className += ' component ' + (config.className || '');
 			
-				// apply component id if given, generate otherwise
-				this.id = config.id || this.$node.id || 'cid' + counter++;
+			    // apply component id if given, generate otherwise
+			    this.id = config.id || this.$node.id || 'cid' + counter++;
 			
-				// apply hierarchy
-				if ( config.parent ) {
-					// add to parent component
-					config.parent.add(this);
-				}
+			    // apply hierarchy
+			    if ( config.parent ) {
+			        // add to parent component
+			        config.parent.add(this);
+			    }
 			
-				// apply given visibility
-				if ( config.visible === false ) {
-					// default state is visible
-					this.hide();
-				}
+			    // apply given visibility
+			    if ( config.visible === false ) {
+			        // default state is visible
+			        this.hide();
+			    }
 			
-				// apply focus handling method
-				if ( config.focusable === false ) {
-					// can't accept focus
-					this.focusable = false;
-				}
+			    // apply focus handling method
+			    if ( config.focusable === false ) {
+			        // can't accept focus
+			        this.focusable = false;
+			    }
 			
-				// a descendant defined own events
-				if ( this.defaultEvents ) {
-					// sanitize
-					config.events = config.events || {};
+			    // a descendant defined own events
+			    if ( this.defaultEvents ) {
+			        // sanitize
+			        config.events = config.events || {};
 			
-					if ( true ) {
-						if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
-						if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
-					}
+			        if ( true ) {
+			            if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
+			            if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
+			        }
 			
-					for ( name in this.defaultEvents ) {
-						// overwrite default events with user-defined
-						config.events[name] = config.events[name] || this.defaultEvents[name];
-					}
-				}
+			        for ( name in this.defaultEvents ) {
+			            // overwrite default events with user-defined
+			            config.events[name] = config.events[name] || this.defaultEvents[name];
+			        }
+			    }
 			
-				// apply given events
-				if ( config.events ) {
-					// apply
-					this.addListeners(config.events);
-				}
+			    // apply given events
+			    if ( config.events ) {
+			        // apply
+			        this.addListeners(config.events);
+			    }
 			
-				// apply the given children components
-				if ( config.children ) {
-					// apply
-					this.add.apply(this, config.children);
-				}
+			    // apply the given children components
+			    if ( config.children ) {
+			        // apply
+			        this.add.apply(this, config.children);
+			    }
 			
-				// component activation by mouse
-				this.$node.addEventListener('click', function ( event ) {
-					// left mouse button
-					if ( event.button === 0 ) {
-						// activate if possible
-						self.focus();
+			    // component activation by mouse
+			    this.$node.addEventListener('click', function ( event ) {
+			        // left mouse button
+			        if ( event.button === 0 ) {
+			            // activate if possible
+			            self.focus();
 			
-						// there are some listeners
-						if ( self.events['click'] ) {
-							/**
-							 * Mouse click event.
-							 *
-							 * @event module:stb/component~Component#click
-							 *
-							 * @type {Object}
-							 * @property {Event} event click event data
-							 */
-							self.emit('click', {event: event});
-						}
-					}
+			            // there are some listeners
+			            if ( self.events['click'] ) {
+			                /**
+			                 * Mouse click event.
+			                 *
+			                 * @event module:stb/component~Component#click
+			                 *
+			                 * @type {Object}
+			                 * @property {Event} event click event data
+			                 */
+			                self.emit('click', {event: event});
+			            }
+			        }
 			
-					if ( true ) {
-						// middle mouse button
-						if ( event.button === 1 ) {
-							debug.inspect(self, 0);
-							debug.info('"window.link" or "' + self.id + '.component"', 'this component is now available in global scope');
-							window.link = self;
-							self.$node.classList.toggle('wired');
-						}
-					}
+			        if ( true ) {
+			            // middle mouse button
+			            if ( event.button === 1 ) {
+			                debug.inspect(self, 0);
+			                debug.info('"window.link" or "' + self.id + '.component"', 'this component is now available in global scope');
+			                window.link = self;
+			                self.$node.classList.toggle('wired');
+			            }
+			        }
 			
-					event.stopPropagation();
-				});
+			        event.stopPropagation();
+			    });
 			
-				if ( true ) {
-					// expose inner ID to global scope
-					window[self.id] = self.$node;
+			    if ( true ) {
+			        // expose inner ID to global scope
+			        window[self.id] = self.$node;
 			
-					// expose a link
-					this.$node.component = this.$body.component = this;
-					this.$node.title = 'component ' + this.constructor.name + '.' + this.id + ' (outer)';
-					this.$body.title = 'component ' + this.constructor.name + '.' + this.id + ' (inner)';
-				}
+			        // expose a link
+			        this.$node.component = this.$body.component = this;
+			        this.$node.title = 'component ' + this.constructor.name + '.' + this.id + ' (outer)';
+			        this.$body.title = 'component ' + this.constructor.name + '.' + this.id + ' (inner)';
+			    }
 			}
 			
 			
@@ -355,40 +355,40 @@
 			 * );
 			 */
 			Component.prototype.add = function ( child ) {
-				var i;
+			    var i;
 			
-				// walk through all the given elements
-				for ( i = 0; i < arguments.length; i++ ) {
-					child = arguments[i];
+			    // walk through all the given elements
+			    for ( i = 0; i < arguments.length; i++ ) {
+			        child = arguments[i];
 			
-					if ( true ) {
-						if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-					}
+			        if ( true ) {
+			            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+			        }
 			
-					// apply
-					this.children.push(child);
-					child.parent = this;
+			        // apply
+			        this.children.push(child);
+			        child.parent = this;
 			
-					// correct DOM parent/child connection if necessary
-					if ( child.$node && child.$node.parentNode === null ) {
-						this.$body.appendChild(child.$node);
-					}
+			        // correct DOM parent/child connection if necessary
+			        if ( child.$node && child.$node.parentNode === null ) {
+			            this.$body.appendChild(child.$node);
+			        }
 			
-					// there are some listeners
-					if ( this.events['add'] ) {
-						/**
-						 * A child component is added.
-						 *
-						 * @event module:stb/component~Component#add
-						 *
-						 * @type {Object}
-						 * @property {Component} item new component added
-						 */
-						this.emit('add', {item: child});
-					}
+			        // there are some listeners
+			        if ( this.events['add'] ) {
+			            /**
+			             * A child component is added.
+			             *
+			             * @event module:stb/component~Component#add
+			             *
+			             * @type {Object}
+			             * @property {Component} item new component added
+			             */
+			            this.emit('add', {item: child});
+			        }
 			
-					debug.log('component ' + this.constructor.name + '.' + this.id + ' new child: ' + child.constructor.name + '.' + child.id);
-				}
+			        debug.log('component ' + this.constructor.name + '.' + this.id + ' new child: ' + child.constructor.name + '.' + child.id);
+			    }
 			};
 			
 			
@@ -400,28 +400,28 @@
 			// * @param {number} index insertion position
 			// */
 			//Component.prototype.insert = function ( child, index ) {
-			//	var prevIndex = this.children.indexOf(child);
+			//    var prevIndex = this.children.indexOf(child);
 			//
-			//	if ( DEBUG ) {
-			//		if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-			//		if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-			//	}
+			//    if ( DEBUG ) {
+			//        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			//        if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+			//    }
 			//
-			//	if ( prevIndex !== -1 ) {
-			//		this.children.splice(prevIndex, 1);
-			//		this.$body.removeChild(child.$node);
-			//	}
+			//    if ( prevIndex !== -1 ) {
+			//        this.children.splice(prevIndex, 1);
+			//        this.$body.removeChild(child.$node);
+			//    }
 			//
-			//	if ( index === this.children.length ) {
-			//		this.$body.appendChild(child.$node);
-			//	} else {
-			//		this.$body.insertBefore(child.$node, this.$body.children[index]);
-			//	}
-			//	this.children.splice(index, 0, child);
+			//    if ( index === this.children.length ) {
+			//        this.$body.appendChild(child.$node);
+			//    } else {
+			//        this.$body.insertBefore(child.$node, this.$body.children[index]);
+			//    }
+			//    this.children.splice(index, 0, child);
 			//
-			//	if ( !child.parent ) {
-			//		child.parent = this;
-			//	}
+			//    if ( !child.parent ) {
+			//        child.parent = this;
+			//    }
 			//};
 			
 			
@@ -431,43 +431,43 @@
 			 * @fires module:stb/component~Component#remove
 			 */
 			Component.prototype.remove = function () {
-				// really inserted somewhere
-				if ( this.parent ) {
-					if ( true ) {
-						if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
-					}
+			    // really inserted somewhere
+			    if ( this.parent ) {
+			        if ( true ) {
+			            if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
+			        }
 			
-					// active at the moment
-					if ( router.current.activeComponent === this ) {
-						this.blur();
-						this.parent.focus();
-					}
-					this.parent.children.splice(this.parent.children.indexOf(this), 1);
-				}
+			        // active at the moment
+			        if ( router.current.activeComponent === this ) {
+			            this.blur();
+			            this.parent.focus();
+			        }
+			        this.parent.children.splice(this.parent.children.indexOf(this), 1);
+			    }
 			
-				// remove all children
-				this.children.forEach(function ( child ) {
-					if ( true ) {
-						if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-					}
+			    // remove all children
+			    this.children.forEach(function ( child ) {
+			        if ( true ) {
+			            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+			        }
 			
-					child.remove();
-				});
+			        child.remove();
+			    });
 			
-				this.removeAllListeners();
-				this.$node.parentNode.removeChild(this.$node);
+			    this.removeAllListeners();
+			    this.$node.parentNode.removeChild(this.$node);
 			
-				// there are some listeners
-				if ( this.events['remove'] ) {
-					/**
-					 * Delete this component.
-					 *
-					 * @event module:stb/component~Component#remove
-					 */
-					this.emit('remove');
-				}
+			    // there are some listeners
+			    if ( this.events['remove'] ) {
+			        /**
+			         * Delete this component.
+			         *
+			         * @event module:stb/component~Component#remove
+			         */
+			        this.emit('remove');
+			    }
 			
-				debug.log('component ' + this.constructor.name + '.' + this.id + ' remove', 'red');
+			    debug.log('component ' + this.constructor.name + '.' + this.id + ' remove', 'red');
 			};
 			
 			
@@ -482,38 +482,38 @@
 			 * @fires module:stb/component~Component#focus
 			 */
 			Component.prototype.focus = function ( data ) {
-				var activePage = router.current,
-					activeItem = activePage.activeComponent;
+			    var activePage = router.current,
+			        activeItem = activePage.activeComponent;
 			
-				// this is a visual component on a page
-				// not already focused and can accept focus
-				if ( this.focusable && this !== activeItem ) {
-					// notify the current active component
-					if ( activeItem ) { activeItem.blur(); }
+			    // this is a visual component on a page
+			    // not already focused and can accept focus
+			    if ( this.focusable && this !== activeItem ) {
+			        // notify the current active component
+			        if ( activeItem ) { activeItem.blur(); }
 			
-					/* eslint consistent-this: 0 */
+			        /* eslint consistent-this: 0 */
 			
-					// apply
-					activePage.activeComponent = activeItem = this;
-					activeItem.$node.classList.add('focus');
+			        // apply
+			        activePage.activeComponent = activeItem = this;
+			        activeItem.$node.classList.add('focus');
 			
-					// there are some listeners
-					if ( activeItem.events['focus'] ) {
-						/**
-						 * Make this component focused.
-						 *
-						 * @event module:stb/component~Component#focus
-						 */
-						activeItem.emit('focus', data);
-					}
+			        // there are some listeners
+			        if ( activeItem.events['focus'] ) {
+			            /**
+			             * Make this component focused.
+			             *
+			             * @event module:stb/component~Component#focus
+			             */
+			            activeItem.emit('focus', data);
+			        }
 			
-					debug.log('component ' + this.constructor.name + '.' + this.id + ' focus');
+			        debug.log('component ' + this.constructor.name + '.' + this.id + ' focus');
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -526,35 +526,35 @@
 			 * @fires module:stb/component~Component#blur
 			 */
 			Component.prototype.blur = function () {
-				var activePage = router.current,
-					activeItem = activePage.activeComponent;
+			    var activePage = router.current,
+			        activeItem = activePage.activeComponent;
 			
-				// apply visuals anyway
-				this.$node.classList.remove('focus');
+			    // apply visuals anyway
+			    this.$node.classList.remove('focus');
 			
-				// this is the active component
-				if ( this === activeItem ) {
-					activePage.activeComponent = null;
+			    // this is the active component
+			    if ( this === activeItem ) {
+			        activePage.activeComponent = null;
 			
-					// there are some listeners
-					if ( this.events['blur'] ) {
-						/**
-						 * Remove focus from this component.
-						 *
-						 * @event module:stb/component~Component#blur
-						 */
-						this.emit('blur');
-					}
+			        // there are some listeners
+			        if ( this.events['blur'] ) {
+			            /**
+			             * Remove focus from this component.
+			             *
+			             * @event module:stb/component~Component#blur
+			             */
+			            this.emit('blur');
+			        }
 			
-					debug.log('component ' + this.constructor.name + '.' + this.id + ' blur', 'grey');
+			        debug.log('component ' + this.constructor.name + '.' + this.id + ' blur', 'grey');
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				debug.log('component ' + this.constructor.name + '.' + this.id + ' attempt to blur without link to a page', 'red');
+			    debug.log('component ' + this.constructor.name + '.' + this.id + ' attempt to blur without link to a page', 'red');
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -568,28 +568,28 @@
 			 * @fires module:stb/component~Component#show
 			 */
 			Component.prototype.show = function ( data ) {
-				// is it hidden
-				if ( !this.visible ) {
-					// correct style
-					this.$node.classList.remove('hidden');
-					// flag
-					this.visible = true;
+			    // is it hidden
+			    if ( !this.visible ) {
+			        // correct style
+			        this.$node.classList.remove('hidden');
+			        // flag
+			        this.visible = true;
 			
-					// there are some listeners
-					if ( this.events['show'] ) {
-						/**
-						 * Make the component visible.
-						 *
-						 * @event module:stb/component~Component#show
-						 */
-						this.emit('show', data);
-					}
+			        // there are some listeners
+			        if ( this.events['show'] ) {
+			            /**
+			             * Make the component visible.
+			             *
+			             * @event module:stb/component~Component#show
+			             */
+			            this.emit('show', data);
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return true;
+			    // nothing was done
+			    return true;
 			};
 			
 			
@@ -601,34 +601,34 @@
 			 * @fires module:stb/component~Component#hide
 			 */
 			Component.prototype.hide = function () {
-				// is it visible
-				if ( this.visible ) {
-					// correct style
-					this.$node.classList.add('hidden');
-					// flag
-					this.visible = false;
+			    // is it visible
+			    if ( this.visible ) {
+			        // correct style
+			        this.$node.classList.add('hidden');
+			        // flag
+			        this.visible = false;
 			
-					// there are some listeners
-					if ( this.events['hide'] ) {
-						/**
-						 * Make the component hidden.
-						 *
-						 * @event module:stb/component~Component#hide
-						 */
-						this.emit('hide');
-					}
+			        // there are some listeners
+			        if ( this.events['hide'] ) {
+			            /**
+			             * Make the component hidden.
+			             *
+			             * @event module:stb/component~Component#hide
+			             */
+			            this.emit('hide');
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return true;
+			    // nothing was done
+			    return true;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.Component = Component;
+			    // expose to the global scope
+			    window.Component = Component;
 			}
 			
 			
@@ -687,27 +687,27 @@
 			 * tabList.add(tabItem);
 			 */
 			function TabItem ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'tabItem hidden ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'tabItem hidden ' + (config.className || '');
 			
-				// prevent parent hiding
-				config.visible = null;
+			    // prevent parent hiding
+			    config.visible = null;
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				this.visible = false;
+			    this.visible = false;
 			}
 			
 			
@@ -727,35 +727,35 @@
 			 * @fires module:stb/ui/tab.item~TabItem#show
 			 */
 			TabItem.prototype.show = function ( data ) {
-				var prev = null;
+			    var prev = null;
 			
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for tab item'); }
-					if ( this.parent.constructor.name !== 'TabList' ) { throw new Error(__filename + ': wrong parent for tab item'); }
-					if ( this.parent.current && !(this.parent.current instanceof TabItem) ) { throw new Error(__filename + ': wrong current tab item type'); }
-				}
+			    if ( true ) {
+			        if ( !this.parent ) { throw new Error(__filename + ': no parent for tab item'); }
+			        if ( this.parent.constructor.name !== 'TabList' ) { throw new Error(__filename + ': wrong parent for tab item'); }
+			        if ( this.parent.current && !(this.parent.current instanceof TabItem) ) { throw new Error(__filename + ': wrong current tab item type'); }
+			    }
 			
-				// is it hidden
-				if ( !this.visible ) {
-					// hide previous tab
-					if ( this.parent.current ) {
-						prev = this.parent.current;
-						prev.hide(data);
-					}
+			    // is it hidden
+			    if ( !this.visible ) {
+			        // hide previous tab
+			        if ( this.parent.current ) {
+			            prev = this.parent.current;
+			            prev.hide(data);
+			        }
 			
-					Component.prototype.show.call(this, data);
-					this.parent.current = this;
+			        Component.prototype.show.call(this, data);
+			        this.parent.current = this;
 			
-					/*// there are some listeners
-					if ( this.parent.events['switch'] ) {
-						this.parent.emit('switch', {prev: prev, curr: this});
-					}*/
+			        /*// there are some listeners
+			        if ( this.parent.events['switch'] ) {
+			            this.parent.emit('switch', {prev: prev, curr: this});
+			        }*/
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return true;
+			    // nothing was done
+			    return true;
 			};
 			
 			
@@ -767,26 +767,26 @@
 			 * @fires module:stb/ui/tab.item~TabItem#hide
 			 */
 			TabItem.prototype.hide = function () {
-				if ( true ) {
-					if ( !this.parent ) { throw new Error(__filename + ': no parent for tab item'); }
-					if ( this.parent.constructor.name !== 'TabList' ) { throw new Error(__filename + ': wrong parent for tab item'); }
-					if ( this.parent.current && !(this.parent.current instanceof TabItem) ) { throw new Error(__filename + ': wrong current tab item type'); }
-				}
+			    if ( true ) {
+			        if ( !this.parent ) { throw new Error(__filename + ': no parent for tab item'); }
+			        if ( this.parent.constructor.name !== 'TabList' ) { throw new Error(__filename + ': wrong parent for tab item'); }
+			        if ( this.parent.current && !(this.parent.current instanceof TabItem) ) { throw new Error(__filename + ': wrong current tab item type'); }
+			    }
 			
-				if ( Component.prototype.hide.call(this) ) {
-					this.parent.current = null;
+			    if ( Component.prototype.hide.call(this) ) {
+			        this.parent.current = null;
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return true;
+			    // nothing was done
+			    return true;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentTabItem = TabItem;
+			    // expose to the global scope
+			    window.ComponentTabItem = TabItem;
 			}
 			
 			
@@ -825,54 +825,54 @@
 			
 			// public
 			module.exports = {
-				back         : 8,    // Backspace
-				'delete'     : 46,
-				channelPrev  : 1009, // Shift+Tab
-				channelNext  : 9,    // Tab
-				ok           : 13,   // Enter
-				exit         : 27,   // Esc
-				up           : 38,   // UP ARROW
-				down         : 40,   // DOWN ARROW
-				left         : 37,   // LEFT ARROW
-				right        : 39,   // RIGHT ARROW
-				pageUp       : 33,   // Page Up
-				pageDown     : 34,   // Page Down
-				end          : 35,
-				home         : 36,
-				volumeUp     : 107,  // NUMPAD +
-				volumeDown   : 109,  // NUMPAD -
-				f1           : 112,  // F1
-				f2           : 113,  // F2
-				f3           : 114,  // F3
-				f4           : 115,  // F4
-				refresh      : 116,  // F5
-				frame        : 117,  // F6
-				phone        : 119,  // F8
-				set          : 120,  // F9
-				tv           : 121,  // F10
-				menu         : 122,  // F11
-				web          : 123,  // F12
-				mic          : 2032,
-				rewind       : 2066, // Alt+B
-				forward      : 2070, // Alt+F
-				app          : 2076, // Alt+L
-				usbMounted   : 2080, // Alt+P
-				usbUnmounted : 2081, // Alt+Q
-				playPause    : 2082, // Alt+R
-				stop         : 2083, // Alt+S
-				power        : 2085, // Alt+U
-				record       : 2087, // Alt+W
-				info         : 2089, // Alt+Y
-				mute         : 2192,
-				clock        : 2032,
-				audio        : 2071, // Alt+G
-				keyboard     : 2076  // Alt+L
+			    back         : 8,    // Backspace
+			    'delete'     : 46,
+			    channelPrev  : 1009, // Shift+Tab
+			    channelNext  : 9,    // Tab
+			    ok           : 13,   // Enter
+			    exit         : 27,   // Esc
+			    up           : 38,   // UP ARROW
+			    down         : 40,   // DOWN ARROW
+			    left         : 37,   // LEFT ARROW
+			    right        : 39,   // RIGHT ARROW
+			    pageUp       : 33,   // Page Up
+			    pageDown     : 34,   // Page Down
+			    end          : 35,
+			    home         : 36,
+			    volumeUp     : 107,  // NUMPAD +
+			    volumeDown   : 109,  // NUMPAD -
+			    f1           : 112,  // F1
+			    f2           : 113,  // F2
+			    f3           : 114,  // F3
+			    f4           : 115,  // F4
+			    refresh      : 116,  // F5
+			    frame        : 117,  // F6
+			    phone        : 119,  // F8
+			    set          : 120,  // F9
+			    tv           : 121,  // F10
+			    menu         : 122,  // F11
+			    web          : 123,  // F12
+			    mic          : 2032,
+			    rewind       : 2066, // Alt+B
+			    forward      : 2070, // Alt+F
+			    app          : 2076, // Alt+L
+			    usbMounted   : 2080, // Alt+P
+			    usbUnmounted : 2081, // Alt+Q
+			    playPause    : 2082, // Alt+R
+			    stop         : 2083, // Alt+S
+			    power        : 2085, // Alt+U
+			    record       : 2087, // Alt+W
+			    info         : 2089, // Alt+Y
+			    mute         : 2192,
+			    clock        : 2032,
+			    audio        : 2071, // Alt+G
+			    keyboard     : 2076  // Alt+L
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.keys = module.exports;
+			    // expose to the global scope
+			    window.keys = module.exports;
 			}
 
 
@@ -922,23 +922,23 @@
 			 * page.add(panel);
 			 */
 			function Panel ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'panel ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'panel ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			}
 			
 			
@@ -948,8 +948,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentPanel = Panel;
+			    // expose to the global scope
+			    window.ComponentPanel = Panel;
 			}
 			
 			
@@ -974,10 +974,11 @@
 			'use strict';
 			
 			var Model    = __webpack_require__(/*! ./model */ 30),
-				router   = __webpack_require__(/*! ./router */ 8),
-				keys     = __webpack_require__(/*! ./keys */ 3),
-				keyCodes = {},
-				app, key;
+			    router   = __webpack_require__(/*! ./router */ 8),
+			    keys     = __webpack_require__(/*! ./keys */ 3),
+			    metrics  = __webpack_require__(/*! ../../../config/metrics */ 13),
+			    keyCodes = {},
+			    app, key;
 			
 			
 			__webpack_require__(/*! ./shims */ 33);
@@ -985,18 +986,18 @@
 			
 			// inside frame/iframe
 			if ( window.parent && window.parent.gSTB ) {
-				// link to the outer global objects
-				window.dvbManager         = window.parent.dvbManager;
-				window.epgManager         = window.parent.epgManager;
-				window.gSTB               = window.parent.gSTB;
-				window.pvrManager         = window.parent.pvrManager;
-				window.stbDownloadManager = window.parent.stbDownloadManager;
-				window.stbStorage         = window.parent.stbStorage;
-				window.stbUpdate          = window.parent.stbUpdate;
-				window.stbUPnP            = window.parent.stbUPnP;
-				window.stbWebWindow       = window.parent.stbWebWindow;
-				window.stbWindowMgr       = window.parent.stbWindowMgr;
-				window.timeShift          = window.parent.timeShift;
+			    // link to the outer global objects
+			    window.dvbManager         = window.parent.dvbManager;
+			    window.epgManager         = window.parent.epgManager;
+			    window.gSTB               = window.parent.gSTB;
+			    window.pvrManager         = window.parent.pvrManager;
+			    window.stbDownloadManager = window.parent.stbDownloadManager;
+			    window.stbStorage         = window.parent.stbStorage;
+			    window.stbUpdate          = window.parent.stbUpdate;
+			    window.stbUPnP            = window.parent.stbUPnP;
+			    window.stbWebWindow       = window.parent.stbWebWindow;
+			    window.stbWindowMgr       = window.parent.stbWindowMgr;
+			    window.timeShift          = window.parent.timeShift;
 			}
 			
 			
@@ -1005,48 +1006,48 @@
 			 * @type {Model}
 			 */
 			app = new Model({
-				/**
-				 * Enable logging and debugging flag set by debug module at runtime.
-				 *
-				 * @type {boolean}
-				 */
-				debug: false,
+			    /**
+			     * Enable logging and debugging flag set by debug module at runtime.
+			     *
+			     * @type {boolean}
+			     */
+			    debug: false,
 			
-				/**
-				 * True if executed on the STB device, set by debug module at runtime.
-				 *
-				 * @type {boolean}
-				 */
-				host: true,
+			    /**
+			     * True if executed on the STB device, set by debug module at runtime.
+			     *
+			     * @type {boolean}
+			     */
+			    host: true,
 			
-				/**
-				 * Screen geometry and margins.
-				 *
-				 * @type {Object}
-				 * @property {number} height Total screen height
-				 * @property {number} width Total screen width
-				 * @property {number} availTop top safe zone margin
-				 * @property {number} availRight right safe zone margin
-				 * @property {number} availBottom bottom safe zone margin
-				 * @property {number} availLeft left safe zone margin
-				 * @property {number} availHeight safe zone height
-				 * @property {number} availWidth safe zone width
-				 */
-				screen: null,
+			    /**
+			     * Screen geometry and margins.
+			     *
+			     * @type {Object}
+			     * @property {number} height Total screen height
+			     * @property {number} width Total screen width
+			     * @property {number} availTop top safe zone margin
+			     * @property {number} availRight right safe zone margin
+			     * @property {number} availBottom bottom safe zone margin
+			     * @property {number} availLeft left safe zone margin
+			     * @property {number} availHeight safe zone height
+			     * @property {number} availWidth safe zone width
+			     */
+			    screen: null,
 			
-				/**
-				 * Timestamps data.
-				 *
-				 * @type {Object}
-				 * @property {number} init application initialization time (right now)
-				 * @property {number} load document onload event
-				 * @property {number} done onload event sent and processed
-				 */
-				time: {
-					init: +new Date(),
-					load: 0,
-					done: 0
-				}
+			    /**
+			     * Timestamps data.
+			     *
+			     * @type {Object}
+			     * @property {number} init application initialization time (right now)
+			     * @property {number} load document onload event
+			     * @property {number} done onload event sent and processed
+			     */
+			    time: {
+			        init: +new Date(),
+			        load: 0,
+			        done: 0
+			    }
 			});
 			
 			
@@ -1058,48 +1059,48 @@
 			 * @return {boolean} operation status
 			 */
 			app.setScreen = function ( metrics ) {
-				var linkCSS;
+			    var linkCSS;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			    }
 			
-				if ( metrics ) {
-					if ( true ) {
-						if ( typeof metrics !== 'object' ) { throw new Error(__filename + ': wrong metrics type'); }
-					}
+			    if ( metrics ) {
+			        if ( true ) {
+			            if ( typeof metrics !== 'object' ) { throw new Error(__filename + ': wrong metrics type'); }
+			        }
 			
-					// calculate and extend
-					metrics.availHeight = metrics.height - (metrics.availTop + metrics.availBottom);
-					metrics.availWidth  = metrics.width - (metrics.availLeft + metrics.availRight);
+			        // calculate and extend
+			        metrics.availHeight = metrics.height - (metrics.availTop + metrics.availBottom);
+			        metrics.availWidth  = metrics.width - (metrics.availLeft + metrics.availRight);
 			
-					// set max browser window size
-					window.moveTo(0, 0);
-					window.resizeTo(metrics.width, metrics.height);
+			        // set max browser window size
+			        window.moveTo(0, 0);
+			        window.resizeTo(metrics.width, metrics.height);
 			
-					// get the link tag
-					linkCSS = document.querySelector('link[rel=stylesheet]');
+			        // get the link tag
+			        linkCSS = document.querySelector('link[rel=stylesheet]');
 			
-					// already was initialized
-					if ( linkCSS && linkCSS instanceof HTMLLinkElement ) {
-						// remove all current CSS styles
-						document.head.removeChild(linkCSS);
-					}
+			        // already was initialized
+			        if ( linkCSS && linkCSS instanceof HTMLLinkElement ) {
+			            // remove all current CSS styles
+			            document.head.removeChild(linkCSS);
+			        }
 			
-					// load CSS file base on resolution
-					linkCSS = document.createElement('link');
-					linkCSS.rel  = 'stylesheet';
-					linkCSS.href = 'css/' + ( true ? 'develop.' : 'release.') + metrics.height + '.css?' + +new Date();
-					document.head.appendChild(linkCSS);
+			        // load CSS file base on resolution
+			        linkCSS = document.createElement('link');
+			        linkCSS.rel  = 'stylesheet';
+			        linkCSS.href = 'css/' + ( true ? 'develop.' : 'release.') + metrics.height + '.css?' + +new Date();
+			        document.head.appendChild(linkCSS);
 			
-					// provide global access
-					this.data.metrics = metrics;
+			        // provide global access
+			        this.data.metrics = metrics;
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing has applied
-				return false;
+			    // nothing has applied
+			    return false;
 			};
 			
 			// define events constants
@@ -1234,302 +1235,302 @@
 			
 			
 			// apply screen size, position and margins
-			app.setScreen(__webpack_require__(/*! ../../../config/metrics */ 13)[screen.height]);
+			app.setScreen(metrics[screen.height] || metrics[720]);
 			
 			
 			// extract key codes
 			for ( key in keys ) {
-				if ( key === 'volumeUp' || key === 'volumeDown' ) {
-					continue;
-				}
-				// no need to save key names
-				keyCodes[keys[key]] = true;
+			    if ( key === 'volumeUp' || key === 'volumeDown' ) {
+			        continue;
+			    }
+			    // no need to save key names
+			    keyCodes[keys[key]] = true;
 			}
 			
 			
 			app.defaultEvents = {
-				/**
-				 * The load event is fired when a resource and its dependent resources have finished loading.
-				 *
-				 * Control flow:
-				 *   1. Global handler.
-				 *   2. Each page handler.
-				 *   3. Application DONE event.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/load
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				load: function ( event ) {
-					//var path;
+			    /**
+			     * The load event is fired when a resource and its dependent resources have finished loading.
+			     *
+			     * Control flow:
+			     *   1. Global handler.
+			     *   2. Each page handler.
+			     *   3. Application DONE event.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/load
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    load: function ( event ) {
+			        //var path;
 			
-					debug.event(event);
+			        debug.event(event);
 			
-					// time mark
-					app.data.time.load = event.timeStamp;
+			        // time mark
+			        app.data.time.load = event.timeStamp;
 			
-					// global handler
-					// there are some listeners
-					if ( app.events[event.type] ) {
-						// notify listeners
-						app.emit(event.type, event);
-					}
+			        // global handler
+			        // there are some listeners
+			        if ( app.events[event.type] ) {
+			            // notify listeners
+			            app.emit(event.type, event);
+			        }
 			
-					// local handler on each page
-					router.pages.forEach(function forEachPages ( page ) {
-						debug.log('component ' + page.constructor.name + '.' + page.id + ' load', 'green');
+			        // local handler on each page
+			        router.pages.forEach(function forEachPages ( page ) {
+			            debug.log('component ' + page.constructor.name + '.' + page.id + ' load', 'green');
 			
-						// there are some listeners
-						if ( page.events[event.type] ) {
-							// notify listeners
-							page.emit(event.type, event);
-						}
-					});
+			            // there are some listeners
+			            if ( page.events[event.type] ) {
+			                // notify listeners
+			                page.emit(event.type, event);
+			            }
+			        });
 			
-					// time mark
-					app.data.time.done = +new Date();
+			        // time mark
+			        app.data.time.done = +new Date();
 			
-					// everything is ready
-					// and there are some listeners
-					if ( app.events['done'] ) {
-						// notify listeners
-						app.emit('done', event);
-					}
-				},
+			        // everything is ready
+			        // and there are some listeners
+			        if ( app.events['done'] ) {
+			            // notify listeners
+			            app.emit('done', event);
+			        }
+			    },
 			
-				/**
-				 * The unload event is fired when the document or a child resource is being unloaded.
-				 *
-				 * Control flow:
-				 *   1. Each page handler.
-				 *   2. Global handler.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/unload
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				unload: function ( event ) {
-					debug.event(event);
+			    /**
+			     * The unload event is fired when the document or a child resource is being unloaded.
+			     *
+			     * Control flow:
+			     *   1. Each page handler.
+			     *   2. Global handler.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/unload
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    unload: function ( event ) {
+			        debug.event(event);
 			
-					// global handler
-					// there are some listeners
-					if ( app.events[event.type] ) {
-						// notify listeners
-						app.emit(event.type, event);
-					}
+			        // global handler
+			        // there are some listeners
+			        if ( app.events[event.type] ) {
+			            // notify listeners
+			            app.emit(event.type, event);
+			        }
 			
-					// local handler on each page
-					router.pages.forEach(function forEachPages ( page ) {
-						debug.log('component ' + page.constructor.name + '.' + page.id + ' unload', 'red');
+			        // local handler on each page
+			        router.pages.forEach(function forEachPages ( page ) {
+			            debug.log('component ' + page.constructor.name + '.' + page.id + ' unload', 'red');
 			
-						// there are some listeners
-						if ( page.events[event.type] ) {
-							// notify listeners
-							page.emit(event.type, event);
-						}
-					});
-				},
+			            // there are some listeners
+			            if ( page.events[event.type] ) {
+			                // notify listeners
+			                page.emit(event.type, event);
+			            }
+			        });
+			    },
 			
-				/**
-				 * The error event is fired when a resource failed to load.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/error
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				error: function ( event ) {
-					debug.event(event);
-				},
+			    /**
+			     * The error event is fired when a resource failed to load.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/error
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    error: function ( event ) {
+			        debug.event(event);
+			    },
 			
-				/**
-				 * The keydown event is fired when a key is pressed down.
-				 * Set event.stop to true in order to prevent bubbling.
-				 *
-				 * Control flow:
-				 *   1. Current active component on the active page.
-				 *   2. Current active page itself.
-				 *   3. Application.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keydown
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				keydown: function ( event ) {
-					var page = router.current,
-						activeComponent;
+			    /**
+			     * The keydown event is fired when a key is pressed down.
+			     * Set event.stop to true in order to prevent bubbling.
+			     *
+			     * Control flow:
+			     *   1. Current active component on the active page.
+			     *   2. Current active page itself.
+			     *   3. Application.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keydown
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    keydown: function ( event ) {
+			        var page = router.current,
+			            activeComponent;
 			
-					if ( true ) {
-						if ( !page ) { throw new Error(__filename + ': app should have at least one page'); }
-					}
+			        if ( true ) {
+			            if ( !page ) { throw new Error(__filename + ': app should have at least one page'); }
+			        }
 			
-					// filter phantoms
-					if ( event.keyCode === 0 ) { return; }
+			        // filter phantoms
+			        if ( event.keyCode === 0 ) { return; }
 			
-					// combined key code
-					event.code = event.keyCode;
+			        // combined key code
+			        event.code = event.keyCode;
 			
-					// apply key modifiers
-					if ( event.shiftKey ) { event.code += 1000; }
-					if ( event.altKey )   { event.code += 2000; }
+			        // apply key modifiers
+			        if ( event.shiftKey ) { event.code += 1000; }
+			        if ( event.altKey )   { event.code += 2000; }
 			
-					debug.event(event);
+			        debug.event(event);
 			
-					// page.activeComponent can be set to null in event handles
-					activeComponent = page.activeComponent;
+			        // page.activeComponent can be set to null in event handles
+			        activeComponent = page.activeComponent;
 			
-					// current component handler
-					if ( activeComponent && activeComponent !== page ) {
-						// component is available and not page itself
-						if ( activeComponent.events[event.type] ) {
-							// there are some listeners
-							activeComponent.emit(event.type, event);
-						}
+			        // current component handler
+			        if ( activeComponent && activeComponent !== page ) {
+			            // component is available and not page itself
+			            if ( activeComponent.events[event.type] ) {
+			                // there are some listeners
+			                activeComponent.emit(event.type, event);
+			            }
 			
-						// bubbling
-						if (
-							!event.stop &&
-							activeComponent.propagate &&
-							activeComponent.parent &&
-							activeComponent.parent.events[event.type]
-						) {
-							activeComponent.parent.emit(event.type, event);
-						}
-					}
+			            // bubbling
+			            if (
+			                !event.stop &&
+			                activeComponent.propagate &&
+			                activeComponent.parent &&
+			                activeComponent.parent.events[event.type]
+			            ) {
+			                activeComponent.parent.emit(event.type, event);
+			            }
+			        }
 			
-					// page handler
-					if ( !event.stop ) {
-						// not prevented
-						if ( page.events[event.type] ) {
-							// there are some listeners
-							page.emit(event.type, event);
-						}
+			        // page handler
+			        if ( !event.stop ) {
+			            // not prevented
+			            if ( page.events[event.type] ) {
+			                // there are some listeners
+			                page.emit(event.type, event);
+			            }
 			
-						// global app handler
-						if ( !event.stop ) {
-							// not prevented
-							if ( app.events[event.type] ) {
-								// there are some listeners
-								app.emit(event.type, event);
-							}
-						}
-					}
+			            // global app handler
+			            if ( !event.stop ) {
+			                // not prevented
+			                if ( app.events[event.type] ) {
+			                    // there are some listeners
+			                    app.emit(event.type, event);
+			                }
+			            }
+			        }
 			
-					// suppress non-printable keys in stb device (not in your browser)
-					if ( app.data.host && keyCodes[event.code] ) {
-						event.preventDefault();
-					}
-				},
+			        // suppress non-printable keys in stb device (not in your browser)
+			        if ( app.data.host && keyCodes[event.code] ) {
+			            event.preventDefault();
+			        }
+			    },
 			
-				/**
-				 * The keypress event is fired when press a printable character.
-				 * Delivers the event only to activeComponent at active page.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keypress
-				 *
-				 * @param {Event} event generated object with event data
-				 * @param {string} event.char entered character
-				 */
-				keypress: function ( event ) {
-					var page = router.current;
+			    /**
+			     * The keypress event is fired when press a printable character.
+			     * Delivers the event only to activeComponent at active page.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/keypress
+			     *
+			     * @param {Event} event generated object with event data
+			     * @param {string} event.char entered character
+			     */
+			    keypress: function ( event ) {
+			        var page = router.current;
 			
-					if ( true ) {
-						if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
-					}
+			        if ( true ) {
+			            if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
+			        }
 			
-					//debug.event(event);
+			        //debug.event(event);
 			
-					// current component handler
-					if ( page.activeComponent && page.activeComponent !== page ) {
-						// component is available and not page itself
-						if ( page.activeComponent.events[event.type] ) {
-							// there are some listeners
-							page.activeComponent.emit(event.type, event);
-						}
-					}
-				},
+			        // current component handler
+			        if ( page.activeComponent && page.activeComponent !== page ) {
+			            // component is available and not page itself
+			            if ( page.activeComponent.events[event.type] ) {
+			                // there are some listeners
+			                page.activeComponent.emit(event.type, event);
+			            }
+			        }
+			    },
 			
-				/**
-				 * The click event is fired when a pointing device button (usually a mouse button) is pressed and released on a single element.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/click
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				click: function ( event ) {
-					debug.event(event);
-				},
+			    /**
+			     * The click event is fired when a pointing device button (usually a mouse button) is pressed and released on a single element.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/click
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    click: function ( event ) {
+			        debug.event(event);
+			    },
 			
-				/**
-				 * The contextmenu event is fired when the right button of the mouse is clicked (before the context menu is displayed),
-				 * or when the context menu key is pressed (in which case the context menu is displayed at the bottom left of the focused
-				 * element, unless the element is a tree, in which case the context menu is displayed at the bottom left of the current row).
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/contextmenu
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				contextmenu: function ( event ) {
-					//var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
+			    /**
+			     * The contextmenu event is fired when the right button of the mouse is clicked (before the context menu is displayed),
+			     * or when the context menu key is pressed (in which case the context menu is displayed at the bottom left of the focused
+			     * element, unless the element is a tree, in which case the context menu is displayed at the bottom left of the current row).
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/contextmenu
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    contextmenu: function ( event ) {
+			        //var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
 			
-					debug.event(event);
+			        debug.event(event);
 			
-					//kbEvent.type    = 'keydown';
-					//kbEvent.keyCode = 8;
+			        //kbEvent.type    = 'keydown';
+			        //kbEvent.keyCode = 8;
 			
-					//debug.log(kbEvent.type);
+			        //debug.log(kbEvent.type);
 			
-					//globalEventListenerKeydown(kbEvent);
-					//var event = document.createEvent('KeyboardEvent');
-					//event.initEvent('keydown', true, true);
+			        //globalEventListenerKeydown(kbEvent);
+			        //var event = document.createEvent('KeyboardEvent');
+			        //event.initEvent('keydown', true, true);
 			
-					//document.dispatchEvent(kbEvent);
+			        //document.dispatchEvent(kbEvent);
 			
-					if ( false ) {
-						// disable right click in release mode
-						event.preventDefault();
-					}
-				},
+			        if ( false ) {
+			            // disable right click in release mode
+			            event.preventDefault();
+			        }
+			    },
 			
-				/**
-				 * The wheel event is fired when a wheel button of a pointing device (usually a mouse) is rotated.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/wheel
-				 *
-				 * @param {Event} event generated object with event data
-				 */
-				mousewheel: function ( event ) {
-					var page = router.current;
+			    /**
+			     * The wheel event is fired when a wheel button of a pointing device (usually a mouse) is rotated.
+			     *
+			     * @see https://developer.mozilla.org/en-US/docs/Web/Reference/Events/wheel
+			     *
+			     * @param {Event} event generated object with event data
+			     */
+			    mousewheel: function ( event ) {
+			        var page = router.current;
 			
-					if ( true ) {
-						if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
-					}
+			        if ( true ) {
+			            if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
+			        }
 			
-					debug.event(event);
+			        debug.event(event);
 			
-					// current component handler
-					if ( page.activeComponent && page.activeComponent !== page ) {
-						// component is available and not page itself
-						if ( page.activeComponent.events[event.type] ) {
-							// there are some listeners
-							page.activeComponent.emit(event.type, event);
-						}
-					}
+			        // current component handler
+			        if ( page.activeComponent && page.activeComponent !== page ) {
+			            // component is available and not page itself
+			            if ( page.activeComponent.events[event.type] ) {
+			                // there are some listeners
+			                page.activeComponent.emit(event.type, event);
+			            }
+			        }
 			
-					// page handler
-					if ( !event.stop ) {
-						// not prevented
-						if ( page.events[event.type] ) {
-							// there are some listeners
-							page.emit(event.type, event);
-						}
-					}
-				}
+			        // page handler
+			        if ( !event.stop ) {
+			            // not prevented
+			            if ( page.events[event.type] ) {
+			                // there are some listeners
+			                page.emit(event.type, event);
+			            }
+			        }
+			    }
 			};
 			
 			
 			// apply events
 			for ( key in app.defaultEvents ) {
-				window.addEventListener(key, app.defaultEvents[key]);
+			    window.addEventListener(key, app.defaultEvents[key]);
 			}
 			
 			
@@ -1564,29 +1565,29 @@
 			 * @param {string} info associated data in **JSON** format
 			 */
 			window.stbEvent.onEvent = function ( event, info ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onEvent ) {
-						// proxy call
-						frame.stbEvent.onEvent(event, info);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onEvent ) {
+			            // proxy call
+			            frame.stbEvent.onEvent(event, info);
+			        }
+			    });
 			
-				// there are some listeners
-				if ( app.events['media'] ) {
-					// additional data
-					if ( info ) {
-						try {
-							info = JSON.parse(info);
-						} catch ( e ) {
-							debug.log(e);
-						}
-					}
+			    // there are some listeners
+			    if ( app.events['media'] ) {
+			        // additional data
+			        if ( info ) {
+			            try {
+			                info = JSON.parse(info);
+			            } catch ( e ) {
+			                debug.log(e);
+			            }
+			        }
 			
-					// notify listeners
-					app.emit('media', {code: parseInt(event, 10), info: info});
-				}
+			        // notify listeners
+			        app.emit('media', {code: parseInt(event, 10), info: info});
+			    }
 			};
 			
 			
@@ -1599,24 +1600,24 @@
 			 * @fires module:/stb/app#message
 			 */
 			window.stbEvent.onBroadcastMessage = function ( windowId, message, data ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onBroadcastMessage ) {
-						// proxy call
-						frame.stbEvent.onBroadcastMessage(windowId, message, data);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onBroadcastMessage ) {
+			            // proxy call
+			            frame.stbEvent.onBroadcastMessage(windowId, message, data);
+			        }
+			    });
 			
-				if ( app.events['message'] ) {
-					// notify listeners
-					app.emit('message', {
-						broadcast: true,
-						windowId: windowId,
-						message: message,
-						data: data
-					});
-				}
+			    if ( app.events['message'] ) {
+			        // notify listeners
+			        app.emit('message', {
+			            broadcast: true,
+			            windowId: windowId,
+			            message: message,
+			            data: data
+			        });
+			    }
 			};
 			
 			
@@ -1629,24 +1630,24 @@
 			 * @fires module:/stb/app#message
 			 */
 			window.stbEvent.onMessage = function ( windowId, message, data ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onMessage ) {
-						// proxy call
-						frame.stbEvent.onMessage(windowId, message, data);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onMessage ) {
+			            // proxy call
+			            frame.stbEvent.onMessage(windowId, message, data);
+			        }
+			    });
 			
-				if ( app.events['message'] ) {
-					// notify listeners
-					app.emit('message', {
-						broadcast: false,
-						windowId: windowId,
-						message: message,
-						data: data
-					});
-				}
+			    if ( app.events['message'] ) {
+			        // notify listeners
+			        app.emit('message', {
+			            broadcast: false,
+			            windowId: windowId,
+			            message: message,
+			            data: data
+			        });
+			    }
 			};
 			
 			
@@ -1666,19 +1667,19 @@
 			 * @fires module:/stb/app#mount
 			 */
 			window.stbEvent.onMount = function ( state ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onMount ) {
-						// proxy call
-						frame.stbEvent.onMount(state);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onMount ) {
+			            // proxy call
+			            frame.stbEvent.onMount(state);
+			        }
+			    });
 			
-				if ( app.events['device:mount'] ) {
-					// notify listeners
-					app.emit('device:mount', {state: state});
-				}
+			    if ( app.events['device:mount'] ) {
+			        // notify listeners
+			        app.emit('device:mount', {state: state});
+			    }
 			};
 			
 			
@@ -1698,19 +1699,19 @@
 			 * @fires module:/stb/app#media:available
 			 */
 			window.stbEvent.onMediaAvailable = function ( mime, url ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onMediaAvailable ) {
-						// proxy call
-						frame.stbEvent.onMediaAvailable(mime, url);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onMediaAvailable ) {
+			            // proxy call
+			            frame.stbEvent.onMediaAvailable(mime, url);
+			        }
+			    });
 			
-				if ( app.events['media:available'] ) {
-					// notify listeners
-					app.emit('media:available', {mime: mime, url: url});
-				}
+			    if ( app.events['media:available'] ) {
+			        // notify listeners
+			        app.emit('media:available', {mime: mime, url: url});
+			    }
 			};
 			
 			
@@ -1730,10 +1731,10 @@
 			 * @fires module:/stb/app#internet:state
 			 */
 			window.stbEvent.onNetworkStateChange = function ( state ) {
-				if ( app.events['internet:state'] ) {
-					// notify listeners
-					app.emit('internet:state', {state: state});
-				}
+			    if ( app.events['internet:state'] ) {
+			        // notify listeners
+			        app.emit('internet:state', {state: state});
+			    }
 			};
 			
 			
@@ -1753,19 +1754,19 @@
 			 * fires module:/stb/app#browser:progress
 			 */
 			window.stbEvent.onWebBrowserProgress = function ( progress ) {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onWebBrowserProgress ) {
-						// proxy call
-						frame.stbEvent.onWebBrowserProgress(progress);
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onWebBrowserProgress ) {
+			            // proxy call
+			            frame.stbEvent.onWebBrowserProgress(progress);
+			        }
+			    });
 			
-				if ( app.events['browser:progress'] ) {
-					// notify listeners
-					app.emit('browser:progress', {progress: progress});
-				}
+			    if ( app.events['browser:progress'] ) {
+			        // notify listeners
+			        app.emit('browser:progress', {progress: progress});
+			    }
 			};
 			
 			
@@ -1782,19 +1783,19 @@
 			 * fires module:/stb/app#window:focus
 			 */
 			window.stbEvent.onWindowActivated = function () {
-				// proxy to all frames
-				Array.prototype.forEach.call(window.frames, function ( frame ) {
-					// necessary global object is present
-					if ( frame.stbEvent && frame.stbEvent.onWindowActivated ) {
-						// proxy call
-						frame.stbEvent.onWindowActivated();
-					}
-				});
+			    // proxy to all frames
+			    Array.prototype.forEach.call(window.frames, function ( frame ) {
+			        // necessary global object is present
+			        if ( frame.stbEvent && frame.stbEvent.onWindowActivated ) {
+			            // proxy call
+			            frame.stbEvent.onWindowActivated();
+			        }
+			    });
 			
-				if ( app.events['window:focus'] ) {
-					// notify listeners
-					app.emit('window:focus');
-				}
+			    if ( app.events['window:focus'] ) {
+			        // notify listeners
+			        app.emit('window:focus');
+			    }
 			};
 			
 			
@@ -1802,15 +1803,15 @@
 			// all strings are in UTF-16
 			// since stbapp 2.18
 			if ( window.gSTB && gSTB.SetNativeStringMode ) {
-				/* eslint new-cap: 0 */
+			    /* eslint new-cap: 0 */
 			
-				gSTB.SetNativeStringMode(true);
+			    gSTB.SetNativeStringMode(true);
 			}
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.app = app;
+			    // expose to the global scope
+			    window.app = app;
 			}
 			
 			
@@ -1835,7 +1836,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 3);
+			    keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -1872,41 +1873,41 @@
 			 * });
 			 */
 			function Button ( config ) {
-				// current execution context
-				//var self = this;
+			    // current execution context
+			    //var self = this;
 			
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.icon      && typeof config.icon      !== 'string' ) { throw new Error(__filename + ': wrong or empty config.icon'); }
-					if ( config.value     && typeof config.value     !== 'string' ) { throw new Error(__filename + ': wrong or empty config.value'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.icon      && typeof config.icon      !== 'string' ) { throw new Error(__filename + ': wrong or empty config.icon'); }
+			        if ( config.value     && typeof config.value     !== 'string' ) { throw new Error(__filename + ': wrong or empty config.value'); }
+			    }
 			
-				// set default className if classList property empty or undefined
-				config.className = 'button ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'button ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// optional dom
-				if ( config.icon ) {
-					// insert icon
-					this.$icon = this.$body.appendChild(document.createElement('div'));
-					this.$icon.className = 'icon ' + config.icon;
-				}
+			    // optional dom
+			    if ( config.icon ) {
+			        // insert icon
+			        this.$icon = this.$body.appendChild(document.createElement('div'));
+			        this.$icon.className = 'icon ' + config.icon;
+			    }
 			
-				// insert caption placeholder
-				this.$text = this.$body.appendChild(document.createElement('div'));
-				this.$text.classList.add('text');
+			    // insert caption placeholder
+			    this.$text = this.$body.appendChild(document.createElement('div'));
+			    this.$text.classList.add('text');
 			
-				if ( config.value ) {
-					// fill it
-					this.$text.innerText = config.value;
-				}
+			    if ( config.value ) {
+			        // fill it
+			        this.$text.innerText = config.value;
+			    }
 			}
 			
 			
@@ -1925,48 +1926,48 @@
 			 * @type {Object.<string, function>}
 			 */
 			Button.prototype.defaultEvents = {
-				/**
-				 * Default method to handle mouse click events.
-				 */
-				click: function () {
-					// current execution context
-					var self = this;
+			    /**
+			     * Default method to handle mouse click events.
+			     */
+			    click: function () {
+			        // current execution context
+			        var self = this;
 			
-					this.$node.classList.add('click');
+			        this.$node.classList.add('click');
 			
-					setTimeout(function () {
-						self.$node.classList.remove('click');
-					}, this.clickDuration);
-				},
+			        setTimeout(function () {
+			            self.$node.classList.remove('click');
+			        }, this.clickDuration);
+			    },
 			
-				/**
-				 * Default method to handle keyboard keydown events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keydown: function ( event ) {
-					if ( event.code === keys.ok ) {
-						// emulate click
-						// there are some listeners
-						if ( this.events['click'] ) {
-							/**
-							 * Mouse click event emulation.
-							 *
-							 * @event module:stb/ui/button~Button#click
-							 *
-							 * @type {Object}
-							 * @property {Event} event click event data
-							 */
-							this.emit('click', {event: event});
-						}
-					}
-				}
+			    /**
+			     * Default method to handle keyboard keydown events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keydown: function ( event ) {
+			        if ( event.code === keys.ok ) {
+			            // emulate click
+			            // there are some listeners
+			            if ( this.events['click'] ) {
+			                /**
+			                 * Mouse click event emulation.
+			                 *
+			                 * @event module:stb/ui/button~Button#click
+			                 *
+			                 * @type {Object}
+			                 * @property {Event} event click event data
+			                 */
+			                this.emit('click', {event: event});
+			            }
+			        }
+			    }
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentButton = Button;
+			    // expose to the global scope
+			    window.ComponentButton = Button;
 			}
 			
 			
@@ -1998,219 +1999,221 @@
 			 * @constructor
 			 */
 			function Emitter () {
-				if ( true ) {
-					if ( typeof this !== 'object' ) { throw new Error(__filename + ': must be constructed via new'); }
-				}
+			    if ( true ) {
+			        if ( typeof this !== 'object' ) { throw new Error(__filename + ': must be constructed via new'); }
+			    }
 			
-				/**
-				 * Inner hash table for event names and linked callbacks.
-				 * Manual editing should be avoided.
-				 *
-				 * @member {Object.<string, function[]>}
-				 *
-				 * @example
-				 * {
-				 *     click: [
-				 *         function click1 () { ... },
-				 *         function click2 () { ... }
-				 *     ],
-				 *     keydown: [
-				 *         function () { ... }
-				 *     ]
-				 * }
-				 **/
-				this.events = {};
+			    /**
+			     * Inner hash table for event names and linked callbacks.
+			     * Manual editing should be avoided.
+			     *
+			     * @member {Object.<string, function[]>}
+			     *
+			     * @example
+			     * {
+			     *     click: [
+			     *         function click1 () { ... },
+			     *         function click2 () { ... }
+			     *     ],
+			     *     keydown: [
+			     *         function () { ... }
+			     *     ]
+			     * }
+			     **/
+			    this.events = {};
 			}
 			
 			
 			Emitter.prototype = {
-				/**
-				 * Bind an event to the given callback function.
-				 * The same callback function can be added multiple times for the same event name.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to call on this event
-				 *
-				 * @example
-				 * var obj = new Emitter();
-				 * obj.addListener('click', function ( data ) { ... });
-				 * // one more click handler
-				 * obj.addListener('click', function ( data ) { ... });
-				 */
-				addListener: function ( name, callback ) {
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-						if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
-					}
+			    /**
+			     * Bind an event to the given callback function.
+			     * The same callback function can be added multiple times for the same event name.
+			     *
+			     * @param {string} name event identifier
+			     * @param {function} callback function to call on this event
+			     *
+			     * @example
+			     * var obj = new Emitter();
+			     * obj.addListener('click', function ( data ) { ... });
+			     * // one more click handler
+			     * obj.addListener('click', function ( data ) { ... });
+			     */
+			    addListener: function ( name, callback ) {
+			        if ( true ) {
+			            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
+			            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+			        }
 			
-					// initialization may be required
-					this.events[name] = this.events[name] || [];
-					// append this new event to the list
-					this.events[name].push(callback);
-				},
-			
-			
-				/**
-				 * Add a one time listener for the event.
-				 * This listener is invoked only the next time the event is fired, after which it is removed.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to call on this event
-				 */
-				once: function ( name, callback ) {
-					// current execution context
-					var self = this;
-			
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-						if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
-					}
-			
-					// initialization may be required
-					this.events[name] = this.events[name] || [];
-					// append this new event to the list
-					this.events[name].push(function onceWrapper ( data ) {
-						callback(data);
-						self.removeListener(name, onceWrapper);
-					});
-				},
+			        // initialization may be required
+			        this.events[name] = this.events[name] || [];
+			        // append this new event to the list
+			        this.events[name].push(callback);
+			    },
 			
 			
-				/**
-				 * Apply multiple listeners at once.
-				 *
-				 * @param {Object} callbacks event names with callbacks
-				 *
-				 * @example
-				 * var obj = new Emitter();
-				 * obj.addListeners({click: function ( data ) {}, close: function ( data ) {}});
-				 */
-				addListeners: function ( callbacks ) {
-					var name;
+			    /**
+			     * Add a one time listener for the event.
+			     * This listener is invoked only the next time the event is fired, after which it is removed.
+			     *
+			     * @param {string} name event identifier
+			     * @param {function} callback function to call on this event
+			     */
+			    once: function ( name, callback ) {
+			        // current execution context
+			        var self = this;
 			
-					if ( true ) {
-						if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-						if ( typeof callbacks !== 'object' ) { throw new Error(__filename + ': wrong callbacks type'); }
-						if ( Object.keys(callbacks).length === 0 ) { throw new Error(__filename + ': no callbacks given'); }
-					}
+			        if ( true ) {
+			            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
+			            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+			        }
 			
-					// valid input
-					if ( typeof callbacks === 'object' ) {
-						for ( name in callbacks ) {
-							if ( callbacks.hasOwnProperty(name) ) {
-								this.addListener(name, callbacks[name]);
-							}
-						}
-					}
-				},
-			
-			
-				/**
-				 * Remove all instances of the given callback.
-				 *
-				 * @param {string} name event identifier
-				 * @param {function} callback function to remove
-				 *
-				 * @example
-				 * obj.removeListener('click', func1);
-				 */
-				removeListener: function ( name, callback ) {
-					if ( true ) {
-						if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-						if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
-						if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw new Error(__filename + ': corrupted inner data'); }
-					}
-			
-					// the event exists and should have some callbacks
-					if ( this.events[name] ) {
-						// rework the callback list to exclude the given one
-						this.events[name] = this.events[name].filter(function callbacksFilter ( fn ) { return fn !== callback; });
-						// event has no more callbacks so clean it
-						if ( this.events[name].length === 0 ) {
-							// as if there were no listeners at all
-							this.events[name] = undefined;
-						}
-					}
-				},
+			        // initialization may be required
+			        this.events[name] = this.events[name] || [];
+			        // append this new event to the list
+			        this.events[name].push(function onceWrapper (/*data*/) {
+			            //callback(data);
+			            callback.apply(this, arguments);
+			            self.removeListener(name, onceWrapper);
+			        });
+			    },
 			
 			
-				/**
-				 * Remove all callbacks for the given event name.
-				 * Without event name clears all events.
-				 *
-				 * @param {string} [name] event identifier
-				 *
-				 * @example
-				 * obj.removeAllListeners('click');
-				 * obj.removeAllListeners();
-				 */
-				removeAllListeners: function ( name ) {
-					if ( true ) {
-						if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw new Error(__filename + ': wrong or empty name'); }
-					}
+			    /**
+			     * Apply multiple listeners at once.
+			     *
+			     * @param {Object} callbacks event names with callbacks
+			     *
+			     * @example
+			     * var obj = new Emitter();
+			     * obj.addListeners({click: function ( data ) {}, close: function ( data ) {}});
+			     */
+			    addListeners: function ( callbacks ) {
+			        var name;
 			
-					// check input
-					if ( arguments.length === 0 ) {
-						// no arguments so remove everything
-						this.events = {};
-					} else if ( name ) {
-						if ( true ) {
-							if ( this.events[name] ) { throw new Error(__filename + ': event is not removed'); }
-						}
+			        if ( true ) {
+			            if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			            if ( typeof callbacks !== 'object' ) { throw new Error(__filename + ': wrong callbacks type'); }
+			            if ( Object.keys(callbacks).length === 0 ) { throw new Error(__filename + ': no callbacks given'); }
+			        }
 			
-						// only name is given so remove all callbacks for the given event
-						// but object structure modification should be avoided
-						this.events[name] = undefined;
-					}
-				},
+			        // valid input
+			        if ( typeof callbacks === 'object' ) {
+			            for ( name in callbacks ) {
+			                if ( callbacks.hasOwnProperty(name) ) {
+			                    this.addListener(name, callbacks[name]);
+			                }
+			            }
+			        }
+			    },
 			
 			
-				/**
-				 * Execute each of the listeners in the given order with the supplied arguments.
-				 *
-				 * @param {string} name event identifier
-				 * @param {Object} [data] options to send
-				 *
-				 * @todo consider use context
-				 *
-				 * @example
-				 * obj.emit('init');
-				 * obj.emit('click', {src:panel1, dst:panel2});
-				 *
-				 * // it's a good idea to emit event only when there are some listeners
-				 * if ( this.events['click'] ) {
-				 *     this.emit('click', {event: event});
-				 * }
-				 */
-				emit: function ( name, data ) {
-					var event = this.events[name],
-						i;
+			    /**
+			     * Remove all instances of the given callback.
+			     *
+			     * @param {string} name event identifier
+			     * @param {function} callback function to remove
+			     *
+			     * @example
+			     * obj.removeListener('click', func1);
+			     */
+			    removeListener: function ( name, callback ) {
+			        if ( true ) {
+			            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
+			            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+			            if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw new Error(__filename + ': corrupted inner data'); }
+			        }
 			
-					if ( true ) {
-						if ( arguments.length < 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-						if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-					}
+			        // the event exists and should have some callbacks
+			        if ( this.events[name] ) {
+			            // rework the callback list to exclude the given one
+			            this.events[name] = this.events[name].filter(function callbacksFilter ( fn ) { return fn !== callback; });
+			            // event has no more callbacks so clean it
+			            if ( this.events[name].length === 0 ) {
+			                // as if there were no listeners at all
+			                this.events[name] = undefined;
+			            }
+			        }
+			    },
 			
-					// the event exists and should have some callbacks
-					if ( event ) {
-						if ( true ) {
-							if ( !Array.isArray(event) ) { throw new Error(__filename + ': wrong event type'); }
-						}
 			
-						for ( i = 0; i < event.length; i++ ) {
-							if ( true ) {
-								if ( typeof event[i] !== 'function' ) { throw new Error(__filename + ': wrong event callback type'); }
-							}
+			    /**
+			     * Remove all callbacks for the given event name.
+			     * Without event name clears all events.
+			     *
+			     * @param {string} [name] event identifier
+			     *
+			     * @example
+			     * obj.removeAllListeners('click');
+			     * obj.removeAllListeners();
+			     */
+			    removeAllListeners: function ( name ) {
+			        if ( true ) {
+			            if ( arguments.length !== 0 && (typeof name !== 'string' || name.length === 0) ) { throw new Error(__filename + ': wrong or empty name'); }
+			        }
 			
-							// invoke the callback with parameters
-							// http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
-							event[i].call(this, data);
-						}
-					}
-				}
+			        // check input
+			        if ( arguments.length === 0 ) {
+			            // no arguments so remove everything
+			            this.events = {};
+			        } else if ( name ) {
+			            if ( true ) {
+			                if ( this.events[name] ) { throw new Error(__filename + ': event is not removed'); }
+			            }
+			
+			            // only name is given so remove all callbacks for the given event
+			            // but object structure modification should be avoided
+			            this.events[name] = undefined;
+			        }
+			    },
+			
+			
+			    /**
+			     * Execute each of the listeners in the given order with the supplied arguments.
+			     *
+			     * @param {string} name event identifier
+			     * @param {Object} [data] options to send
+			     * @param {Function} [callback] callback to send
+			     *
+			     *
+			     * @example
+			     * obj.emit('init');
+			     * obj.emit('click', {src:panel1, dst:panel2});
+			     *
+			     * // it's a good idea to emit event only when there are some listeners
+			     * if ( this.events['click'] ) {
+			     *     this.emit('click', {event: event});
+			     * }
+			     */
+			    emit: function ( name, data, callback ) {
+			        var event = this.events[name],
+			            i;
+			
+			        if ( true ) {
+			            if ( arguments.length < 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
+			        }
+			
+			        // the event exists and should have some callbacks
+			        if ( event ) {
+			            if ( true ) {
+			                if ( !Array.isArray(event) ) { throw new Error(__filename + ': wrong event type'); }
+			            }
+			
+			            for ( i = 0; i < event.length; i++ ) {
+			                if ( true ) {
+			                    if ( typeof event[i] !== 'function' ) { throw new Error(__filename + ': wrong event callback type'); }
+			                }
+			
+			                // invoke the callback with parameters
+			                // http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
+			                //event[i].call(this, data);
+			                event[i].apply(this, Array.prototype.slice.call(arguments, 1));
+			            }
+			        }
+			    }
 			};
 			
 			// correct constructor name
@@ -2218,8 +2221,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.Emitter = Emitter;
+			    // expose to the global scope
+			    window.Emitter = Emitter;
 			}
 			
 			
@@ -2296,7 +2299,7 @@
 			'use strict';
 			
 			var Emitter = __webpack_require__(/*! ./emitter */ 7),
-				router;
+			    router;
 			
 			
 			/**
@@ -2360,40 +2363,40 @@
 			 * @fires module:stb/router#init
 			 */
 			router.init = function ( pages ) {
-				var i, l, item;
+			    var i, l, item;
 			
-				if ( pages ) {
-					if ( true ) {
-						if ( !Array.isArray(pages) ) { throw new Error(__filename + ': wrong pages type'); }
-					}
+			    if ( pages ) {
+			        if ( true ) {
+			            if ( !Array.isArray(pages) ) { throw new Error(__filename + ': wrong pages type'); }
+			        }
 			
-					// reset page list
-					this.pages = [];
+			        // reset page list
+			        this.pages = [];
 			
-					// apply list
-					this.pages = pages;
+			        // apply list
+			        this.pages = pages;
 			
-					// extract ids
-					for ( i = 0, l = pages.length; i < l; i++ ) {
-						item = pages[i];
-						this.ids[item.id] = item;
+			        // extract ids
+			        for ( i = 0, l = pages.length; i < l; i++ ) {
+			            item = pages[i];
+			            this.ids[item.id] = item;
 			
-						// find the currently active page
-						if ( item.active ) {
-							this.current = item;
-						}
-					}
+			            // find the currently active page
+			            if ( item.active ) {
+			                this.current = item;
+			            }
+			        }
 			
-					// there are some listeners
-					if ( this.events['init'] ) {
-						// notify listeners
-						this.emit('init', {pages: pages});
-					}
+			        // there are some listeners
+			        if ( this.events['init'] ) {
+			            // notify listeners
+			            this.emit('init', {pages: pages});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				return false;
+			    return false;
 			};
 			
 			
@@ -2410,18 +2413,18 @@
 			 * {name: 'main', data: ['some', 'additional', 'data']}
 			 */
 			router.parse = function ( hash ) {
-				var page = {
-					name: '',
-					data: []
-				};
+			    var page = {
+			        name: '',
+			        data: []
+			    };
 			
-				// get and decode all parts
-				page.data = hash.split('/').map(decodeURIComponent);
-				// the first part is a page id
-				// everything else is optional path
-				page.name = page.data.shift().slice(1);
+			    // get and decode all parts
+			    page.data = hash.split('/').map(decodeURIComponent);
+			    // the first part is a page id
+			    // everything else is optional path
+			    page.name = page.data.shift().slice(1);
 			
-				return page;
+			    return page;
 			};
 			
 			
@@ -2439,17 +2442,17 @@
 			 * '#main/some/additional/data'
 			 */
 			router.stringify = function ( name, data ) {
-				// validation
-				data = Array.isArray(data) ? data : [];
+			    // validation
+			    data = Array.isArray(data) ? data : [];
 			
-				// encode all parts
-				name = encodeURIComponent(name);
-				data = data.map(encodeURIComponent);
-				// add encoded name to the beginning
-				data.unshift(name);
+			    // encode all parts
+			    name = encodeURIComponent(name);
+			    data = data.map(encodeURIComponent);
+			    // add encoded name to the beginning
+			    data.unshift(name);
 			
-				// build an uri
-				return data.join('/');
+			    // build an uri
+			    return data.join('/');
 			};
 			
 			
@@ -2463,26 +2466,26 @@
 			 * @return {boolean} operation status
 			 */
 			router.show = function ( page, data ) {
-				// page available and can be hidden
-				if ( page && !page.active ) {
-					// apply visibility
-					page.$node.classList.add('active');
-					page.active  = true;
-					this.current = page;
+			    // page available and can be hidden
+			    if ( page && !page.active ) {
+			        // apply visibility
+			        page.$node.classList.add('active');
+			        page.active  = true;
+			        this.current = page;
 			
-					// there are some listeners
-					if ( page.events['show'] ) {
-						// notify listeners
-						page.emit('show', {page: page, data: data});
-					}
+			        // there are some listeners
+			        if ( page.events['show'] ) {
+			            // notify listeners
+			            page.emit('show', {page: page, data: data});
+			        }
 			
-					debug.log('component ' + page.constructor.name + '.' + page.id + ' show', 'green');
+			        debug.log('component ' + page.constructor.name + '.' + page.id + ' show', 'green');
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -2494,26 +2497,26 @@
 			 * @return {boolean} operation status
 			 */
 			router.hide = function ( page ) {
-				// page available and can be hidden
-				if ( page && page.active ) {
-					// apply visibility
-					page.$node.classList.remove('active');
-					page.active  = false;
-					this.current = null;
+			    // page available and can be hidden
+			    if ( page && page.active ) {
+			        // apply visibility
+			        page.$node.classList.remove('active');
+			        page.active  = false;
+			        this.current = null;
 			
-					// there are some listeners
-					if ( page.events['hide'] ) {
-						// notify listeners
-						page.emit('hide', {page: page});
-					}
+			        // there are some listeners
+			        if ( page.events['hide'] ) {
+			            // notify listeners
+			            page.emit('hide', {page: page});
+			        }
 			
-					debug.log('component ' + page.constructor.name + '.' + page.id + ' hide', 'grey');
+			        debug.log('component ' + page.constructor.name + '.' + page.id + ' hide', 'grey');
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -2527,43 +2530,43 @@
 			 * @return {boolean} operation status
 			 */
 			router.navigate = function ( name, data ) {
-				var pageFrom = this.current,
-					pageTo   = this.ids[name];
+			    var pageFrom = this.current,
+			        pageTo   = this.ids[name];
 			
-				if ( true ) {
-					if ( router.pages.length > 0 ) {
-						if ( !pageTo || typeof pageTo !== 'object' ) { throw new Error(__filename + ': wrong pageTo type'); }
-						if ( !('active' in pageTo) ) { throw new Error(__filename + ': missing field "active" in pageTo'); }
-					}
-				}
+			    if ( true ) {
+			        if ( router.pages.length > 0 ) {
+			            if ( !pageTo || typeof pageTo !== 'object' ) { throw new Error(__filename + ': wrong pageTo type'); }
+			            if ( !('active' in pageTo) ) { throw new Error(__filename + ': missing field "active" in pageTo'); }
+			        }
+			    }
 			
-				// valid not already active page
-				if ( pageTo && !pageTo.active ) {
-					debug.log('router.navigate: ' + name, pageTo === pageFrom ? 'grey' : 'green');
+			    // valid not already active page
+			    if ( pageTo && !pageTo.active ) {
+			        debug.log('router.navigate: ' + name, pageTo === pageFrom ? 'grey' : 'green');
 			
-					// update url
-					location.hash = this.stringify(name, data);
+			        // update url
+			        location.hash = this.stringify(name, data);
 			
-					// apply visibility
-					this.hide(this.current);
-					this.show(pageTo, data);
+			        // apply visibility
+			        this.hide(this.current);
+			        this.show(pageTo, data);
 			
-					// there are some listeners
-					if ( this.events['navigate'] ) {
-						// notify listeners
-						this.emit('navigate', {from: pageFrom, to: pageTo});
-					}
+			        // there are some listeners
+			        if ( this.events['navigate'] ) {
+			            // notify listeners
+			            this.emit('navigate', {from: pageFrom, to: pageTo});
+			        }
 			
-					// store
-					this.history.push(pageTo);
+			        // store
+			        this.history.push(pageTo);
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				debug.log('router.navigate: ' + name, 'red');
+			    debug.log('router.navigate: ' + name, 'red');
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -2574,45 +2577,45 @@
 			 * @return {boolean} operation status
 			 */
 			router.back = function () {
-				var pageFrom, pageTo;
+			    var pageFrom, pageTo;
 			
-				debug.log('router.back', this.history.length > 1 ? 'green' : 'red');
+			    debug.log('router.back', this.history.length > 1 ? 'green' : 'red');
 			
-				// there are some pages in the history
-				if ( this.history.length > 1 ) {
-					// remove the current
-					pageFrom = this.history.pop();
+			    // there are some pages in the history
+			    if ( this.history.length > 1 ) {
+			        // remove the current
+			        pageFrom = this.history.pop();
 			
-					// new tail
-					pageTo = this.history[this.history.length - 1];
+			        // new tail
+			        pageTo = this.history[this.history.length - 1];
 			
-					// valid not already active page
-					if ( pageTo && !pageTo.active ) {
-						// update url
-						location.hash = pageTo.id;
+			        // valid not already active page
+			        if ( pageTo && !pageTo.active ) {
+			            // update url
+			            location.hash = pageTo.id;
 			
-						// apply visibility
-						this.hide(this.current);
-						this.show(pageTo);
+			            // apply visibility
+			            this.hide(this.current);
+			            this.show(pageTo);
 			
-						// there are some listeners
-						if ( this.events['navigate'] ) {
-							// notify listeners
-							this.emit('navigate', {from: pageFrom, to: pageTo});
-						}
+			            // there are some listeners
+			            if ( this.events['navigate'] ) {
+			                // notify listeners
+			                this.emit('navigate', {from: pageFrom, to: pageTo});
+			            }
 			
-						return true;
-					}
-				}
+			            return true;
+			        }
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.router = router;
+			    // expose to the global scope
+			    window.router = router;
 			}
 			
 			
@@ -2643,27 +2646,27 @@
 			
 			// public
 			module.exports = {
-				get: function ( name ) {
-					var value;
+			    get: function ( name ) {
+			        var value;
 			
-					if ( data.host ) {
-						value = stbStorage.getItem(name);
-					} else {
-						value = localStorage.getItem(name);
-					}
+			        if ( data.host ) {
+			            value = stbStorage.getItem(name);
+			        } else {
+			            value = localStorage.getItem(name);
+			        }
 			
-					return value ? JSON.parse(value) : null;
-				},
+			        return value ? JSON.parse(value) : null;
+			    },
 			
-				set: function ( name, value ) {
-					value = JSON.stringify(value);
+			    set: function ( name, value ) {
+			        value = JSON.stringify(value);
 			
-					if ( data.host ) {
-						stbStorage.setItem(name, value);
-					} else {
-						localStorage.setItem(name, value);
-					}
-				}
+			        if ( data.host ) {
+			            stbStorage.setItem(name, value);
+			        } else {
+			            localStorage.setItem(name, value);
+			        }
+			    }
 			};
 
 
@@ -3303,38 +3306,38 @@
 			 * dom.tag('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
 			 */
 			dom.tag = function ( tagName, attrList, content ) {
-				var node = null,
-					i, name;
+			    var node = null,
+			        i, name;
 			
-				// minimal param is given
-				if ( tagName ) {
-					// empty element
-					node = document.createElement(tagName);
+			    // minimal param is given
+			    if ( tagName ) {
+			        // empty element
+			        node = document.createElement(tagName);
 			
-					// optional attribute list is given
-					if ( attrList && typeof attrList === 'object' ) {
-						for ( name in attrList ) {
-							// extend a new node with the given attributes
-							node[name] = attrList[name];
-						}
-					}
+			        // optional attribute list is given
+			        if ( attrList && typeof attrList === 'object' ) {
+			            for ( name in attrList ) {
+			                // extend a new node with the given attributes
+			                node[name] = attrList[name];
+			            }
+			        }
 			
-					// content (arguments except the first two)
-					for ( i = 2; i < arguments.length; i++ ) {
-						// some data is given
-						if ( arguments[i] ) {
-							// regular HTML tag or plain data
-							node.appendChild(
-								typeof arguments[i] === 'object' ?
-								arguments[i] :
-								document.createTextNode(arguments[i])
-							);
-						}
-					}
+			        // content (arguments except the first two)
+			        for ( i = 2; i < arguments.length; i++ ) {
+			            // some data is given
+			            if ( arguments[i] ) {
+			                // regular HTML tag or plain data
+			                node.appendChild(
+			                    typeof arguments[i] === 'object' ?
+			                    arguments[i] :
+			                    document.createTextNode(arguments[i])
+			                );
+			            }
+			        }
 			
-				}
+			    }
 			
-				return node;
+			    return node;
 			};
 			
 			
@@ -3353,20 +3356,20 @@
 			 * dom.fragment('some text', 123, div3);
 			 */
 			dom.fragment = function ( node ) {
-				// prepare placeholder
-				var i, fragment = document.createDocumentFragment();
+			    // prepare placeholder
+			    var i, fragment = document.createDocumentFragment();
 			
-				// walk through all the given elements
-				for ( i = 0; i < arguments.length; i++ ) {
-					node = arguments[i];
-					// some data is given
-					if ( node ) {
-						// regular HTML tag or plain data
-						fragment.appendChild(typeof node === 'object' ? node : document.createTextNode(node));
-					}
-				}
+			    // walk through all the given elements
+			    for ( i = 0; i < arguments.length; i++ ) {
+			        node = arguments[i];
+			        // some data is given
+			        if ( node ) {
+			            // regular HTML tag or plain data
+			            fragment.appendChild(typeof node === 'object' ? node : document.createTextNode(node));
+			        }
+			    }
 			
-				return fragment;
+			    return fragment;
 			};
 			
 			
@@ -3388,26 +3391,26 @@
 			 * add(some_div, div1, 'hello', 'world');
 			 */
 			dom.add = function ( tagDst, content ) {
-				var i;
+			    var i;
 			
-				// valid HTML tag as the destination
-				if ( tagDst instanceof Node ) {
-					// append all except the first one
-					for ( i = 1; i < arguments.length; i++ ) {
-						// some data is given
-						if ( arguments[i] ) {
-							// regular HTML tag or plain data
-							tagDst.appendChild(
-								typeof arguments[i] === 'object' ?
-								arguments[i] :
-								document.createTextNode(arguments[i])
-							);
-						}
-					}
-					return tagDst;
-				}
+			    // valid HTML tag as the destination
+			    if ( tagDst instanceof Node ) {
+			        // append all except the first one
+			        for ( i = 1; i < arguments.length; i++ ) {
+			            // some data is given
+			            if ( arguments[i] ) {
+			                // regular HTML tag or plain data
+			                tagDst.appendChild(
+			                    typeof arguments[i] === 'object' ?
+			                    arguments[i] :
+			                    document.createTextNode(arguments[i])
+			                );
+			            }
+			        }
+			        return tagDst;
+			    }
 			
-				return null;
+			    return null;
 			};
 			
 			
@@ -3422,26 +3425,26 @@
 			 * dom.remove(div1, div2, div3);
 			 */
 			dom.remove = function ( nodes ) {
-				var count = 0,  // amount of successfully removed nodes
-					i;
+			    var count = 0,  // amount of successfully removed nodes
+			        i;
 			
-				// walk through all the given elements
-				for ( i = 0; i < arguments.length; i++ ) {
-					// valid non-empty tag
-					if ( arguments[i] && arguments[i].parentNode ) {
-						if ( arguments[i].parentNode.removeChild(arguments[i]) === arguments[i] ) {
-							count++;
-						}
-					}
-				}
+			    // walk through all the given elements
+			    for ( i = 0; i < arguments.length; i++ ) {
+			        // valid non-empty tag
+			        if ( arguments[i] && arguments[i].parentNode ) {
+			            if ( arguments[i].parentNode.removeChild(arguments[i]) === arguments[i] ) {
+			                count++;
+			            }
+			        }
+			    }
 			
-				return arguments.length > 0 && count === arguments.length;
+			    return arguments.length > 0 && count === arguments.length;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.dom = dom;
+			    // expose to the global scope
+			    window.dom = dom;
 			}
 			
 			
@@ -3497,47 +3500,47 @@
 			 * });
 			 */
 			function Page ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				/**
-				 * Page visibility/active state flag.
-				 *
-				 * @readonly
-				 * @type {boolean}
-				 */
-				this.active = false;
+			    /**
+			     * Page visibility/active state flag.
+			     *
+			     * @readonly
+			     * @type {boolean}
+			     */
+			    this.active = false;
 			
-				/**
-				 * Link to the currently active component with focus.
-				 *
-				 * @readonly
-				 * @type {Component}
-				 */
-				this.activeComponent = null;
+			    /**
+			     * Link to the currently active component with focus.
+			     *
+			     * @readonly
+			     * @type {Component}
+			     */
+			    this.activeComponent = null;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'page ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'page ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// state flag
-				this.active = this.$node.classList.contains('active');
+			    // state flag
+			    this.active = this.$node.classList.contains('active');
 			
-				// correct DOM parent/child connection if necessary
-				if ( this.$node.parentNode === null ) {
-					document.body.appendChild(this.$node);
-				}
+			    // correct DOM parent/child connection if necessary
+			    if ( this.$node.parentNode === null ) {
+			        document.body.appendChild(this.$node);
+			    }
 			
-				// always itself
-				this.page = this;
+			    // always itself
+			    this.page = this;
 			}
 			
 			
@@ -3547,8 +3550,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentPage = Page;
+			    // expose to the global scope
+			    window.ComponentPage = Page;
 			}
 			
 			
@@ -3575,49 +3578,49 @@
 			
 			// public
 			module.exports = {
-				480 : {
-					// screen base dimension
-					height: 480,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 32,
-					availLeft  : 48
-				},
+			    480 : {
+			        // screen base dimension
+			        height: 480,
+			        width : 720,
+			        // safe zone margins
+			        availTop   : 24,
+			        availBottom: 24,
+			        availRight : 32,
+			        availLeft  : 48
+			    },
 			
-				576 : {
-					// screen base dimension
-					height: 576,
-					width : 720,
-					// safe zone margins
-					availTop   : 24,
-					availBottom: 24,
-					availRight : 26,
-					availLeft  : 54
-				},
+			    576 : {
+			        // screen base dimension
+			        height: 576,
+			        width : 720,
+			        // safe zone margins
+			        availTop   : 24,
+			        availBottom: 24,
+			        availRight : 26,
+			        availLeft  : 54
+			    },
 			
-				720 : {
-					// screen base dimension
-					height: 720,
-					width : 1280,
-					// safe zone margins
-					availTop   : 30,
-					availBottom: 30,
-					availRight : 40,
-					availLeft  : 40
-				},
+			    720 : {
+			        // screen base dimension
+			        height: 720,
+			        width : 1280,
+			        // safe zone margins
+			        availTop   : 30,
+			        availBottom: 30,
+			        availRight : 40,
+			        availLeft  : 40
+			    },
 			
-				1080: {
-					// screen base dimension
-					height: 1080,
-					width : 1920,
-					// safe zone margins
-					availTop   : 45,
-					availBottom: 45,
-					availRight : 60,
-					availLeft  : 60
-				}
+			    1080: {
+			        // screen base dimension
+			        height: 1080,
+			        width : 1920,
+			        // safe zone margins
+			        availTop   : 45,
+			        availBottom: 45,
+			        availRight : 60,
+			        availLeft  : 60
+			    }
 			};
 
 
@@ -3637,7 +3640,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 3);
+			    keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -3666,58 +3669,58 @@
 			 *     });
 			 */
 			function Input ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string'   ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string'   ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				/**
-				 * Text value of input.
-				 *
-				 * @type {string}
-				 */
-				this.value = '';
+			    /**
+			     * Text value of input.
+			     *
+			     * @type {string}
+			     */
+			    this.value = '';
 			
-				/**
-				 * Input type, now available only text and password.
-				 * Different logic with different types.
-				 * TYPE_TEXT - normal input.
-				 * TYPE_PASSWORD - hidden input, all chars replaced with '*', but real value is located in 'this.value'.
-				 *
-				 * @type {number}
-				 */
-				this.type = this.TYPE_TEXT;
+			    /**
+			     * Input type, now available only text and password.
+			     * Different logic with different types.
+			     * TYPE_TEXT - normal input.
+			     * TYPE_PASSWORD - hidden input, all chars replaced with '*', but real value is located in 'this.value'.
+			     *
+			     * @type {number}
+			     */
+			    this.type = this.TYPE_TEXT;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'input ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'input ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// insert text line
-				this.$line = this.$body.appendChild(document.createElement('div'));
-				// correct class
-				this.$line.className = 'line';
+			    // insert text line
+			    this.$line = this.$body.appendChild(document.createElement('div'));
+			    // correct class
+			    this.$line.className = 'line';
 			
-				// element to show current cursor position
-				this.$caret = this.$line.appendChild(document.createElement('div'));
-				// correct class
-				this.$caret.className = 'caret';
+			    // element to show current cursor position
+			    this.$caret = this.$line.appendChild(document.createElement('div'));
+			    // correct class
+			    this.$caret.className = 'caret';
 			
-				// hint element with placeholder text
-				this.$placeholder = this.$line.appendChild(document.createElement('div'));
-				// correct class
-				this.$placeholder.className = 'placeholder';
+			    // hint element with placeholder text
+			    this.$placeholder = this.$line.appendChild(document.createElement('div'));
+			    // correct class
+			    this.$placeholder.className = 'placeholder';
 			
-				// setup caret index
-				this.$caret.index = 0;
+			    // setup caret index
+			    this.$caret.index = 0;
 			
-				// component setup
-				this.init(config);
+			    // component setup
+			    this.init(config);
 			}
 			
 			
@@ -3736,52 +3739,52 @@
 			 * @type {Object.<string, function>}
 			 */
 			Input.prototype.defaultEvents = {
-				/**
-				 * Default method to handle keyboard keypress events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keypress: function ( event ) {
-					this.addChar(String.fromCharCode(event.keyCode), this.$caret.index);
-				},
+			    /**
+			     * Default method to handle keyboard keypress events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keypress: function ( event ) {
+			        this.addChar(String.fromCharCode(event.keyCode), this.$caret.index);
+			    },
 			
-				/**
-				 * Default method to handle keyboard keydown events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keydown: function ( event ) {
-					switch ( event.code ) {
-						case keys['delete']:
-							this.removeChar(this.$caret.index);
-							break;
+			    /**
+			     * Default method to handle keyboard keydown events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keydown: function ( event ) {
+			        switch ( event.code ) {
+			            case keys['delete']:
+			                this.removeChar(this.$caret.index);
+			                break;
 			
-						case keys.back:
-							this.removeChar(this.$caret.index - 1);
-							break;
+			            case keys.back:
+			                this.removeChar(this.$caret.index - 1);
+			                break;
 			
-						case keys.left:
-							this.setCaretPosition(this.$caret.index - 1);
-							break;
+			            case keys.left:
+			                this.setCaretPosition(this.$caret.index - 1);
+			                break;
 			
-						case keys.right:
-							this.setCaretPosition(this.$caret.index + 1);
-							break;
+			            case keys.right:
+			                this.setCaretPosition(this.$caret.index + 1);
+			                break;
 			
-						case keys.end:
-						case keys.down:
-							this.setCaretPosition(this.value.length);
-							break;
+			            case keys.end:
+			            case keys.down:
+			                this.setCaretPosition(this.value.length);
+			                break;
 			
-						case keys.home:
-						case keys.up:
-							this.setCaretPosition(0);
-							break;
+			            case keys.home:
+			            case keys.up:
+			                this.setCaretPosition(0);
+			                break;
 			
-						default:
-							break;
-					}
-				}
+			            default:
+			                break;
+			        }
+			    }
 			};
 			
 			
@@ -3791,35 +3794,35 @@
 			 * @param {Object} config init parameters (subset of constructor config params)
 			 */
 			Input.prototype.init = function ( config ) {
-				if ( true ) {
-					if ( config.type && Number(config.type) !== config.type ) { throw new Error(__filename + ': config.type must be a number'); }
-					if ( config.type && config.type !== this.TYPE_TEXT && config.type !== this.TYPE_PASSWORD ) { throw new Error(__filename + ': config.type must be one of the TYPE_* constant'); }
-					if ( config.value && typeof config.value !== 'string' ) { throw new Error(__filename + ': config.value must be a string'); }
-					if ( config.placeholder && typeof config.placeholder !== 'string' ) { throw new Error(__filename + ': config.placeholder must be a string'); }
-					if ( config.direction && typeof config.direction !== 'string' ) { throw new Error(__filename + ': config.direction must be a string'); }
-					if ( config.direction && config.direction !== 'ltr' && config.direction !== 'rtl' ) { throw new Error(__filename + ': config.direction wrong value'); }
-				}
+			    if ( true ) {
+			        if ( config.type && Number(config.type) !== config.type ) { throw new Error(__filename + ': config.type must be a number'); }
+			        if ( config.type && config.type !== this.TYPE_TEXT && config.type !== this.TYPE_PASSWORD ) { throw new Error(__filename + ': config.type must be one of the TYPE_* constant'); }
+			        if ( config.value && typeof config.value !== 'string' ) { throw new Error(__filename + ': config.value must be a string'); }
+			        if ( config.placeholder && typeof config.placeholder !== 'string' ) { throw new Error(__filename + ': config.placeholder must be a string'); }
+			        if ( config.direction && typeof config.direction !== 'string' ) { throw new Error(__filename + ': config.direction must be a string'); }
+			        if ( config.direction && config.direction !== 'ltr' && config.direction !== 'rtl' ) { throw new Error(__filename + ': config.direction wrong value'); }
+			    }
 			
-				// type passed
-				if ( config.type ) {
-					// apply
-					this.type = config.type;
-				}
+			    // type passed
+			    if ( config.type ) {
+			        // apply
+			        this.type = config.type;
+			    }
 			
-				// default value passed
-				if ( config.value ) {
-					// apply
-					this.setValue(config.value);
-				}
+			    // default value passed
+			    if ( config.value ) {
+			        // apply
+			        this.setValue(config.value);
+			    }
 			
-				// hint
-				if ( config.placeholder ) {
-					// apply
-					this.$placeholder.innerText = config.placeholder;
-				}
+			    // hint
+			    if ( config.placeholder ) {
+			        // apply
+			        this.$placeholder.innerText = config.placeholder;
+			    }
 			
-				// char direction
-				this.$line.dir = config.direction || 'ltr';
+			    // char direction
+			    this.$line.dir = config.direction || 'ltr';
 			};
 			
 			
@@ -3834,51 +3837,51 @@
 			 * @fires module:stb/ui/input~Input#input
 			 */
 			Input.prototype.addChar = function ( char, index ) {
-				var $char = document.createElement('div');
+			    var $char = document.createElement('div');
 			
-				index = (index === undefined) ? this.$caret.index : index;
+			    index = (index === undefined) ? this.$caret.index : index;
 			
-				if ( true ) {
-					if ( index < 0 ) { throw new Error(__filename + ': index must be more than 0 or equal to 0'); }
-					if ( typeof char !== 'string' ) { throw new Error(__filename + ': char must be a string'); }
-					if ( char.length !== 1 ) { throw new Error(__filename + ': char must be a string with length = 1'); }
-				}
+			    if ( true ) {
+			        if ( index < 0 ) { throw new Error(__filename + ': index must be more than 0 or equal to 0'); }
+			        if ( typeof char !== 'string' ) { throw new Error(__filename + ': char must be a string'); }
+			        if ( char.length !== 1 ) { throw new Error(__filename + ': char must be a string with length = 1'); }
+			    }
 			
-				// remove hint
-				if ( this.value.length === 0 ) {
-					this.$line.removeChild(this.$placeholder);
-				}
+			    // remove hint
+			    if ( this.value.length === 0 ) {
+			        this.$line.removeChild(this.$placeholder);
+			    }
 			
-				// settings class name for span which presents one symbol in virtual input
-				$char.className = 'char';
+			    // settings class name for span which presents one symbol in virtual input
+			    $char.className = 'char';
 			
-				// insert char into value
-				this.value = this.value.substring(0, index) + char + this.value.substring(index, this.value.length);
+			    // insert char into value
+			    this.value = this.value.substring(0, index) + char + this.value.substring(index, this.value.length);
 			
-				// move caret
-				++this.$caret.index;
+			    // move caret
+			    ++this.$caret.index;
 			
-				if ( this.type === this.TYPE_PASSWORD ) {
-					$char.innerText = '*';
-				} else if ( char === ' ' ) {
-					$char.innerHTML = '&nbsp;';
-				} else {
-					$char.innerText = char;
-				}
+			    if ( this.type === this.TYPE_PASSWORD ) {
+			        $char.innerText = '*';
+			    } else if ( char === ' ' ) {
+			        $char.innerHTML = '&nbsp;';
+			    } else {
+			        $char.innerText = char;
+			    }
 			
-				if ( index >= this.value.length ) { // add char to the end, move caret to the end
-					this.$line.appendChild($char);
-					this.$line.appendChild(this.$caret);
-				} else { // move caret before index, append span before caret
-					this.$line.insertBefore(this.$caret, this.$line.children[index]);
-					this.$line.insertBefore($char, this.$caret);
-				}
+			    if ( index >= this.value.length ) { // add char to the end, move caret to the end
+			        this.$line.appendChild($char);
+			        this.$line.appendChild(this.$caret);
+			    } else { // move caret before index, append span before caret
+			        this.$line.insertBefore(this.$caret, this.$line.children[index]);
+			        this.$line.insertBefore($char, this.$caret);
+			    }
 			
-				// there are some listeners
-				if ( this.events['input'] ) {
-					// notify listeners
-					this.emit('input', {value: this.value});
-				}
+			    // there are some listeners
+			    if ( this.events['input'] ) {
+			        // notify listeners
+			        this.emit('input', {value: this.value});
+			    }
 			};
 			
 			
@@ -3891,39 +3894,39 @@
 			 * @fires module:stb/ui/input~Input#input
 			 */
 			Input.prototype.removeChar = function ( index ) {
-				var prevValue = this.value;
+			    var prevValue = this.value;
 			
-				index = (index === undefined) ? this.$caret.index - 1 : index;
-				// non-empty string
-				if ( this.value.length > 0 ) {
-					if ( true ) {
-						if ( index < 0 ) { throw new Error(__filename + ': index must be a positive value'); }
-						if ( index > this.value.length ) { throw new Error(__filename + ': index must be a less than or equal to total length'); }
-					}
+			    index = (index === undefined) ? this.$caret.index - 1 : index;
+			    // non-empty string
+			    if ( this.value.length > 0 ) {
+			        if ( true ) {
+			            if ( index < 0 ) { throw new Error(__filename + ': index must be a positive value'); }
+			            if ( index > this.value.length ) { throw new Error(__filename + ': index must be a less than or equal to total length'); }
+			        }
 			
-					if ( this.$caret.index === index && index < this.value.length ) {
-						// remove char after caret
-						this.$line.removeChild(this.$line.children[index + 1]);
-					} else if ( this.$caret.index > index ) {
-						// remove char before caret
-						--this.$caret.index;
-						this.$line.removeChild(this.$line.children[index]);
-					}
+			        if ( this.$caret.index === index && index < this.value.length ) {
+			            // remove char after caret
+			            this.$line.removeChild(this.$line.children[index + 1]);
+			        } else if ( this.$caret.index > index ) {
+			            // remove char before caret
+			            --this.$caret.index;
+			            this.$line.removeChild(this.$line.children[index]);
+			        }
 			
-					// cut one char from the value
-					this.value = this.value.substring(0, index) + this.value.substring(index + 1, this.value.length);
+			        // cut one char from the value
+			        this.value = this.value.substring(0, index) + this.value.substring(index + 1, this.value.length);
 			
-					// there are some listeners and value was changed
-					if ( this.events['input'] && prevValue !== this.value ) {
-						// notify listeners
-						this.emit('input', {value: this.value});
-					}
-				}
+			        // there are some listeners and value was changed
+			        if ( this.events['input'] && prevValue !== this.value ) {
+			            // notify listeners
+			            this.emit('input', {value: this.value});
+			        }
+			    }
 			
-				// only hint
-				if ( this.value.length === 0 ) {
-					this.$line.appendChild(this.$placeholder);
-				}
+			    // only hint
+			    if ( this.value.length === 0 ) {
+			        this.$line.appendChild(this.$placeholder);
+			    }
 			};
 			
 			
@@ -3934,21 +3937,21 @@
 			 * @param {number} index given position
 			 */
 			Input.prototype.setCaretPosition = function ( index ) {
-				// check boundaries and current position
-				if ( index >= 0 && index <= this.value.length && this.$caret.index !== index ) {
-					// extract caret
-					this.$line.removeChild(this.$caret);
+			    // check boundaries and current position
+			    if ( index >= 0 && index <= this.value.length && this.$caret.index !== index ) {
+			        // extract caret
+			        this.$line.removeChild(this.$caret);
 			
-					// apply
-					if ( index === this.value.length ) {
-						// add to the end
-						this.$line.appendChild(this.$caret);
-					} else {
-						this.$line.insertBefore(this.$caret, this.$line.children[index]);
-					}
+			        // apply
+			        if ( index === this.value.length ) {
+			            // add to the end
+			            this.$line.appendChild(this.$caret);
+			        } else {
+			            this.$line.insertBefore(this.$caret, this.$line.children[index]);
+			        }
 			
-					this.$caret.index = index;
-				}
+			        this.$caret.index = index;
+			    }
 			};
 			
 			
@@ -3958,84 +3961,84 @@
 			 * @param {string} value given string value
 			 */
 			Input.prototype.setValue = function ( value ) {
-				var oldLength = this.value.length,
-					newLength = value.length,
-					i = 0,
-					$char, diff;
+			    var oldLength = this.value.length,
+			        newLength = value.length,
+			        i = 0,
+			        $char, diff;
 			
-				if ( true ) {
-					if ( typeof value !== 'string' ) { throw new Error(__filename + ': value must be a string'); }
-				}
+			    if ( true ) {
+			        if ( typeof value !== 'string' ) { throw new Error(__filename + ': value must be a string'); }
+			    }
 			
-				// return if no changes
-				if ( value === this.value ) {
-					return;
-				}
+			    // return if no changes
+			    if ( value === this.value ) {
+			        return;
+			    }
 			
-				// non-empty string
-				if ( newLength > 0 ) {
-					// no hint
-					if ( this.$placeholder.parentNode === this.$line ) {
-						this.$line.removeChild(this.$placeholder);
-					}
+			    // non-empty string
+			    if ( newLength > 0 ) {
+			        // no hint
+			        if ( this.$placeholder.parentNode === this.$line ) {
+			            this.$line.removeChild(this.$placeholder);
+			        }
 			
-					// no cursor
-					this.$line.removeChild(this.$caret);
+			        // no cursor
+			        this.$line.removeChild(this.$caret);
 			
-					// value length has changed
-					if ( newLength !== oldLength ) {
-						diff = newLength - oldLength;
+			        // value length has changed
+			        if ( newLength !== oldLength ) {
+			            diff = newLength - oldLength;
 			
-						// need to correct char divs amount
-						if ( diff > 0 ) {
-							// add missing chars
-							for ( i = 0; i < diff; i++ ) {
-								$char = this.$line.appendChild(document.createElement('div'));
-								$char.className = 'char';
-							}
-						} else {
-							// remove unnecessary chars
-							for ( i = 0; i > diff; i-- ) {
-								this.$line.removeChild(this.$line.lastChild);
-							}
-						}
-					}
+			            // need to correct char divs amount
+			            if ( diff > 0 ) {
+			                // add missing chars
+			                for ( i = 0; i < diff; i++ ) {
+			                    $char = this.$line.appendChild(document.createElement('div'));
+			                    $char.className = 'char';
+			                }
+			            } else {
+			                // remove unnecessary chars
+			                for ( i = 0; i > diff; i-- ) {
+			                    this.$line.removeChild(this.$line.lastChild);
+			                }
+			            }
+			        }
 			
-					// apply value
-					for ( i = 0; i < newLength; i++ ) {
-						$char = this.$line.children[i];
+			        // apply value
+			        for ( i = 0; i < newLength; i++ ) {
+			            $char = this.$line.children[i];
 			
-						if ( this.type === this.TYPE_PASSWORD ) {
-							$char.innerHTML = '*';
-						} else if ( value[i] === ' ' ) {
-							$char.innerHTML = '&nbsp;';
-						} else {
-							$char.innerText = value[i];
-						}
-					}
+			            if ( this.type === this.TYPE_PASSWORD ) {
+			                $char.innerHTML = '*';
+			            } else if ( value[i] === ' ' ) {
+			                $char.innerHTML = '&nbsp;';
+			            } else {
+			                $char.innerText = value[i];
+			            }
+			        }
 			
-					this.value = value;
-					this.$caret.index = newLength;
-					this.$line.appendChild(this.$caret);
-				} else {
-					// empty string
-					this.value = '';
-					this.$line.innerText = '';
-					this.$line.appendChild(this.$caret);
-					this.$line.appendChild(this.$placeholder);
-				}
+			        this.value = value;
+			        this.$caret.index = newLength;
+			        this.$line.appendChild(this.$caret);
+			    } else {
+			        // empty string
+			        this.value = '';
+			        this.$line.innerText = '';
+			        this.$line.appendChild(this.$caret);
+			        this.$line.appendChild(this.$placeholder);
+			    }
 			
-				// there are some listeners
-				if ( this.events['input'] ) {
-					// notify listeners
-					this.emit('input', {value: this.value});
-				}
+			    // there are some listeners
+			    if ( this.events['input'] ) {
+			        // notify listeners
+			        this.emit('input', {value: this.value});
+			    }
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentInput = Input;
+			    // expose to the global scope
+			    window.ComponentInput = Input;
 			}
 			
 			
@@ -4060,7 +4063,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 3);
+			    keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -4100,111 +4103,111 @@
 			 * @fires module:stb/ui/list~List#click:item
 			 */
 			function List ( config ) {
-				// current execution context
-				//var self = this;
+			    // current execution context
+			    //var self = this;
 			
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
+			    }
 			
-				/**
-				 * Link to the currently focused DOM element.
-				 *
-				 * @type {Element}
-				 */
-				this.$focusItem = null;
+			    /**
+			     * Link to the currently focused DOM element.
+			     *
+			     * @type {Element}
+			     */
+			    this.$focusItem = null;
 			
-				/**
-				 * Position of the visible window to render.
-				 *
-				 * @type {number}
-				 */
-				this.viewIndex = null;
+			    /**
+			     * Position of the visible window to render.
+			     *
+			     * @type {number}
+			     */
+			    this.viewIndex = null;
 			
-				/**
-				 * Component data to visualize.
-				 *
-				 * @type {Array}
-				 */
-				this.data = [];
+			    /**
+			     * Component data to visualize.
+			     *
+			     * @type {Array}
+			     */
+			    this.data = [];
 			
-				/**
-				 * Component orientation.
-				 *
-				 * @type {number}
-				 */
-				this.type = this.TYPE_VERTICAL;
+			    /**
+			     * Component orientation.
+			     *
+			     * @type {number}
+			     */
+			    this.type = this.TYPE_VERTICAL;
 			
-				/**
-				 * Amount of visible items on a page.
-				 *
-				 * @type {number}
-				 */
-				this.size = 5;
+			    /**
+			     * Amount of visible items on a page.
+			     *
+			     * @type {number}
+			     */
+			    this.size = 5;
 			
-				/**
-				 * Allow or not to jump to the opposite side of a list when there is nowhere to go next.
-				 *
-				 * @type {boolean}
-				 */
-				this.cycle = false;
+			    /**
+			     * Allow or not to jump to the opposite side of a list when there is nowhere to go next.
+			     *
+			     * @type {boolean}
+			     */
+			    this.cycle = false;
 			
-				/**
-				 * Associated ScrollBar component link.
-				 *
-				 * @type {ScrollBar}
-				 */
-				this.scroll = null;
+			    /**
+			     * Associated ScrollBar component link.
+			     *
+			     * @type {ScrollBar}
+			     */
+			    this.scroll = null;
 			
-				// horizontal or vertical
-				if ( config.type ) {
-					// apply
-					this.type = config.type;
-				}
+			    // horizontal or vertical
+			    if ( config.type ) {
+			        // apply
+			        this.type = config.type;
+			    }
 			
-				// set default className if classList property empty or undefined
-				config.className = 'list ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'list ' + (config.className || '');
 			
-				if ( this.type === this.TYPE_HORIZONTAL ) {
-					config.className += ' horizontal';
-				}
+			    if ( this.type === this.TYPE_HORIZONTAL ) {
+			        config.className += ' horizontal';
+			    }
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// component setup
-				this.init(config);
+			    // component setup
+			    this.init(config);
 			
-				// custom navigation method
-				//if ( config.navigate ) {
-				//	if ( DEBUG ) {
-				//		if ( typeof config.navigate !== 'function' ) { throw new Error(__filename + ': wrong config.navigate type'); }
-				//	}
-				//	// apply
-				//	this.navigate = config.navigate;
-				//}
+			    // custom navigation method
+			    //if ( config.navigate ) {
+			    //    if ( DEBUG ) {
+			    //        if ( typeof config.navigate !== 'function' ) { throw new Error(__filename + ': wrong config.navigate type'); }
+			    //    }
+			    //    // apply
+			    //    this.navigate = config.navigate;
+			    //}
 			
-				// navigation by keyboard
-				//this.addListener('keydown', this.navigate);
+			    // navigation by keyboard
+			    //this.addListener('keydown', this.navigate);
 			
-				// navigation by mouse
-				//this.$body.addEventListener('mousewheel', function ( event ) {
-				//	// scrolling by Y axis
-				//	if ( self.type === self.TYPE_VERTICAL && event.wheelDeltaY ) {
-				//		self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
-				//	}
-				//
-				//	// scrolling by X axis
-				//	if ( self.type === self.TYPE_HORIZONTAL && event.wheelDeltaX ) {
-				//		self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
-				//	}
-				//});
+			    // navigation by mouse
+			    //this.$body.addEventListener('mousewheel', function ( event ) {
+			    //    // scrolling by Y axis
+			    //    if ( self.type === self.TYPE_VERTICAL && event.wheelDeltaY ) {
+			    //        self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+			    //    }
+			    //
+			    //    // scrolling by X axis
+			    //    if ( self.type === self.TYPE_HORIZONTAL && event.wheelDeltaX ) {
+			    //        self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+			    //    }
+			    //});
 			}
 			
 			
@@ -4224,7 +4227,7 @@
 			 * @param {*} data associated with this item data
 			 */
 			List.prototype.renderItemDefault = function ( $item, data ) {
-				$item.innerText = data.value;
+			    $item.innerText = data.value;
 			};
 			
 			
@@ -4243,50 +4246,50 @@
 			 * @type {Object.<string, function>}
 			 */
 			List.prototype.defaultEvents = {
-				/**
-				 * Default method to handle mouse wheel events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				mousewheel: function ( event ) {
-					// scrolling by Y axis
-					if ( this.type === this.TYPE_VERTICAL && event.wheelDeltaY ) {
-						this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
-					}
+			    /**
+			     * Default method to handle mouse wheel events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    mousewheel: function ( event ) {
+			        // scrolling by Y axis
+			        if ( this.type === this.TYPE_VERTICAL && event.wheelDeltaY ) {
+			            this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+			        }
 			
-					// scrolling by X axis
-					if ( this.type === this.TYPE_HORIZONTAL && event.wheelDeltaX ) {
-						this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
-					}
-				},
+			        // scrolling by X axis
+			        if ( this.type === this.TYPE_HORIZONTAL && event.wheelDeltaX ) {
+			            this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+			        }
+			    },
 			
-				/**
-				 * Default method to handle keyboard keydown events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keydown: function ( event ) {
-					switch ( event.code ) {
-						case keys.up:
-						case keys.down:
-						case keys.right:
-						case keys.left:
-						case keys.pageUp:
-						case keys.pageDown:
-						case keys.home:
-						case keys.end:
-							// cursor move only on arrow keys
-							this.move(event.code);
-							break;
-						case keys.ok:
-							// there are some listeners
-							if ( this.events['click:item'] ) {
-								// notify listeners
-								this.emit('click:item', {$item: this.$focusItem, event: event});
-							}
-							break;
-					}
-				}
+			    /**
+			     * Default method to handle keyboard keydown events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keydown: function ( event ) {
+			        switch ( event.code ) {
+			            case keys.up:
+			            case keys.down:
+			            case keys.right:
+			            case keys.left:
+			            case keys.pageUp:
+			            case keys.pageDown:
+			            case keys.home:
+			            case keys.end:
+			                // cursor move only on arrow keys
+			                this.move(event.code);
+			                break;
+			            case keys.ok:
+			                // there are some listeners
+			                if ( this.events['click:item'] ) {
+			                    // notify listeners
+			                    this.emit('click:item', {$item: this.$focusItem, event: event});
+			                }
+			                break;
+			        }
+			    }
 			};
 			
 			
@@ -4296,26 +4299,26 @@
 			 * @param {Event} event generated event source of movement
 			 */
 			//List.prototype.navigateDefault = function ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.up:
-			//		case keys.down:
-			//		case keys.right:
-			//		case keys.left:
-			//		case keys.pageUp:
-			//		case keys.pageDown:
-			//		case keys.home:
-			//		case keys.end:
-			//			// cursor move only on arrow keys
-			//			this.move(event.code);
-			//			break;
-			//		case keys.ok:
-			//			// there are some listeners
-			//			if ( this.events['click:item'] ) {
-			//				// notify listeners
-			//				this.emit('click:item', {$item: this.$focusItem, event: event});
-			//			}
-			//			break;
-			//	}
+			//    switch ( event.code ) {
+			//        case keys.up:
+			//        case keys.down:
+			//        case keys.right:
+			//        case keys.left:
+			//        case keys.pageUp:
+			//        case keys.pageDown:
+			//        case keys.home:
+			//        case keys.end:
+			//            // cursor move only on arrow keys
+			//            this.move(event.code);
+			//            break;
+			//        case keys.ok:
+			//            // there are some listeners
+			//            if ( this.events['click:item'] ) {
+			//                // notify listeners
+			//                this.emit('click:item', {$item: this.$focusItem, event: event});
+			//            }
+			//            break;
+			//    }
 			//};
 			
 			
@@ -4336,32 +4339,32 @@
 			 * @return {Array} reworked incoming data
 			 */
 			function normalize ( data ) {
-				var i, item;
+			    var i, item;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// rows
-				for ( i = 0; i < data.length; i++ ) {
-					// cell value
-					item = data[i];
-					// primitive value
-					if ( typeof item !== 'object' ) {
-						// wrap with defaults
-						item = data[i] = {
-							value: data[i]
-						};
-					}
+			    // rows
+			    for ( i = 0; i < data.length; i++ ) {
+			        // cell value
+			        item = data[i];
+			        // primitive value
+			        if ( typeof item !== 'object' ) {
+			            // wrap with defaults
+			            item = data[i] = {
+			                value: data[i]
+			            };
+			        }
 			
-					if ( true ) {
-						//if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
-						if ( ('mark' in item) && Boolean(item.mark) !== item.mark ) { throw new Error(__filename + ': item.mark must be boolean'); }
-					}
-				}
+			        if ( true ) {
+			            //if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
+			            if ( ('mark' in item) && Boolean(item.mark) !== item.mark ) { throw new Error(__filename + ': item.mark must be boolean'); }
+			        }
+			    }
 			
-				return data;
+			    return data;
 			}
 			
 			
@@ -4371,112 +4374,112 @@
 			 * @param {Object} config init parameters (subset of constructor config params)
 			 */
 			List.prototype.init = function ( config ) {
-				var self     = this,
-					currSize = this.$body.children.length,
-					/**
-					 * Item mouse click handler.
-					 *
-					 * @param {Event} event click event data
-					 *
-					 * @this Element
-					 *
-					 * @fires module:stb/ui/list~List#click:item
-					 */
-					onClick = function ( event ) {
-						if ( this.data ) {
-							self.focusItem(this);
+			    var self     = this,
+			        currSize = this.$body.children.length,
+			        /**
+			         * Item mouse click handler.
+			         *
+			         * @param {Event} event click event data
+			         *
+			         * @this Element
+			         *
+			         * @fires module:stb/ui/list~List#click:item
+			         */
+			        onClick = function ( event ) {
+			            if ( this.data ) {
+			                self.focusItem(this);
 			
-							// there are some listeners
-							if ( self.events['click:item'] ) {
-								// notify listeners
-								self.emit('click:item', {$item: this, event: event});
-							}
-						}
-					},
-					item, i;
+			                // there are some listeners
+			                if ( self.events['click:item'] ) {
+			                    // notify listeners
+			                    self.emit('click:item', {$item: this, event: event});
+			                }
+			            }
+			        },
+			        item, i;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			    }
 			
-				// apply cycle behaviour
-				if ( config.cycle !== undefined ) { this.cycle = config.cycle; }
+			    // apply cycle behaviour
+			    if ( config.cycle !== undefined ) { this.cycle = config.cycle; }
 			
-				// apply ScrollBar link
-				if ( config.scroll ) { this.scroll = config.scroll; }
+			    // apply ScrollBar link
+			    if ( config.scroll ) { this.scroll = config.scroll; }
 			
-				// apply list of items
-				if ( config.data ) {
-					if ( true ) {
-						if ( !Array.isArray(config.data) ) { throw new Error(__filename + ': wrong config.data type'); }
-					}
-					// prepare user data
-					this.data = normalize(config.data);
-				}
+			    // apply list of items
+			    if ( config.data ) {
+			        if ( true ) {
+			            if ( !Array.isArray(config.data) ) { throw new Error(__filename + ': wrong config.data type'); }
+			        }
+			        // prepare user data
+			        this.data = normalize(config.data);
+			    }
 			
-				// custom render method
-				if ( config.render ) {
-					if ( true ) {
-						if ( typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
-					}
-					// apply
-					this.renderItem = config.render;
-				}
+			    // custom render method
+			    if ( config.render ) {
+			        if ( true ) {
+			            if ( typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
+			        }
+			        // apply
+			        this.renderItem = config.render;
+			    }
 			
-				// list items amount on page
-				if ( config.size ) {
-					if ( true ) {
-						if ( Number(config.size) !== config.size ) { throw new Error(__filename + ': config.size must be a number'); }
-						if ( config.size <= 0 ) { throw new Error(__filename + ': config.size should be positive'); }
-					}
-					// apply
-					this.size = config.size;
-				}
+			    // list items amount on page
+			    if ( config.size ) {
+			        if ( true ) {
+			            if ( Number(config.size) !== config.size ) { throw new Error(__filename + ': config.size must be a number'); }
+			            if ( config.size <= 0 ) { throw new Error(__filename + ': config.size should be positive'); }
+			        }
+			        // apply
+			        this.size = config.size;
+			    }
 			
-				// geometry has changed or initial draw
-				if ( this.size !== currSize ) {
-					// non-empty list
-					if ( currSize > 0 ) {
-						// clear old items
-						this.$body.innerText = null;
-					}
+			    // geometry has changed or initial draw
+			    if ( this.size !== currSize ) {
+			        // non-empty list
+			        if ( currSize > 0 ) {
+			            // clear old items
+			            this.$body.innerText = null;
+			        }
 			
-					// create new items
-					for ( i = 0; i < this.size; i++ ) {
-						item = document.createElement('div');
-						item.index = i;
-						item.className = 'item';
+			        // create new items
+			        for ( i = 0; i < this.size; i++ ) {
+			            item = document.createElement('div');
+			            item.index = i;
+			            item.className = 'item';
 			
-						item.addEventListener('click', onClick);
-						this.$body.appendChild(item);
-					}
-				}
+			            item.addEventListener('click', onClick);
+			            this.$body.appendChild(item);
+			        }
+			    }
 			
-				// view window position
-				if ( config.viewIndex !== undefined ) {
-					if ( true ) {
-						if ( Number(config.viewIndex) !== config.viewIndex ) { throw new Error(__filename + ': config.viewIndex must be a number'); }
-						if ( config.viewIndex < 0 ) { throw new Error(__filename + ': config.viewIndex should be positive'); }
-					}
-				}
-				// reset current view window position
-				this.viewIndex = null;
+			    // view window position
+			    if ( config.viewIndex !== undefined ) {
+			        if ( true ) {
+			            if ( Number(config.viewIndex) !== config.viewIndex ) { throw new Error(__filename + ': config.viewIndex must be a number'); }
+			            if ( config.viewIndex < 0 ) { throw new Error(__filename + ': config.viewIndex should be positive'); }
+			        }
+			    }
+			    // reset current view window position
+			    this.viewIndex = null;
 			
-				// set focus item
-				if ( config.focusIndex !== undefined ) {
-					if ( true ) {
-						if ( Number(config.focusIndex) !== config.focusIndex ) { throw new Error(__filename + ': config.focusIndex must be a number'); }
-						if ( config.focusIndex < 0 ) { throw new Error(__filename + ': config.focusIndex should be positive'); }
-						if ( config.focusIndex > this.data.length - 1 ) { throw new Error(__filename + ': config.focusIndex should be less than data size'); }
-					}
+			    // set focus item
+			    if ( config.focusIndex !== undefined ) {
+			        if ( true ) {
+			            if ( Number(config.focusIndex) !== config.focusIndex ) { throw new Error(__filename + ': config.focusIndex must be a number'); }
+			            if ( config.focusIndex < 0 ) { throw new Error(__filename + ': config.focusIndex should be positive'); }
+			            if ( config.focusIndex > this.data.length - 1 ) { throw new Error(__filename + ': config.focusIndex should be less than data size'); }
+			        }
 			
-					// jump to the necessary item
-					this.focusIndex(config.focusIndex);
-				} else {
-					// go to the first page
-					this.renderView(config.viewIndex || 0);
-				}
+			        // jump to the necessary item
+			        this.focusIndex(config.focusIndex);
+			    } else {
+			        // go to the first page
+			        this.renderView(config.viewIndex || 0);
+			    }
 			};
 			
 			
@@ -4501,71 +4504,71 @@
 			 * @fires module:stb/ui/list~List#move:view
 			 */
 			List.prototype.renderView = function ( index ) {
-				var $item, i, itemData, prevIndex, currIndex;
+			    var $item, i, itemData, prevIndex, currIndex;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
-					if ( index < 0 ) { throw new Error(__filename + ': index should be more than zero'); }
-					if ( index >= this.data.length ) { throw new Error(__filename + ': index should be less than data size'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
+			        if ( index < 0 ) { throw new Error(__filename + ': index should be more than zero'); }
+			        if ( index >= this.data.length ) { throw new Error(__filename + ': index should be less than data size'); }
+			    }
 			
-				// has the view window position changed
-				if ( this.viewIndex !== index ) {
-					// save for emit
-					prevIndex = this.viewIndex;
-					// sync global pointer
-					this.viewIndex = currIndex = index;
+			    // has the view window position changed
+			    if ( this.viewIndex !== index ) {
+			        // save for emit
+			        prevIndex = this.viewIndex;
+			        // sync global pointer
+			        this.viewIndex = currIndex = index;
 			
-					// rebuild all visible items
-					for ( i = 0; i < this.size; i++ ) {
-						// shortcuts
-						$item    = this.$body.children[i];
-						itemData = this.data[index];
+			        // rebuild all visible items
+			        for ( i = 0; i < this.size; i++ ) {
+			            // shortcuts
+			            $item    = this.$body.children[i];
+			            itemData = this.data[index];
 			
-						// real item or stub
-						if ( itemData ) {
-							// correct inner data/index and render
-							$item.data  = itemData;
-							$item.index = index;
-							this.renderItem($item, itemData);
+			            // real item or stub
+			            if ( itemData ) {
+			                // correct inner data/index and render
+			                $item.data  = itemData;
+			                $item.index = index;
+			                this.renderItem($item, itemData);
 			
-							// apply CSS
-							if ( itemData.mark ) {
-								$item.classList.add('mark');
-							} else {
-								$item.classList.remove('mark');
-							}
-						} else {
-							// nothing to render
-							$item.data = $item.index = undefined;
-							$item.innerHTML = '&nbsp;';
-						}
-						index++;
-					}
+			                // apply CSS
+			                if ( itemData.mark ) {
+			                    $item.classList.add('mark');
+			                } else {
+			                    $item.classList.remove('mark');
+			                }
+			            } else {
+			                // nothing to render
+			                $item.data = $item.index = undefined;
+			                $item.innerHTML = '&nbsp;';
+			            }
+			            index++;
+			        }
 			
-					// there are some listeners
-					if ( this.events['move:view'] ) {
-						// notify listeners
-						this.emit('move:view', {prevIndex: prevIndex, currIndex: currIndex});
-					}
+			        // there are some listeners
+			        if ( this.events['move:view'] ) {
+			            // notify listeners
+			            this.emit('move:view', {prevIndex: prevIndex, currIndex: currIndex});
+			        }
 			
-					// there are some listeners
-					if ( this.events['select:item'] ) {
-						this.emit('select:item', {$item: $item});
-					}
+			        // there are some listeners
+			        if ( this.events['select:item'] ) {
+			            this.emit('select:item', {$item: $item});
+			        }
 			
-					// update a linked scroll component
-					if ( this.scroll ) {
-						this.scroll.scrollTo(this.viewIndex);
-					}
+			        // update a linked scroll component
+			        if ( this.scroll ) {
+			            this.scroll.scrollTo(this.viewIndex);
+			        }
 			
-					// full rebuild
-					return true;
-				}
+			        // full rebuild
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -4598,114 +4601,114 @@
 			 * @fires module:stb/ui/list~List#overflow
 			 */
 			List.prototype.move = function ( direction ) {
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
+			    }
 			
-				if ( (direction === keys.up && this.type === this.TYPE_VERTICAL) || (direction === keys.left && this.type === this.TYPE_HORIZONTAL) ) {
-					// still can go backward
-					if ( this.$focusItem && this.$focusItem.index > 0 ) {
-						if ( this.$focusItem === this.$body.firstChild ) {
-							this.renderView(this.viewIndex - 1);
-						} else {
-							this.focusItem(this.$focusItem.previousSibling);
-						}
-					} else {
-						// already at the beginning
-						if ( this.cycle ) {
-							// jump to the end of the list
-							this.move(keys.end);
+			    if ( (direction === keys.up && this.type === this.TYPE_VERTICAL) || (direction === keys.left && this.type === this.TYPE_HORIZONTAL) ) {
+			        // still can go backward
+			        if ( this.$focusItem && this.$focusItem.index > 0 ) {
+			            if ( this.$focusItem === this.$body.firstChild ) {
+			                this.renderView(this.viewIndex - 1);
+			            } else {
+			                this.focusItem(this.$focusItem.previousSibling);
+			            }
+			        } else {
+			            // already at the beginning
+			            if ( this.cycle ) {
+			                // jump to the end of the list
+			                this.move(keys.end);
 			
-							// there are some listeners
-							if ( this.events['cycle'] ) {
-								// notify listeners
-								this.emit('cycle', {direction: direction});
-							}
-						} else {
-							// there are some listeners
-							if ( this.events['overflow'] ) {
-								// notify listeners
-								this.emit('overflow', {direction: direction});
-							}
-						}
-					}
-				}
-				if ( (direction === keys.down && this.type === this.TYPE_VERTICAL) || (direction === keys.right && this.type === this.TYPE_HORIZONTAL) ) {
-					// still can go forward
-					if ( this.$focusItem && this.$focusItem.index < this.data.length - 1 ) {
-						if ( this.$focusItem === this.$body.lastChild ) {
-							this.renderView(this.viewIndex + 1);
-						} else {
-							this.focusItem(this.$focusItem.nextSibling);
-						}
-					} else {
-						// already at the beginning
-						if ( this.cycle ) {
-							// jump to the beginning of the list
-							this.move(keys.home);
+			                // there are some listeners
+			                if ( this.events['cycle'] ) {
+			                    // notify listeners
+			                    this.emit('cycle', {direction: direction});
+			                }
+			            } else {
+			                // there are some listeners
+			                if ( this.events['overflow'] ) {
+			                    // notify listeners
+			                    this.emit('overflow', {direction: direction});
+			                }
+			            }
+			        }
+			    }
+			    if ( (direction === keys.down && this.type === this.TYPE_VERTICAL) || (direction === keys.right && this.type === this.TYPE_HORIZONTAL) ) {
+			        // still can go forward
+			        if ( this.$focusItem && this.$focusItem.index < this.data.length - 1 ) {
+			            if ( this.$focusItem === this.$body.lastChild ) {
+			                this.renderView(this.viewIndex + 1);
+			            } else {
+			                this.focusItem(this.$focusItem.nextSibling);
+			            }
+			        } else {
+			            // already at the beginning
+			            if ( this.cycle ) {
+			                // jump to the beginning of the list
+			                this.move(keys.home);
 			
-							// there are some listeners
-							if ( this.events['cycle'] ) {
-								// notify listeners
-								this.emit('cycle', {direction: direction});
-							}
-						} else {
-							// there are some listeners
-							if ( this.events['overflow'] ) {
-								// notify listeners
-								this.emit('overflow', {direction: direction});
-							}
-						}
-					}
-				}
+			                // there are some listeners
+			                if ( this.events['cycle'] ) {
+			                    // notify listeners
+			                    this.emit('cycle', {direction: direction});
+			                }
+			            } else {
+			                // there are some listeners
+			                if ( this.events['overflow'] ) {
+			                    // notify listeners
+			                    this.emit('overflow', {direction: direction});
+			                }
+			            }
+			        }
+			    }
 			
-				if ( direction === keys.pageUp ) {
-					// determine jump size
-					if ( this.viewIndex < this.size ) {
-						// first page
-						this.renderView(0);
-					} else {
-						// second page and further
-						this.renderView(this.viewIndex - this.size + 1);
-					}
+			    if ( direction === keys.pageUp ) {
+			        // determine jump size
+			        if ( this.viewIndex < this.size ) {
+			            // first page
+			            this.renderView(0);
+			        } else {
+			            // second page and further
+			            this.renderView(this.viewIndex - this.size + 1);
+			        }
 			
-					this.focusItem(this.$body.firstChild);
-				}
+			        this.focusItem(this.$body.firstChild);
+			    }
 			
-				if ( direction === keys.pageDown ) {
-					// data is bigger then one page
-					if ( this.data.length > this.size ) {
-						// determine jump size
-						if ( this.viewIndex > this.data.length - this.size * 2 ) {
-							// last page
-							this.renderView(this.data.length - this.size);
-						} else {
-							// before the last page
-							this.renderView(this.viewIndex + this.size - 1);
-						}
-						this.focusItem(this.$body.lastChild);
-					} else {
-						// not the last item on the page
-						this.focusItem(this.$body.children[this.data.length - 1]);
-					}
-				}
+			    if ( direction === keys.pageDown ) {
+			        // data is bigger then one page
+			        if ( this.data.length > this.size ) {
+			            // determine jump size
+			            if ( this.viewIndex > this.data.length - this.size * 2 ) {
+			                // last page
+			                this.renderView(this.data.length - this.size);
+			            } else {
+			                // before the last page
+			                this.renderView(this.viewIndex + this.size - 1);
+			            }
+			            this.focusItem(this.$body.lastChild);
+			        } else {
+			            // not the last item on the page
+			            this.focusItem(this.$body.children[this.data.length - 1]);
+			        }
+			    }
 			
-				if ( direction === keys.home ) {
-					this.renderView(0);
-					this.focusItem(this.$body.firstChild);
-				}
+			    if ( direction === keys.home ) {
+			        this.renderView(0);
+			        this.focusItem(this.$body.firstChild);
+			    }
 			
-				if ( direction === keys.end ) {
-					// data is bigger then one page
-					if ( this.data.length > this.size ) {
-						this.renderView(this.data.length - this.size);
-						this.focusItem(this.$body.lastChild);
-					} else {
-						// not the last item on the page
-						this.focusItem(this.$body.children[this.data.length - 1]);
-					}
-				}
+			    if ( direction === keys.end ) {
+			        // data is bigger then one page
+			        if ( this.data.length > this.size ) {
+			            this.renderView(this.data.length - this.size);
+			            this.focusItem(this.$body.lastChild);
+			        } else {
+			            // not the last item on the page
+			            this.focusItem(this.$body.children[this.data.length - 1]);
+			        }
+			    }
 			};
 			
 			
@@ -4721,81 +4724,81 @@
 			 * @fires module:stb/ui/list~List#blur:item
 			 */
 			List.prototype.focusItem = function ( $item ) {
-				var $prev = this.$focusItem;
+			    var $prev = this.$focusItem;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			    }
 			
-				// different element
-				if ( $item && $prev !== $item ) {
-					if ( true ) {
-						if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-						if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
-					}
+			    // different element
+			    if ( $item && $prev !== $item ) {
+			        if ( true ) {
+			            if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+			            if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+			        }
 			
-					// some item is focused already
-					if ( $prev !== null ) {
-						if ( true ) {
-							if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
-						}
+			        // some item is focused already
+			        if ( $prev !== null ) {
+			            if ( true ) {
+			                if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
+			            }
 			
-						// style
-						$prev.classList.remove('focus');
+			            // style
+			            $prev.classList.remove('focus');
 			
-						// there are some listeners
-						if ( this.events['blur:item'] ) {
-							/**
-							 * Remove focus from an element.
-							 *
-							 * @event module:stb/ui/list~List#blur:item
-							 *
-							 * @type {Object}
-							 * @property {Element} $item previously focused HTML element
-							 */
-							this.emit('blur:item', {$item: $prev});
-						}
-					}
-					// reassign
-					this.$focusItem = $item;
+			            // there are some listeners
+			            if ( this.events['blur:item'] ) {
+			                /**
+			                 * Remove focus from an element.
+			                 *
+			                 * @event module:stb/ui/list~List#blur:item
+			                 *
+			                 * @type {Object}
+			                 * @property {Element} $item previously focused HTML element
+			                 */
+			                this.emit('blur:item', {$item: $prev});
+			            }
+			        }
+			        // reassign
+			        this.$focusItem = $item;
 			
-					this.$focusItem.data = this.data[this.$focusItem.index];
+			        this.$focusItem.data = this.data[this.$focusItem.index];
 			
-					// correct CSS
-					$item.classList.add('focus');
+			        // correct CSS
+			        $item.classList.add('focus');
 			
-					// there are some listeners
-					if ( this.events['focus:item'] ) {
-						/**
-						 * Set focus to a DOM element.
-						 *
-						 * @event module:stb/ui/list~List#focus:item
-						 *
-						 * @type {Object}
-						 * @property {Element} $prev old/previous focused HTML element
-						 * @property {Element} $curr new/current focused HTML element
-						 */
-						this.emit('focus:item', {$prev: $prev, $curr: $item});
-					}
+			        // there are some listeners
+			        if ( this.events['focus:item'] ) {
+			            /**
+			             * Set focus to a DOM element.
+			             *
+			             * @event module:stb/ui/list~List#focus:item
+			             *
+			             * @type {Object}
+			             * @property {Element} $prev old/previous focused HTML element
+			             * @property {Element} $curr new/current focused HTML element
+			             */
+			            this.emit('focus:item', {$prev: $prev, $curr: $item});
+			        }
 			
-					// there are some listeners
-					if ( this.events['select:item'] ) {
-						/**
-						 * Set focus to a list item.
-						 *
-						 * @event module:stb/ui/list~List#select:item
-						 *
-						 * @type {Object}
-						 * @property {Element} $item new/current focused item
-						 */
-						this.emit('select:item', {$item: $item});
-					}
+			        // there are some listeners
+			        if ( this.events['select:item'] ) {
+			            /**
+			             * Set focus to a list item.
+			             *
+			             * @event module:stb/ui/list~List#select:item
+			             *
+			             * @type {Object}
+			             * @property {Element} $item new/current focused item
+			             */
+			            this.emit('select:item', {$item: $item});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -4805,35 +4808,35 @@
 			 * @param {number} index item data index
 			 */
 			List.prototype.focusIndex = function ( index ) {
-				var viewIndex = this.viewIndex || 0;
+			    var viewIndex = this.viewIndex || 0;
 			
-				if ( true ) {
-					if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
-					if ( index < 0 ) { throw new Error(__filename + ': index should be positive'); }
-					if ( index > this.data.length - 1 ) { throw new Error(__filename + ': index should be less than data size'); }
-				}
+			    if ( true ) {
+			        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
+			        if ( index < 0 ) { throw new Error(__filename + ': index should be positive'); }
+			        if ( index > this.data.length - 1 ) { throw new Error(__filename + ': index should be less than data size'); }
+			    }
 			
-				// determine direction
-				if ( index >= viewIndex + this.size ) {
-					// check range
-					index = index < this.data.length - 1 ? index : this.data.length - 1;
-					// move down
-					this.renderView(index - this.size + 1);
-					this.focusItem(this.$body.lastChild);
-				} else if ( index < viewIndex ) {
-					// check range
-					index = index > 0 ? index : 0;
-					// move up
-					this.renderView(index);
-					this.focusItem(this.$body.firstChild);
-				} else {
-					// no move
-					if ( this.viewIndex === null ) {
-						// first attempt
-						this.renderView(0);
-					}
-					this.focusItem(this.$body.children[index - viewIndex]);
-				}
+			    // determine direction
+			    if ( index >= viewIndex + this.size ) {
+			        // check range
+			        index = index < this.data.length - 1 ? index : this.data.length - 1;
+			        // move down
+			        this.renderView(index - this.size + 1);
+			        this.focusItem(this.$body.lastChild);
+			    } else if ( index < viewIndex ) {
+			        // check range
+			        index = index > 0 ? index : 0;
+			        // move up
+			        this.renderView(index);
+			        this.focusItem(this.$body.firstChild);
+			    } else {
+			        // no move
+			        if ( this.viewIndex === null ) {
+			            // first attempt
+			            this.renderView(0);
+			        }
+			        this.focusItem(this.$body.children[index - viewIndex]);
+			    }
 			};
 			
 			
@@ -4844,28 +4847,28 @@
 			 * @param {boolean} state true - marked, false - not marked
 			 */
 			List.prototype.markItem = function ( $item, state ) {
-				if ( true ) {
-					if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-					if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
-					if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+			        if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+			        if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
+			    }
 			
-				// correct CSS
-				if ( state ) {
-					$item.classList.add('mark');
-				} else {
-					$item.classList.remove('mark');
-				}
+			    // correct CSS
+			    if ( state ) {
+			        $item.classList.add('mark');
+			    } else {
+			        $item.classList.remove('mark');
+			    }
 			
-				// apply flag
-				$item.data.mark = state;
+			    // apply flag
+			    $item.data.mark = state;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentList = List;
+			    // expose to the global scope
+			    window.ComponentList = List;
 			}
 			
 			
@@ -4901,28 +4904,28 @@
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 */
 			function ModalBox ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.$body ) { throw new Error(__filename + ': config.$body should not be provided in ModalBox manually'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.$body ) { throw new Error(__filename + ': config.$body should not be provided in ModalBox manually'); }
+			    }
 			
-				// set default className if classList property empty or undefined
-				config.className = 'modalBox ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'modalBox ' + (config.className || '');
 			
-				// create centered div
-				config.$body = document.createElement('div');
-				config.$body.className = 'body';
+			    // create centered div
+			    config.$body = document.createElement('div');
+			    config.$body.className = 'body';
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// add table-cell wrapper
-				this.$node.appendChild(document.createElement('div').appendChild(this.$body).parentNode);
+			    // add table-cell wrapper
+			    this.$node.appendChild(document.createElement('div').appendChild(this.$body).parentNode);
 			}
 			
 			
@@ -4932,8 +4935,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentModalBox = ModalBox;
+			    // expose to the global scope
+			    window.ComponentModalBox = ModalBox;
 			}
 			
 			
@@ -4959,50 +4962,50 @@
 			'use strict';
 			
 			var app    = __webpack_require__(/*! ./stb/app */ 5),
-				router = __webpack_require__(/*! ./stb/router */ 8),
-				keys   = __webpack_require__(/*! ./stb/keys */ 3),
-				format = __webpack_require__(/*! ./stb/tools/format */ 34);
+			    router = __webpack_require__(/*! ./stb/router */ 8),
+			    keys   = __webpack_require__(/*! ./stb/keys */ 3),
+			    format = __webpack_require__(/*! ./stb/tools/format */ 34);
 			
 			
 			app.addListeners({
-				// all resources are loaded
-				load: function load () {
-					// localization
-					__webpack_require__(/*! ./stb/gettext */ 29).load({name: 'ru'}, function ( error ) {
-						if ( error ) {
-							debug.inspect(error, 3);
-						}
+			    // all resources are loaded
+			    load: function load () {
+			        // localization
+			        __webpack_require__(/*! ./stb/gettext */ 29).load({name: 'ru'}, function ( error ) {
+			            if ( error ) {
+			                debug.inspect(error, 3);
+			            }
 			
-						/* gettext: comment for a translator */
-						debug.info(gettext('qwe'), 'translation');
+			            /* gettext: comment for a translator */
+			            debug.info(gettext('qwe'), 'translation');
 			
-						debug.info(pgettext('some context', 'some text'), 'translation');
+			            debug.info(pgettext('some context', 'some text'), 'translation');
 			
-						debug.info(format(ngettext('{0} cat', '{0} cats', 1), 1), 'translation');
+			            debug.info(format(ngettext('{0} cat', '{0} cats', 1), 1), 'translation');
 			
-						debug.info(format(ngettext('{0} dog', '{0} dogs', 3), 3), 'translation');
-					});
+			            debug.info(format(ngettext('{0} dog', '{0} dogs', 3), 3), 'translation');
+			        });
 			
-					// set pages
-					router.init([
-						__webpack_require__(/*! ./pages/init */ 19),
-						__webpack_require__(/*! ./pages/main */ 20),
-						__webpack_require__(/*! ./pages/help */ 18)
-					]);
-				},
+			        // set pages
+			        router.init([
+			            __webpack_require__(/*! ./pages/init */ 19),
+			            __webpack_require__(/*! ./pages/main */ 20),
+			            __webpack_require__(/*! ./pages/help */ 18)
+			        ]);
+			    },
 			
-				// everything is ready
-				done: function done () {
-					// go to the main page
-					router.navigate('pageMain');
-				},
+			    // everything is ready
+			    done: function done () {
+			        // go to the main page
+			        router.navigate('pageMain');
+			    },
 			
-				// event
-				keydown: function keydown ( event ) {
-					if ( event.code === keys.back ) {
-						router.back();
-					}
-				}
+			    // event
+			    keydown: function keydown ( event ) {
+			        if ( event.code === keys.back ) {
+			            router.back();
+			        }
+			    }
 			});
 
 
@@ -5023,28 +5026,28 @@
 			'use strict';
 			
 			var Page   = __webpack_require__(/*! ../stb/ui/page */ 12),
-				Button = __webpack_require__(/*! ../stb/ui/button */ 6),
-				router = __webpack_require__(/*! ../stb/router */ 8),
-				page   = new Page({$node: window.pageHelp});
+			    Button = __webpack_require__(/*! ../stb/ui/button */ 6),
+			    router = __webpack_require__(/*! ../stb/router */ 8),
+			    page   = new Page({$node: window.pageHelp});
 			
 			
 			page.addListener('load', function load () {
-				page.add(
-					page.back = new Button({
-						value: 'go back',
-						events: {
-							click: function () {
-								router.navigate('pageMain');
-							}
-						}
-					})
-				);
+			    page.add(
+			        page.back = new Button({
+			            value: 'go back',
+			            events: {
+			                click: function () {
+			                    router.navigate('pageMain');
+			                }
+			            }
+			        })
+			    );
 			});
 			
 			
 			page.addListener('show', function show () {
-				// initial active component
-				page.back.focus();
+			    // initial active component
+			    page.back.focus();
 			});
 			
 			
@@ -5069,7 +5072,7 @@
 			'use strict';
 			
 			var Page = __webpack_require__(/*! ../stb/ui/page */ 12),
-				page = new Page({$node: window.pageInit});
+			    page = new Page({$node: window.pageInit});
 			
 			
 			// public
@@ -5093,89 +5096,89 @@
 			'use strict';
 			
 			var List    = __webpack_require__(/*! ../stb/ui/list */ 15),
-				TabList = __webpack_require__(/*! ../stb/ui/tab.list */ 42),
-				Page    = __webpack_require__(/*! ../stb/ui/page */ 12),
-				page    = new Page({$node: window.pageMain});
+			    TabList = __webpack_require__(/*! ../stb/ui/tab.list */ 42),
+			    Page    = __webpack_require__(/*! ../stb/ui/page */ 12),
+			    page    = new Page({$node: window.pageMain});
 			
 			
 			page.addListener('load', function load () {
-				var tabData = [
-					__webpack_require__(/*! ../tabs/main.panel */ 53),
-					__webpack_require__(/*! ../tabs/main.button */ 44),
-					__webpack_require__(/*! ../tabs/main.input */ 48),
-					__webpack_require__(/*! ../tabs/main.check.box */ 45),
-					__webpack_require__(/*! ../tabs/main.grid */ 47),
-					__webpack_require__(/*! ../tabs/main.list */ 50),
-					__webpack_require__(/*! ../tabs/main.progress.bar */ 54),
-					__webpack_require__(/*! ../tabs/main.page */ 52),
-					__webpack_require__(/*! ../tabs/main.modal */ 51),
-					__webpack_require__(/*! ../tabs/main.widget */ 55),
-					__webpack_require__(/*! ../tabs/main.layer.list */ 49)
-				];
+			    var tabData = [
+			        __webpack_require__(/*! ../tabs/main.panel */ 53),
+			        __webpack_require__(/*! ../tabs/main.button */ 44),
+			        __webpack_require__(/*! ../tabs/main.input */ 48),
+			        __webpack_require__(/*! ../tabs/main.check.box */ 45),
+			        __webpack_require__(/*! ../tabs/main.grid */ 47),
+			        __webpack_require__(/*! ../tabs/main.list */ 50),
+			        __webpack_require__(/*! ../tabs/main.progress.bar */ 54),
+			        __webpack_require__(/*! ../tabs/main.page */ 52),
+			        __webpack_require__(/*! ../tabs/main.modal */ 51),
+			        __webpack_require__(/*! ../tabs/main.widget */ 55),
+			        __webpack_require__(/*! ../tabs/main.layer.list */ 49)
+			    ];
 			
-				// attach to page
-				page.add(
-					page.tabList = new TabList({
-						$node: window.pageMainTabListContainer,
-						children: tabData,
-						current: tabData[0]
-					})
-				);
+			    // attach to page
+			    page.add(
+			        page.tabList = new TabList({
+			            $node: window.pageMainTabListContainer,
+			            children: tabData,
+			            current: tabData[0]
+			        })
+			    );
 			
-				page.add(
-					page.menu = new List({
-						$node: window.pageMainMenu,
-						data: tabData,
-						focusIndex: 0,
-						size: tabData.length,
-						cycle: true,
-						render: function ( $item, data ) {
-							$item.textContent = data.title;
-						},
-						events: {
-							/*click: function ( data ) {
-								//console.log('click');
-								//data.event.stop = true;
-								//debug.inspect(data, 1);
-							},
-							focus: function ( data ) {
-								//console.log('focus');
-								//debug.inspect(data, 1);
-							},
-							'click:item': function ( data ) {
-								//console.log('click:item');
-								//debug.inspect(data, 1);
-							},*/
-							'focus:item': function ( event ) {
-								tabData[event.$curr.index].show();
-							}
-							/*'blur:item': function ( data ) {
-								//console.log('blur:item');
-								//debug.inspect(data, 1);
-							}*/
-						}
-					})
-					//page.body = new Panel({$node: document.getElementById('pageMainBody')})
-				);
+			    page.add(
+			        page.menu = new List({
+			            $node: window.pageMainMenu,
+			            data: tabData,
+			            focusIndex: 0,
+			            size: tabData.length,
+			            cycle: true,
+			            render: function ( $item, data ) {
+			                $item.textContent = data.title;
+			            },
+			            events: {
+			                /*click: function ( data ) {
+			                    //console.log('click');
+			                    //data.event.stop = true;
+			                    //debug.inspect(data, 1);
+			                },
+			                focus: function ( data ) {
+			                    //console.log('focus');
+			                    //debug.inspect(data, 1);
+			                },
+			                'click:item': function ( data ) {
+			                    //console.log('click:item');
+			                    //debug.inspect(data, 1);
+			                },*/
+			                'focus:item': function ( event ) {
+			                    tabData[event.$curr.index].show();
+			                }
+			                /*'blur:item': function ( data ) {
+			                    //console.log('blur:item');
+			                    //debug.inspect(data, 1);
+			                }*/
+			            }
+			        })
+			        //page.body = new Panel({$node: document.getElementById('pageMainBody')})
+			    );
 			
-				page.focusable = false;
-				//page.addListener('click', function ( data ) {
-				//	data.event.stop = true;
-				//});
+			    page.focusable = false;
+			    //page.addListener('click', function ( data ) {
+			    //    data.event.stop = true;
+			    //});
 			});
 			
 			
 			page.addListener('show', function show () {
-				// initial active component
-				if ( !page.activeComponent ) {
-					page.menu.focus();
-				}
+			    // initial active component
+			    if ( !page.activeComponent ) {
+			        page.menu.focus();
+			    }
 			
-				// time marks examples
-				debug.time('test');
-				debug.time('test', 1);
-				debug.time('test', 2);
-				debug.timeEnd('test', 'everything is ready');
+			    // time marks examples
+			    debug.time('test');
+			    debug.time('test', 1);
+			    debug.time('test', 2);
+			    debug.timeEnd('test', 'everything is ready');
 			});
 			
 			
@@ -5203,11 +5206,11 @@
 			/* eslint new-cap: 0 */
 			
 			var host      = __webpack_require__(/*! ../app */ 5).data.host,
-				config    = __webpack_require__(/*! ../../../../config/logger */ 56),
-				util      = __webpack_require__(/*! util */ 10),
-				buffer    = [],
-				timeMarks = {},  // storage for timers (debug.time, debug.timeEnd)
-				socket;
+			    config    = __webpack_require__(/*! ../../../../config/logger */ 56),
+			    util      = __webpack_require__(/*! util */ 10),
+			    buffer    = [],
+			    timeMarks = {},  // storage for timers (debug.time, debug.timeEnd)
+			    socket;
 			
 			
 			// enable colors in console
@@ -5215,17 +5218,17 @@
 			
 			
 			(function connect () {
-				if ( !config.active || !host ) {
-					return;
-				}
+			    if ( !config.active || !host ) {
+			        return;
+			    }
 			
-				socket = new WebSocket('ws://' + location.hostname + ':' + config.port);
+			    socket = new WebSocket('ws://' + location.hostname + ':' + config.port);
 			
-				socket.onclose = function () {
-					setTimeout(function () {
-						connect();
-					}, 5000);
-				};
+			    socket.onclose = function () {
+			        setTimeout(function () {
+			            connect();
+			        }, 5000);
+			    };
 			})();
 			
 			
@@ -5235,12 +5238,15 @@
 			 * @param {string} message data to output and send
 			 */
 			function log ( message ) {
-				gSTB.Debug(message);
-				buffer.push(message);
-				if ( socket && socket.readyState === socket.OPEN ) {
-					socket.send(JSON.stringify(buffer));
-					buffer = [];
-				}
+			    gSTB.Debug(message);
+			
+			    if ( config.active ) {
+			        buffer.push(message);
+			        if ( socket && socket.readyState === socket.OPEN ) {
+			            socket.send(JSON.stringify(buffer));
+			            buffer = [];
+			        }
+			    }
 			}
 			
 			
@@ -5251,250 +5257,250 @@
 			 */
 			module.exports = window.debug = {
 			
-				/**
-				 * Check condition and warn if not match.
-				 *
-				 * @param {boolean} condition should be true if okay
-				 * @param {string} title description of the problem
-				 */
-				assert: function ( condition, title ) {
-					if ( !condition ) {
-						if ( host ) {
-							log(('Assertion failed: ' + title).red);
-						} else {
-							console.assert(condition, title);
-						}
-					}
-				},
+			    /**
+			     * Check condition and warn if not match.
+			     *
+			     * @param {boolean} condition should be true if okay
+			     * @param {string} title description of the problem
+			     */
+			    assert: function ( condition, title ) {
+			        if ( !condition ) {
+			            if ( host ) {
+			                log(('Assertion failed: ' + title).red);
+			            } else {
+			                console.assert(condition, title);
+			            }
+			        }
+			    },
 			
 			
-				/**
-				 * Print a plain colored string.
-				 *
-				 * @param {*} message data to output
-				 * @param {string} [color='black'] colour to set
-				 */
-				log: function ( message, color ) {
-					message = (message + '') || '(empty message)';
-					if ( host ) {
-						log(message[color || 'white']);
-					} else {
-						console.log('%c%s', 'color:' + (color || 'black'), message);
-					}
-				},
+			    /**
+			     * Print a plain colored string.
+			     *
+			     * @param {*} message data to output
+			     * @param {string} [color='black'] colour to set
+			     */
+			    log: function ( message, color ) {
+			        message = (message + '') || '(empty message)';
+			        if ( host ) {
+			            log(message[color || 'white']);
+			        } else {
+			            console.log('%c%s', 'color:' + (color || 'black'), message);
+			        }
+			    },
 			
 			
-				/**
-				 * Print the given var with caption.
-				 *
-				 * @param {*} data data to output
-				 * @param {string} [title] optional caption
-				 */
-				info: function ( data, title ) {
-					var type = Object.prototype.toString.call(data).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
-						args;
+			    /**
+			     * Print the given var with caption.
+			     *
+			     * @param {*} data data to output
+			     * @param {string} [title] optional caption
+			     */
+			    info: function ( data, title ) {
+			        var type = Object.prototype.toString.call(data).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
+			            args;
 			
-					if ( host ) {
-						// prepare
-						if ( data instanceof Object || Array.isArray(data) ) {
-							// complex object
-							data = data.nodeName ? data.outerHTML : JSON.stringify(data, null, 4);
-						}
-						// combine all together and print result
-						log((type === 'error' ? type.red : type.green) + '\t' + (title ? title.bold + ':\t'.green : '') + data);
-					} else {
-						args = ['color:' + (type === 'error' ? 'red' : 'green'), type];
-						if ( title ) {
-							args.unshift('%c%s\t%c%s\t');
-							args.push('color:grey');
-							args.push(title);
-						} else {
-							args.unshift('%c%s\t');
-						}
-						args.push(data);
-						// output
-						console.log.apply(console, args);
-					}
-				},
-			
-			
-				/**
-				 * Print the given complex var with level restriction.
-				 *
-				 * @param {*} data data to output
-				 * @param {number} [depth=0] amount of sub-levels to print
-				 */
-				inspect: function ( data, depth ) {
-					if ( host ) {
-						log('inspect:\n' + util.inspect(data, {depth: depth === undefined ? 3 : depth, colors: true}));
-					} else {
-						console.log(data);
-					}
-				},
+			        if ( host ) {
+			            // prepare
+			            if ( data instanceof Object || Array.isArray(data) ) {
+			                // complex object
+			                data = data.nodeName ? data.outerHTML : JSON.stringify(data, null, 4);
+			            }
+			            // combine all together and print result
+			            log((type === 'error' ? type.red : type.green) + '\t' + (title ? title.bold + ':\t'.green : '') + data);
+			        } else {
+			            args = ['color:' + (type === 'error' ? 'red' : 'green'), type];
+			            if ( title ) {
+			                args.unshift('%c%s\t%c%s\t');
+			                args.push('color:grey');
+			                args.push(title);
+			            } else {
+			                args.unshift('%c%s\t');
+			            }
+			            args.push(data);
+			            // output
+			            console.log.apply(console, args);
+			        }
+			    },
 			
 			
-				/**
-				 * Print the given event object in some special way.
-				 *
-				 * @param {Event} data event object
-				 */
-				event: function ( data ) {
-					var type  = data.type.toUpperCase(),
-						color = type === 'ERROR' ? 'red' : 'green',
-						text  = ('Event ' + type[color]).bold;
-			
-					if ( host ) {
-						switch ( type ) {
-							case 'KEYDOWN':
-								text = text +
-								'\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
-								' alt'  [data.altKey   ? 'green' : 'grey'] +
-								' shift'[data.shiftKey ? 'green' : 'grey'] +
-								'\t' + data.keyCode + '\t' + data.code + '\t' + (data.keyIdentifier || '').green;
-								break;
-							case 'KEYPRESS':
-								text = text +
-								'\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
-								' alt'  [data.altKey   ? 'green' : 'grey'] +
-								' shift'[data.shiftKey ? 'green' : 'grey'] +
-								'\t' + data.keyCode + '\t' + (data.keyIdentifier || '').green + '\t' + String.fromCharCode(data.keyCode);
-								break;
-							case 'MOUSEMOVE':
-								text = text +
-								'\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
-								' alt'  [data.altKey   ? 'green' : 'grey'] +
-								' shift'[data.shiftKey ? 'green' : 'grey'] +
-								'\t' + data.x + ':' + data.y;
-								break;
-							case 'CLICK':
-								text = text +
-								'\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
-								' alt'  [data.altKey   ? 'green' : 'grey'] +
-								' shift'[data.shiftKey ? 'green' : 'grey'] +
-								'\t' + data.x + ':' + data.y;
-								break;
-							case 'ERROR':
-								text = text +
-									'\t' + data.filename +
-									' (' + data.lineno + ':' + data.colno + ')' +
-									' ' + data.message;
-								break;
-						}
-						log(text);
-					} else {
-						switch ( type ) {
-							case 'KEYDOWN':
-							case 'KEYPRESS':
-								console.log('%o\t%c%s %c%s %c%s %c%s %c%s\t%s\t%c%s', data, 'color:' + color + ';font-weight:bold', type,
-									'color:' + (data.ctrlKey  ? 'green' : 'lightgrey'), 'ctrl',
-									'color:' + (data.altKey   ? 'green' : 'lightgrey'), 'alt',
-									'color:' + (data.shiftKey ? 'green' : 'lightgrey'), 'shift',
-									'color:black', data.keyCode, data.code || '', 'color:green', data.keyIdentifier
-								);
-								break;
-							default:
-								console.log('%o\t%c%s', data, 'color:' + color + ';font-weight:bold', type);
-						}
-					}
-				},
+			    /**
+			     * Print the given complex var with level restriction.
+			     *
+			     * @param {*} data data to output
+			     * @param {number} [depth=0] amount of sub-levels to print
+			     */
+			    inspect: function ( data, depth ) {
+			        if ( host ) {
+			            log('inspect:\n' + util.inspect(data, {depth: depth === undefined ? 3 : depth, colors: true}));
+			        } else {
+			            console.log(data);
+			        }
+			    },
 			
 			
-				/**
-				 * Use to do some development-specific actions which are removed in release mode.
-				 *
-				 * @param {function} cb callback to execute
-				 *
-				 * @example
-				 * debug.stub(function () {
-				 *     alert('This is visible only in debug mode!');
-				 * });
-				 * // it's also possible to use simple expression:
-				 * // link the current scope var with global
-				 * // useful for dev only
-				 * debug.stub(window.app = this);
-				 */
-				stub: function ( cb ) {
-					if ( typeof cb === 'function' ) {
-						cb();
-					}
-				},
+			    /**
+			     * Print the given event object in some special way.
+			     *
+			     * @param {Event} data event object
+			     */
+			    event: function ( data ) {
+			        var type  = data.type.toUpperCase(),
+			            color = type === 'ERROR' ? 'red' : 'green',
+			            text  = ('Event ' + type[color]).bold;
+			
+			        if ( host ) {
+			            switch ( type ) {
+			                case 'KEYDOWN':
+			                    text = text +
+			                    '\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
+			                    ' alt'  [data.altKey   ? 'green' : 'grey'] +
+			                    ' shift'[data.shiftKey ? 'green' : 'grey'] +
+			                    '\t' + data.keyCode + '\t' + data.code + '\t' + (data.keyIdentifier || '').green;
+			                    break;
+			                case 'KEYPRESS':
+			                    text = text +
+			                    '\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
+			                    ' alt'  [data.altKey   ? 'green' : 'grey'] +
+			                    ' shift'[data.shiftKey ? 'green' : 'grey'] +
+			                    '\t' + data.keyCode + '\t' + (data.keyIdentifier || '').green + '\t' + String.fromCharCode(data.keyCode);
+			                    break;
+			                case 'MOUSEMOVE':
+			                    text = text +
+			                    '\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
+			                    ' alt'  [data.altKey   ? 'green' : 'grey'] +
+			                    ' shift'[data.shiftKey ? 'green' : 'grey'] +
+			                    '\t' + data.x + ':' + data.y;
+			                    break;
+			                case 'CLICK':
+			                    text = text +
+			                    '\tctrl' [data.ctrlKey  ? 'green' : 'grey'] +
+			                    ' alt'  [data.altKey   ? 'green' : 'grey'] +
+			                    ' shift'[data.shiftKey ? 'green' : 'grey'] +
+			                    '\t' + data.x + ':' + data.y;
+			                    break;
+			                case 'ERROR':
+			                    text = text +
+			                        '\t' + data.filename +
+			                        ' (' + data.lineno + ':' + data.colno + ')' +
+			                        ' ' + data.message;
+			                    break;
+			            }
+			            log(text);
+			        } else {
+			            switch ( type ) {
+			                case 'KEYDOWN':
+			                case 'KEYPRESS':
+			                    console.log('%o\t%c%s %c%s %c%s %c%s %c%s\t%s\t%c%s', data, 'color:' + color + ';font-weight:bold', type,
+			                        'color:' + (data.ctrlKey  ? 'green' : 'lightgrey'), 'ctrl',
+			                        'color:' + (data.altKey   ? 'green' : 'lightgrey'), 'alt',
+			                        'color:' + (data.shiftKey ? 'green' : 'lightgrey'), 'shift',
+			                        'color:black', data.keyCode, data.code || '', 'color:green', data.keyIdentifier
+			                    );
+			                    break;
+			                default:
+			                    console.log('%o\t%c%s', data, 'color:' + color + ';font-weight:bold', type);
+			            }
+			        }
+			    },
 			
 			
-				/**
-				 * Start specific timer.
-				 * Use to calculate time of some actions.
-				 *
-				 * @param {string} [name=''] timer group name
-				 * @param {string} [title=''] timer individual mark caption
-				 *
-				 * @example
-				 * debug.time('request');
-				 * // some processing...
-				 * debug.time('request');
-				 * // prints 'time: +20ms'
-				 * // some processing...
-				 * debug.time('request', 'ready');
-				 * // prints 'time (ready): +40ms'
-				 * // some processing...
-				 * debug.time('request', 'done');
-				 * // prints 'time (done): +60ms'
-				 */
-				time: function ( name, title ) {
-					var time = +new Date();
-			
-					// sanitize
-					name  = name  || '';
-					title = title || '';
-			
-					// is this mark exist
-					if ( timeMarks[name] ) {
-						// already set
-						debug.log((name || 'time') + (title ? ' (' + title + ')' : '') + ': +' + (time - timeMarks[name].last) + 'ms', 'blue');
-					} else {
-						// create a new mark
-						timeMarks[name] = {init: time};
-					}
-			
-					// update with the current value
-					timeMarks[name].last = time;
-				},
+			    /**
+			     * Use to do some development-specific actions which are removed in release mode.
+			     *
+			     * @param {function} cb callback to execute
+			     *
+			     * @example
+			     * debug.stub(function () {
+			     *     alert('This is visible only in debug mode!');
+			     * });
+			     * // it's also possible to use simple expression:
+			     * // link the current scope var with global
+			     * // useful for dev only
+			     * debug.stub(window.app = this);
+			     */
+			    stub: function ( cb ) {
+			        if ( typeof cb === 'function' ) {
+			            cb();
+			        }
+			    },
 			
 			
-				/**
-				 * End specific timer.
-				 * Use to calculate time of some actions.
-				 *
-				 * @param {string} [name=''] timer name
-				 * @param {string} [title='total'] timer mark caption
-				 *
-				 * @example
-				 * debug.time();
-				 * // some processing...
-				 * debug.timeEnd();
-				 * // prints 'time (total): 934ms'
-				 *
-				 * @example
-				 * debug.time('request');
-				 * // some processing...
-				 * debug.timeEnd('request', 'done');
-				 * // prints 'request (done): 934ms'
-				 */
-				timeEnd: function ( name, title ) {
-					var time = +new Date();
+			    /**
+			     * Start specific timer.
+			     * Use to calculate time of some actions.
+			     *
+			     * @param {string} [name=''] timer group name
+			     * @param {string} [title=''] timer individual mark caption
+			     *
+			     * @example
+			     * debug.time('request');
+			     * // some processing...
+			     * debug.time('request');
+			     * // prints 'time: +20ms'
+			     * // some processing...
+			     * debug.time('request', 'ready');
+			     * // prints 'time (ready): +40ms'
+			     * // some processing...
+			     * debug.time('request', 'done');
+			     * // prints 'time (done): +60ms'
+			     */
+			    time: function ( name, title ) {
+			        var time = +new Date();
 			
-					// sanitize
-					name  = name  || '';
-					title = title || 'total';
+			        // sanitize
+			        name  = name  || '';
+			        title = title || '';
 			
-					// is this mark exist
-					if ( timeMarks[name] ) {
-						debug.log((name || 'time') + ' (' + title + '): ' + (time - timeMarks[name].init) + 'ms', 'blue');
+			        // is this mark exist
+			        if ( timeMarks[name] ) {
+			            // already set
+			            debug.log((name || 'time') + (title ? ' (' + title + ')' : '') + ': +' + (time - timeMarks[name].last) + 'ms', 'blue');
+			        } else {
+			            // create a new mark
+			            timeMarks[name] = {init: time};
+			        }
 			
-						delete timeMarks[name];
-					} else {
-						throw new Error(__filename + ': no started timer for "' + name + '"');
-					}
-				}
+			        // update with the current value
+			        timeMarks[name].last = time;
+			    },
+			
+			
+			    /**
+			     * End specific timer.
+			     * Use to calculate time of some actions.
+			     *
+			     * @param {string} [name=''] timer name
+			     * @param {string} [title='total'] timer mark caption
+			     *
+			     * @example
+			     * debug.time();
+			     * // some processing...
+			     * debug.timeEnd();
+			     * // prints 'time (total): 934ms'
+			     *
+			     * @example
+			     * debug.time('request');
+			     * // some processing...
+			     * debug.timeEnd('request', 'done');
+			     * // prints 'request (done): 934ms'
+			     */
+			    timeEnd: function ( name, title ) {
+			        var time = +new Date();
+			
+			        // sanitize
+			        name  = name  || '';
+			        title = title || 'total';
+			
+			        // is this mark exist
+			        if ( timeMarks[name] ) {
+			            debug.log((name || 'time') + ' (' + title + '): ' + (time - timeMarks[name].init) + 'ms', 'blue');
+			
+			            delete timeMarks[name];
+			        } else {
+			            throw new Error(__filename + ': no started timer for "' + name + '"');
+			        }
+			    }
 			
 			};
 			
@@ -5520,154 +5526,154 @@
 			/* eslint new-cap: 0 */
 			
 			var util    = __webpack_require__(/*! util */ 10),
-				app     = __webpack_require__(/*! ../app */ 5),
-				request = __webpack_require__(/*! ../request */ 32),
-				dom     = __webpack_require__(/*! ../dom */ 11),
-				grid    = __webpack_require__(/*! ./grid */ 23),
-				storage = __webpack_require__(/*! ./storage */ 9);
+			    app     = __webpack_require__(/*! ../app */ 5),
+			    request = __webpack_require__(/*! ../request */ 32),
+			    dom     = __webpack_require__(/*! ../dom */ 11),
+			    grid    = __webpack_require__(/*! ./grid */ 23),
+			    storage = __webpack_require__(/*! ./storage */ 9);
 			
 			
 			// additional top-level key handler
 			window.addEventListener('load', function developEventListenerLoad () {
-				// export to globals div for develop HTML elements
-				window.$develop = document.body.appendChild(document.createElement('div'));
-				window.$develop.className = 'develop';
+			    // export to globals div for develop HTML elements
+			    window.$develop = document.body.appendChild(document.createElement('div'));
+			    window.$develop.className = 'develop';
 			
-				// apply dev css
-				document.body.classList.add('develop');
+			    // apply dev css
+			    document.body.classList.add('develop');
 			
-				grid.init();
+			    grid.init();
 			
-				if ( storage.get('grid.active') ) {
-					grid.show();
-				}
+			    if ( storage.get('grid.active') ) {
+			        grid.show();
+			    }
 			
-				// stress-testing
-				window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 62);
-				window.horde    = window.gremlins.createHorde();
+			    // stress-testing
+			    window.gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 62);
+			    window.horde    = window.gremlins.createHorde();
 			});
 			
 			
 			// additional top-level key handler
 			window.addEventListener('keydown', function developEventListenerKeydown ( event ) {
-				switch ( event.keyCode ) {
-					// numpad 0
-					case 96:
-						debug.log('full document reload', 'red');
-						location.hash = '';
-						location.reload();
-						break;
+			    switch ( event.keyCode ) {
+			        // numpad 0
+			        case 96:
+			            debug.log('full document reload', 'red');
+			            location.hash = '';
+			            location.reload();
+			            break;
 			
-					// numpad 1
-					case 97:
-						// NTSC
-						changeScreenDimension(720, 480);
-						break;
+			        // numpad 1
+			        case 97:
+			            // NTSC
+			            changeScreenDimension(720, 480);
+			            break;
 			
-					// numpad 2
-					case 98:
-						// PAL
-						changeScreenDimension(720, 576);
-						break;
+			        // numpad 2
+			        case 98:
+			            // PAL
+			            changeScreenDimension(720, 576);
+			            break;
 			
-					// numpad 3
-					case 99:
-						// 720p
-						changeScreenDimension(1280, 720);
-						break;
+			        // numpad 3
+			        case 99:
+			            // 720p
+			            changeScreenDimension(1280, 720);
+			            break;
 			
-					// numpad 4
-					case 100:
-						// 1080p
-						changeScreenDimension(1920, 1080);
-						break;
+			        // numpad 4
+			        case 100:
+			            // 1080p
+			            changeScreenDimension(1920, 1080);
+			            break;
 			
-					// numpad 5
-					case 101:
-						// debug grid
-						if ( grid.active ) {
-							grid.hide();
-						} else {
-							grid.show();
-						}
-						debug.log('show grid: ' + grid.active, 'red');
-						storage.set('grid.active', grid.active);
-						break;
+			        // numpad 5
+			        case 101:
+			            // debug grid
+			            if ( grid.active ) {
+			                grid.hide();
+			            } else {
+			                grid.show();
+			            }
+			            debug.log('show grid: ' + grid.active, 'red');
+			            storage.set('grid.active', grid.active);
+			            break;
 			
-					// numpad 6
-					case 102:
-						// stress-testing for emulation
-						window.horde.unleash({nb: 500});
-						break;
+			        // numpad 6
+			        case 102:
+			            // stress-testing for emulation
+			            window.horde.unleash({nb: 500});
+			            break;
 			
-					// numpad 7
-					case 103:
-						if ( !app.data.host ) {
-							debug.log('SpyJS in this mode is available only on STB devices.', 'red');
-						} else {
-							// SpyJS enable/disable
-							if ( !storage.get('spyjs.active') ) {
-								// try to "ping" proxy server
-								request.ajax(document.location.protocol + '//' + location.hostname + ':3546', {
-									method: 'get',
-									onload: function () {
-										// proxy seems ready
-										//isSpyJs = true;
-										storage.set('spyjs.active', true);
-										debug.log('SpyJS: enable', 'red');
-										debug.log('SpyJS: set proxy to ' + location.hostname + ':' + 3546);
+			        // numpad 7
+			        case 103:
+			            if ( !app.data.host ) {
+			                debug.log('SpyJS in this mode is available only on STB devices.', 'red');
+			            } else {
+			                // SpyJS enable/disable
+			                if ( !storage.get('spyjs.active') ) {
+			                    // try to "ping" proxy server
+			                    request.ajax(document.location.protocol + '//' + location.hostname + ':3546', {
+			                        method: 'get',
+			                        onload: function () {
+			                            // proxy seems ready
+			                            //isSpyJs = true;
+			                            storage.set('spyjs.active', true);
+			                            debug.log('SpyJS: enable', 'red');
+			                            debug.log('SpyJS: set proxy to ' + location.hostname + ':' + 3546);
 			
-										gSTB.SetWebProxy(location.hostname, 3546, '', '', '');
-										location.reload();
-									},
-									onerror: function () {
-										debug.log('SpyJS: no connection (check SpyJS is started on the server)', 'red');
-									}
-								});
-							} else {
-								//isSpyJs = false;
-								storage.set('spyjs.active', false);
-								gSTB.ResetWebProxy();
-								debug.log('SpyJS: disable', 'red');
-								location.reload();
-							}
-						}
-						break;
+			                            gSTB.SetWebProxy(location.hostname, 3546, '', '', '');
+			                            location.reload();
+			                        },
+			                        onerror: function () {
+			                            debug.log('SpyJS: no connection (check SpyJS is started on the server)', 'red');
+			                        }
+			                    });
+			                } else {
+			                    //isSpyJs = false;
+			                    storage.set('spyjs.active', false);
+			                    gSTB.ResetWebProxy();
+			                    debug.log('SpyJS: disable', 'red');
+			                    location.reload();
+			                }
+			            }
+			            break;
 			
-					// numpad 8
-					case 104:
-						// FireBug Lite
-						debug.log('firebug-lite activation', 'red');
-						document.head.appendChild(dom.tag('script', {
-							type: 'text/javascript',
-							src: 'http://getfirebug.com/firebug-lite.js#startOpened',
-							onload: function () {
-								debug.log('firebug-lite ready ...', 'green');
-							},
-							onerror: function ( error ) {
-								debug.inspect(error);
-							}
-						}));
-						break;
+			        // numpad 8
+			        case 104:
+			            // FireBug Lite
+			            debug.log('firebug-lite activation', 'red');
+			            document.head.appendChild(dom.tag('script', {
+			                type: 'text/javascript',
+			                src: 'http://getfirebug.com/firebug-lite.js#startOpened',
+			                onload: function () {
+			                    debug.log('firebug-lite ready ...', 'green');
+			                },
+			                onerror: function ( error ) {
+			                    debug.inspect(error);
+			                }
+			            }));
+			            break;
 			
-					// numpad 9
-					case 105:
-						// outline components and inner structures
-						debug.log('toggle develop css layout', 'red');
-						document.body.classList.toggle('develop');
-						break;
+			        // numpad 9
+			        case 105:
+			            // outline components and inner structures
+			            debug.log('toggle develop css layout', 'red');
+			            document.body.classList.toggle('develop');
+			            break;
 			
-					// numpad .
-					case 110:
-						// CSS reload
-						debug.log('CSS reload', 'red');
-						// get through all css links
-						Array.prototype.slice.call(document.head.getElementsByTagName('link')).forEach(function forEachLink ( tag ) {
-							// get base name, modify and apply
-							tag.href = tag.href.split('?')[0] + '?' + (+new Date());
-						});
-						break;
-				}
+			        // numpad .
+			        case 110:
+			            // CSS reload
+			            debug.log('CSS reload', 'red');
+			            // get through all css links
+			            Array.prototype.slice.call(document.head.getElementsByTagName('link')).forEach(function forEachLink ( tag ) {
+			                // get base name, modify and apply
+			                tag.href = tag.href.split('?')[0] + '?' + (+new Date());
+			            });
+			            break;
+			    }
 			});
 			
 			
@@ -5678,27 +5684,27 @@
 			 * @param {number} height screen param
 			 */
 			function changeScreenDimension ( width, height ) {
-				// check if it's necessary
-				if ( Number(storage.get('screen.height')) !== height ) {
-					// yes
-					debug.log(util.format('switch to %sx%s', width, height), 'red');
+			    // check if it's necessary
+			    if ( Number(storage.get('screen.height')) !== height ) {
+			        // yes
+			        debug.log(util.format('switch to %sx%s', width, height), 'red');
 			
-					// save in case of document reload
-					storage.set('screen.height', height);
-					storage.set('screen.width',  width);
+			        // save in case of document reload
+			        storage.set('screen.height', height);
+			        storage.set('screen.width',  width);
 			
-					// hide content to avoid raw HTML blinking
-					document.body.style.display = 'none';
+			        // hide content to avoid raw HTML blinking
+			        document.body.style.display = 'none';
 			
-					// apply new metrics
-					app.setScreen(__webpack_require__(/*! ../../../../config/metrics */ 13)[height]);
+			        // apply new metrics
+			        app.setScreen(__webpack_require__(/*! ../../../../config/metrics */ 13)[height]);
 			
-					// restore visibility
-					document.body.style.display = '';
-				} else {
-					// not really
-					debug.log('no resolution change: new and current values are identical', 'red');
-				}
+			        // restore visibility
+			        document.body.style.display = '';
+			    } else {
+			        // not really
+			        debug.log('no resolution change: new and current values are identical', 'red');
+			    }
 			}
 
 
@@ -5720,284 +5726,284 @@
 			'use strict';
 			
 			var data    = __webpack_require__(/*! ../app */ 5).data,
-				storage = __webpack_require__(/*! ./storage */ 9);
+			    storage = __webpack_require__(/*! ./storage */ 9);
 			
 			
 			// public
 			module.exports = window.grid = {
 			
-				/** @type {HTMLElement} */
-				$canvas: null,
+			    /** @type {HTMLElement} */
+			    $canvas: null,
 			
-				/** @type {CanvasRenderingContext2D} */
-				ctx: null,
+			    /** @type {CanvasRenderingContext2D} */
+			    ctx: null,
 			
-				lineWidth: 0.9,
+			    lineWidth: 0.9,
 			
-				// content middle point
-				centerX: 0,
-				centerY: 0,
+			    // content middle point
+			    centerX: 0,
+			    centerY: 0,
 			
-				// last click point
-				lastX: 0,
-				lastY: 0,
+			    // last click point
+			    lastX: 0,
+			    lastY: 0,
 			
-				// mouse pointer
-				cursorX: 0,
-				cursorY: 0,
+			    // mouse pointer
+			    cursorX: 0,
+			    cursorY: 0,
 			
-				// list of click points
-				points: storage.get('grid.points') || [],
+			    // list of click points
+			    points: storage.get('grid.points') || [],
 			
-				// points to snap
-				snaps: [],
+			    // points to snap
+			    snaps: [],
 			
-				// visible or not
-				active: false,
-			
-			
-				init: function () {
-					// current execution context
-					var self = this;
-			
-					this.$canvas = window.$develop.appendChild(document.createElement('canvas'));
-					this.ctx = this.$canvas.getContext('2d');
-			
-					// apply size
-					this.ctx.canvas.width  = data.metrics.width;
-					this.ctx.canvas.height = data.metrics.height;
-			
-					// safe zone center
-					this.centerX = data.metrics.availWidth  / 2 + data.metrics.availLeft;
-					this.centerY = data.metrics.availHeight / 2 + data.metrics.availTop;
-			
-					this.snaps.push({x: data.metrics.availLeft,  y: data.metrics.availTop});
-					this.snaps.push({x: data.metrics.width - data.metrics.availRight, y: data.metrics.height - data.metrics.availBottom});
-					this.snaps.push({x: this.centerX, y: this.centerY});
-			
-					this.ctx.lineWidth = this.lineWidth;
-					this.ctx.font = '14px Ubuntu';
-			
-					this.$canvas.addEventListener('contextmenu', function ( event ) {
-						event.preventDefault();
-					});
-			
-					this.$canvas.addEventListener('mousedown', function ( event ) {
-						self.mousedown(event);
-					});
-			
-					this.$canvas.addEventListener('mousemove', function ( event ) {
-						self.mousemove(event);
-					});
-				},
+			    // visible or not
+			    active: false,
 			
 			
-				mousemove: function ( event ) {
-					// current execution context
-					var self = this;
+			    init: function () {
+			        // current execution context
+			        var self = this;
 			
-					this.cursorX = event.x;
-					this.cursorY = event.y;
+			        this.$canvas = window.$develop.appendChild(document.createElement('canvas'));
+			        this.ctx = this.$canvas.getContext('2d');
 			
-					this.repaint();
+			        // apply size
+			        this.ctx.canvas.width  = data.metrics.width;
+			        this.ctx.canvas.height = data.metrics.height;
 			
-					if ( event.shiftKey ) {
-						// snap to the point divisible by 10
-						this.cursorX = Math.round(event.x / 10) * 10;
-						this.cursorY = Math.round(event.y / 10) * 10;
-					} else if ( !event.ctrlKey ) {
-						// snap to the nearest line
-						this.points.concat(this.snaps).some(function ( point ) {
-							if ( Math.abs(point.x - self.cursorX) <= 10 ) {
-								self.cursorX = point.x;
-							}
-							if ( Math.abs(point.y - self.cursorY) <= 10 ) {
-								self.cursorY = point.y;
-							}
-						});
-					}
+			        // safe zone center
+			        this.centerX = data.metrics.availWidth  / 2 + data.metrics.availLeft;
+			        this.centerY = data.metrics.availHeight / 2 + data.metrics.availTop;
 			
-					this.drawPointer();
-				},
+			        this.snaps.push({x: data.metrics.availLeft,  y: data.metrics.availTop});
+			        this.snaps.push({x: data.metrics.width - data.metrics.availRight, y: data.metrics.height - data.metrics.availBottom});
+			        this.snaps.push({x: this.centerX, y: this.centerY});
 			
+			        this.ctx.lineWidth = this.lineWidth;
+			        this.ctx.font = '14px Ubuntu';
 			
-				mousedown: function ( event ) {
-					var matchPoint = null,
-						self       = this,  // current execution context
-						point;
+			        this.$canvas.addEventListener('contextmenu', function ( event ) {
+			            event.preventDefault();
+			        });
 			
-					// all clicked crosses
-					this.points.forEach(function ( point ) {
-						if ( self.cursorX === point.x && self.cursorY === point.y ) {
-							matchPoint = point;
-						}
-					});
+			        this.$canvas.addEventListener('mousedown', function ( event ) {
+			            self.mousedown(event);
+			        });
 			
-					if ( event.button === 0 ) {
-						// left mouse button
-						if ( matchPoint === null ) {
-							this.points.push({x: this.cursorX, y: this.cursorY});
-						}
-						this.lastX = this.cursorX;
-						this.lastY = this.cursorY;
-					} else if ( event.button === 1 ) {
-						// middle mouse button
-						this.points.pop();
-						point = this.points[this.points.length - 1];
-						if ( point ) {
-							this.lastX = point.x;
-							this.lastY = point.y;
-						} else {
-							this.lastX = 0;
-							this.lastY = 0;
-						}
-					} else if ( event.button === 2 ) {
-						// right mouse button
-						if ( matchPoint !== null ) {
-							this.points.splice(this.points.indexOf(matchPoint), 1);
-							point = this.points[this.points.length - 1];
-							if ( point ) {
-								this.lastX = point.x;
-								this.lastY = point.y;
-							} else {
-								this.lastX = 0;
-								this.lastY = 0;
-							}
-						} else {
-							this.lastX = 0;
-							this.lastY = 0;
-						}
-					}
-					this.repaint();
-					this.drawPointer();
-					storage.set('grid.points', this.points);
-				},
+			        this.$canvas.addEventListener('mousemove', function ( event ) {
+			            self.mousemove(event);
+			        });
+			    },
 			
 			
-				show: function () {
-					this.active = true;
-					this.$canvas.classList.add('active');
-					this.repaint();
-				},
+			    mousemove: function ( event ) {
+			        // current execution context
+			        var self = this;
+			
+			        this.cursorX = event.x;
+			        this.cursorY = event.y;
+			
+			        this.repaint();
+			
+			        if ( event.shiftKey ) {
+			            // snap to the point divisible by 10
+			            this.cursorX = Math.round(event.x / 10) * 10;
+			            this.cursorY = Math.round(event.y / 10) * 10;
+			        } else if ( !event.ctrlKey ) {
+			            // snap to the nearest line
+			            this.points.concat(this.snaps).some(function ( point ) {
+			                if ( Math.abs(point.x - self.cursorX) <= 10 ) {
+			                    self.cursorX = point.x;
+			                }
+			                if ( Math.abs(point.y - self.cursorY) <= 10 ) {
+			                    self.cursorY = point.y;
+			                }
+			            });
+			        }
+			
+			        this.drawPointer();
+			    },
 			
 			
-				hide: function () {
-					this.active = false;
-					this.$canvas.classList.remove('active');
-				},
+			    mousedown: function ( event ) {
+			        var matchPoint = null,
+			            self       = this,  // current execution context
+			            point;
+			
+			        // all clicked crosses
+			        this.points.forEach(function ( point ) {
+			            if ( self.cursorX === point.x && self.cursorY === point.y ) {
+			                matchPoint = point;
+			            }
+			        });
+			
+			        if ( event.button === 0 ) {
+			            // left mouse button
+			            if ( matchPoint === null ) {
+			                this.points.push({x: this.cursorX, y: this.cursorY});
+			            }
+			            this.lastX = this.cursorX;
+			            this.lastY = this.cursorY;
+			        } else if ( event.button === 1 ) {
+			            // middle mouse button
+			            this.points.pop();
+			            point = this.points[this.points.length - 1];
+			            if ( point ) {
+			                this.lastX = point.x;
+			                this.lastY = point.y;
+			            } else {
+			                this.lastX = 0;
+			                this.lastY = 0;
+			            }
+			        } else if ( event.button === 2 ) {
+			            // right mouse button
+			            if ( matchPoint !== null ) {
+			                this.points.splice(this.points.indexOf(matchPoint), 1);
+			                point = this.points[this.points.length - 1];
+			                if ( point ) {
+			                    this.lastX = point.x;
+			                    this.lastY = point.y;
+			                } else {
+			                    this.lastX = 0;
+			                    this.lastY = 0;
+			                }
+			            } else {
+			                this.lastX = 0;
+			                this.lastY = 0;
+			            }
+			        }
+			        this.repaint();
+			        this.drawPointer();
+			        storage.set('grid.points', this.points);
+			    },
 			
 			
-				repaint: function () {
-					var ctx  = this.ctx,
-						self = this;  // current execution context
-			
-					// remove all
-					ctx.clearRect(0, 0, data.metrics.width, data.metrics.height);
-			
-					// safe zone center
-					this.drawCross({x: this.centerX, y: this.centerY}, {color: 'grey'});
-			
-					// draw safe zone borders
-					ctx.strokeStyle = 'red';
-					ctx.strokeRect(data.metrics.availLeft, data.metrics.availTop, data.metrics.availWidth, data.metrics.availHeight);
-			
-					// all clicked crosses
-					this.points.forEach(function ( point ) {
-						self.drawCross(point, {color:'green', mark: 5});
-					});
-				},
+			    show: function () {
+			        this.active = true;
+			        this.$canvas.classList.add('active');
+			        this.repaint();
+			    },
 			
 			
-				drawPointer: function () {
-					var ctx    = this.ctx,
-						height = 16,
-						width, dx, dy, angle, title;
-			
-					title = this.cursorX + ' : ' + this.cursorY;
-			
-					// there were some clicks
-					if ( this.lastX || this.lastY ) {
-						// distance by X and Y from last point
-						dx = this.cursorX - this.lastX;
-						dy = this.cursorY - this.lastY;
-						title = title + ' [' + (dx > 0 ? '+' : '') + dx + ', ' + (dy > 0 ? '+' : '') + dy + ']';
-			
-						// angle of the line connecting the cursor and the last point
-						angle = Math.atan2(dy, dx) * 180 / Math.PI;
-						title = title + ' ' + angle.toFixed(2) + '°';
-			
-						// not perpendicular
-						if ( dx && dy ) {
-							// distance between the cursor and the last point
-							title = title + ' len: ' + Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2)).toFixed(2);
-						}
-			
-						// angle line
-						ctx.beginPath();
-						// show by color if 45°
-						ctx.strokeStyle = [-135, 135, -45, 45].indexOf(angle) !== -1 ? 'yellow' : 'grey';
-						ctx.moveTo(this.lastX, this.lastY);
-						ctx.lineTo(this.cursorX, this.cursorY);
-						ctx.stroke();
-					}
-			
-					// pointer itself
-					this.drawCross({x: this.cursorX, y: this.cursorY});
-			
-					title = ' ' + title + ' ';
-					width = ctx.measureText(title).width;
-			
-					// title background
-					ctx.fillStyle = 'yellow';
-					ctx.fillRect(
-						this.cursorX > this.centerX ? this.cursorX - width  : this.cursorX,
-						this.cursorY > this.centerY ? this.cursorY - height : this.cursorY,
-						width, height
-					);
-			
-					// title itself
-					ctx.fillStyle    = 'black';
-					ctx.textBaseline = this.cursorY > this.centerY ? 'bottom' : 'top';
-					ctx.textAlign    = this.cursorX > this.centerX ? 'right'  : 'left';
-					ctx.fillText(title, this.cursorX, this.cursorY);
-				},
+			    hide: function () {
+			        this.active = false;
+			        this.$canvas.classList.remove('active');
+			    },
 			
 			
-				drawCross: function ( point, options ) {
-					var ctx = this.ctx;
+			    repaint: function () {
+			        var ctx  = this.ctx,
+			            self = this;  // current execution context
 			
-					// defaults
-					options = options || {};
+			        // remove all
+			        ctx.clearRect(0, 0, data.metrics.width, data.metrics.height);
 			
-					// apply style options
-					ctx.lineWidth   = options.width || this.lineWidth;
-					ctx.strokeStyle = options.color || 'yellow';
+			        // safe zone center
+			        this.drawCross({x: this.centerX, y: this.centerY}, {color: 'grey'});
 			
-					ctx.beginPath();
-					// horizontal line
-					ctx.moveTo(0, point.y);
-					ctx.lineTo(data.metrics.width, point.y);
-					// vertical line
-					ctx.moveTo(point.x, 0);
-					ctx.lineTo(point.x, data.metrics.height);
-					// draw
-					ctx.stroke();
+			        // draw safe zone borders
+			        ctx.strokeStyle = 'red';
+			        ctx.strokeRect(data.metrics.availLeft, data.metrics.availTop, data.metrics.availWidth, data.metrics.availHeight);
 			
-					// center mark
-					if ( options.mark ) {
-						ctx.lineWidth = 1.5;
-						ctx.beginPath();
-						// horizontal line
-						ctx.moveTo(point.x - options.mark, point.y);
-						ctx.lineTo(point.x + options.mark, point.y);
-						// vertical line
-						ctx.moveTo(point.x, point.y - options.mark);
-						ctx.lineTo(point.x, point.y + options.mark);
-						// draw
-						ctx.stroke();
-						ctx.lineWidth = this.lineWidth;
-					}
-				}
+			        // all clicked crosses
+			        this.points.forEach(function ( point ) {
+			            self.drawCross(point, {color:'green', mark: 5});
+			        });
+			    },
+			
+			
+			    drawPointer: function () {
+			        var ctx    = this.ctx,
+			            height = 16,
+			            width, dx, dy, angle, title;
+			
+			        title = this.cursorX + ' : ' + this.cursorY;
+			
+			        // there were some clicks
+			        if ( this.lastX || this.lastY ) {
+			            // distance by X and Y from last point
+			            dx = this.cursorX - this.lastX;
+			            dy = this.cursorY - this.lastY;
+			            title = title + ' [' + (dx > 0 ? '+' : '') + dx + ', ' + (dy > 0 ? '+' : '') + dy + ']';
+			
+			            // angle of the line connecting the cursor and the last point
+			            angle = Math.atan2(dy, dx) * 180 / Math.PI;
+			            title = title + ' ' + angle.toFixed(2) + '°';
+			
+			            // not perpendicular
+			            if ( dx && dy ) {
+			                // distance between the cursor and the last point
+			                title = title + ' len: ' + Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2)).toFixed(2);
+			            }
+			
+			            // angle line
+			            ctx.beginPath();
+			            // show by color if 45°
+			            ctx.strokeStyle = [-135, 135, -45, 45].indexOf(angle) !== -1 ? 'yellow' : 'grey';
+			            ctx.moveTo(this.lastX, this.lastY);
+			            ctx.lineTo(this.cursorX, this.cursorY);
+			            ctx.stroke();
+			        }
+			
+			        // pointer itself
+			        this.drawCross({x: this.cursorX, y: this.cursorY});
+			
+			        title = ' ' + title + ' ';
+			        width = ctx.measureText(title).width;
+			
+			        // title background
+			        ctx.fillStyle = 'yellow';
+			        ctx.fillRect(
+			            this.cursorX > this.centerX ? this.cursorX - width  : this.cursorX,
+			            this.cursorY > this.centerY ? this.cursorY - height : this.cursorY,
+			            width, height
+			        );
+			
+			        // title itself
+			        ctx.fillStyle    = 'black';
+			        ctx.textBaseline = this.cursorY > this.centerY ? 'bottom' : 'top';
+			        ctx.textAlign    = this.cursorX > this.centerX ? 'right'  : 'left';
+			        ctx.fillText(title, this.cursorX, this.cursorY);
+			    },
+			
+			
+			    drawCross: function ( point, options ) {
+			        var ctx = this.ctx;
+			
+			        // defaults
+			        options = options || {};
+			
+			        // apply style options
+			        ctx.lineWidth   = options.width || this.lineWidth;
+			        ctx.strokeStyle = options.color || 'yellow';
+			
+			        ctx.beginPath();
+			        // horizontal line
+			        ctx.moveTo(0, point.y);
+			        ctx.lineTo(data.metrics.width, point.y);
+			        // vertical line
+			        ctx.moveTo(point.x, 0);
+			        ctx.lineTo(point.x, data.metrics.height);
+			        // draw
+			        ctx.stroke();
+			
+			        // center mark
+			        if ( options.mark ) {
+			            ctx.lineWidth = 1.5;
+			            ctx.beginPath();
+			            // horizontal line
+			            ctx.moveTo(point.x - options.mark, point.y);
+			            ctx.lineTo(point.x + options.mark, point.y);
+			            // vertical line
+			            ctx.moveTo(point.x, point.y - options.mark);
+			            ctx.lineTo(point.x, point.y + options.mark);
+			            // draw
+			            ctx.stroke();
+			            ctx.lineWidth = this.lineWidth;
+			        }
+			    }
 			
 			};
 
@@ -6022,24 +6028,24 @@
 			
 			// links to the origin
 			var getElementById = document.getElementById,
-				querySelector  = document.querySelector;
+			    querySelector  = document.querySelector;
 			
 			
 			// improved error output when working with selection elements by id
 			document.getElementById = function ( id ) {
-				var el = getElementById.call(document, id);
+			    var el = getElementById.call(document, id);
 			
-				if ( !el ) { throw new Error(__filename + ': no element with id ' + id); }
+			    if ( !el ) { throw new Error(__filename + ': no element with id ' + id); }
 			
-				return el;
+			    return el;
 			};
 			
 			document.querySelector = function ( selector ) {
-				var el = querySelector.call(document, selector);
+			    var el = querySelector.call(document, selector);
 			
-				if ( !el ) { throw new Error(__filename + ': no element with selector: ' + selector); }
+			    if ( !el ) { throw new Error(__filename + ': no element with selector: ' + selector); }
 			
-				return el;
+			    return el;
 			};
 			
 			/* WEBPACK VAR INJECTION */}.call(exports, "app/js/stb/develop/overrides.js"))
@@ -6064,106 +6070,106 @@
 			/* eslint new-cap: 0 */
 			
 			var host   = __webpack_require__(/*! ../app */ 5).data.host,
-				util   = __webpack_require__(/*! util */ 10),
-				config = __webpack_require__(/*! ../../../../config/proxy */ 57);
+			    util   = __webpack_require__(/*! util */ 10),
+			    config = __webpack_require__(/*! ../../../../config/proxy */ 57);
 			
 			
 			/**
 			 * Proxy host activation
 			 */
 			function initHost () {
-				var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 61);
+			    var ProxyHost = __webpack_require__(/*! code-proxy/client/host */ 61);
 			
-				// init and export to globals
-				window.proxy = new ProxyHost({
-					name: config.name,
-					host: location.hostname,
-					port: config.portWs
-				});
+			    // init and export to globals
+			    window.proxy = new ProxyHost({
+			        name: config.name,
+			        host: location.hostname,
+			        port: config.portWs
+			    });
 			
-				// redefine logging
-				window.proxy.log = function log ( type, time, status, message, params ) {
-					gSTB.Debug(util.format('[%s]\t%s\t%s\t%s\t%s',
-						type.grey,
-						config.name.magenta,
-						time.toString().grey,
-						(status ? message.green : message.red),
-						(params ? JSON.stringify(params).grey : '')
-					));
-				};
+			    // redefine logging
+			    window.proxy.log = function log ( type, time, status, message, params ) {
+			        gSTB.Debug(util.format('[%s]\t%s\t%s\t%s\t%s',
+			            type.grey,
+			            config.name.magenta,
+			            time.toString().grey,
+			            (status ? message.green : message.red),
+			            (params ? JSON.stringify(params).grey : '')
+			        ));
+			    };
 			}
 			
 			/**
 			 * Proxy guest activation
 			 */
 			function initGuest () {
-				var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 60),
-					stbNames   = ['dvbManager', 'gSTB', 'pvrManager', 'stbDownloadManager', 'stbStorage', 'stbUpdate', 'stbWebWindow', 'stbWindowMgr', 'timeShift'],
-					skipKeys   = ['objectName', 'destroyed', 'deleteLater'];
+			    var ProxyGuest = __webpack_require__(/*! code-proxy/client/guest */ 60),
+			        stbNames   = ['dvbManager', 'gSTB', 'pvrManager', 'stbDownloadManager', 'stbStorage', 'stbUpdate', 'stbWebWindow', 'stbWindowMgr', 'timeShift'],
+			        skipKeys   = ['objectName', 'destroyed', 'deleteLater'];
 			
-				// init and export to globals
-				window.proxy = new ProxyGuest({
-					name: config.name,
-					host: location.hostname,
-					port: config.portHttp
-				});
+			    // init and export to globals
+			    window.proxy = new ProxyGuest({
+			        name: config.name,
+			        host: location.hostname,
+			        port: config.portHttp
+			    });
 			
-				// create local stb objects
-				stbNames.forEach(function forEachStbNames ( stbObjName ) {
-					// prepare
-					var stbObj = window[stbObjName] = {},
-						// for each global stb object get all its properties
-						keysCode = util.format('Object.keys(%s)', stbObjName),
-						stbObjKeys;
+			    // create local stb objects
+			    stbNames.forEach(function forEachStbNames ( stbObjName ) {
+			        // prepare
+			        var stbObj = window[stbObjName] = {},
+			            // for each global stb object get all its properties
+			            keysCode = util.format('Object.keys(%s)', stbObjName),
+			            stbObjKeys;
 			
-					// get data from cache if no connection
-					if ( !window.proxy.active && config.cache ) {
-						stbObjKeys = JSON.parse(localStorage.getItem('proxy:eval:' + keysCode));
-						console.log('proxy cache: ', keysCode);
-					} else {
-						stbObjKeys = window.proxy.eval(keysCode);
-						localStorage.setItem('proxy:eval:' + keysCode, JSON.stringify(stbObjKeys));
-					}
+			        // get data from cache if no connection
+			        if ( !window.proxy.active && config.cache ) {
+			            stbObjKeys = JSON.parse(localStorage.getItem('proxy:eval:' + keysCode));
+			            console.log('proxy cache: ', keysCode);
+			        } else {
+			            stbObjKeys = window.proxy.eval(keysCode);
+			            localStorage.setItem('proxy:eval:' + keysCode, JSON.stringify(stbObjKeys));
+			        }
 			
-					// valid list of keys
-					if ( stbObjKeys && Array.isArray(stbObjKeys) ) {
+			        // valid list of keys
+			        if ( stbObjKeys && Array.isArray(stbObjKeys) ) {
 			
-						stbObjKeys.forEach(function forEachStbObjKeys ( stbObjKey ) {
-							// strip signature
-							stbObjKey = stbObjKey.split('(')[0];
-							// get rid of system fields
-							if ( skipKeys.indexOf(stbObjKey) === -1 ) {
-								// wrap each method with proxy call
-								stbObj[stbObjKey] = (function stbCallWrapper ( name, method ) {
-									return function stbCallBody () {
-										var code = name + '.' + method,
-											data;
+			            stbObjKeys.forEach(function forEachStbObjKeys ( stbObjKey ) {
+			                // strip signature
+			                stbObjKey = stbObjKey.split('(')[0];
+			                // get rid of system fields
+			                if ( skipKeys.indexOf(stbObjKey) === -1 ) {
+			                    // wrap each method with proxy call
+			                    stbObj[stbObjKey] = (function stbCallWrapper ( name, method ) {
+			                        return function stbCallBody () {
+			                            var code = name + '.' + method,
+			                                data;
 			
-										// get data from cache if no connection
-										if ( !window.proxy.active && config.cache ) {
-											data = JSON.parse(localStorage.getItem('proxy:call:' + code));
-											console.log('proxy cache: ', code);
-										} else {
-											data = window.proxy.call(code, Array.prototype.slice.call(arguments), name) || null;
-											localStorage.setItem('proxy:call:' + code, JSON.stringify(data));
-										}
-										return data;
-									};
-								}(stbObjName, stbObjKey));
-							}
-						});
-					}
-				});
+			                            // get data from cache if no connection
+			                            if ( !window.proxy.active && config.cache ) {
+			                                data = JSON.parse(localStorage.getItem('proxy:call:' + code));
+			                                console.log('proxy cache: ', code);
+			                            } else {
+			                                data = window.proxy.call(code, Array.prototype.slice.call(arguments), name) || null;
+			                                localStorage.setItem('proxy:call:' + code, JSON.stringify(data));
+			                            }
+			                            return data;
+			                        };
+			                    }(stbObjName, stbObjKey));
+			                }
+			            });
+			        }
+			    });
 			}
 			
 			
 			// init
 			if ( config.active ) {
-				if ( host ) {
-					initHost();
-				} else {
-					initGuest();
-				}
+			    if ( host ) {
+			        initHost();
+			    } else {
+			        initGuest();
+			    }
 			}
 
 
@@ -6185,40 +6191,40 @@
 			/* eslint-disable */
 			
 			if ( !Function.prototype.bind ) {
-				Function.prototype.bind = function ( oThis ) {
-					if ( typeof this !== 'function' ) {
-						// closest thing possible to the ECMAScript 5
-						// internal IsCallable function
-						throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-					}
+			    Function.prototype.bind = function ( oThis ) {
+			        if ( typeof this !== 'function' ) {
+			            // closest thing possible to the ECMAScript 5
+			            // internal IsCallable function
+			            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+			        }
 			
-					var aArgs = Array.prototype.slice.call(arguments, 1),
-						fToBind = this,
-						fNOP = function () {},
-						fBound = function () {
-							return fToBind.apply(this instanceof fNOP && oThis
-									? this
-									: oThis,
-								aArgs.concat(Array.prototype.slice.call(arguments)));
-						};
+			        var aArgs = Array.prototype.slice.call(arguments, 1),
+			            fToBind = this,
+			            fNOP = function () {},
+			            fBound = function () {
+			                return fToBind.apply(this instanceof fNOP && oThis
+			                        ? this
+			                        : oThis,
+			                    aArgs.concat(Array.prototype.slice.call(arguments)));
+			            };
 			
-					fNOP.prototype = this.prototype;
-					fBound.prototype = new fNOP();
+			        fNOP.prototype = this.prototype;
+			        fBound.prototype = new fNOP();
 			
-					return fBound;
-				};
+			        return fBound;
+			    };
 			}
 			
 			
 			if ( !window.requestAnimationFrame ) {
-				// shim layer with setTimeout fallback
-				window.requestAnimationFrame =
-					window.mozRequestAnimationFrame ||
-					window.webkitRequestAnimationFrame ||
-					window.msRequestAnimationFrame ||
-					function ( callback ) {
-						window.setTimeout(callback, 1000 / 60);
-					};
+			    // shim layer with setTimeout fallback
+			    window.requestAnimationFrame =
+			        window.mozRequestAnimationFrame ||
+			        window.webkitRequestAnimationFrame ||
+			        window.msRequestAnimationFrame ||
+			        function ( callback ) {
+			            window.setTimeout(callback, 1000 / 60);
+			        };
 			}
 
 
@@ -6240,16 +6246,16 @@
 			'use strict';
 			
 			var dom    = __webpack_require__(/*! ../dom */ 11),
-				config = __webpack_require__(/*! ../../../../config/static */ 58);
+			    config = __webpack_require__(/*! ../../../../config/static */ 58);
 			
 			
 			// livereload activation
 			if ( config.livereload ) {
-				// load external script
-				document.head.appendChild(dom.tag('script', {
-					type: 'text/javascript',
-					src: '//' + location.hostname + ':' + (config.livereload === true ? 35729 : config.livereload) + '/livereload.js'
-				}));
+			    // load external script
+			    document.head.appendChild(dom.tag('script', {
+			        type: 'text/javascript',
+			        src: '//' + location.hostname + ':' + (config.livereload === true ? 35729 : config.livereload) + '/livereload.js'
+			    }));
 			}
 
 
@@ -6271,18 +6277,18 @@
 			'use strict';
 			
 			var dom     = __webpack_require__(/*! ../dom */ 11),
-				util    = __webpack_require__(/*! util */ 10),
-				storage = __webpack_require__(/*! ./storage */ 9),
-				config  = __webpack_require__(/*! ../../../../config/weinre */ 59);
+			    util    = __webpack_require__(/*! util */ 10),
+			    storage = __webpack_require__(/*! ./storage */ 9),
+			    config  = __webpack_require__(/*! ../../../../config/weinre */ 59);
 			
 			
 			// web inspector is allowed only without SpyJS
 			if ( config.active && !storage.get('spyjs.active') ) {
-				// load external script
-				document.head.appendChild(dom.tag('script', {
-					type: 'text/javascript',
-					src: util.format('//%s:%s/target/target-script-min.js#%s', location.hostname, config.port, config.name)
-				}));
+			    // load external script
+			    document.head.appendChild(dom.tag('script', {
+			        type: 'text/javascript',
+			        src: util.format('//%s:%s/target/target-script-min.js#%s', location.hostname, config.port, config.name)
+			    }));
 			}
 
 
@@ -6302,9 +6308,9 @@
 			'use strict';
 			
 			var Emitter = __webpack_require__(/*! ./emitter */ 7),
-				gettext = new Emitter(),
-				meta    = null,
-				data    = null;
+			    gettext = new Emitter(),
+			    meta    = null,
+			    data    = null;
 			
 			
 			/**
@@ -6323,56 +6329,56 @@
 			 * });
 			 */
 			gettext.load = function ( config, callback ) {
-				var xhr = new XMLHttpRequest();
+			    var xhr = new XMLHttpRequest();
 			
-				if ( true ) {
-					if ( !config.name || typeof config.name !== 'string' ) { throw new Error(__filename + ': config.name must be a nonempty string'); }
-					if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
-				}
+			    if ( true ) {
+			        if ( !config.name || typeof config.name !== 'string' ) { throw new Error(__filename + ': config.name must be a nonempty string'); }
+			        if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+			    }
 			
-				// defaults
-				config.ext  = config.ext  || 'json';
-				config.path = config.path || 'lang';
+			    // defaults
+			    config.ext  = config.ext  || 'json';
+			    config.path = config.path || 'lang';
 			
-				/* todo: get rid of JSON.parse in future
-				xhr.overrideMimeType('application/json');
-				xhr.responseType = 'json';/**/
+			    /* todo: get rid of JSON.parse in future
+			    xhr.overrideMimeType('application/json');
+			    xhr.responseType = 'json';/**/
 			
-				xhr.responseType = 'text';
+			    xhr.responseType = 'text';
 			
-				xhr.onload = function () {
-					var json;
+			    xhr.onload = function () {
+			        var json;
 			
-					try {
-						json = JSON.parse(xhr.responseText);
-						meta = json.meta;
-						data = json.data;
-						callback(null, data);
-					} catch ( error ) {
-						meta = null;
-						data = null;
-						xhr.onerror(error);
-					}
+			        try {
+			            json = JSON.parse(xhr.responseText);
+			            meta = json.meta;
+			            data = json.data;
+			            callback(null, data);
+			        } catch ( error ) {
+			            meta = null;
+			            data = null;
+			            xhr.onerror(error);
+			        }
 			
-					// there are some listeners
-					if ( gettext.events['load'] ) {
-						// notify listeners
-						gettext.emit('load');
-					}
-				};
+			        // there are some listeners
+			        if ( gettext.events['load'] ) {
+			            // notify listeners
+			            gettext.emit('load');
+			        }
+			    };
 			
-				xhr.onerror = function ( error ) {
-					callback(error);
+			    xhr.onerror = function ( error ) {
+			        callback(error);
 			
-					// there are some listeners
-					if ( gettext.events['error'] ) {
-						// notify listeners
-						gettext.emit('error');
-					}
-				};
+			        // there are some listeners
+			        if ( gettext.events['error'] ) {
+			            // notify listeners
+			            gettext.emit('error');
+			        }
+			    };
 			
-				xhr.open('GET', config.path + '/' + config.name + '.' + config.ext, true);
-				xhr.send(null);
+			    xhr.open('GET', config.path + '/' + config.name + '.' + config.ext, true);
+			    xhr.send(null);
 			};
 			
 			
@@ -6389,7 +6395,7 @@
 			 * console.log(gettext('some line to be localized'));
 			 */
 			window.gettext = function ( msgId ) {
-				return data && data[''][msgId] ? data[''][msgId] : msgId;
+			    return data && data[''][msgId] ? data[''][msgId] : msgId;
 			};
 			
 			
@@ -6407,7 +6413,7 @@
 			 * console.log(pgettext('some context', 'some text'));
 			 */
 			window.pgettext = function ( context, msgId ) {
-				return data && data[context][msgId] ? data[context][msgId] : msgId;
+			    return data && data[context][msgId] ? data[context][msgId] : msgId;
 			};
 			
 			
@@ -6426,19 +6432,19 @@
 			 * console.log(ngettext('{0} cat', '{0} cats', 1));
 			 */
 			window.ngettext = function ( msgId, plural, value ) {
-				/* eslint no-eval: 0 */
+			    /* eslint no-eval: 0 */
 			
-				if ( true ) {
-					if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
-				}
+			    if ( true ) {
+			        if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
+			    }
 			
-				if ( data && meta ) {
-					// translation
-					return data[''][msgId][eval('var n = ' + value + '; ' + meta.plural)];
-				}
+			    if ( data && meta ) {
+			        // translation
+			        return data[''][msgId][eval('var n = ' + value + '; ' + meta.plural)];
+			    }
 			
-				// english
-				return value === 1 ? msgId : plural;
+			    // english
+			    return value === 1 ? msgId : plural;
 			};
 			
 			
@@ -6478,20 +6484,20 @@
 			 * @param {Object} [data={}] init attributes
 			 */
 			function Model ( data ) {
-				if ( true ) {
-					if ( typeof this !== 'object' ) { throw new Error(__filename + ': must be constructed via new'); }
-					if ( data && typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof this !== 'object' ) { throw new Error(__filename + ': must be constructed via new'); }
+			        if ( data && typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// parent constructor call
-				Emitter.call(this);
+			    // parent constructor call
+			    Emitter.call(this);
 			
-				/**
-				 * Model attributes with given data or empty hash table.
-				 *
-				 * @member {Object.<string, *>}
-				 **/
-				this.data = data || {};
+			    /**
+			     * Model attributes with given data or empty hash table.
+			     *
+			     * @member {Object.<string, *>}
+			     **/
+			    this.data = data || {};
 			}
 			
 			
@@ -6522,28 +6528,28 @@
 			 * @fires module:stb/model~Model#clear
 			 */
 			Model.prototype.clear = function () {
-				var data = this.data;
+			    var data = this.data;
 			
-				if ( true ) {
-					if ( typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// is there any data?
-				if ( Object.keys(data).length > 0 ) {
-					// reset
-					this.data = {};
+			    // is there any data?
+			    if ( Object.keys(data).length > 0 ) {
+			        // reset
+			        this.data = {};
 			
-					// there are some listeners
-					if ( this.events['clear'] ) {
-						// notify listeners
-						this.emit('clear', {data: data});
-					}
+			        // there are some listeners
+			        if ( this.events['clear'] ) {
+			            // notify listeners
+			            this.emit('clear', {data: data});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -6567,29 +6573,29 @@
 			 * @fires module:stb/model~Model#init
 			 */
 			Model.prototype.init = function ( data ) {
-				if ( true ) {
-					if ( typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof data !== 'object' ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// valid input
-				if ( data ) {
-					// reset data
-					this.clear();
+			    // valid input
+			    if ( data ) {
+			        // reset data
+			        this.clear();
 			
-					// init with given data
-					this.data = data;
+			        // init with given data
+			        this.data = data;
 			
-					// there are some listeners
-					if ( this.events['init'] ) {
-						// notify listeners
-						this.emit('init', {data: data});
-					}
+			        // there are some listeners
+			        if ( this.events['init'] ) {
+			            // notify listeners
+			            this.emit('init', {data: data});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -6601,13 +6607,13 @@
 			 * @return {boolean} attribute exists or not
 			 */
 			Model.prototype.has = function ( name ) {
-				if ( true ) {
-					if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
+			    }
 			
-				// hasOwnProperty method is not available directly in case of Object.create(null)
-				//return Object.hasOwnProperty.call(this.data, name);
-				return this.data.hasOwnProperty(name);
+			    // hasOwnProperty method is not available directly in case of Object.create(null)
+			    //return Object.hasOwnProperty.call(this.data, name);
+			    return this.data.hasOwnProperty(name);
 			};
 			
 			/**
@@ -6618,11 +6624,11 @@
 			 * @return {*} associated value
 			 */
 			Model.prototype.get = function ( name ) {
-				if ( true ) {
-					if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
+			    }
 			
-				return this.data[name];
+			    return this.data[name];
 			};
 			
 			
@@ -6648,43 +6654,43 @@
 			 * @fires module:stb/model~Model#change
 			 */
 			Model.prototype.set = function ( name, value ) {
-				var isAttrSet = name in this.data,
-					emitData  = {name: name, curr: value};
+			    var isAttrSet = name in this.data,
+			        emitData  = {name: name, curr: value};
 			
-				if ( true ) {
-					if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
+			    }
 			
-				if ( isAttrSet ) {
-					// update
-					emitData.prev = this.data[name];
-					// only if values are different
-					if ( value !== emitData.prev ) {
-						this.data[name] = value;
+			    if ( isAttrSet ) {
+			        // update
+			        emitData.prev = this.data[name];
+			        // only if values are different
+			        if ( value !== emitData.prev ) {
+			            this.data[name] = value;
 			
-						// there are some listeners
-						if ( this.events['change'] ) {
-							// notify listeners
-							this.emit('change', emitData);
-						}
+			            // there are some listeners
+			            if ( this.events['change'] ) {
+			                // notify listeners
+			                this.emit('change', emitData);
+			            }
 			
-						return true;
-					}
-				} else {
-					// create
-					this.data[name] = value;
+			            return true;
+			        }
+			    } else {
+			        // create
+			        this.data[name] = value;
 			
-					// there are some listeners
-					if ( this.events['change'] ) {
-						// notify listeners
-						this.emit('change', emitData);
-					}
+			        // there are some listeners
+			        if ( this.events['change'] ) {
+			            // notify listeners
+			            this.emit('change', emitData);
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -6697,28 +6703,28 @@
 			 * @fires module:stb/model~Model#change
 			 */
 			Model.prototype.unset = function ( name ) {
-				var isAttrSet = name in this.data,
-					emitData;
+			    var isAttrSet = name in this.data,
+			        emitData;
 			
-				if ( true ) {
-					if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
-				}
+			    if ( true ) {
+			        if ( typeof this.data !== 'object' ) { throw new Error(__filename + ': wrong this.data type'); }
+			    }
 			
-				if ( isAttrSet ) {
-					emitData = {name: name, prev: this.data[name]};
-					delete this.data[name];
+			    if ( isAttrSet ) {
+			        emitData = {name: name, prev: this.data[name]};
+			        delete this.data[name];
 			
-					// there are some listeners
-					if ( this.events['change'] ) {
-						// notify listeners
-						this.emit('change', emitData);
-					}
+			        // there are some listeners
+			        if ( this.events['change'] ) {
+			            // notify listeners
+			            this.emit('change', emitData);
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -6727,11 +6733,11 @@
 			// * @param {Object} data
 			// */
 			//Model.prototype.attributes = function ( data ) {
-			//	var index   = 0,
-			//		keyList = data && typeof data === 'object' ? Object.keys(data) : [];
-			//	for ( ; index < keyList.length; index++ ) {
-			//		this.set(keyList[index], data[keyList[index]]);
-			//	}
+			//    var index   = 0,
+			//        keyList = data && typeof data === 'object' ? Object.keys(data) : [];
+			//    for ( ; index < keyList.length; index++ ) {
+			//        this.set(keyList[index], data[keyList[index]]);
+			//    }
 			//};
 			
 			
@@ -6740,7 +6746,7 @@
 			// * @return {Object}
 			// */
 			//Model.prototype.pack = function () {
-			//	return this._data;
+			//    return this._data;
 			//};
 			
 			
@@ -6750,7 +6756,7 @@
 			// * @return {Object}
 			// */
 			//Model.prototype.unpack = function ( data ) {
-			//	return data;
+			//    return data;
 			//};
 			
 			
@@ -6758,24 +6764,24 @@
 			// * Sync model to a server
 			// */
 			//Model.prototype.save = function () {
-			//	var self = this;
-			//	if ( this.url ) {
-			//		// collect data
-			//		io.ajax(this.url, {
-			//			// request params
-			//			method: self._data[self.idName] ? 'put' : 'post',
-			//			data  : self.pack(),
-			//			onload: function ( data ) {
-			//				data = self.unpack(self.parse(data));
-			//				self.attributes(data);
-			//				console.log(data);
-			//				self.emit('save', true);
-			//			},
-			//			// error handlers
-			//			onerror:   this.saveFailure,
-			//			ontimeout: this.saveFailure
-			//		});
-			//	}
+			//    var self = this;
+			//    if ( this.url ) {
+			//        // collect data
+			//        io.ajax(this.url, {
+			//            // request params
+			//            method: self._data[self.idName] ? 'put' : 'post',
+			//            data  : self.pack(),
+			//            onload: function ( data ) {
+			//                data = self.unpack(self.parse(data));
+			//                self.attributes(data);
+			//                console.log(data);
+			//                self.emit('save', true);
+			//            },
+			//            // error handlers
+			//            onerror:   this.saveFailure,
+			//            ontimeout: this.saveFailure
+			//        });
+			//    }
 			//};
 			
 			
@@ -6783,7 +6789,7 @@
 			// * Error handler while model data fetch
 			// */
 			//Model.prototype.saveFailure = function () {
-			//	this.emit('save', false);
+			//    this.emit('save', false);
 			//};
 			
 			
@@ -6793,17 +6799,17 @@
 			// * @return {Object}
 			// */
 			//Model.prototype.parse = function ( response ) {
-			//	var data = {};
-			//	try {
-			//		data = JSON.parse(response).data;
-			//	} catch(e){ console.log(e); }
-			//	return data;
+			//    var data = {};
+			//    try {
+			//        data = JSON.parse(response).data;
+			//    } catch(e){ console.log(e); }
+			//    return data;
 			//};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.Model = Model;
+			    // expose to the global scope
+			    window.Model = Model;
 			}
 			
 			
@@ -6830,10 +6836,10 @@
 			'use strict';
 			
 			var Emitter   = __webpack_require__(/*! ./emitter */ 7),
-				preloader = new Emitter(),
-				queueSize = 0,
-				groups    = {},
-				verbose   = false;
+			    preloader = new Emitter(),
+			    queueSize = 0,
+			    groups    = {},
+			    verbose   = false;
 			
 			
 			/**
@@ -6872,43 +6878,43 @@
 			 * @fires module:stb/preloader#done
 			 */
 			function handler ( event ) {
-				// report
-				if ( event.type === 'error' ) {
-					debug.log('[preloader] group "' + this.group + '" link "' + this.src + '"', 'red');
-				} else {
-					if ( verbose ) {
-						debug.log('[preloader] group "' + this.group + '" link "' + this.src + '" (' + this.width + 'x' + this.height + ')');
-					}
-				}
+			    // report
+			    if ( event.type === 'error' ) {
+			        debug.log('[preloader] group "' + this.group + '" link "' + this.src + '"', 'red');
+			    } else {
+			        if ( verbose ) {
+			            debug.log('[preloader] group "' + this.group + '" link "' + this.src + '" (' + this.width + 'x' + this.height + ')');
+			        }
+			    }
 			
-				queueSize--;
-				groups[this.group]--;
+			    queueSize--;
+			    groups[this.group]--;
 			
-				// one link is done
-				if ( preloader.events['link'] ) {
-					// notify listeners
-					preloader.emit('link', {url: this.src, group: this.group});
-				}
+			    // one link is done
+			    if ( preloader.events['link'] ) {
+			        // notify listeners
+			        preloader.emit('link', {url: this.src, group: this.group});
+			    }
 			
-				// the whole group is done
-				if ( groups[this.group] === 0 ) {
-					debug.log('[preloader] group "' + this.group + '" loaded');
-					// one link is done
-					if ( preloader.events['group'] ) {
-						// notify listeners
-						preloader.emit('group', {name: this.group});
-					}
-				}
+			    // the whole group is done
+			    if ( groups[this.group] === 0 ) {
+			        debug.log('[preloader] group "' + this.group + '" loaded');
+			        // one link is done
+			        if ( preloader.events['group'] ) {
+			            // notify listeners
+			            preloader.emit('group', {name: this.group});
+			        }
+			    }
 			
-				// everything is done
-				if ( queueSize === 0 ) {
-					debug.log('[preloader] done');
-					// all links are done
-					if ( preloader.events['done'] ) {
-						// notify listeners
-						preloader.emit('done');
-					}
-				}
+			    // everything is done
+			    if ( queueSize === 0 ) {
+			        debug.log('[preloader] done');
+			        // all links are done
+			        if ( preloader.events['done'] ) {
+			            // notify listeners
+			            preloader.emit('done');
+			        }
+			    }
 			}
 			
 			
@@ -6931,38 +6937,38 @@
 			 * ]);
 			 */
 			preloader.add = function ( links ) {
-				if ( true ) {
-					if ( !Array.isArray(links) ) { throw new Error(__filename + ': wrong argument links'); }
-				}
+			    if ( true ) {
+			        if ( !Array.isArray(links) ) { throw new Error(__filename + ': wrong argument links'); }
+			    }
 			
-				// walk through all the given links
-				links.forEach(function ( item ) {
-					var img   = new Image(),
-						url   = item.url   || item,
-						group = item.group || '';
+			    // walk through all the given links
+			    links.forEach(function ( item ) {
+			        var img   = new Image(),
+			            url   = item.url   || item,
+			            group = item.group || '';
 			
-					if ( true ) {
-						if ( typeof url !== 'string' ) { throw new Error(__filename + ': wrong url type'); }
-						if ( typeof group !== 'string' ) { throw new Error(__filename + ': wrong group type'); }
-						if ( url.trim() === '' ) { throw new Error(__filename + ': empty url'); }
-					}
+			        if ( true ) {
+			            if ( typeof url !== 'string' ) { throw new Error(__filename + ': wrong url type'); }
+			            if ( typeof group !== 'string' ) { throw new Error(__filename + ': wrong group type'); }
+			            if ( url.trim() === '' ) { throw new Error(__filename + ': empty url'); }
+			        }
 			
-					// increase counters
-					queueSize++;
-					groups[group] = groups[group] === undefined ? 1 : groups[group] + 1;
+			        // increase counters
+			        queueSize++;
+			        groups[group] = groups[group] === undefined ? 1 : groups[group] + 1;
 			
-					// build tag
-					img.src    = url;
-					img.group  = group;
-					img.onload = img.onerror = img.ontimeout = handler;
-				});
+			        // build tag
+			        img.src    = url;
+			        img.group  = group;
+			        img.onload = img.onerror = img.ontimeout = handler;
+			    });
 			
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.preloader = preloader;
+			    // expose to the global scope
+			    window.preloader = preloader;
 			}
 			
 			
@@ -6989,18 +6995,18 @@
 			'use strict';
 			
 			var request = {},
-				defaults = {
-					method    : 'GET',  // HTTP method to use, such as "GET", "POST", "PUT", "DELETE", etc.
-					async     : true,   // whether or not to perform the operation asynchronously
-					headers   : {},     // list of HTTP request headers
-					type      : 'text', // "", "arraybuffer", "blob", "document", "json", "text"
-					data      : null,   // data to send (plain object)
-					timeout   : 30000,  // amount of milliseconds a request can take before being terminated
-					onload    : null,   // callback when the request has successfully completed
-					onerror   : null,   // callback when the request has failed
-					ontimeout : null    // callback when the author specified timeout has passed before the request could complete
-				},
-				defaultsKeys = Object.keys(defaults);
+			    defaults = {
+			        method    : 'GET',  // HTTP method to use, such as "GET", "POST", "PUT", "DELETE", etc.
+			        async     : true,   // whether or not to perform the operation asynchronously
+			        headers   : {},     // list of HTTP request headers
+			        type      : 'text', // "", "arraybuffer", "blob", "document", "json", "text"
+			        data      : null,   // data to send (plain object)
+			        timeout   : 30000,  // amount of milliseconds a request can take before being terminated
+			        onload    : null,   // callback when the request has successfully completed
+			        onerror   : null,   // callback when the request has failed
+			        ontimeout : null    // callback when the author specified timeout has passed before the request could complete
+			    },
+			    defaultsKeys = Object.keys(defaults);
 			
 			
 			/**
@@ -7014,55 +7020,55 @@
 			 * TODO: add
 			 */
 			request.ajax = function ( url, options ) {
-				var i, headersKeys, client;
+			    var i, headersKeys, client;
 			
-				// init
-				options = options || {};
-				// valid non-empty string
-				if ( url && (typeof url === 'string' || url instanceof String) && url.length > 0 ) {
-					// plain object is given as param
-					if ( options && typeof options === 'object') {
-						// extend with default options
-						for ( i = 0; i < defaultsKeys.length; i++ ) {
-							// in case not redefined
-							if ( options[defaultsKeys[i]] === undefined ) {
-								options[defaultsKeys[i]] = defaults[defaultsKeys[i]];
-							}
-						}
-					}
+			    // init
+			    options = options || {};
+			    // valid non-empty string
+			    if ( url && (typeof url === 'string' || url instanceof String) && url.length > 0 ) {
+			        // plain object is given as param
+			        if ( options && typeof options === 'object') {
+			            // extend with default options
+			            for ( i = 0; i < defaultsKeys.length; i++ ) {
+			                // in case not redefined
+			                if ( options[defaultsKeys[i]] === undefined ) {
+			                    options[defaultsKeys[i]] = defaults[defaultsKeys[i]];
+			                }
+			            }
+			        }
 			
-					client = new XMLHttpRequest();
-					// init a request
-					client.open(options.method, url, options.async);
+			        client = new XMLHttpRequest();
+			        // init a request
+			        client.open(options.method, url, options.async);
 			
-					// apply the given headers
-					if ( options.headers && typeof options.headers === 'object') {
-						headersKeys = Object.keys(options.headers);
-						for ( i = 0; i < headersKeys.length; i++ ) {
-							client.setRequestHeader(headersKeys[i], options.headers[headersKeys[i]]);
-						}
-					}
+			        // apply the given headers
+			        if ( options.headers && typeof options.headers === 'object') {
+			            headersKeys = Object.keys(options.headers);
+			            for ( i = 0; i < headersKeys.length; i++ ) {
+			                client.setRequestHeader(headersKeys[i], options.headers[headersKeys[i]]);
+			            }
+			        }
 			
-					// set response type and timeout
-					client.responseType = options.type;
-					client.timeout      = options.timeout;
+			        // set response type and timeout
+			        client.responseType = options.type;
+			        client.timeout      = options.timeout;
 			
-					// callbacks
-					if ( options.onload && typeof options.onload === 'function' ) {
-						client.onload = function onload () {
-							options.onload.call(this, this.response || this.responseText, this.status);
-						};
-					}
-					client.onerror   = options.onerror;
-					client.ontimeout = options.ontimeout;
+			        // callbacks
+			        if ( options.onload && typeof options.onload === 'function' ) {
+			            client.onload = function onload () {
+			                options.onload.call(this, this.response || this.responseText, this.status);
+			            };
+			        }
+			        client.onerror   = options.onerror;
+			        client.ontimeout = options.ontimeout;
 			
-					// actual request
-					//client.send(this.encode(options.data));
-					client.send(options.data ? JSON.stringify(options.data) : null);
+			        // actual request
+			        //client.send(this.encode(options.data));
+			        client.send(options.data ? JSON.stringify(options.data) : null);
 			
-					return client;
-				}
-				return false;
+			        return client;
+			    }
+			    return false;
 			};
 			
 			
@@ -7076,28 +7082,28 @@
 			 * TODO: add
 			 */
 			request.encode = function ( data ) {
-				var result = [],
-					i, keys;
+			    var result = [],
+			        i, keys;
 			
-				// input plain object validation
-				if ( data && typeof data === 'object') {
-					keys = Object.keys(data);
-					// apply encoding
-					for ( i = 0; i < keys.length; i++ ) {
-						result.push(encodeURIComponent(keys[i]) + '=' + encodeURIComponent(data[keys[i]]));
-					}
-					// build the list of params
-					if ( result.length > 0 ) {
-						return result.join('&');
-					}
-				}
-				return null;
+			    // input plain object validation
+			    if ( data && typeof data === 'object') {
+			        keys = Object.keys(data);
+			        // apply encoding
+			        for ( i = 0; i < keys.length; i++ ) {
+			            result.push(encodeURIComponent(keys[i]) + '=' + encodeURIComponent(data[keys[i]]));
+			        }
+			        // build the list of params
+			        if ( result.length > 0 ) {
+			            return result.join('&');
+			        }
+			    }
+			    return null;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.request = request;
+			    // expose to the global scope
+			    window.request = request;
 			}
 			
 			
@@ -7122,63 +7128,63 @@
 			/* eslint-disable */
 			
 			if ( !('classList' in document.documentElement) ) {
-				var prototype = Array.prototype,
-					indexOf = prototype.indexOf,
-					slice = prototype.slice,
-					push = prototype.push,
-					splice = prototype.splice,
-					join = prototype.join;
+			    var prototype = Array.prototype,
+			        indexOf = prototype.indexOf,
+			        slice = prototype.slice,
+			        push = prototype.push,
+			        splice = prototype.splice,
+			        join = prototype.join;
 			
-				window.DOMTokenList = function ( el ) {
-					this._element = el;
-					if (el.className !== this._classCache) {
-						this._classCache = el.className;
-						if (!this._classCache) { return; }
-						var classes = this._classCache.replace(/^\s+|\s+$/g,'').split(/\s+/),
-							i;
-						for (i = 0; i < classes.length; i++) {
-							push.call(this, classes[i]);
-						}
-					}
-				};
-				window.DOMTokenList.prototype = {
-					add: function ( token ) {
-						if(this.contains(token)) { return; }
-						push.call(this, token);
-						this._element.className = slice.call(this, 0).join(' ');
-					},
-					contains: function ( token ) {
-						return indexOf.call(this, token) !== -1;
-					},
-					item: function ( index ) {
-						return this[index] || null;
-					},
-					remove: function ( token ) {
-						var i = indexOf.call(this, token);
-						if (i === -1) {
-							return;
-						}
-						splice.call(this, i, 1);
-						this._element.className = slice.call(this, 0).join(' ');
-					},
-					toString: function () {
-						return join.call(this, ' ');
-					},
-					toggle: function ( token ) {
-						if (!this.contains(token)) {
-							this.add(token);
-						} else {
-							this.remove(token);
-						}
-						return this.contains(token);
-					}
-				};
+			    window.DOMTokenList = function ( el ) {
+			        this._element = el;
+			        if (el.className !== this._classCache) {
+			            this._classCache = el.className;
+			            if (!this._classCache) { return; }
+			            var classes = this._classCache.replace(/^\s+|\s+$/g,'').split(/\s+/),
+			                i;
+			            for (i = 0; i < classes.length; i++) {
+			                push.call(this, classes[i]);
+			            }
+			        }
+			    };
+			    window.DOMTokenList.prototype = {
+			        add: function ( token ) {
+			            if(this.contains(token)) { return; }
+			            push.call(this, token);
+			            this._element.className = slice.call(this, 0).join(' ');
+			        },
+			        contains: function ( token ) {
+			            return indexOf.call(this, token) !== -1;
+			        },
+			        item: function ( index ) {
+			            return this[index] || null;
+			        },
+			        remove: function ( token ) {
+			            var i = indexOf.call(this, token);
+			            if (i === -1) {
+			                return;
+			            }
+			            splice.call(this, i, 1);
+			            this._element.className = slice.call(this, 0).join(' ');
+			        },
+			        toString: function () {
+			            return join.call(this, ' ');
+			        },
+			        toggle: function ( token ) {
+			            if (!this.contains(token)) {
+			                this.add(token);
+			            } else {
+			                this.remove(token);
+			            }
+			            return this.contains(token);
+			        }
+			    };
 			
-				Object.defineProperty(Element.prototype, 'classList',{
-					get: function () {
-						return new window.DOMTokenList(this);
-					}
-				});
+			    Object.defineProperty(Element.prototype, 'classList',{
+			        get: function () {
+			            return new window.DOMTokenList(this);
+			        }
+			    });
 			}
 
 
@@ -7212,16 +7218,16 @@
 			 * format('This is a {0} and a {1} and another {0}', 'cat', 'dog');
 			 */
 			module.exports = function ( format ) {
-				var args = Array.prototype.slice.call(arguments, 1),
-					expr = /{(\d+)}/g;
+			    var args = Array.prototype.slice.call(arguments, 1),
+			        expr = /{(\d+)}/g;
 			
-				if ( true ) {
-					if ( !expr.test(format) ) { throw new Error(__filename + ': format string does not have substitutions: ' + format); }
-				}
+			    if ( true ) {
+			        if ( !expr.test(format) ) { throw new Error(__filename + ': format string does not have substitutions: ' + format); }
+			    }
 			
-				return format.replace(expr, function ( match, number ) {
-					return args[number] !== undefined ? args[number] : match;
-				});
+			    return format.replace(expr, function ( match, number ) {
+			        return args[number] !== undefined ? args[number] : match;
+			    });
 			};
 			
 			/* WEBPACK VAR INJECTION */}.call(exports, "app/js/stb/tools/format.js"))
@@ -7242,8 +7248,8 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 3),
-				groups    = {};  // set of groups with linked components
+			    keys      = __webpack_require__(/*! ../keys */ 3),
+			    groups    = {};  // set of groups with linked components
 			
 			
 			/**
@@ -7264,45 +7270,45 @@
 			 *     });
 			 */
 			function CheckBox ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.group     && typeof config.group     !== 'string' ) { throw new Error(__filename + ': wrong or empty config.group'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.group     && typeof config.group     !== 'string' ) { throw new Error(__filename + ': wrong or empty config.group'); }
+			    }
 			
-				// set default className if classList property empty or undefined
-				config.className = 'checkBox ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'checkBox ' + (config.className || '');
 			
-				// state
-				this.value = !!config.value;
+			    // state
+			    this.value = !!config.value;
 			
-				// correct init styles
-				if ( this.value ) {
-					config.className += ' checked';
-				}
+			    // correct init styles
+			    if ( this.value ) {
+			        config.className += ' checked';
+			    }
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// group name to work synchronously with other checkboxes
-				this.group = null;
+			    // group name to work synchronously with other checkboxes
+			    this.group = null;
 			
-				// apply hierarchy
-				if ( config.group ) {
-					// save
-					this.group = config.group;
+			    // apply hierarchy
+			    if ( config.group ) {
+			        // save
+			        this.group = config.group;
 			
-					// fill groups data
-					if ( groups[config.group] === undefined ) {
-						groups[config.group] = [this];
-					} else {
-						groups[config.group].push(this);
-					}
-				}
+			        // fill groups data
+			        if ( groups[config.group] === undefined ) {
+			            groups[config.group] = [this];
+			        } else {
+			            groups[config.group].push(this);
+			        }
+			    }
 			}
 			
 			
@@ -7317,25 +7323,25 @@
 			 * @type {Object.<string, function>}
 			 */
 			CheckBox.prototype.defaultEvents = {
-				/**
-				 * Default method to handle mouse click events.
-				 */
-				click: function () {
-					// invert state
-					this.set(!this.value);
-				},
+			    /**
+			     * Default method to handle mouse click events.
+			     */
+			    click: function () {
+			        // invert state
+			        this.set(!this.value);
+			    },
 			
-				/**
-				 * Default method to handle keyboard keydown events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keydown: function ( event ) {
-					// emulate click
-					if ( event.code === keys.ok ) {
-						this.set(!this.value);
-					}
-				}
+			    /**
+			     * Default method to handle keyboard keydown events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keydown: function ( event ) {
+			        // emulate click
+			        if ( event.code === keys.ok ) {
+			            this.set(!this.value);
+			        }
+			    }
 			};
 			
 			
@@ -7349,51 +7355,51 @@
 			 * @fires module:"stb/ui/check.box~CheckBox#change"
 			 */
 			CheckBox.prototype.set = function ( value ) {
-				var i, l;
+			    var i, l;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			    }
 			
-				if ( this.value !== value ) {
-					// going to be turned on and assigned to some group
-					if ( !this.value && this.group !== null ) {
-						// unset all checkboxes in this group
-						for ( i = 0, l = groups[this.group].length; i < l; i++ ) {
-							groups[this.group][i].set(false);
-						}
-					}
+			    if ( this.value !== value ) {
+			        // going to be turned on and assigned to some group
+			        if ( !this.value && this.group !== null ) {
+			            // unset all checkboxes in this group
+			            for ( i = 0, l = groups[this.group].length; i < l; i++ ) {
+			                groups[this.group][i].set(false);
+			            }
+			        }
 			
-					// set new value
-					this.value = !this.value;
+			        // set new value
+			        this.value = !this.value;
 			
-					// set visible changes
-					this.$node.classList.toggle('checked');
+			        // set visible changes
+			        this.$node.classList.toggle('checked');
 			
-					// there are some listeners
-					if ( this.events['change'] ) {
-						/**
-						 * Update progress value.
-						 *
-						 * @event module:stb/ui/check.box~CheckBox#change
-						 *
-						 * @type {Object}
-						 * @property {boolean} value current check state
-						 */
-						this.emit('change', {value: this.value});
-					}
+			        // there are some listeners
+			        if ( this.events['change'] ) {
+			            /**
+			             * Update progress value.
+			             *
+			             * @event module:stb/ui/check.box~CheckBox#change
+			             *
+			             * @type {Object}
+			             * @property {boolean} value current check state
+			             */
+			            this.emit('change', {value: this.value});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentCheckBox = CheckBox;
+			    // expose to the global scope
+			    window.ComponentCheckBox = CheckBox;
 			}
 			
 			
@@ -7418,7 +7424,7 @@
 			'use strict';
 			
 			var Component = __webpack_require__(/*! ../component */ 1),
-				keys      = __webpack_require__(/*! ../keys */ 3);
+			    keys      = __webpack_require__(/*! ../keys */ 3);
 			
 			
 			/**
@@ -7457,6 +7463,9 @@
 			 * @param {function} [config.navigate] method to move focus according to pressed keys
 			 * @param {boolean}  [config.cycleX=true] allow or not to jump to the opposite side of line when there is nowhere to go next
 			 * @param {boolean}  [config.cycleY=true] allow or not to jump to the opposite side of column when there is nowhere to go next
+			 * @param {object}   [config.provider] data provider
+			 * @param {number}   [config.sizeX] grid columns count
+			 * @param {number}   [config.sizeX] grid rows count
 			 *
 			 * @fires module:stb/ui/grid~Grid#click:item
 			 *
@@ -7476,99 +7485,99 @@
 			 *     });
 			 */
 			function Grid ( config ) {
-				// current execution context
-				//var self = this;
+			    // current execution context
+			    //var self = this;
 			
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string'   ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					//if ( config.navigate  && typeof config.navigate  !== 'function' ) { throw new Error(__filename + ': wrong config.navigate type'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        //if ( config.navigate  && typeof config.navigate  !== 'function' ) { throw new Error(__filename + ': wrong config.navigate type'); }
+			    }
 			
-				/**
-				 * List of DOM elements representing the component cells.
-				 * Necessary for navigation calculations.
-				 *
-				 * @type {Element[][]}
-				 */
-				this.map = [];
+			    /**
+			     * List of DOM elements representing the component cells.
+			     * Necessary for navigation calculations.
+			     *
+			     * @type {Element[][]}
+			     */
+			    this.map = [];
 			
-				/**
-				 * Link to the currently focused DOM element.
-				 *
-				 * @type {Element}
-				 */
-				this.$focusItem = null;
+			    /**
+			     * Link to the currently focused DOM element.
+			     *
+			     * @type {Element}
+			     */
+			    this.$focusItem = null;
 			
-				/**
-				 * Component data to visualize.
-				 *
-				 * @type {Array[]}
-				 */
-				this.data = [];
+			    /**
+			     * Component data to visualize.
+			     *
+			     * @type {Array[]}
+			     */
+			    this.data = [];
 			
-				/**
-				 * Allow or not to jump to the opposite side of line when there is nowhere to go next.
-				 *
-				 * @type {boolean}
-				 */
-				this.cycleX = true;
+			    /**
+			     * Allow or not to jump to the opposite side of line when there is nowhere to go next.
+			     *
+			     * @type {boolean}
+			     */
+			    this.cycleX = true;
 			
-				/**
-				 * Allow or not to jump to the opposite side of column when there is nowhere to go next.
-				 *
-				 * @type {boolean}
-				 */
-				this.cycleY = true;
+			    /**
+			     * Allow or not to jump to the opposite side of column when there is nowhere to go next.
+			     *
+			     * @type {boolean}
+			     */
+			    this.cycleY = true;
 			
-				/**
-				 * Current navigation map horizontal position.
-				 *
-				 * @type {number}
-				 */
-				this.focusX = 0;
+			    /**
+			     * Current navigation map horizontal position.
+			     *
+			     * @type {number}
+			     */
+			    this.focusX = 0;
 			
-				/**
-				 * Current navigation map vertical position.
-				 *
-				 * @type {number}
-				 */
-				this.focusY = 0;
+			    /**
+			     * Current navigation map vertical position.
+			     *
+			     * @type {number}
+			     */
+			    this.focusY = 0;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'grid ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'grid ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// component setup
-				this.init(config);
+			    // component setup
+			    this.init(config);
 			
-				// custom navigation method
-				//if ( config.navigate ) {
-				//	// apply
-				//	this.navigate = config.navigate;
-				//}
+			    // custom navigation method
+			    //if ( config.navigate ) {
+			    //    // apply
+			    //    this.navigate = config.navigate;
+			    //}
 			
-				// navigation by keyboard
-				//this.addListener('keydown', this.navigate);
+			    // navigation by keyboard
+			    //this.addListener('keydown', this.navigate);
 			
-				// navigation by mouse
-				//this.$body.addEventListener('mousewheel', function ( event ) {
-				//	// scrolling by Y axis
-				//	if ( event.wheelDeltaY ) {
-				//		self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
-				//	}
-				//
-				//	// scrolling by X axis
-				//	if ( event.wheelDeltaX ) {
-				//		self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
-				//	}
-				//});
+			    // navigation by mouse
+			    //this.$body.addEventListener('mousewheel', function ( event ) {
+			    //    // scrolling by Y axis
+			    //    if ( event.wheelDeltaY ) {
+			    //        self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+			    //    }
+			    //
+			    //    // scrolling by X axis
+			    //    if ( event.wheelDeltaX ) {
+			    //        self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+			    //    }
+			    //});
 			}
 			
 			
@@ -7585,12 +7594,12 @@
 			 * @param {*} data associated with this item data
 			 */
 			Grid.prototype.renderItemDefault = function ( $item, data ) {
-				if ( true ) {
-					if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+			    }
 			
-				$item.innerText = data.value;
+			    $item.innerText = data.value;
 			};
 			
 			
@@ -7609,46 +7618,46 @@
 			 * @type {Object.<string, function>}
 			 */
 			Grid.prototype.defaultEvents = {
-				/**
-				 * Default method to handle mouse wheel events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				mousewheel: function ( event ) {
-					// scrolling by Y axis
-					if ( event.wheelDeltaY ) {
-						this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
-					}
+			    /**
+			     * Default method to handle mouse wheel events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    mousewheel: function ( event ) {
+			        // scrolling by Y axis
+			        if ( event.wheelDeltaY ) {
+			            this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+			        }
 			
-					// scrolling by X axis
-					if ( event.wheelDeltaX ) {
-						this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
-					}
-				},
+			        // scrolling by X axis
+			        if ( event.wheelDeltaX ) {
+			            this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
+			        }
+			    },
 			
-				/**
-				 * Default method to handle keyboard keydown events.
-				 *
-				 * @param {Event} event generated event
-				 */
-				keydown: function ( event ) {
-					switch ( event.code ) {
-						case keys.up:
-						case keys.down:
-						case keys.right:
-						case keys.left:
-							// cursor move only on arrow keys
-							this.move(event.code);
-							break;
-						case keys.ok:
-							// there are some listeners
-							if ( this.events['click:item'] ) {
-								// notify listeners
-								this.emit('click:item', {$item: this.$focusItem, event: event});
-							}
-							break;
-					}
-				}
+			    /**
+			     * Default method to handle keyboard keydown events.
+			     *
+			     * @param {Event} event generated event
+			     */
+			    keydown: function ( event ) {
+			        switch ( event.code ) {
+			            case keys.up:
+			            case keys.down:
+			            case keys.right:
+			            case keys.left:
+			                // cursor move only on arrow keys
+			                this.move(event.code);
+			                break;
+			            case keys.ok:
+			                // there are some listeners
+			                if ( this.events['click:item'] ) {
+			                    // notify listeners
+			                    this.emit('click:item', {$item: this.$focusItem, event: event});
+			                }
+			                break;
+			        }
+			    }
 			};
 			
 			
@@ -7658,22 +7667,22 @@
 			 * @param {Event} event generated event source of movement
 			 */
 			//Grid.prototype.navigateDefault = function ( event ) {
-			//	switch ( event.code ) {
-			//		case keys.up:
-			//		case keys.down:
-			//		case keys.right:
-			//		case keys.left:
-			//			// cursor move only on arrow keys
-			//			this.move(event.code);
-			//			break;
-			//		case keys.ok:
-			//			// there are some listeners
-			//			if ( this.events['click:item'] ) {
-			//				// notify listeners
-			//				this.emit('click:item', {$item: this.$focusItem, event: event});
-			//			}
-			//			break;
-			//	}
+			//    switch ( event.code ) {
+			//        case keys.up:
+			//        case keys.down:
+			//        case keys.right:
+			//        case keys.left:
+			//            // cursor move only on arrow keys
+			//            this.move(event.code);
+			//            break;
+			//        case keys.ok:
+			//            // there are some listeners
+			//            if ( this.events['click:item'] ) {
+			//                // notify listeners
+			//                this.emit('click:item', {$item: this.$focusItem, event: event});
+			//            }
+			//            break;
+			//    }
 			//};
 			
 			
@@ -7694,46 +7703,46 @@
 			 * @return {Array[]} reworked incoming data
 			 */
 			function normalize ( data ) {
-				var i, j, item;
+			    var i, j, item;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// rows
-				for ( i = 0; i < data.length; i++ ) {
-					// cols
-					for ( j = 0; j < data[i].length; j++ ) {
-						// cell value
-						item = data[i][j];
-						// primitive value
-						if ( typeof item !== 'object' ) {
-							// wrap with defaults
-							item = data[i][j] = {
-								value: data[i][j],
-								colSpan: 1,
-								rowSpan: 1
-							};
-						} else {
-							// always at least one row/col
-							item.colSpan = item.colSpan || 1;
-							item.rowSpan = item.rowSpan || 1;
-						}
+			    // rows
+			    for ( i = 0; i < data.length; i++ ) {
+			        // cols
+			        for ( j = 0; j < data[i].length; j++ ) {
+			            // cell value
+			            item = data[i][j];
+			            // primitive value
+			            if ( typeof item !== 'object' ) {
+			                // wrap with defaults
+			                item = data[i][j] = {
+			                    value: data[i][j],
+			                    colSpan: 1,
+			                    rowSpan: 1
+			                };
+			            } else {
+			                // always at least one row/col
+			                item.colSpan = item.colSpan || 1;
+			                item.rowSpan = item.rowSpan || 1;
+			            }
 			
-						if ( true ) {
-							//if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
-							if ( Number(item.colSpan) !== item.colSpan ) { throw new Error(__filename + ': item.colSpan must be a number'); }
-							if ( Number(item.rowSpan) !== item.rowSpan ) { throw new Error(__filename + ': item.rowSpan must be a number'); }
-							if ( item.colSpan <= 0 ) { throw new Error(__filename + ': item.colSpan should be positive'); }
-							if ( item.rowSpan <= 0 ) { throw new Error(__filename + ': item.rowSpan should be positive'); }
-							if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) { throw new Error(__filename + ': item.focus must be boolean'); }
-							if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) { throw new Error(__filename + ': item.disable must be boolean'); }
-						}
-					}
-				}
+			            if ( true ) {
+			                //if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
+			                if ( Number(item.colSpan) !== item.colSpan ) { throw new Error(__filename + ': item.colSpan must be a number'); }
+			                if ( Number(item.rowSpan) !== item.rowSpan ) { throw new Error(__filename + ': item.rowSpan must be a number'); }
+			                if ( item.colSpan <= 0 ) { throw new Error(__filename + ': item.colSpan should be positive'); }
+			                if ( item.rowSpan <= 0 ) { throw new Error(__filename + ': item.rowSpan should be positive'); }
+			                if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) { throw new Error(__filename + ': item.focus must be boolean'); }
+			                if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) { throw new Error(__filename + ': item.disable must be boolean'); }
+			            }
+			        }
+			    }
 			
-				return data;
+			    return data;
 			}
 			
 			
@@ -7748,34 +7757,34 @@
 			 * @param {*} value filling data
 			 */
 			function fill ( map, x, y, dX, dY, value ) {
-				var i, j;
+			    var i, j;
 			
-				if ( true ) {
-					if ( arguments.length !== 6 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !Array.isArray(map) ) { throw new Error(__filename + ': wrong map type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 6 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !Array.isArray(map) ) { throw new Error(__filename + ': wrong map type'); }
+			    }
 			
-				// rows
-				for ( i = y; i < y + dY; i++ ) {
-					// expand map rows
-					if ( map.length < i + 1 ) { map.push([]); }
+			    // rows
+			    for ( i = y; i < y + dY; i++ ) {
+			        // expand map rows
+			        if ( map.length < i + 1 ) { map.push([]); }
 			
-					// compensate long columns from previous rows
-					while ( map[i][x] !== undefined ) {
-						x++;
-					}
+			        // compensate long columns from previous rows
+			        while ( map[i][x] !== undefined ) {
+			            x++;
+			        }
 			
-					// cols
-					for ( j = x; j < x + dX; j++ ) {
-						// expand map row cols
-						if ( map[i].length < j + 1 ) { map[i].push(); }
-						// fill
-						map[i][j] = value;
-						// apply coordinates for future mouse clicks
-						if ( value.x === undefined ) { value.x = j; }
-						if ( value.y === undefined ) { value.y = i; }
-					}
-				}
+			        // cols
+			        for ( j = x; j < x + dX; j++ ) {
+			            // expand map row cols
+			            if ( map[i].length < j + 1 ) { map[i].push(); }
+			            // fill
+			            map[i][j] = value;
+			            // apply coordinates for future mouse clicks
+			            if ( value.x === undefined ) { value.x = j; }
+			            if ( value.y === undefined ) { value.y = i; }
+			        }
+			    }
 			}
 			
 			
@@ -7786,28 +7795,28 @@
 			 * @return {Array[]} navigation map
 			 */
 			function map ( data ) {
-				var result = [],
-					i, j, item;
+			    var result = [],
+			        i, j, item;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+			    }
 			
-				// rows
-				for ( i = 0; i < data.length; i++ ) {
-					// cols
-					for ( j = 0; j < data[i].length; j++ ) {
-						// cell value
-						item = data[i][j];
-						// process a cell
-						fill(result, j, i, item.colSpan, item.rowSpan, item.$item);
-						// clear redundant info
-						delete item.$item;
-					}
-				}
+			    // rows
+			    for ( i = 0; i < data.length; i++ ) {
+			        // cols
+			        for ( j = 0; j < data[i].length; j++ ) {
+			            // cell value
+			            item = data[i][j];
+			            // process a cell
+			            fill(result, j, i, item.colSpan, item.rowSpan, item.$item);
+			            // clear redundant info
+			            delete item.$item;
+			        }
+			    }
 			
-				return result;
+			    return result;
 			}
 			
 			
@@ -7817,153 +7826,249 @@
 			 * @param {Object} config init parameters (subset of constructor config params)
 			 */
 			Grid.prototype.init = function ( config ) {
-				var self = this,
-					draw = false,
-					i, j,
-					$row, $item, $tbody, $focusItem,
-					itemData,
-					/**
-					 * Cell mouse click handler.
-					 *
-					 * @param {Event} event click event data
-					 *
-					 * @this Element
-					 *
-					 * @fires module:stb/ui/grid~Grid#click:item
-					 */
-					onItemClick = function ( event ) {
-						// allow to accept focus
-						if ( this.data.disable !== true ) {
-							// visualize
-							self.focusItem(this);
+			    var self = this,
+			        draw = false,
+			        i, j,
+			        $row, $item, $tbody, $focusItem,
+			        itemData, newData,
+			        /**
+			         * Cell mouse click handler.
+			         *
+			         * @param {Event} event click event data
+			         *
+			         * @this Element
+			         *
+			         * @fires module:stb/ui/grid~Grid#click:item
+			         */
+			        onItemClick = function ( event ) {
+			            // allow to accept focus
+			            if ( this.data.disable !== true ) {
+			                // visualize
+			                self.focusItem(this);
 			
-							// there are some listeners
-							if ( self.events['click:item'] ) {
-								// notify listeners
-								self.emit('click:item', {$item: this, event: event});
-							}
-						}
-					};
+			                // there are some listeners
+			                if ( self.events['click:item'] ) {
+			                    // notify listeners
+			                    self.emit('click:item', {$item: this, event: event});
+			                }
+			            }
+			        },
+			        /**
+			         * Construct grid when receive new data
+			         *
+			         * @param {Array} data to render
+			         */
+			        construct = function ( data ) {
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					if ( config.data && (!Array.isArray(config.data) || !Array.isArray(config.data[0])) ) { throw new Error(__filename + ': wrong config.data type'); }
-					if ( config.render && typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
-				}
+			            // apply data
+			            if ( data ) {
+			                // new data is different
+			                if ( self.data !== data ) {
+			                    // apply
+			                    self.data = data;
+			                    // need to redraw table
+			                    draw = true;
+			                }
+			            }
 			
-				// apply cycle behaviour
-				if ( config.cycleX !== undefined ) { this.cycleX = config.cycleX; }
-				if ( config.cycleY !== undefined ) { this.cycleY = config.cycleY; }
+			            // custom render method
+			            if ( config.render ) {
+			                // new render is different
+			                if ( self.renderItem !== config.render ) {
+			                    // apply
+			                    self.renderItem = config.render;
+			                    // need to redraw table
+			                    draw = true;
+			                }
+			            }
 			
-				// apply data
-				if ( config.data ) {
-					// new data is different
-					if ( this.data !== config.data ) {
-						// apply
-						this.data = config.data;
-						// need to redraw table
-						draw = true;
-					}
-				}
+			            if ( !draw ) {
+			                // do not redraw table
+			                return;
+			            }
 			
-				// custom render method
-				if ( config.render ) {
-					// new render is different
-					if ( this.renderItem !== config.render ) {
-						// apply
-						this.renderItem = config.render;
-						// need to redraw table
-						draw = true;
-					}
-				}
+			            // export pointer to inner table
+			            self.$table = document.createElement('table');
+			            $tbody = document.createElement('tbody');
 			
-				if ( !draw ) {
-					// do not redraw table
-					return;
-				}
+			            // prepare user data
+			            self.data = normalize(self.data);
 			
-				// export pointer to inner table
-				this.$table = document.createElement('table');
-				$tbody      = document.createElement('tbody');
+			            // rows
+			            for ( i = 0; i < self.data.length; i++ ) {
+			                // dom
+			                $row = $tbody.insertRow();
 			
-				// prepare user data
-				this.data = normalize(this.data);
+			                // cols
+			                for ( j = 0; j < self.data[i].length; j++ ) {
+			                    // dom
+			                    $item = $row.insertCell(-1);
+			                    // additional params
+			                    $item.className = 'item';
 			
-				// rows
-				for ( i = 0; i < this.data.length; i++ ) {
-					// dom
-					$row = $tbody.insertRow();
+			                    // shortcut
+			                    itemData = self.data[i][j];
 			
-					// cols
-					for ( j = 0; j < this.data[i].length; j++ ) {
-						// dom
-						$item = $row.insertCell(-1);
-						// additional params
-						$item.className = 'item';
+			                    // for map
+			                    itemData.$item = $item;
 			
-						// shortcut
-						itemData = this.data[i][j];
+			                    // merge columns
+			                    $item.colSpan = itemData.colSpan;
 			
-						// for map
-						itemData.$item = $item;
+			                    // merge rows
+			                    $item.rowSpan = itemData.rowSpan;
 			
-						// merge columns
-						$item.colSpan = itemData.colSpan;
+			                    // active cell
+			                    if ( itemData.focus ) {
+			                        // store and clean
+			                        $focusItem = $item;
+			                    }
 			
-						// merge rows
-						$item.rowSpan = itemData.rowSpan;
+			                    // disabled cell
+			                    if ( itemData.disable ) {
+			                        // apply CSS
+			                        $item.classList.add('disable');
+			                    }
 			
-						// active cell
-						if ( itemData.focus ) {
-							// store and clean
-							$focusItem = $item;
-						}
+			                    // marked cell
+			                    if ( itemData.mark ) {
+			                        // apply CSS
+			                        $item.classList.add('mark');
+			                    }
 			
-						// disabled cell
-						if ( itemData.disable ) {
-							// apply CSS
-							$item.classList.add('disable');
-						}
+			                    // visualize
+			                    self.renderItem($item, itemData);
 			
-						// marked cell
-						if ( itemData.mark ) {
-							// apply CSS
-							$item.classList.add('mark');
-						}
+			                    // save data link
+			                    $item.data = itemData;
 			
-						// visualize
-						this.renderItem($item, itemData);
+			                    // manual focusing
+			                    $item.addEventListener('click', onItemClick);
+			                }
+			                // row is ready
+			                $tbody.appendChild($row);
+			            }
 			
-						// save data link
-						$item.data = itemData;
+			            // navigation map filling
+			            self.map = map(self.data);
 			
-						// manual focusing
-						$item.addEventListener('click', onItemClick);
-					}
-					// row is ready
-					$tbody.appendChild($row);
-				}
+			            // clear all table
+			            self.$body.innerText = null;
 			
-				// navigation map filling
-				this.map = map(this.data);
+			            // everything is ready
+			            self.$table.appendChild($tbody);
+			            self.$body.appendChild(self.$table);
 			
-				// clear all table
-				this.$body.innerText = null;
+			            // apply focus
+			            if ( $focusItem ) {
+			                // focus item was given in data
+			                self.focusItem($focusItem);
+			            } else {
+			                // just the first cell
+			                self.focusItem(self.map[0][0]);
+			            }
+			        };
 			
-				// everything is ready
-				this.$table.appendChild($tbody);
-				this.$body.appendChild(this.$table);
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        if ( config.data && (!Array.isArray(config.data) || !Array.isArray(config.data[0])) ) { throw new Error(__filename + ': wrong config.data type'); }
+			        if ( config.render && typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
+			    }
 			
-				// apply focus
-				if ( $focusItem ) {
-					// focus item was given in data
-					this.focusItem($focusItem);
-				} else {
-					// just the first cell
-					this.focusItem(this.map[0][0]);
-				}
+			    // apply cycle behaviour
+			    if ( config.cycleX !== undefined ) {
+			        this.cycleX = config.cycleX;
+			    }
+			    if ( config.cycleY !== undefined ) {
+			        this.cycleY = config.cycleY;
+			    }
+			
+			
+			    if ( config.provider ) {
+			        if ( true ) {
+			            if ( !config.sizeX || !config.sizeY ) {    throw new Error(__filename + ': wrong grid data size');    }
+			        }
+			
+			        this.provider = config.provider;
+			        this.sizeX = config.sizeX;
+			        this.sizeY = config.sizeY;
+			    }
+			
+			    if ( config.translate ) {
+			        this.translate = config.translate;
+			    }
+			
+			    if ( config.provider ) {
+			        newData = this.provider.get(null, function ( error, data ) {
+			            if ( error ) {
+			                if ( self.events['data:error'] ) {
+			                    /**
+			                     * Provider get error while take new data
+			                     *
+			                     * @event module:stb/ui/grid~Grid#data:error
+			                     */
+			                    self.emit('data:error', error);
+			                }
+			            }
+			            construct(self.translate(data));
+			
+			            if ( self.events['data:ready'] ) {
+			                /**
+			                 * Provider get new data and reinit grid
+			                 *
+			                 * @event module:stb/ui/grid~Grid#data:ready
+			                 */
+			                self.emit('data:ready');
+			            }
+			        });
+			
+			        if ( this.events['data:get'] ) {
+			            /**
+			             * Provider request new data
+			             *
+			             * @event module:stb/ui/grid~Grid#data:get
+			             *
+			             * @type {Object}
+			             * @property {boolean} fresh status of data to response
+			             */
+			            this.emit('data:get', {fresh: newData});
+			        }
+			    } else {
+			        construct(config.data);
+			    }
+			
+			
 			};
+			
+			/**
+			 * Default translate function
+			 *
+			 * @param {Array} data to translate
+			 * @return {Array} data to use as grid data
+			 */
+			Grid.prototype.defaultTranslate = function ( data ) {
+			    var result = [],
+			        i, j, arr;
+			
+			    for ( i = 0; i < this.sizeY; i++ ) {
+			        arr = [];
+			        for ( j = 0; j < this.sizeX; j++ ) {
+			            arr[j] = data[i * this.sizeX + j];
+			        }
+			        result[i] = arr;
+			    }
+			    return result;
+			};
+			
+			
+			/**
+			 * Method to translate given array to array adapted to use as grid data
+			 * Can be redefined to provide custom translate.
+			 *
+			 * @type {function}
+			 */
+			Grid.prototype.translate = Grid.prototype.defaultTranslate;
 			
 			
 			/**
@@ -7973,155 +8078,192 @@
 			 *
 			 * @fires module:stb/ui/grid~Grid#cycle
 			 * @fires module:stb/ui/grid~Grid#overflow
+			 * @fires module:stb/ui/grid~Grid#data:get
+			 * @fires module:stb/ui/grid~Grid#data:ready
+			 * @fires module:stb/ui/grid~Grid#data:error
 			 */
 			Grid.prototype.move = function ( direction ) {
-				var x        = this.focusX,
-					y        = this.focusY,
-					move     = true,
-					overflow = false,
-					cycle    = false;
+			    var x        = this.focusX,
+			        y        = this.focusY,
+			        move     = true,
+			        overflow = false,
+			        cycle    = false,
+			        newData, i, j;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
+			    }
 			
-				// shift till full stop
-				while ( move ) {
-					// arrow keys
-					switch ( direction ) {
-						case keys.up:
-							if ( y > 0 ) {
-								// can go one step up
-								y--;
-							} else {
-								if ( this.cycleY ) {
-									// jump to the last row
-									y = this.map.length - 1;
-									cycle = true;
-								} else {
-									// grid edge
-									overflow = true;
-								}
-							}
-							break;
+			    // shift till full stop
+			    while ( move ) {
+			        // arrow keys
+			        switch ( direction ) {
+			            case keys.up:
+			                if ( y > 0 ) {
+			                    // can go one step up
+			                    y--;
+			                } else {
+			                    if ( this.cycleY ) {
+			                        // jump to the last row
+			                        y = this.map.length - 1;
+			                        cycle = true;
+			                    }
+			                    // grid edge
+			                    overflow = true;
+			                }
+			                break;
 			
-						case keys.down:
-							if ( y < this.map.length - 1 ) {
-								// can go one step down
-								y++;
-							} else {
-								if ( this.cycleY ) {
-									// jump to the first row
-									y = 0;
-									cycle = true;
-								} else {
-									// grid edge
-									overflow = true;
-								}
-							}
-							break;
+			            case keys.down:
+			                if ( y < this.map.length - 1 ) {
+			                    // can go one step down
+			                    y++;
+			                } else {
+			                    if ( this.cycleY ) {
+			                        // jump to the first row
+			                        y = 0;
+			                        cycle = true;
+			                    }
+			                    // grid edge
+			                    overflow = true;
+			                }
+			                break;
 			
-						case keys.right:
-							if ( x < this.map[y].length - 1 ) {
-								// can go one step right
-								x++;
-							} else {
-								if ( this.cycleX ) {
-									// jump to the first column
-									x = 0;
-									cycle = true;
-								} else {
-									// grid edge
-									overflow = true;
-								}
-							}
-							break;
+			            case keys.right:
+			                if ( x < this.map[y].length - 1 ) {
+			                    // can go one step right
+			                    x++;
+			                } else {
+			                    if ( this.cycleX ) {
+			                        // jump to the first column
+			                        x = 0;
+			                        cycle = true;
+			                    }
+			                    // grid edge
+			                    overflow = true;
+			                }
+			                break;
+			            case keys.left:
+			                if ( x > 0 ) {
+			                    // can go one step left
+			                    x--;
+			                } else {
+			                    if ( this.cycleX ) {
+			                        // jump to the last column
+			                        x = this.map[y].length - 1;
+			                        cycle = true;
+			                    }
+			                    // grid edge
+			                    overflow = true;
 			
-						case keys.left:
-							if ( x > 0 ) {
-								// can go one step left
-								x--;
-							} else {
-								if ( this.cycleX ) {
-									// jump to the last column
-									x = this.map[y].length - 1;
-									cycle = true;
-								} else {
-									// grid edge
-									overflow = true;
-								}
-							}
-							break;
-					}
+			                }
+			                break;
+			        }
 			
-					// full cycle - has come to the start point
-					if ( x === this.focusX && y === this.focusY ) {
-						// full stop
-						move = false;
-					}
+			        // full cycle - has come to the start point
+			        if ( x === this.focusX && y === this.focusY ) {
+			            // full stop
+			            move = false;
+			        }
 			
-					// focus item has changed and it's not disabled
-					if ( this.map[y][x] !== this.map[this.focusY][this.focusX] && this.map[y][x].data.disable !== true ) {
-						// full stop
-						move = false;
-					}
+			        // focus item has changed and it's not disabled
+			        if ( this.map[y][x] !== this.map[this.focusY][this.focusX] && this.map[y][x].data.disable !== true ) {
+			            // full stop
+			            move = false;
+			        }
 			
-					// the last cell in a row/col
-					if ( overflow ) {
-						// full stop
-						move = false;
-						// but it's disabled so need to go back
-						if ( this.map[y][x].data.disable === true ) {
-							// return to the start point
-							x = this.focusX;
-							y = this.focusY;
-						}
-					}
-				}
+			        // the last cell in a row/col
+			        if ( overflow ) {
+			            // full stop
+			            move = false;
+			            // but it's disabled so need to go back
+			            if ( this.map[y][x].data.disable === true ) {
+			                // return to the start point
+			                x = this.focusX;
+			                y = this.focusY;
+			            }
+			        }
+			    }
 			
-				if ( cycle ) {
-					// there are some listeners
-					if ( this.events['cycle'] ) {
-						/**
-						 * Jump to the opposite side.
-						 *
-						 * @event module:stb/ui/grid~Grid#cycle
-						 *
-						 * @type {Object}
-						 * @property {number} direction key code initiator of movement
-						 */
-						this.emit('cycle', {direction: direction});
-					}
-				}
+			    this.focusItem(this.map[y][x]);
 			
-				if ( overflow ) {
-					// there are some listeners
-					if ( this.events['overflow'] ) {
-						/**
-						 * Attempt to go beyond the edge of the grid.
-						 *
-						 * @event module:stb/ui/grid~Grid#overflow
-						 *
-						 * @type {Object}
-						 * @property {number} direction key code initiator of movement
-						 */
-						this.emit('overflow', {direction: direction});
-					}
-				}
+			    // correct coordinates
+			    // focusItem set approximate values
+			    this.focusX = x;
+			    this.focusY = y;
 			
-				// report
-				debug.info(this.focusX + ' : ' + x, 'X old/new');
-				debug.info(this.focusY + ' : ' + y, 'Y old/new');
-				debug.info(cycle,  'cycle');
-				debug.info(overflow, 'overflow');
+			    if ( overflow ) {
+			        //
+			        if (this.provider) {
+			            newData = this.provider.get(direction, function ( error, data ) {
+			                if ( error ) {
 			
-				this.focusItem(this.map[y][x]);
+			                    if ( self.events['data:error'] ) {
+			                        /**
+			                         * Provider get error while take new data
+			                         *
+			                         * @event module:stb/ui/grid~Grid#data:error
+			                         */
+			                        self.emit('data:error', error);
+			                        return false;
+			                    }
+			                }
 			
-				// correct coordinates
-				// focusItem set approximate values
-				this.focusX = x;
-				this.focusY = y;
+			                if ( data ) {
+			                    self.data = self.translate(data);
+			                    for ( i = 0; i < self.sizeY - 1; i++ ) {
+			                        for ( j = 0; j < self.sizeX; j++ ) {
+			                            self.renderItem(self.map[i][j], self.data[i][j]);
+			                        }
+			                    }
+			
+			                    if ( self.events['data:ready'] ) {
+			                        /**
+			                         * Provider get new data and reinit grid
+			                         *
+			                         * @event module:stb/ui/grid~Grid#data:ready
+			                         */
+			                        self.emit('data:ready');
+			                    }
+			                }
+			
+			            });
+			
+			            if ( this.events['data:get'] ) {
+			                /**
+			                 * Provider request new data
+			                 *
+			                 * @event module:stb/ui/grid~Grid#data:get
+			                 *
+			                 * @type {Object}
+			                 * @property {boolean} fresh status of data to response
+			                 */
+			                this.emit('data:get', {fresh: newData});
+			            }
+			        }
+			
+			        // there are some listeners
+			        if ( this.events['overflow'] ) {
+			            /**
+			             * Attempt to go beyond the edge of the grid.
+			             *
+			             * @event module:stb/ui/grid~Grid#overflow
+			             *
+			             * @type {Object}
+			             * @property {number} direction key code initiator of movement
+			             * @property {number} cycle ...
+			             */
+			            this.emit('overflow', {direction: direction, cycle: cycle});
+			        }
+			    }
+			
+			    // report
+			    debug.info(this.focusX + ' : ' + x, 'X old/new');
+			    debug.info(this.focusY + ' : ' + y, 'Y old/new');
+			    debug.info(cycle, 'cycle');
+			    debug.info(overflow, 'overflow');
+			
+			
 			};
 			
 			
@@ -8139,71 +8281,71 @@
 			 * @fires module:stb/ui/grid~Grid#blur:item
 			 */
 			Grid.prototype.focusItem = function ( $item ) {
-				var $prev = this.$focusItem;
+			    var $prev = this.$focusItem;
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			    }
 			
-				// different element
-				if ( $item && $prev !== $item && $item.data.disable !== true ) {
-					if ( true ) {
-						if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-						if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
-					}
+			    // different element
+			    if ( $item && $prev !== $item && $item.data.disable !== true ) {
+			        if ( true ) {
+			            if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+			            if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+			        }
 			
-					// some item is focused already
-					if ( $prev !== null ) {
-						if ( true ) {
-							if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
-						}
+			        // some item is focused already
+			        if ( $prev !== null ) {
+			            if ( true ) {
+			                if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
+			            }
 			
-						// style
-						$prev.classList.remove('focus');
+			            // style
+			            $prev.classList.remove('focus');
 			
-						// there are some listeners
-						if ( this.events['blur:item'] ) {
-							/**
-							 * Remove focus from an element.
-							 *
-							 * @event module:stb/ui/grid~Grid#blur:item
-							 *
-							 * @type {Object}
-							 * @property {Element} $item previously focused HTML element
-							 */
-							this.emit('blur:item', {$item: $prev});
-						}
-					}
+			            // there are some listeners
+			            if ( this.events['blur:item'] ) {
+			                /**
+			                 * Remove focus from an element.
+			                 *
+			                 * @event module:stb/ui/grid~Grid#blur:item
+			                 *
+			                 * @type {Object}
+			                 * @property {Element} $item previously focused HTML element
+			                 */
+			                this.emit('blur:item', {$item: $prev});
+			            }
+			        }
 			
-					// draft coordinates
-					this.focusX = $item.x;
-					this.focusY = $item.y;
+			        // draft coordinates
+			        this.focusX = $item.x;
+			        this.focusY = $item.y;
 			
-					// reassign
-					this.$focusItem = $item;
+			        // reassign
+			        this.$focusItem = $item;
 			
-					// correct CSS
-					$item.classList.add('focus');
+			        // correct CSS
+			        $item.classList.add('focus');
 			
-					// there are some listeners
-					if ( this.events['focus:item'] ) {
-						/**
-						 * Set focus to an element.
-						 *
-						 * @event module:stb/ui/grid~Grid#focus:item
-						 *
-						 * @type {Object}
-						 * @property {Element} $prev old/previous focused HTML element
-						 * @property {Element} $curr new/current focused HTML element
-						 */
-						this.emit('focus:item', {$prev: $prev, $curr: $item});
-					}
+			        // there are some listeners
+			        if ( this.events['focus:item'] ) {
+			            /**
+			             * Set focus to an element.
+			             *
+			             * @event module:stb/ui/grid~Grid#focus:item
+			             *
+			             * @type {Object}
+			             * @property {Element} $prev old/previous focused HTML element
+			             * @property {Element} $curr new/current focused HTML element
+			             */
+			            this.emit('focus:item', {$prev: $prev, $curr: $item});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -8214,28 +8356,28 @@
 			 * @param {boolean} state true - marked, false - not marked
 			 */
 			Grid.prototype.markItem = function ( $item, state ) {
-				if ( true ) {
-					if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-					if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
-					if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+			        if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+			        if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
+			    }
 			
-				// correct CSS
-				if ( state ) {
-					$item.classList.add('mark');
-				} else {
-					$item.classList.remove('mark');
-				}
+			    // correct CSS
+			    if ( state ) {
+			        $item.classList.add('mark');
+			    } else {
+			        $item.classList.remove('mark');
+			    }
 			
-				// apply flag
-				$item.data.mark = state;
+			    // apply flag
+			    $item.data.mark = state;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentGrid = Grid;
+			    // expose to the global scope
+			    window.ComponentGrid = Grid;
 			}
 			
 			
@@ -8291,22 +8433,22 @@
 			 * layerList.add(layerItem);
 			 */
 			function LayerItem ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'layerItem ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'layerItem ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			}
 			
 			
@@ -8319,24 +8461,24 @@
 			 * Delete this component and clear all associated events.
 			 */
 			LayerItem.prototype.remove = function () {
-				var map    = this.parent.map,
-					zIndex = this.$node.style.zIndex,
-					mapSize, i;
+			    var map    = this.parent.map,
+			        zIndex = this.$node.style.zIndex,
+			        mapSize, i;
 			
-				// remove
-				map.splice(zIndex, 1);
+			    // remove
+			    map.splice(zIndex, 1);
 			
-				// reindex
-				for ( i = 0, mapSize = map.length; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
+			    // reindex
+			    for ( i = 0, mapSize = map.length; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
 			
-				// parent invoke
-				Component.prototype.remove.call(this);
+			    // parent invoke
+			    Component.prototype.remove.call(this);
 			
-				/*// there are some listeners
-				if ( this.parent.events['change'] ) {
-					// notify listeners
-					this.emit('change', {state: 'remove', item: this});
-				}*/
+			    /*// there are some listeners
+			    if ( this.parent.events['change'] ) {
+			        // notify listeners
+			        this.emit('change', {state: 'remove', item: this});
+			    }*/
 			};
 			
 			
@@ -8351,33 +8493,33 @@
 			 * @fires module:stb/ui/layer.item~LayerItem#move
 			 */
 			LayerItem.prototype.move = function ( shift, type ) {
-				var map     = this.parent.map,
-					mapSize = map.length,
-					zIndex  = Number(this.$node.style.zIndex),
-					i;
+			    var map     = this.parent.map,
+			        mapSize = map.length,
+			        zIndex  = Number(this.$node.style.zIndex),
+			        i;
 			
-				if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-				if ( Number(shift) !== shift ) { throw new Error(__filename + ': shift must be a number'); }
-				if ( typeof type !== 'string' || type.length === 0 ) { throw new Error(__filename + ': wrong or empty type'); }
+			    if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+			    if ( Number(shift) !== shift ) { throw new Error(__filename + ': shift must be a number'); }
+			    if ( typeof type !== 'string' || type.length === 0 ) { throw new Error(__filename + ': wrong or empty type'); }
 			
-				// move
-				map.splice(zIndex, 1);
-				map.splice(zIndex + shift, 0, this);
+			    // move
+			    map.splice(zIndex, 1);
+			    map.splice(zIndex + shift, 0, this);
 			
-				// reindex
-				for ( i = 0; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
+			    // reindex
+			    for ( i = 0; i < mapSize; i++ ) { map[i].$node.style.zIndex = i; }
 			
-				// there are some listeners
-				if ( this.events['move'] ) {
-					// notify listeners
-					this.emit('move', {shift: shift, type: type});
-				}
+			    // there are some listeners
+			    if ( this.events['move'] ) {
+			        // notify listeners
+			        this.emit('move', {shift: shift, type: type});
+			    }
 			
-				/*// there are some listeners
-				if ( this.parent.events['change'] ) {
-					// notify listeners
-					this.emit('change', {state: event, item: this});
-				}*/
+			    /*// there are some listeners
+			    if ( this.parent.events['change'] ) {
+			        // notify listeners
+			        this.emit('change', {state: event, item: this});
+			    }*/
 			};
 			
 			
@@ -8387,7 +8529,7 @@
 			 * @param {number} [step=1] shift size
 			 */
 			LayerItem.prototype.moveUp = function ( step ) {
-				this.move(step || 1, 'up');
+			    this.move(step || 1, 'up');
 			};
 			
 			
@@ -8397,7 +8539,7 @@
 			 * @param {number} [step=-1] shift size
 			 */
 			LayerItem.prototype.moveDown = function ( step ) {
-				this.move(-step || -1, 'down');
+			    this.move(-step || -1, 'down');
 			};
 			
 			
@@ -8405,7 +8547,7 @@
 			 * Move layer to the top of the layers list.
 			 */
 			LayerItem.prototype.moveTop = function () {
-				this.move(this.parent.map.length, 'top');
+			    this.move(this.parent.map.length, 'top');
 			};
 			
 			
@@ -8413,13 +8555,13 @@
 			 * Move layer to the bottom of the layers list.
 			 */
 			LayerItem.prototype.moveBottom = function () {
-				this.move(-this.$node.style.zIndex, 'bottom');
+			    this.move(-this.$node.style.zIndex, 'bottom');
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentLayerItem = LayerItem;
+			    // expose to the global scope
+			    window.ComponentLayerItem = LayerItem;
 			}
 			
 			
@@ -8468,29 +8610,29 @@
 			 * page.add(layerList);
 			 */
 			function LayerList ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				/**
-				 * z-index to layer items map.
-				 *
-				 * @type {Array}
-				 */
-				this.map = [];
+			    /**
+			     * z-index to layer items map.
+			     *
+			     * @type {Array}
+			     */
+			    this.map = [];
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'layerList ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'layerList ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			}
 			
 			
@@ -8503,25 +8645,25 @@
 			 * Add a new component(s) as a child.
 			 */
 			LayerList.prototype.add = function () {
-				var i, child;
+			    var i, child;
 			
-				// parent invoke
-				Component.prototype.add.apply(this, arguments);
+			    // parent invoke
+			    Component.prototype.add.apply(this, arguments);
 			
-				// walk through all the given elements
-				for ( i = 0; i < arguments.length; i++ ) {
-					child = arguments[i];
+			    // walk through all the given elements
+			    for ( i = 0; i < arguments.length; i++ ) {
+			        child = arguments[i];
 			
-					// rework map and indexes
-					child.$node.style.zIndex = this.map.length;
-					this.map[this.map.length] = child;
-				}
+			        // rework map and indexes
+			        child.$node.style.zIndex = this.map.length;
+			        this.map[this.map.length] = child;
+			    }
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentLayerList = LayerList;
+			    // expose to the global scope
+			    window.ComponentLayerList = LayerList;
 			}
 			
 			
@@ -8557,32 +8699,32 @@
 			 * @param {Object} [config={}] init parameters (all inherited from the parent)
 			 */
 			function ModalMessage ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				// set default className if classList property empty or undefined
-				config.className = 'modalMessage ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'modalMessage ' + (config.className || '');
 			
-				// parent constructor call
-				ModalBox.call(this, config);
+			    // parent constructor call
+			    ModalBox.call(this, config);
 			
-				this.$header  = this.$body.appendChild(document.createElement('div'));
-				this.$content = this.$body.appendChild(document.createElement('div'));
-				this.$footer  = this.$body.appendChild(document.createElement('div'));
+			    this.$header  = this.$body.appendChild(document.createElement('div'));
+			    this.$content = this.$body.appendChild(document.createElement('div'));
+			    this.$footer  = this.$body.appendChild(document.createElement('div'));
 			
-				this.$header.className  = 'header';
-				this.$content.className = 'content';
-				this.$footer.className  = 'footer';
+			    this.$header.className  = 'header';
+			    this.$content.className = 'content';
+			    this.$footer.className  = 'footer';
 			
-				this.$header.innerText  = 'header';
-				this.$content.innerText = 'content';
-				this.$footer.innerText  = 'footer';
+			    this.$header.innerText  = 'header';
+			    this.$content.innerText = 'content';
+			    this.$footer.innerText  = 'footer';
 			}
 			
 			
@@ -8592,8 +8734,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentModalMessage = ModalMessage;
+			    // expose to the global scope
+			    window.ComponentModalMessage = ModalMessage;
 			}
 			
 			
@@ -8647,60 +8789,60 @@
 			 *     });
 			 */
 			function ProgressBar ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				/**
-				 * Max progress value.
-				 *
-				 * @type {number}
-				 */
-				this.max = 100;
+			    /**
+			     * Max progress value.
+			     *
+			     * @type {number}
+			     */
+			    this.max = 100;
 			
-				/**
-				 * Min progress value.
-				 *
-				 * @type {number}
-				 */
-				this.min = 0;
+			    /**
+			     * Min progress value.
+			     *
+			     * @type {number}
+			     */
+			    this.min = 0;
 			
-				/**
-				 * Initial progress position.
-				 *
-				 * @type {number}
-				 */
-				this.value = 0;
+			    /**
+			     * Initial progress position.
+			     *
+			     * @type {number}
+			     */
+			    this.value = 0;
 			
-				/**
-				 * Value of the one percent step
-				 *
-				 * @type {number}
-				 */
-				this.step = 1;
+			    /**
+			     * Value of the one percent step
+			     *
+			     * @type {number}
+			     */
+			    this.step = 1;
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'progressBar ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'progressBar ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// insert bar line
-				this.$value = this.$body.appendChild(document.createElement('div'));
+			    // insert bar line
+			    this.$value = this.$body.appendChild(document.createElement('div'));
 			
-				// correct CSS class name
-				this.$value.className = 'value';
+			    // correct CSS class name
+			    this.$value.className = 'value';
 			
-				// component setup
-				this.init(config);
+			    // component setup
+			    this.init(config);
 			}
 			
 			
@@ -8720,55 +8862,55 @@
 			 * @fires module:stb/ui/progress.bar~ProgressBar#change
 			 */
 			ProgressBar.prototype.set = function ( value ) {
-				var prevValue = this.value;
+			    var prevValue = this.value;
 			
-				if ( true ) {
-					if ( arguments.length !== 1  ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1  ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
+			    }
 			
-				// value changed but in the given range
-				if ( this.value !== value && value <= this.max && value >= this.min ) {
-					// set new value
-					this.value = value;
+			    // value changed but in the given range
+			    if ( this.value !== value && value <= this.max && value >= this.min ) {
+			        // set new value
+			        this.value = value;
 			
-					// get value in percents
-					value = Math.abs(this.value - this.min) / this.step;
+			        // get value in percents
+			        value = Math.abs(this.value - this.min) / this.step;
 			
-					if ( value === 100 ) {
-						// there are some listeners
-						if ( this.events['done'] ) {
-							/**
-							 * Set progress to its maximum value.
-							 *
-							 * @event module:stb/ui/progress.bar~ProgressBar#done
-							 */
-							this.emit('done');
-						}
-					}
+			        if ( value === 100 ) {
+			            // there are some listeners
+			            if ( this.events['done'] ) {
+			                /**
+			                 * Set progress to its maximum value.
+			                 *
+			                 * @event module:stb/ui/progress.bar~ProgressBar#done
+			                 */
+			                this.emit('done');
+			            }
+			        }
 			
-					// set progress bar width
-					this.$value.style.width = value + '%';
+			        // set progress bar width
+			        this.$value.style.width = value + '%';
 			
-					// there are some listeners
-					if ( this.events['change'] ) {
-						/**
-						 * Update progress value.
-						 *
-						 * @event module:stb/ui/progress.bar~ProgressBar#change
-						 *
-						 * @type {Object}
-						 * @property {number} prev old/previous progress value
-						 * @property {number} curr new/current progress value
-						 */
-						this.emit('change', {curr: this.value, prev: prevValue});
-					}
+			        // there are some listeners
+			        if ( this.events['change'] ) {
+			            /**
+			             * Update progress value.
+			             *
+			             * @event module:stb/ui/progress.bar~ProgressBar#change
+			             *
+			             * @type {Object}
+			             * @property {number} prev old/previous progress value
+			             * @property {number} curr new/current progress value
+			             */
+			            this.emit('change', {curr: this.value, prev: prevValue});
+			        }
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
@@ -8778,57 +8920,57 @@
 			 * @param {Object} config init parameters (subset of constructor config params)
 			 */
 			ProgressBar.prototype.init = function ( config ) {
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			    }
 			
-				// set max progress value
-				if ( config.max !== undefined ) {
-					if ( true ) {
-						if ( Number(config.max) !== config.max ) { throw new Error(__filename + ': config.max value must be a number'); }
-					}
+			    // set max progress value
+			    if ( config.max !== undefined ) {
+			        if ( true ) {
+			            if ( Number(config.max) !== config.max ) { throw new Error(__filename + ': config.max value must be a number'); }
+			        }
 			
-					// apply
-					this.max = config.max;
-				}
+			        // apply
+			        this.max = config.max;
+			    }
 			
-				// set min progress value
-				if ( config.min !== undefined ) {
-					if ( true ) {
-						if ( Number(config.min) !== config.min ) { throw new Error(__filename + ': config.min value must be a number'); }
-					}
+			    // set min progress value
+			    if ( config.min !== undefined ) {
+			        if ( true ) {
+			            if ( Number(config.min) !== config.min ) { throw new Error(__filename + ': config.min value must be a number'); }
+			        }
 			
-					// apply
-					this.min = config.min;
-				}
+			        // apply
+			        this.min = config.min;
+			    }
 			
-				if ( true ) {
-					if ( this.min >= this.max ) { throw new Error(__filename + ': this.min value must be less than this.max'); }
-				}
+			    if ( true ) {
+			        if ( this.min >= this.max ) { throw new Error(__filename + ': this.min value must be less than this.max'); }
+			    }
 			
-				// set actual progress value
-				if ( config.value !== undefined ) {
-					if ( true ) {
-						if ( Number(config.value) !== config.value ) { throw new Error(__filename + ': config.value must be a number'); }
-						if ( config.value > this.max ) { throw new Error(__filename + ': config.value more than config.maximum'); }
-						if ( config.value < this.min ) { throw new Error(__filename + ': config.value less than config.minimum'); }
-					}
+			    // set actual progress value
+			    if ( config.value !== undefined ) {
+			        if ( true ) {
+			            if ( Number(config.value) !== config.value ) { throw new Error(__filename + ': config.value must be a number'); }
+			            if ( config.value > this.max ) { throw new Error(__filename + ': config.value more than config.maximum'); }
+			            if ( config.value < this.min ) { throw new Error(__filename + ': config.value less than config.minimum'); }
+			        }
 			
-					// apply
-					this.value = config.value;
-				}
+			        // apply
+			        this.value = config.value;
+			    }
 			
-				this.step = Math.abs(this.max - this.min) / 100;
+			    this.step = Math.abs(this.max - this.min) / 100;
 			
-				// init bar size, (this.min - this.value) - calculate distance from start
-				this.$value.style.width = (Math.abs(this.min - this.value) / this.step) + '%';
+			    // init bar size, (this.min - this.value) - calculate distance from start
+			    this.$value.style.width = (Math.abs(this.min - this.value) / this.step) + '%';
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentProgressBar = ProgressBar;
+			    // expose to the global scope
+			    window.ComponentProgressBar = ProgressBar;
 			}
 			
 			
@@ -8883,85 +9025,85 @@
 			 *     });
 			 */
 			function ScrollBar ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
+			    }
 			
-				/**
-				 * Visible area size.
-				 *
-				 * @type {number}
-				 */
-				this.viewSize = 10;
+			    /**
+			     * Visible area size.
+			     *
+			     * @type {number}
+			     */
+			    this.viewSize = 10;
 			
-				/**
-				 * Scroll area actual height or width (if scroll is horizontal).
-				 *
-				 * @type {number}
-				 */
-				this.realSize = 100;
+			    /**
+			     * Scroll area actual height or width (if scroll is horizontal).
+			     *
+			     * @type {number}
+			     */
+			    this.realSize = 100;
 			
-				/**
-				 * Scroll thumb position.
-				 *
-				 * @type {number}
-				 */
-				this.value = 0;
+			    /**
+			     * Scroll thumb position.
+			     *
+			     * @type {number}
+			     */
+			    this.value = 0;
 			
-				/**
-				 * Component orientation.
-				 *
-				 * @type {number}
-				 */
-				this.type = this.TYPE_VERTICAL;
+			    /**
+			     * Component orientation.
+			     *
+			     * @type {number}
+			     */
+			    this.type = this.TYPE_VERTICAL;
 			
-				/**
-				 * Geometry of the scroll thumb element.
-				 *
-				 * @type {ClientRect}
-				 */
-				this.thumbRect = null;
+			    /**
+			     * Geometry of the scroll thumb element.
+			     *
+			     * @type {ClientRect}
+			     */
+			    this.thumbRect = null;
 			
-				/**
-				 * Geometry of the scroll track element.
-				 *
-				 * @type {ClientRect}
-				 */
-				this.trackRect = null;
+			    /**
+			     * Geometry of the scroll track element.
+			     *
+			     * @type {ClientRect}
+			     */
+			    this.trackRect = null;
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'scrollBar ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'scrollBar ' + (config.className || '');
 			
-				// horizontal or vertical
-				if ( config.type ) {
-					// apply
-					this.type = config.type;
-				}
+			    // horizontal or vertical
+			    if ( config.type ) {
+			        // apply
+			        this.type = config.type;
+			    }
 			
-				if ( this.type === this.TYPE_HORIZONTAL ) {
-					config.className += ' horizontal';
-				}
+			    if ( this.type === this.TYPE_HORIZONTAL ) {
+			        config.className += ' horizontal';
+			    }
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				// insert thumb line
-				this.$thumb = this.$body.appendChild(document.createElement('div'));
+			    // insert thumb line
+			    this.$thumb = this.$body.appendChild(document.createElement('div'));
 			
-				// correct CSS class name
-				this.$thumb.className = 'thumb';
+			    // correct CSS class name
+			    this.$thumb.className = 'thumb';
 			
-				// component setup
-				this.init(config);
+			    // component setup
+			    this.init(config);
 			}
 			
 			
@@ -8980,55 +9122,55 @@
 			 * @param {Object} config init parameters (subset of constructor config params)
 			 */
 			ScrollBar.prototype.init = function ( config ) {
-				config = config || {};
+			    config = config || {};
 			
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			    }
 			
-				// set actual scroll size
-				if ( config.realSize ) {
-					if ( true ) {
-						if ( Number(config.realSize) !== config.realSize ) { throw new Error(__filename + ': config.realSize value must be a number'); }
-					}
-					// apply
-					this.realSize = config.realSize;
-				}
+			    // set actual scroll size
+			    if ( config.realSize ) {
+			        if ( true ) {
+			            if ( Number(config.realSize) !== config.realSize ) { throw new Error(__filename + ': config.realSize value must be a number'); }
+			        }
+			        // apply
+			        this.realSize = config.realSize;
+			    }
 			
-				// set visible area size
-				if ( config.viewSize ) {
-					if ( true ) {
-						if ( Number(config.viewSize) !== config.viewSize ) { throw new Error(__filename + ': config.viewSize value must be a number'); }
-						if ( config.viewSize <= 0 ) { throw new Error(__filename + ': config.viewSize value must be greater than 0'); }
-					}
-					// apply
-					this.viewSize = config.viewSize;
-				}
+			    // set visible area size
+			    if ( config.viewSize ) {
+			        if ( true ) {
+			            if ( Number(config.viewSize) !== config.viewSize ) { throw new Error(__filename + ': config.viewSize value must be a number'); }
+			            if ( config.viewSize <= 0 ) { throw new Error(__filename + ': config.viewSize value must be greater than 0'); }
+			        }
+			        // apply
+			        this.viewSize = config.viewSize;
+			    }
 			
-				// show or hide thumb
-				if ( this.viewSize >= this.realSize ) {
-					this.$thumb.classList.add('hidden');
-				} else {
-					this.$thumb.classList.remove('hidden');
-				}
+			    // show or hide thumb
+			    if ( this.viewSize >= this.realSize ) {
+			        this.$thumb.classList.add('hidden');
+			    } else {
+			        this.$thumb.classList.remove('hidden');
+			    }
 			
-				// set thumb position
-				if ( config.value !== undefined ) {
-					// apply
-					this.scrollTo(config.value);
-				}
+			    // set thumb position
+			    if ( config.value !== undefined ) {
+			        // apply
+			        this.scrollTo(config.value);
+			    }
 			
-				// set thumb size
-				if ( this.type === this.TYPE_VERTICAL ) {
-					this.$thumb.style.height = (this.viewSize / this.realSize * 100) + '%';
-				} else {
-					this.$thumb.style.width = (this.viewSize / this.realSize * 100) + '%';
-				}
+			    // set thumb size
+			    if ( this.type === this.TYPE_VERTICAL ) {
+			        this.$thumb.style.height = (this.viewSize / this.realSize * 100) + '%';
+			    } else {
+			        this.$thumb.style.width = (this.viewSize / this.realSize * 100) + '%';
+			    }
 			
-				// geometry
-				this.thumbRect = this.$thumb.getBoundingClientRect();
-				this.trackRect = this.$node.getBoundingClientRect();
+			    // geometry
+			    this.thumbRect = this.$thumb.getBoundingClientRect();
+			    this.trackRect = this.$node.getBoundingClientRect();
 			};
 			
 			
@@ -9043,72 +9185,72 @@
 			 * @fires module:stb/ui/scroll.bar~ScrollBar#change
 			 */
 			ScrollBar.prototype.scrollTo = function ( value ) {
-				if ( true ) {
-					if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-					if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
-					if ( this.realSize > this.viewSize && value > this.realSize - this.viewSize ) { throw new Error(__filename + ': value is greater than this.realSize-this.viewSize'); }
-					if ( value < 0 ) { throw new Error(__filename + ': value is less then 0'); }
-				}
+			    if ( true ) {
+			        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+			        if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
+			        if ( this.realSize > this.viewSize && value > this.realSize - this.viewSize ) { throw new Error(__filename + ': value is greater than this.realSize-this.viewSize'); }
+			        if ( value < 0 ) { throw new Error(__filename + ': value is less then 0'); }
+			    }
 			
-				// value has changed
-				if ( this.value !== value ) {
-					// track and thumb geometry was not set
-					if ( this.thumbRect.height === 0 || this.thumbRect.width === 0 ) {
-						// apply
-						this.trackRect = this.$node.getBoundingClientRect();
-						this.thumbRect = this.$thumb.getBoundingClientRect();
-					}
+			    // value has changed
+			    if ( this.value !== value ) {
+			        // track and thumb geometry was not set
+			        if ( this.thumbRect.height === 0 || this.thumbRect.width === 0 ) {
+			            // apply
+			            this.trackRect = this.$node.getBoundingClientRect();
+			            this.thumbRect = this.$thumb.getBoundingClientRect();
+			        }
 			
-					// set scroll bar width
-					if ( this.type === this.TYPE_VERTICAL ) {
-						this.$thumb.style.marginTop = ((this.trackRect.height - this.thumbRect.height) * value / (this.realSize - this.viewSize)) + 'px';
-					} else {
-						this.$thumb.style.marginLeft = ((this.trackRect.width - this.thumbRect.width) * value / (this.realSize - this.viewSize)) + 'px';
-					}
+			        // set scroll bar width
+			        if ( this.type === this.TYPE_VERTICAL ) {
+			            this.$thumb.style.marginTop = ((this.trackRect.height - this.thumbRect.height) * value / (this.realSize - this.viewSize)) + 'px';
+			        } else {
+			            this.$thumb.style.marginLeft = ((this.trackRect.width - this.thumbRect.width) * value / (this.realSize - this.viewSize)) + 'px';
+			        }
 			
-					// there are some listeners
-					if ( this.events['change'] ) {
-						/**
-						 * Update scroll value.
-						 *
-						 * @event module:stb/ui/scroll.bar~ScrollBar#change
-						 *
-						 * @type {Object}
-						 * @property {number} prev old/previous scroll value
-						 * @property {number} curr new/current scroll value
-						 */
-						this.emit('change', {curr: value, prev: this.value});
-					}
+			        // there are some listeners
+			        if ( this.events['change'] ) {
+			            /**
+			             * Update scroll value.
+			             *
+			             * @event module:stb/ui/scroll.bar~ScrollBar#change
+			             *
+			             * @type {Object}
+			             * @property {number} prev old/previous scroll value
+			             * @property {number} curr new/current scroll value
+			             */
+			            this.emit('change', {curr: value, prev: this.value});
+			        }
 			
-					// is it the end?
-					if ( value >= this.realSize ) {
-						value = this.realSize;
+			        // is it the end?
+			        if ( value >= this.realSize ) {
+			            value = this.realSize;
 			
-						// there are some listeners
-						if ( this.events['done'] ) {
-							/**
-							 * Set scroll to its maximum value.
-							 *
-							 * @event module:stb/ui/scroll.bar~ScrollBar#done
-							 */
-							this.emit('done');
-						}
-					}
+			            // there are some listeners
+			            if ( this.events['done'] ) {
+			                /**
+			                 * Set scroll to its maximum value.
+			                 *
+			                 * @event module:stb/ui/scroll.bar~ScrollBar#done
+			                 */
+			                this.emit('done');
+			            }
+			        }
 			
-					// set new value
-					this.value = value;
+			        // set new value
+			        this.value = value;
 			
-					return true;
-				}
+			        return true;
+			    }
 			
-				// nothing was done
-				return false;
+			    // nothing was done
+			    return false;
 			};
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentScrollBar = ScrollBar;
+			    // expose to the global scope
+			    window.ComponentScrollBar = ScrollBar;
 			}
 			
 			
@@ -9165,35 +9307,35 @@
 			 * page.add(tabList);
 			 */
 			function TabList ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				/**
-				 * Active at the moment tab item.
-				 *
-				 * @type {TabItem}
-				 */
-				this.current = null;
+			    /**
+			     * Active at the moment tab item.
+			     *
+			     * @type {TabItem}
+			     */
+			    this.current = null;
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-					if ( config.current && config.current.constructor.name !== 'TabItem' ) { throw new Error(__filename + ': wrong config.current type'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			        if ( config.current && config.current.constructor.name !== 'TabItem' ) { throw new Error(__filename + ': wrong config.current type'); }
+			    }
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'tabList ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'tabList ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			
-				if ( config.current ) {
-					// make the given tab active
-					config.current.show();
-				}
+			    if ( config.current ) {
+			        // make the given tab active
+			        config.current.show();
+			    }
 			}
 			
 			
@@ -9203,8 +9345,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentTabList = TabList;
+			    // expose to the global scope
+			    window.ComponentTabList = TabList;
 			}
 			
 			
@@ -9253,26 +9395,26 @@
 			 * widget.show();
 			 */
 			function Widget ( config ) {
-				// sanitize
-				config = config || {};
+			    // sanitize
+			    config = config || {};
 			
-				if ( true ) {
-					if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-					// init parameters checks
-					if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-				}
+			    if ( true ) {
+			        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+			        // init parameters checks
+			        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+			    }
 			
-				// can't accept focus
-				config.focusable = config.focusable || false;
+			    // can't accept focus
+			    config.focusable = config.focusable || false;
 			
-				// hidden
-				config.visible = config.visible || false;
+			    // hidden
+			    config.visible = config.visible || false;
 			
-				// set default className if classList property empty or undefined
-				config.className = 'widget ' + (config.className || '');
+			    // set default className if classList property empty or undefined
+			    config.className = 'widget ' + (config.className || '');
 			
-				// parent constructor call
-				Component.call(this, config);
+			    // parent constructor call
+			    Component.call(this, config);
 			}
 			
 			
@@ -9282,8 +9424,8 @@
 			
 			
 			if ( true ) {
-				// expose to the global scope
-				window.ComponentWidget = Widget;
+			    // expose to the global scope
+			    window.ComponentWidget = Widget;
 			}
 			
 			
@@ -9309,19 +9451,19 @@
 			'use strict';
 			
 			var Button    = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				preloader = __webpack_require__(/*! ../stb/preloader */ 31),
-				tabItem   = new TabItem({
-					$node: window.pageMainTabButton
-				});
+			    Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
+			    TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    preloader = __webpack_require__(/*! ../stb/preloader */ 31),
+			    tabItem   = new TabItem({
+			        $node: window.pageMainTabButton
+			    });
 			
 			
 			tabItem.title = 'Button';
 			
 			
 			preloader.addListener('done', function () {
-				debug.log('ready');
+			    debug.log('ready');
 			});
 			
 			
@@ -9329,84 +9471,84 @@
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabButtonSimple,
-					children: [
-						new Button({
-							value: 'preload images',
-							className: 'wide',
-							events: {
-								click: function () {
-									debug.log('click');
+			    new Panel({
+			        $node: window.pageMainTabButtonSimple,
+			        children: [
+			            new Button({
+			                value: 'preload images',
+			                className: 'wide',
+			                events: {
+			                    click: function () {
+			                        debug.log('click');
 			
-									preloader.add([
-										'http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png',
-										'https://perishablepress.com/wp/wp-content/themes/wire/img/jeff-starr.jpg',
-										{url: 'http://www.phpied.com/files/reflow/dyna1.png', group:'qwe'},
-										{url: 'http://www.phpied.com/files/reflow/dyna3.png', group:'qwe'},
-										'http://www.phpied.com/files/reflow/render.pn'
-									]);
-								}
-							}
-						}),
-						new Button({
-							value: 'show heavy image',
-							events: {
-								click: function () {
-									debug.log('click');
+			                        preloader.add([
+			                            'http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png',
+			                            'https://perishablepress.com/wp/wp-content/themes/wire/img/jeff-starr.jpg',
+			                            {url: 'http://www.phpied.com/files/reflow/dyna1.png', group:'qwe'},
+			                            {url: 'http://www.phpied.com/files/reflow/dyna3.png', group:'qwe'},
+			                            'http://www.phpied.com/files/reflow/render.pn'
+			                        ]);
+			                    }
+			                }
+			            }),
+			            new Button({
+			                value: 'show heavy image',
+			                events: {
+			                    click: function () {
+			                        debug.log('click');
 			
-									tabItem.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
-								}
-							}
-						}),
-						new Button({
-							value: 'a button with a lot of text a button with a lot of text a button with a lot of text',
-							className: 'wide'
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabButtonIcon,
-					children: [
-						new Button({
-							icon: 'menu',
-							events: {
-								click: function () {
-									debug.log('click');
-									this.defaultEvents.click.call(this);
-								},
-								keydown: function ( event ) {
-									debug.log('keydown');
-									this.defaultEvents.keydown.call(this, event);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabButtonIconText,
-					children: [
-						new Button({
-							icon: 'menu',
-							value: 'press me'
-						}),
-						new Button({
-							icon: 'menu',
-							value: 'press me',
-							className: 'iconTop'
-						}),
-						new Button({
-							icon: 'menu',
-							value: 'press me',
-							className: 'iconBottom'
-						}),
-						new Button({
-							icon: 'menu',
-							value: 'press me',
-							className: 'wide'
-						})
-					]
-				})
+			                        tabItem.$node.style.background = 'url("http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png") center center';
+			                    }
+			                }
+			            }),
+			            new Button({
+			                value: 'a button with a lot of text a button with a lot of text a button with a lot of text',
+			                className: 'wide'
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabButtonIcon,
+			        children: [
+			            new Button({
+			                icon: 'menu',
+			                events: {
+			                    click: function () {
+			                        debug.log('click');
+			                        this.defaultEvents.click.call(this);
+			                    },
+			                    keydown: function ( event ) {
+			                        debug.log('keydown');
+			                        this.defaultEvents.keydown.call(this, event);
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabButtonIconText,
+			        children: [
+			            new Button({
+			                icon: 'menu',
+			                value: 'press me'
+			            }),
+			            new Button({
+			                icon: 'menu',
+			                value: 'press me',
+			                className: 'iconTop'
+			            }),
+			            new Button({
+			                icon: 'menu',
+			                value: 'press me',
+			                className: 'iconBottom'
+			            }),
+			            new Button({
+			                icon: 'menu',
+			                value: 'press me',
+			                className: 'wide'
+			            })
+			        ]
+			    })
 			);
 			
 			
@@ -9431,32 +9573,32 @@
 			'use strict';
 			
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				CheckBox = __webpack_require__(/*! ../stb/ui/check.box */ 35),
-				TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem  = new TabItem({
-					$node: window.pageMainTabCheckBox
-				});
+			    CheckBox = __webpack_require__(/*! ../stb/ui/check.box */ 35),
+			    TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem  = new TabItem({
+			        $node: window.pageMainTabCheckBox
+			    });
 			
 			
 			tabItem.title = 'CheckBox';
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabCheckBoxSimple,
-					children: [
-						new CheckBox()
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabCheckBoxGroup,
-					children: [
-						new CheckBox({group: 'main', value: false}),
-						new CheckBox({group: 'main', value: true}),
-						new CheckBox({group: 'main', value: false}),
-						new CheckBox({group: 'main', value: false})
-					]
-				})
+			    new Panel({
+			        $node: window.pageMainTabCheckBoxSimple,
+			        children: [
+			            new CheckBox()
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabCheckBoxGroup,
+			        children: [
+			            new CheckBox({group: 'main', value: false}),
+			            new CheckBox({group: 'main', value: true}),
+			            new CheckBox({group: 'main', value: false}),
+			            new CheckBox({group: 'main', value: false})
+			        ]
+			    })
 			);
 			
 			
@@ -9481,324 +9623,324 @@
 			'use strict';
 			
 			module.exports = {
-				'table 1x1 with no merge': {
-					raw: [
-						[1]
-					],
-					check: [[1]]
-				},
+			    'table 1x1 with no merge': {
+			        raw: [
+			            [1]
+			        ],
+			        check: [[1]]
+			    },
 			
-				'table 3x3 with no merge': {
-					raw: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[7, 8, 9]
-					],
-					check: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[7, 8, 9]
-					]
-				},
+			    'table 3x3 with no merge': {
+			        raw: [
+			            [1, 2, 3],
+			            [4, 5, 6],
+			            [7, 8, 9]
+			        ],
+			        check: [
+			            [1, 2, 3],
+			            [4, 5, 6],
+			            [7, 8, 9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 2x2 #1': {
-					raw: [
-						[{value: '1;2;4;5', rowSpan: 2, colSpan: 2}, 3],
-						[6],
-						[7, 8, 9]
-					],
-					check: [
-						['1;2;4;5', '1;2;4;5', 3],
-						['1;2;4;5', '1;2;4;5', 6],
-						[7,          8,        9]
-					]
-				},
+			    'table 3x3 with merge 2x2 #1': {
+			        raw: [
+			            [{value: '1;2;4;5', rowSpan: 2, colSpan: 2}, 3],
+			            [6],
+			            [7, 8, 9]
+			        ],
+			        check: [
+			            ['1;2;4;5', '1;2;4;5', 3],
+			            ['1;2;4;5', '1;2;4;5', 6],
+			            [7,          8,        9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 2x2 #2': {
-					raw: [
-						[1, {value: '2;3;5;6', rowSpan: 2, colSpan: 2}],
-						[4],
-						[7, 8, 9]
-					],
-					check: [
-						[1, '2;3;5;6', '2;3;5;6'],
-						[4, '2;3;5;6', '2;3;5;6'],
-						[7,  8,         9]
-					]
-				},
+			    'table 3x3 with merge 2x2 #2': {
+			        raw: [
+			            [1, {value: '2;3;5;6', rowSpan: 2, colSpan: 2}],
+			            [4],
+			            [7, 8, 9]
+			        ],
+			        check: [
+			            [1, '2;3;5;6', '2;3;5;6'],
+			            [4, '2;3;5;6', '2;3;5;6'],
+			            [7,  8,         9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 2x2 #3': {
-					raw: [
-						[1, 2, 3],
-						[4, {value: '5;6;8;9', rowSpan: 2, colSpan: 2}],
-						[7]
-					],
-					check: [
-						[1,  2,         3],
-						[4, '5;6;8;9', '5;6;8;9'],
-						[7, '5;6;8;9', '5;6;8;9']
-					]
-				},
+			    'table 3x3 with merge 2x2 #3': {
+			        raw: [
+			            [1, 2, 3],
+			            [4, {value: '5;6;8;9', rowSpan: 2, colSpan: 2}],
+			            [7]
+			        ],
+			        check: [
+			            [1,  2,         3],
+			            [4, '5;6;8;9', '5;6;8;9'],
+			            [7, '5;6;8;9', '5;6;8;9']
+			        ]
+			    },
 			
-				'table 3x3 with merge 2x2 #4': {
-					raw: [
-						[1, 2, 3],
-						[{value: '4;5;7;8', rowSpan: 2, colSpan: 2}, 6],
-						[9]
-					],
-					check: [
-						[1,          2,        3],
-						['4;5;7;8', '4;5;7;8', 6],
-						['4;5;7;8', '4;5;7;8', 9]
-					]
-				},
+			    'table 3x3 with merge 2x2 #4': {
+			        raw: [
+			            [1, 2, 3],
+			            [{value: '4;5;7;8', rowSpan: 2, colSpan: 2}, 6],
+			            [9]
+			        ],
+			        check: [
+			            [1,          2,        3],
+			            ['4;5;7;8', '4;5;7;8', 6],
+			            ['4;5;7;8', '4;5;7;8', 9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 3x1 #1': {
-					raw: [
-						[{value: '1;2;3', colSpan: 3}],
-						[4,       5,      6],
-						[7,       8,      9]
-					],
-					check: [
-						['1;2;3', '1;2;3', '1;2;3'],
-						[4,        5,       6],
-						[7,        8,       9]
-					]
-				},
+			    'table 3x3 with merge 3x1 #1': {
+			        raw: [
+			            [{value: '1;2;3', colSpan: 3}],
+			            [4,       5,      6],
+			            [7,       8,      9]
+			        ],
+			        check: [
+			            ['1;2;3', '1;2;3', '1;2;3'],
+			            [4,        5,       6],
+			            [7,        8,       9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 3x1 #2': {
-					raw: [
-						[1, 2, 3],
-						[{value: '4;5;6', colSpan: 3}],
-						[7, 8, 9]
-					],
-					check: [
-						[1,        2,       3],
-						['4;5;6', '4;5;6', '4;5;6'],
-						[7,        8,       9]
-					]
-				},
+			    'table 3x3 with merge 3x1 #2': {
+			        raw: [
+			            [1, 2, 3],
+			            [{value: '4;5;6', colSpan: 3}],
+			            [7, 8, 9]
+			        ],
+			        check: [
+			            [1,        2,       3],
+			            ['4;5;6', '4;5;6', '4;5;6'],
+			            [7,        8,       9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 3x1 #3': {
-					raw: [
-						[1, 2, 3],
-						[4, 5, 6],
-						[{value: '7;8;9', colSpan: 3}]
-					],
-					check: [
-						[1,        2,       3],
-						[4,        5,       6],
-						['7;8;9', '7;8;9', '7;8;9']
-					]
-				},
+			    'table 3x3 with merge 3x1 #3': {
+			        raw: [
+			            [1, 2, 3],
+			            [4, 5, 6],
+			            [{value: '7;8;9', colSpan: 3}]
+			        ],
+			        check: [
+			            [1,        2,       3],
+			            [4,        5,       6],
+			            ['7;8;9', '7;8;9', '7;8;9']
+			        ]
+			    },
 			
-				'table 3x3 with merge 1x3 #1': {
-					raw: [
-						[{value: '1;4;7', rowSpan: 3}, 2, 3],
-						[5, 6],
-						[8, 9]
-					],
-					check: [
-						['1;4;7', 2, 3],
-						['1;4;7', 5, 6],
-						['1;4;7', 8, 9]
-					]
-				},
+			    'table 3x3 with merge 1x3 #1': {
+			        raw: [
+			            [{value: '1;4;7', rowSpan: 3}, 2, 3],
+			            [5, 6],
+			            [8, 9]
+			        ],
+			        check: [
+			            ['1;4;7', 2, 3],
+			            ['1;4;7', 5, 6],
+			            ['1;4;7', 8, 9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 1x3 #2': {
-					raw: [
-						[1, {value: '2;5;8', rowSpan: 3}, 3],
-						[4, 6],
-						[7, 9]
-					],
-					check: [
-						[1, '2;5;8', 3],
-						[4, '2;5;8', 6],
-						[7, '2;5;8', 9]
-					]
-				},
+			    'table 3x3 with merge 1x3 #2': {
+			        raw: [
+			            [1, {value: '2;5;8', rowSpan: 3}, 3],
+			            [4, 6],
+			            [7, 9]
+			        ],
+			        check: [
+			            [1, '2;5;8', 3],
+			            [4, '2;5;8', 6],
+			            [7, '2;5;8', 9]
+			        ]
+			    },
 			
-				'table 3x3 with merge 1x3 #3': {
-					raw: [
-						[1, 2, {value: '3;6;9', rowSpan: 3}],
-						[4, 5],
-						[7, 8]
-					],
-					check: [
-						[1, 2, '3;6;9'],
-						[4, 5, '3;6;9'],
-						[7, 8, '3;6;9']
-					]
-				},
+			    'table 3x3 with merge 1x3 #3': {
+			        raw: [
+			            [1, 2, {value: '3;6;9', rowSpan: 3}],
+			            [4, 5],
+			            [7, 8]
+			        ],
+			        check: [
+			            [1, 2, '3;6;9'],
+			            [4, 5, '3;6;9'],
+			            [7, 8, '3;6;9']
+			        ]
+			    },
 			
-				'table 2x2 with all merged cells': {
-					raw: [
-						[{value: '1-4', rowSpan: 2, colSpan: 2}]
-					],
-					check: [
-						['1-4', '1-4'],
-						['1-4', '1-4']
-					]
-				},
+			    'table 2x2 with all merged cells': {
+			        raw: [
+			            [{value: '1-4', rowSpan: 2, colSpan: 2}]
+			        ],
+			        check: [
+			            ['1-4', '1-4'],
+			            ['1-4', '1-4']
+			        ]
+			    },
 			
-				'table 3x3 with all merged cells': {
-					raw: [
-						[{value: '1-9', rowSpan: 3, colSpan: 3}]
-					],
-					check: [
-						['1-9', '1-9', '1-9'],
-						['1-9', '1-9', '1-9'],
-						['1-9', '1-9', '1-9']
-					]
-				},
+			    'table 3x3 with all merged cells': {
+			        raw: [
+			            [{value: '1-9', rowSpan: 3, colSpan: 3}]
+			        ],
+			        check: [
+			            ['1-9', '1-9', '1-9'],
+			            ['1-9', '1-9', '1-9'],
+			            ['1-9', '1-9', '1-9']
+			        ]
+			    },
 			
-				'table 3x3 with horizontal stripes #1': {
-					raw: [
-						[{value: '1;2', colSpan: 2}, 3],
-						[4, {value: '5;6', colSpan: 2}],
-						[{value: '7;8', colSpan: 2}, 9]
-					],
-					check: [
-						['1;2', '1;2',  3],
-						[4,     '5;6', '5;6'],
-						['7;8', '7;8',  9]
-					]
-				},
+			    'table 3x3 with horizontal stripes #1': {
+			        raw: [
+			            [{value: '1;2', colSpan: 2}, 3],
+			            [4, {value: '5;6', colSpan: 2}],
+			            [{value: '7;8', colSpan: 2}, 9]
+			        ],
+			        check: [
+			            ['1;2', '1;2',  3],
+			            [4,     '5;6', '5;6'],
+			            ['7;8', '7;8',  9]
+			        ]
+			    },
 			
-				'table 3x3 with horizontal stripes #2': {
-					raw: [
-						[1, {value: '2;3', colSpan: 2}],
-						[{value: '4;5', colSpan: 2}, 6],
-						[7, {value: '8;9', colSpan: 2}]
-					],
-					check: [
-						[1,     '2;3', '2;3'],
-						['4;5', '4;5',  6],
-						[7,     '8;9', '8;9']
-					]
-				},
+			    'table 3x3 with horizontal stripes #2': {
+			        raw: [
+			            [1, {value: '2;3', colSpan: 2}],
+			            [{value: '4;5', colSpan: 2}, 6],
+			            [7, {value: '8;9', colSpan: 2}]
+			        ],
+			        check: [
+			            [1,     '2;3', '2;3'],
+			            ['4;5', '4;5',  6],
+			            [7,     '8;9', '8;9']
+			        ]
+			    },
 			
-				'table 3x3 with vertical stripes #1': {
-					raw: [
-						[{value: '1;4', rowSpan: 2}, 2, {value: '3;6', rowSpan: 2}],
-						[{value: '5;8', rowSpan: 2}],
-						[7, 9]
-					],
-					check: [
-						['1;4',  2,    '3;6'],
-						['1;4', '5;8', '3;6'],
-						[7,     '5;8',  9]
-					]
-				},
+			    'table 3x3 with vertical stripes #1': {
+			        raw: [
+			            [{value: '1;4', rowSpan: 2}, 2, {value: '3;6', rowSpan: 2}],
+			            [{value: '5;8', rowSpan: 2}],
+			            [7, 9]
+			        ],
+			        check: [
+			            ['1;4',  2,    '3;6'],
+			            ['1;4', '5;8', '3;6'],
+			            [7,     '5;8',  9]
+			        ]
+			    },
 			
-				'table 3x3 with vertical stripes #2': {
-					raw: [
-						[1, {value: '2;5', rowSpan: 2}, 3],
-						[{value: '4;7', rowSpan: 2}, {value: '6;9', rowSpan: 2}],
-						[8]
-					],
-					check: [
-						[1,     '2;5',  3],
-						['4;7', '2;5', '6;9'],
-						['4;7',  8,    '6;9']
-					]
-				},
+			    'table 3x3 with vertical stripes #2': {
+			        raw: [
+			            [1, {value: '2;5', rowSpan: 2}, 3],
+			            [{value: '4;7', rowSpan: 2}, {value: '6;9', rowSpan: 2}],
+			            [8]
+			        ],
+			        check: [
+			            [1,     '2;5',  3],
+			            ['4;7', '2;5', '6;9'],
+			            ['4;7',  8,    '6;9']
+			        ]
+			    },
 			
-				'table 3x3 with spiral merge #1': {
-					raw: [
-						[{value: '1;2', rowSpan: 1, colSpan: 2}, {value: '3;6', rowSpan: 2, colSpan: 1}],
-						[{value: '4;7', rowSpan: 2, colSpan: 1}, 5],
-						[{value: '8;9', rowSpan: 1, colSpan: 2}]
-					],
-					check: [
-						['1;2', '1;2', '3;6'],
-						['4;7',  5,    '3;6'],
-						['4;7', '8;9', '8;9']
-					]
-				},
+			    'table 3x3 with spiral merge #1': {
+			        raw: [
+			            [{value: '1;2', rowSpan: 1, colSpan: 2}, {value: '3;6', rowSpan: 2, colSpan: 1}],
+			            [{value: '4;7', rowSpan: 2, colSpan: 1}, 5],
+			            [{value: '8;9', rowSpan: 1, colSpan: 2}]
+			        ],
+			        check: [
+			            ['1;2', '1;2', '3;6'],
+			            ['4;7',  5,    '3;6'],
+			            ['4;7', '8;9', '8;9']
+			        ]
+			    },
 			
-				'table 3x3 with spiral merge #2': {
-					raw: [
-						[{value: '1;4', rowSpan: 2, colSpan: 1}, {value: '2;3', rowSpan: 1, colSpan: 2}],
-						[5, {value: '6;9', rowSpan: 2, colSpan: 1}],
-						[{value: '7;8', rowSpan: 1, colSpan: 2}]
-					],
-					check: [
-						['1;4', '2;3', '2;3'],
-						['1;4',  5,    '6;9'],
-						['7;8', '7;8', '6;9']
-					]
-				},
+			    'table 3x3 with spiral merge #2': {
+			        raw: [
+			            [{value: '1;4', rowSpan: 2, colSpan: 1}, {value: '2;3', rowSpan: 1, colSpan: 2}],
+			            [5, {value: '6;9', rowSpan: 2, colSpan: 1}],
+			            [{value: '7;8', rowSpan: 1, colSpan: 2}]
+			        ],
+			        check: [
+			            ['1;4', '2;3', '2;3'],
+			            ['1;4',  5,    '6;9'],
+			            ['7;8', '7;8', '6;9']
+			        ]
+			    },
 			
-				'table 5x5 with merge #1': {
-					raw: [
-						[1, 2, 3, 4, 5],
-						[6, {value: '7-9', colSpan: 3}, 10],
-						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14, {value: '15;20', rowSpan: 2}],
-						[18, 19],
-						[{value: '26-30', colSpan: 5}],
-						[{value: '31-40', colSpan: 5, rowSpan: 2}]
-					],
-					check: [
-						[1,              2,            3,       4,       5],
-						[6,             '7-9',        '7-9',   '7-9',    10],
-						['11;12;16;17', '11;12;16;17', 13,      14,     '15;20'],
-						['11;12;16;17', '11;12;16;17', 18,      19,     '15;20'],
-						['26-30',       '26-30',      '26-30', '26-30', '26-30'],
-						['31-40',       '31-40',      '31-40', '31-40', '31-40'],
-						['31-40',       '31-40',      '31-40', '31-40', '31-40']
-					]
-				},
+			    'table 5x5 with merge #1': {
+			        raw: [
+			            [1, 2, 3, 4, 5],
+			            [6, {value: '7-9', colSpan: 3}, 10],
+			            [{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14, {value: '15;20', rowSpan: 2}],
+			            [18, 19],
+			            [{value: '26-30', colSpan: 5}],
+			            [{value: '31-40', colSpan: 5, rowSpan: 2}]
+			        ],
+			        check: [
+			            [1,              2,            3,       4,       5],
+			            [6,             '7-9',        '7-9',   '7-9',    10],
+			            ['11;12;16;17', '11;12;16;17', 13,      14,     '15;20'],
+			            ['11;12;16;17', '11;12;16;17', 18,      19,     '15;20'],
+			            ['26-30',       '26-30',      '26-30', '26-30', '26-30'],
+			            ['31-40',       '31-40',      '31-40', '31-40', '31-40'],
+			            ['31-40',       '31-40',      '31-40', '31-40', '31-40']
+			        ]
+			    },
 			
-				'table 5x5 with merge #2': {
-					raw: [
-						[1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
-						[6, {value: '7-9', colSpan: 3}],
-						[{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
-						[18, 19],
-						[{value: '21-25', colSpan: 5}],
-						[{value: '26-35', colSpan: 5, rowSpan: 2}]
-					],
-					check: [
-						[1,              2,            3,       4,      '5;10;15;20'],
-						[6,             '7-9',        '7-9',   '7-9',   '5;10;15;20'],
-						['11;12;16;17', '11;12;16;17', 13,      14,     '5;10;15;20'],
-						['11;12;16;17', '11;12;16;17', 18,      19,     '5;10;15;20'],
-						['21-25',       '21-25',      '21-25', '21-25', '21-25'],
-						['26-35',       '26-35',      '26-35', '26-35', '26-35'],
-						['26-35',       '26-35',      '26-35', '26-35', '26-35']
-					]
-				},
+			    'table 5x5 with merge #2': {
+			        raw: [
+			            [1, 2, 3, 4, {value: '5;10;15;20', rowSpan: 4}],
+			            [6, {value: '7-9', colSpan: 3}],
+			            [{value: '11;12;16;17', rowSpan: 2, colSpan: 2}, 13, 14],
+			            [18, 19],
+			            [{value: '21-25', colSpan: 5}],
+			            [{value: '26-35', colSpan: 5, rowSpan: 2}]
+			        ],
+			        check: [
+			            [1,              2,            3,       4,      '5;10;15;20'],
+			            [6,             '7-9',        '7-9',   '7-9',   '5;10;15;20'],
+			            ['11;12;16;17', '11;12;16;17', 13,      14,     '5;10;15;20'],
+			            ['11;12;16;17', '11;12;16;17', 18,      19,     '5;10;15;20'],
+			            ['21-25',       '21-25',      '21-25', '21-25', '21-25'],
+			            ['26-35',       '26-35',      '26-35', '26-35', '26-35'],
+			            ['26-35',       '26-35',      '26-35', '26-35', '26-35']
+			        ]
+			    },
 			
-				'table 4x2 with tricky long columns #1': {
-					raw: [
-						[{value: '1;3;5', rowSpan: 3}, 2],
-						[{value: '4;6;8', rowSpan: 3}],
-						[],  // have to be specified
-						[7]
-					],
-					check: [
-						['1;3;5',  2],
-						['1;3;5', '4;6;8'],
-						['1;3;5', '4;6;8'],
-						[7,       '4;6;8']
-					]
-				},
+			    'table 4x2 with tricky long columns #1': {
+			        raw: [
+			            [{value: '1;3;5', rowSpan: 3}, 2],
+			            [{value: '4;6;8', rowSpan: 3}],
+			            [],  // have to be specified
+			            [7]
+			        ],
+			        check: [
+			            ['1;3;5',  2],
+			            ['1;3;5', '4;6;8'],
+			            ['1;3;5', '4;6;8'],
+			            [7,       '4;6;8']
+			        ]
+			    },
 			
-				'table 4x2 with tricky long columns #2': {
-					raw: [
-						[1, {value: '2;4;6', rowSpan: 3}],
-						[{value: '3;5;7', rowSpan: 3}],
-						[],  // have to be specified
-						[8]
-					],
-					check: [
-						[1,       '2;4;6'],
-						['3;5;7', '2;4;6'],
-						['3;5;7', '2;4;6'],
-						['3;5;7',  8]
-					]
-				}
+			    'table 4x2 with tricky long columns #2': {
+			        raw: [
+			            [1, {value: '2;4;6', rowSpan: 3}],
+			            [{value: '3;5;7', rowSpan: 3}],
+			            [],  // have to be specified
+			            [8]
+			        ],
+			        check: [
+			            [1,       '2;4;6'],
+			            ['3;5;7', '2;4;6'],
+			            ['3;5;7', '2;4;6'],
+			            ['3;5;7',  8]
+			        ]
+			    }
 			};
 
 
@@ -9819,16 +9961,16 @@
 			'use strict';
 			
 			var Panel    = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				Button   = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Grid     = __webpack_require__(/*! ../stb/ui/grid */ 36),
-				TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				keys     = __webpack_require__(/*! ../stb/keys */ 3),
-				gridData = __webpack_require__(/*! ./main.grid.data */ 46),
-				tabItem  = new TabItem({
-					$node: window.pageMainTabGrid
-				}),
-				gridDataIndex = 0,
-				grid1, grid2;
+			    Button   = __webpack_require__(/*! ../stb/ui/button */ 6),
+			    Grid     = __webpack_require__(/*! ../stb/ui/grid */ 36),
+			    TabItem  = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    keys     = __webpack_require__(/*! ../stb/keys */ 3),
+			    gridData = __webpack_require__(/*! ./main.grid.data */ 46),
+			    tabItem  = new TabItem({
+			        $node: window.pageMainTabGrid
+			    }),
+			    gridDataIndex = 0,
+			    grid1, grid2;
 			
 			
 			tabItem.title = 'Grid';
@@ -9836,121 +9978,121 @@
 			
 			// add random disabled cells
 			Object.keys(gridData).forEach(function ( key ) {
-				gridData[key].raw.forEach(function ( row ) {
-					row = row.map(function ( cell ) {
-						if ( typeof cell !== 'object' ) {
-							cell = {value: cell};
-						}
-						return cell;
-					});
-					row.forEach(function ( cell ) {
-						if ( Math.random() > 0.7 ) {
-							cell.disable = true;
-						}
-					});
-				});
+			    gridData[key].raw.forEach(function ( row ) {
+			        row = row.map(function ( cell ) {
+			            if ( typeof cell !== 'object' ) {
+			                cell = {value: cell};
+			            }
+			            return cell;
+			        });
+			        row.forEach(function ( cell ) {
+			            if ( Math.random() > 0.7 ) {
+			                cell.disable = true;
+			            }
+			        });
+			    });
 			});
 			
 			
 			tabItem.add(
-				new Button({
-					$node: window.pageMainTabGridBtnPrev,
-					value: '<< prev grid data',
-					events: {
-						click: function () {
-							var key;
+			    new Button({
+			        $node: window.pageMainTabGridBtnPrev,
+			        value: '<< prev grid data',
+			        events: {
+			            click: function () {
+			                var key;
 			
-							if ( gridDataIndex > 0 ) {
-								gridDataIndex--;
-								key = Object.keys(gridData)[gridDataIndex];
-								grid1.parent.$node.children[0].innerText = key;
-								grid1.init({
-									data: gridData[key].raw
-								});
-							}
-						}
-					}
-				}),
+			                if ( gridDataIndex > 0 ) {
+			                    gridDataIndex--;
+			                    key = Object.keys(gridData)[gridDataIndex];
+			                    grid1.parent.$node.children[0].innerText = key;
+			                    grid1.init({
+			                        data: gridData[key].raw
+			                    });
+			                }
+			            }
+			        }
+			    }),
 			
-				new Button({
-					$node: window.pageMainTabGridBtnNext,
-					value: 'next grid data >>',
-					events: {
-						click: function () {
-							var key;
+			    new Button({
+			        $node: window.pageMainTabGridBtnNext,
+			        value: 'next grid data >>',
+			        events: {
+			            click: function () {
+			                var key;
 			
-							if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
-								gridDataIndex++;
-								key = Object.keys(gridData)[gridDataIndex];
-								grid1.parent.$node.children[0].innerText = key;
-								grid1.init({
-									data: gridData[key].raw
-								});
-							}
-						}
-					}
-				}),
+			                if ( gridDataIndex < Object.keys(gridData).length - 1 ) {
+			                    gridDataIndex++;
+			                    key = Object.keys(gridData)[gridDataIndex];
+			                    grid1.parent.$node.children[0].innerText = key;
+			                    grid1.init({
+			                        data: gridData[key].raw
+			                    });
+			                }
+			            }
+			        }
+			    }),
 			
-				new Button({
-					$node: window.pageMainTabGridBtnCycle,
-					value: 'toggle cycle mode',
-					events: {
-						click: function () {
-							grid1.init({
-								cycleX: !grid1.cycleX,
-								cycleY: !grid1.cycleY
-							});
-						}
-					}
-				}),
+			    new Button({
+			        $node: window.pageMainTabGridBtnCycle,
+			        value: 'toggle cycle mode',
+			        events: {
+			            click: function () {
+			                grid1.init({
+			                    cycleX: !grid1.cycleX,
+			                    cycleY: !grid1.cycleY
+			                });
+			            }
+			        }
+			    }),
 			
 			
-				new Panel({
-					$node: window.pageMainTabGridMain,
-					$body: window.pageMainTabGridMainBody,
-					children: [
-						grid1 = new Grid({
-							data: [
-								[{value: 1, disable: true}, 2,  3,  4],
-								[5, {value: 6, disable: true},  7,  8],
-								[9,  10, 11, 12],
-								[13, 14, 15, {value: 16, focus: true}]
-							],
-							render: function ( $cell, data ) {
-								$cell.innerHTML = '<div>' + (data.value) + '</div>';
-							},
-							cycleX: false,
-							cycleY: false
-						})
-					]
-				}),
+			    new Panel({
+			        $node: window.pageMainTabGridMain,
+			        $body: window.pageMainTabGridMainBody,
+			        children: [
+			            grid1 = new Grid({
+			                data: [
+			                    [{value: 1, disable: true}, 2,  3,  4],
+			                    [5, {value: 6, disable: true},  7,  8],
+			                    [9,  10, 11, 12],
+			                    [13, 14, 15, {value: 16, focus: true}]
+			                ],
+			                render: function ( $cell, data ) {
+			                    $cell.innerHTML = '<div>' + (data.value) + '</div>';
+			                },
+			                cycleX: false,
+			                cycleY: false
+			            })
+			        ]
+			    }),
 			
-				new Panel({
-					$node: window.pageMainTabGridJoin,
-					children: [
-						grid2 = new Grid({
-							data: [
-								[1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
-								[{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
-								[{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
-								[18, 19],
-								[{value: '21-25', colSpan: 5}],
-								[{value: '26-35', colSpan: 5, rowSpan: 2}]
-							],
-							events: {
-								'click:item': function ( data ) {
-									grid2.markItem(data.$item, !data.$item.data.mark);
-								}
-							},
-							navigate: function ( event ) {
-								if ( event.code === keys.up    ) { this.move(keys.down); }
-								if ( event.code === keys.down  ) { this.move(keys.up); }
-								if ( event.code === keys.right ) { this.move(keys.left); }
-								if ( event.code === keys.left  ) { this.move(keys.right); }
-							}
-						})
-					]
-				})
+			    new Panel({
+			        $node: window.pageMainTabGridJoin,
+			        children: [
+			            grid2 = new Grid({
+			                data: [
+			                    [1, 2, {value: 3, mark: true}, 4, {value: '5;10;15;20', rowSpan: 4, disable: true}],
+			                    [{value: 6}, {value: '7-9', colSpan: 3, disable: true}],
+			                    [{value: '11;12;16;17', rowSpan: 2, colSpan: 2, disable: true}, {value: 13, mark: true}, 14],
+			                    [18, 19],
+			                    [{value: '21-25', colSpan: 5}],
+			                    [{value: '26-35', colSpan: 5, rowSpan: 2}]
+			                ],
+			                events: {
+			                    'click:item': function ( data ) {
+			                        grid2.markItem(data.$item, !data.$item.data.mark);
+			                    }
+			                },
+			                navigate: function ( event ) {
+			                    if ( event.code === keys.up    ) { this.move(keys.down); }
+			                    if ( event.code === keys.down  ) { this.move(keys.up); }
+			                    if ( event.code === keys.right ) { this.move(keys.left); }
+			                    if ( event.code === keys.left  ) { this.move(keys.right); }
+			                }
+			            })
+			        ]
+			    })
 			);
 			
 			
@@ -9975,64 +10117,64 @@
 			'use strict';
 			
 			var Input   = __webpack_require__(/*! ../stb/ui/input */ 14),
-				Panel   = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem = new TabItem({
-					$node: window.pageMainTabInput
-				});
+			    Panel   = __webpack_require__(/*! ../stb/ui/panel */ 4),
+			    TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem = new TabItem({
+			        $node: window.pageMainTabInput
+			    });
 			
 			
 			tabItem.title = 'Input';
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabInputEmpty,
-					children: [
-						new Input()
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabInputSimple,
-					children: [
-						new Input({
-							value: 'some text',
-							events: {
-								click: function () {
+			    new Panel({
+			        $node: window.pageMainTabInputEmpty,
+			        children: [
+			            new Input()
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabInputSimple,
+			        children: [
+			            new Input({
+			                value: 'some text',
+			                events: {
+			                    click: function () {
 			
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabInputPassword,
-					children: [
-						new Input({
-							value: 'some text',
-							type: Input.prototype.TYPE_PASSWORD,
-							events: {
-								click: function () {
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabInputPassword,
+			        children: [
+			            new Input({
+			                value: 'some text',
+			                type: Input.prototype.TYPE_PASSWORD,
+			                events: {
+			                    click: function () {
 			
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabInputPlaceholder,
-					children: [
-						new Input({
-							//value: 'some text',
-							placeholder: 'hint text',
-							events: {
-								click: function () {
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabInputPlaceholder,
+			        children: [
+			            new Input({
+			                //value: 'some text',
+			                placeholder: 'hint text',
+			                events: {
+			                    click: function () {
 			
-								}
-							}
-						})
-					]
-				})
+			                    }
+			                }
+			            })
+			        ]
+			    })
 			);
 			
 			
@@ -10058,40 +10200,40 @@
 			
 			var keys = __webpack_require__(/*! ../stb/keys */ 3),
 			
-				TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				Button    = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Input     = __webpack_require__(/*! ../stb/ui/input */ 14),
-				Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				LayerList = __webpack_require__(/*! ../stb/ui/layer.list.js */ 38),
-				LayerItem = __webpack_require__(/*! ../stb/ui/layer.item.js */ 37),
+			    TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    Button    = __webpack_require__(/*! ../stb/ui/button */ 6),
+			    Input     = __webpack_require__(/*! ../stb/ui/input */ 14),
+			    Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
+			    LayerList = __webpack_require__(/*! ../stb/ui/layer.list.js */ 38),
+			    LayerItem = __webpack_require__(/*! ../stb/ui/layer.item.js */ 37),
 			
-				tabItem = new TabItem({
-					$node: window.pageMainTabLayerList
-				}),
+			    tabItem = new TabItem({
+			        $node: window.pageMainTabLayerList
+			    }),
 			
-				layers = [
-					new LayerItem({id: 'layer-0'}),
-					new LayerItem({id: 'layer-1'}),
-					new LayerItem({id: 'layer-2'}),
-					new LayerItem({id: 'layer-3'}),
-					new LayerItem({id: 'layer-4'}),
-					new LayerItem({id: 'layer-5'})
-				],
+			    layers = [
+			        new LayerItem({id: 'layer-0'}),
+			        new LayerItem({id: 'layer-1'}),
+			        new LayerItem({id: 'layer-2'}),
+			        new LayerItem({id: 'layer-3'}),
+			        new LayerItem({id: 'layer-4'}),
+			        new LayerItem({id: 'layer-5'})
+			    ],
 			
-				layerAffectedIndex = 2;
+			    layerAffectedIndex = 2;
 			
 			
 			function parseLayerOrder () {
-				var order = 'Layers order: <ul>',
-					i;
+			    var order = 'Layers order: <ul>',
+			        i;
 			
-				for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
-					order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
-				}
+			    for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
+			        order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
+			    }
 			
-				order += '</ul>';
+			    order += '</ul>';
 			
-				return order;
+			    return order;
 			}
 			
 			
@@ -10099,155 +10241,155 @@
 			
 			
 			layers.forEach(function ( layer, index ) {
-				layer.$body.innerHTML = 'layer #' + index;
+			    layer.$body.innerHTML = 'layer #' + index;
 			});
 			
 			
 			tabItem.add(
-				tabItem.input = new Input({
-					value: String(layerAffectedIndex),
-					events: {
-						input: function ( event ) {
-							var value;
+			    tabItem.input = new Input({
+			        value: String(layerAffectedIndex),
+			        events: {
+			            input: function ( event ) {
+			                var value;
 			
-							if ( event.value.length === 0 ) {
-								value = layerAffectedIndex;
-							} else if ( isNaN(Number(event.value)) ) {
-								value = parseInt(event.value.substr(3, 1), 10);
-							} else if ( event.value.length > 1 ) {
-								value = parseInt(event.value.substr(1, 1), 10);
-							} else {
-								value = parseInt(event.value, 10);
-							}
+			                if ( event.value.length === 0 ) {
+			                    value = layerAffectedIndex;
+			                } else if ( isNaN(Number(event.value)) ) {
+			                    value = parseInt(event.value.substr(3, 1), 10);
+			                } else if ( event.value.length > 1 ) {
+			                    value = parseInt(event.value.substr(1, 1), 10);
+			                } else {
+			                    value = parseInt(event.value, 10);
+			                }
 			
-							if ( value < 0 ) {
-								this.setValue(layerAffectedIndex + '');
-							} else if ( value > layers.length - 1 ) {
-								layerAffectedIndex = layers.length - 1;
-								this.setValue((layers.length - 1) + '');
-							} else {
-								layerAffectedIndex = value;
-								this.setValue(value + '');
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'move top',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].moveTop();
+			                if ( value < 0 ) {
+			                    this.setValue(layerAffectedIndex + '');
+			                } else if ( value > layers.length - 1 ) {
+			                    layerAffectedIndex = layers.length - 1;
+			                    this.setValue((layers.length - 1) + '');
+			                } else {
+			                    layerAffectedIndex = value;
+			                    this.setValue(value + '');
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'move top',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].moveTop();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'move bottom',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].moveBottom();
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'move bottom',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].moveBottom();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'move up',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].moveUp();
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'move up',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].moveUp();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'move down',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].moveDown();
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'move down',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].moveDown();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'hide',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].hide();
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'hide',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].hide();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'show',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].show();
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'show',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].show();
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				new Button({
-					value: 'add',
-					events: {
-						click: function () {
-							var layerItem = new LayerItem({id: 'layer-' + layers.length});
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'add',
+			        events: {
+			            click: function () {
+			                var layerItem = new LayerItem({id: 'layer-' + layers.length});
 			
-							layers.push(layerItem);
-							tabItem.layerList.add(layerItem);
+			                layers.push(layerItem);
+			                tabItem.layerList.add(layerItem);
 			
-							layerItem.$body.innerHTML = 'layer #' + (layers.length - 1);
+			                layerItem.$body.innerHTML = 'layer #' + (layers.length - 1);
 			
-							tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-						}
-					}
-				}),
-				new Button({
-					value: 'remove',
-					events: {
-						click: function () {
-							if ( layers[layerAffectedIndex] ) {
-								layers[layerAffectedIndex].remove();
-								layers[layerAffectedIndex] = null;
+			                tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'remove',
+			        events: {
+			            click: function () {
+			                if ( layers[layerAffectedIndex] ) {
+			                    layers[layerAffectedIndex].remove();
+			                    layers[layerAffectedIndex] = null;
 			
-								tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-							}
-						}
-					}
-				}),
-				tabItem.layerOrder = new Panel(),
-				tabItem.layerList = new LayerList({
-					children: layers
-				})
+			                    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			                }
+			            }
+			        }
+			    }),
+			    tabItem.layerOrder = new Panel(),
+			    tabItem.layerList = new LayerList({
+			        children: layers
+			    })
 			);
 			
 			
 			tabItem.addListener('show', function () {
-				tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
-				//tabItem.parent.addListener('item:change', hide);
+			    tabItem.layerOrder.$body.innerHTML = parseLayerOrder();
+			    //tabItem.parent.addListener('item:change', hide);
 			});
 			
 			tabItem.input.addListener('keydown', function ( event ) {
-				if ( event.code === keys.back ) {
-					event.stop = true;
-				}
+			    if ( event.code === keys.back ) {
+			        event.stop = true;
+			    }
 			});
 			
 			
@@ -10272,164 +10414,164 @@
 			'use strict';
 			
 			var Panel     = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				List      = __webpack_require__(/*! ../stb/ui/list */ 15),
-				ScrollBar = __webpack_require__(/*! ../stb/ui/scroll.bar */ 41),
-				TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem   = new TabItem({
-					$node: window.pageMainTabList
-				}),
-				listScrollN = new ScrollBar({
-					$node: window.pageMainTabListCustomScrollN,
-					viewSize: 5,
-					realSize: 4
-				}),
-				listScrollV = new ScrollBar({
-					$node: window.pageMainTabListCustomScrollV,
-					viewSize: 5,
-					realSize: 25
-				}),
-				listScrollH = new ScrollBar({
-					$node: window.pageMainTabListCustomScrollH,
-					type: ScrollBar.prototype.TYPE_HORIZONTAL,
-					viewSize: 5,
-					realSize: 100
-				}),
-				list2;
+			    List      = __webpack_require__(/*! ../stb/ui/list */ 15),
+			    ScrollBar = __webpack_require__(/*! ../stb/ui/scroll.bar */ 41),
+			    TabItem   = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem   = new TabItem({
+			        $node: window.pageMainTabList
+			    }),
+			    listScrollN = new ScrollBar({
+			        $node: window.pageMainTabListCustomScrollN,
+			        viewSize: 5,
+			        realSize: 4
+			    }),
+			    listScrollV = new ScrollBar({
+			        $node: window.pageMainTabListCustomScrollV,
+			        viewSize: 5,
+			        realSize: 25
+			    }),
+			    listScrollH = new ScrollBar({
+			        $node: window.pageMainTabListCustomScrollH,
+			        type: ScrollBar.prototype.TYPE_HORIZONTAL,
+			        viewSize: 5,
+			        realSize: 100
+			    }),
+			    list2;
 			
 			
 			tabItem.title = 'List';
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabListSimple,
-					children: [
-						new List({
-							$node: window.pageMainTabListSimpleList,
-							scroll: listScrollN,
-							//data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
-							data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
-							size: 5,
-							//render: function ( $item, data ) {
-							//	$item.innerHTML = '[' + (data) + ']';
-							//},
-							cycle: true,
-							events: {
-								click: function ( data ) {
-									//data.event.stop = true;
-									debug.log('click');
-									debug.inspect(data, 1);
-								},
-								focus: function ( data ) {
-									debug.log('focus');
-									debug.inspect(data, 1);
-								},
-								cycle: function () {
-									debug.log('cycle');
-								},
-								overflow: function () {
-									debug.log('overflow');
-								},
-								'click:item': function ( data ) {
-									debug.log('click:item');
-									debug.inspect(data, 1);
-								},
-								'focus:item': function ( data ) {
-									debug.log('focus:item');
-									debug.inspect(data, 1);
-								},
-								'blur:item': function ( data ) {
-									debug.log('blur:item');
-									debug.inspect(data, 1);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabListCustom,
-					children: [
-						list2 = new List({
-							$node: window.pageMainTabListCustomList,
-							scroll: listScrollV,
-							data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
-							//data: [1,2,3],
-							viewIndex: 8,
-							size: 5,
-							render: function ( $item, data ) {
-								$item.innerHTML = '[' + (data.value) + ']';
-							},
-							cycle: false,
-							events: {
-								click: function () {
-									//data.event.stop = true;
-									//debug.log('click');
-									//debug.inspect(data, 1);
-								},
-								focus: function () {
-									//debug.log('focus');
-									//debug.inspect(data, 1);
-								},
-								cycle: function () {
-									debug.log('cycle');
-								},
-								overflow: function () {
-									debug.log('overflow');
-								},
-								'click:item': function ( data ) {
-									//debug.log('click:item');
-									//debug.inspect(data, 1);
+			    new Panel({
+			        $node: window.pageMainTabListSimple,
+			        children: [
+			            new List({
+			                $node: window.pageMainTabListSimpleList,
+			                scroll: listScrollN,
+			                //data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+			                data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
+			                size: 5,
+			                //render: function ( $item, data ) {
+			                //    $item.innerHTML = '[' + (data) + ']';
+			                //},
+			                cycle: true,
+			                events: {
+			                    click: function ( data ) {
+			                        //data.event.stop = true;
+			                        debug.log('click');
+			                        debug.inspect(data, 1);
+			                    },
+			                    focus: function ( data ) {
+			                        debug.log('focus');
+			                        debug.inspect(data, 1);
+			                    },
+			                    cycle: function () {
+			                        debug.log('cycle');
+			                    },
+			                    overflow: function () {
+			                        debug.log('overflow');
+			                    },
+			                    'click:item': function ( data ) {
+			                        debug.log('click:item');
+			                        debug.inspect(data, 1);
+			                    },
+			                    'focus:item': function ( data ) {
+			                        debug.log('focus:item');
+			                        debug.inspect(data, 1);
+			                    },
+			                    'blur:item': function ( data ) {
+			                        debug.log('blur:item');
+			                        debug.inspect(data, 1);
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabListCustom,
+			        children: [
+			            list2 = new List({
+			                $node: window.pageMainTabListCustomList,
+			                scroll: listScrollV,
+			                data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
+			                //data: [1,2,3],
+			                viewIndex: 8,
+			                size: 5,
+			                render: function ( $item, data ) {
+			                    $item.innerHTML = '[' + (data.value) + ']';
+			                },
+			                cycle: false,
+			                events: {
+			                    click: function () {
+			                        //data.event.stop = true;
+			                        //debug.log('click');
+			                        //debug.inspect(data, 1);
+			                    },
+			                    focus: function () {
+			                        //debug.log('focus');
+			                        //debug.inspect(data, 1);
+			                    },
+			                    cycle: function () {
+			                        debug.log('cycle');
+			                    },
+			                    overflow: function () {
+			                        debug.log('overflow');
+			                    },
+			                    'click:item': function ( data ) {
+			                        //debug.log('click:item');
+			                        //debug.inspect(data, 1);
 			
-									list2.markItem(data.$item, !data.$item.data.mark);
-								},
-								'focus:item': function () {
-									//debug.log('focus:item');
-									//debug.inspect(data, 1);
-								},
-								'blur:item': function () {
-									//debug.log('blur:item');
-									//debug.inspect(data, 1);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabListHoriz,
-					children: [
-						new List({
-							$node: window.pageMainTabListHList,
-							data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
-							scroll: listScrollH,
-							type: List.prototype.TYPE_HORIZONTAL,
-							cycle: true,
-							events: {
-								overflow: function () {
-									debug.log('overflow');
-								}
-							}
-						})
-					]
-				})
+			                        list2.markItem(data.$item, !data.$item.data.mark);
+			                    },
+			                    'focus:item': function () {
+			                        //debug.log('focus:item');
+			                        //debug.inspect(data, 1);
+			                    },
+			                    'blur:item': function () {
+			                        //debug.log('blur:item');
+			                        //debug.inspect(data, 1);
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabListHoriz,
+			        children: [
+			            new List({
+			                $node: window.pageMainTabListHList,
+			                data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+			                scroll: listScrollH,
+			                type: List.prototype.TYPE_HORIZONTAL,
+			                cycle: true,
+			                events: {
+			                    overflow: function () {
+			                        debug.log('overflow');
+			                    }
+			                }
+			            })
+			        ]
+			    })
 			
 			
 			);
 			
 			setTimeout(function () {
-				listScrollN.init({
-					viewSize: 5,
-					realSize: 25
-				});
-				listScrollN.init({
-					viewSize: 5,
-					realSize: 4
-				});
-				listScrollH.$node.style.verticalAlign = 'middle';
-				listScrollH.init({
-					type: ScrollBar.prototype.TYPE_HORIZONTAL,
-					viewSize: 5,
-					realSize: 100
-				});
+			    listScrollN.init({
+			        viewSize: 5,
+			        realSize: 25
+			    });
+			    listScrollN.init({
+			        viewSize: 5,
+			        realSize: 4
+			    });
+			    listScrollH.$node.style.verticalAlign = 'middle';
+			    listScrollH.init({
+			        type: ScrollBar.prototype.TYPE_HORIZONTAL,
+			        viewSize: 5,
+			        realSize: 100
+			    });
 			}, 0);
 			
 			
@@ -10454,74 +10596,74 @@
 			'use strict';
 			
 			var Button       = __webpack_require__(/*! ../stb/ui/button */ 6),
-				ModalBox     = __webpack_require__(/*! ../stb/ui/modal.box */ 16),
-				ModalMessage = __webpack_require__(/*! ../stb/ui/modal.message */ 39),
-				TabItem      = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem      = new TabItem({
-					$node: window.pageMainTabModal
-				});
+			    ModalBox     = __webpack_require__(/*! ../stb/ui/modal.box */ 16),
+			    ModalMessage = __webpack_require__(/*! ../stb/ui/modal.message */ 39),
+			    TabItem      = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem      = new TabItem({
+			        $node: window.pageMainTabModal
+			    });
 			
 			
 			tabItem.title = 'Modal';
 			
 			
 			tabItem.add(
-				new Button({
-					value: 'show simple modal window',
-					events: {
-						click: function () {
-							tabItem.add(
-								tabItem.modal = new ModalBox({
-									events: {
-										click: function () {
-											console.log(tabItem.modal);
-											tabItem.modal.remove();
-										}
-									}
-								})
-							);
-							tabItem.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
-							tabItem.modal.focus();
-						}
-					}
-				}),
-				new Button({
-					value: 'show modal window with a lot of text',
-					events: {
-						click: function () {
-							tabItem.add(
-								tabItem.modal = new ModalBox({
-									events: {
-										click: function () {
-											console.log(tabItem.modal);
-											tabItem.modal.remove();
-										}
-									}
-								})
-							);
-							tabItem.modal.$body.innerText = new Array(300).join('text ');
-							tabItem.modal.focus();
-						}
-					}
-				}),
-				new Button({
-					value: 'show modal message',
-					events: {
-						click: function () {
-							tabItem.add(
-								tabItem.modal = new ModalMessage({
-									events: {
-										click: function () {
-											console.log(tabItem.modal);
-											tabItem.modal.remove();
-										}
-									}
-								})
-							);
-							tabItem.modal.focus();
-						}
-					}
-				})
+			    new Button({
+			        value: 'show simple modal window',
+			        events: {
+			            click: function () {
+			                tabItem.add(
+			                    tabItem.modal = new ModalBox({
+			                        events: {
+			                            click: function () {
+			                                console.log(tabItem.modal);
+			                                tabItem.modal.remove();
+			                            }
+			                        }
+			                    })
+			                );
+			                tabItem.modal.$body.innerText = 'This is a simple modal box.\nClick to close.';
+			                tabItem.modal.focus();
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'show modal window with a lot of text',
+			        events: {
+			            click: function () {
+			                tabItem.add(
+			                    tabItem.modal = new ModalBox({
+			                        events: {
+			                            click: function () {
+			                                console.log(tabItem.modal);
+			                                tabItem.modal.remove();
+			                            }
+			                        }
+			                    })
+			                );
+			                tabItem.modal.$body.innerText = new Array(300).join('text ');
+			                tabItem.modal.focus();
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'show modal message',
+			        events: {
+			            click: function () {
+			                tabItem.add(
+			                    tabItem.modal = new ModalMessage({
+			                        events: {
+			                            click: function () {
+			                                console.log(tabItem.modal);
+			                                tabItem.modal.remove();
+			                            }
+			                        }
+			                    })
+			                );
+			                tabItem.modal.focus();
+			            }
+			        }
+			    })
 			);
 			
 			
@@ -10546,25 +10688,25 @@
 			'use strict';
 			
 			var Button  = __webpack_require__(/*! ../stb/ui/button */ 6),
-				router  = __webpack_require__(/*! ../stb/router */ 8),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem = new TabItem({
-					$node: window.pageMainTabPage
-				});
+			    router  = __webpack_require__(/*! ../stb/router */ 8),
+			    TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem = new TabItem({
+			        $node: window.pageMainTabPage
+			    });
 			
 			
 			tabItem.title = 'Page';
 			
 			
 			tabItem.add(
-				new Button({
-					value: 'switch to page Help',
-					events: {
-						click: function () {
-							router.navigate('pageHelp');
-						}
-					}
-				})
+			    new Button({
+			        value: 'switch to page Help',
+			        events: {
+			            click: function () {
+			                router.navigate('pageHelp');
+			            }
+			        }
+			    })
 			);
 			
 			
@@ -10589,30 +10731,30 @@
 			'use strict';
 			
 			var Panel   = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem = new TabItem({
-					$node: window.pageMainTabPanel
-				});
+			    TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem = new TabItem({
+			        $node: window.pageMainTabPanel
+			    });
 			
 			
 			tabItem.title = 'Panel';
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabPanelSimple
-				}),
-				new Panel({
-					$node: window.pageMainTabPanelMulti
-				}),
-				new Panel({
-					$node: window.pageMainTabPanelParent,
-					children: [
-						new Panel({
-							$node: window.pageMainTabPanelChild
-						})
-					]
-				})
+			    new Panel({
+			        $node: window.pageMainTabPanelSimple
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabPanelMulti
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabPanelParent,
+			        children: [
+			            new Panel({
+			                $node: window.pageMainTabPanelChild
+			            })
+			        ]
+			    })
 			);
 			
 			
@@ -10637,88 +10779,88 @@
 			'use strict';
 			
 			var Panel       = __webpack_require__(/*! ../stb/ui/panel */ 4),
-				ProgressBar = __webpack_require__(/*! ../stb/ui/progress.bar */ 40),
-				TabItem     = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				keys        = __webpack_require__(/*! ../stb/keys */ 3),
-				tabItem     = new TabItem({
-					$node: window.pageMainTabProgressBar
-				});
+			    ProgressBar = __webpack_require__(/*! ../stb/ui/progress.bar */ 40),
+			    TabItem     = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    keys        = __webpack_require__(/*! ../stb/keys */ 3),
+			    tabItem     = new TabItem({
+			        $node: window.pageMainTabProgressBar
+			    });
 			
 			
 			tabItem.title = 'ProgressBar';
 			
 			
 			tabItem.add(
-				new Panel({
-					$node: window.pageMainTabProgressBarEmpty,
-					children: [
-						new ProgressBar({
-							value: 0
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabProgressBarFull,
-					children: [
-						new ProgressBar({
-							value: 100
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabProgressBarStep1,
-					children: [
-						new ProgressBar({
-							min: -5,
-							max: 5,
-							value: -2,
-							focusable: true,
-							events: {
-								keydown: function ( event ) {
-									if ( event.code === keys.right ) { this.set(this.value + 1); }
-									if ( event.code === keys.left  ) { this.set(this.value - 1); }
-								},
-								done: function () {
-									debug.log('ProgressBar: done');
-								},
-								change: function ( data ) {
-									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabProgressBarStep2,
-					children: [
-						new ProgressBar({
-							min: -200,
-							max: 200,
-							value: 0,
-							focusable: true,
-							events: {
-								keydown: function ( event ) {
-									if ( event.code === keys.right ) { this.set(this.value + 1); }
-									if ( event.code === keys.left  ) { this.set(this.value - 1); }
-								},
-								done: function () {
-									debug.log('ProgressBar: done');
-								},
-								change: function ( data ) {
-									debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
-								}
-							}
-						})
-					]
-				}),
-				new Panel({
-					$node: window.pageMainTabProgressBarStyle,
-					children: [
-						new ProgressBar({
-							value: 70
-						})
-					]
-				})
+			    new Panel({
+			        $node: window.pageMainTabProgressBarEmpty,
+			        children: [
+			            new ProgressBar({
+			                value: 0
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabProgressBarFull,
+			        children: [
+			            new ProgressBar({
+			                value: 100
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabProgressBarStep1,
+			        children: [
+			            new ProgressBar({
+			                min: -5,
+			                max: 5,
+			                value: -2,
+			                focusable: true,
+			                events: {
+			                    keydown: function ( event ) {
+			                        if ( event.code === keys.right ) { this.set(this.value + 1); }
+			                        if ( event.code === keys.left  ) { this.set(this.value - 1); }
+			                    },
+			                    done: function () {
+			                        debug.log('ProgressBar: done');
+			                    },
+			                    change: function ( data ) {
+			                        debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabProgressBarStep2,
+			        children: [
+			            new ProgressBar({
+			                min: -200,
+			                max: 200,
+			                value: 0,
+			                focusable: true,
+			                events: {
+			                    keydown: function ( event ) {
+			                        if ( event.code === keys.right ) { this.set(this.value + 1); }
+			                        if ( event.code === keys.left  ) { this.set(this.value - 1); }
+			                    },
+			                    done: function () {
+			                        debug.log('ProgressBar: done');
+			                    },
+			                    change: function ( data ) {
+			                        debug.log('ProgressBar: change to ' + data.curr + ' from ' + data.prev);
+			                    }
+			                }
+			            })
+			        ]
+			    }),
+			    new Panel({
+			        $node: window.pageMainTabProgressBarStyle,
+			        children: [
+			            new ProgressBar({
+			                value: 70
+			            })
+			        ]
+			    })
 			);
 			
 			
@@ -10743,59 +10885,59 @@
 			'use strict';
 			
 			var Button  = __webpack_require__(/*! ../stb/ui/button */ 6),
-				Widget  = __webpack_require__(/*! ../stb/ui/widget */ 43),
-				TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
-				tabItem = new TabItem({
-					$node: window.pageMainTabWidget
-				}),
-				w1 = new Widget({
-					$node: window.pageMainTabWidgetW1,
-					events: {
-						click: function () { w1.hide(); }
-					}
-				}),
-				w2 = new Widget({
-					$node: window.pageMainTabWidgetW2,
-					events: {
-						click: function () { w2.hide(); }
-					}
-				}),
-				w3 = new Widget({
-					$node: window.pageMainTabWidgetW3,
-					events: {
-						click: function () { w3.hide(); }
-					}
-				});
+			    Widget  = __webpack_require__(/*! ../stb/ui/widget */ 43),
+			    TabItem = __webpack_require__(/*! ../stb/ui/tab.item */ 2),
+			    tabItem = new TabItem({
+			        $node: window.pageMainTabWidget
+			    }),
+			    w1 = new Widget({
+			        $node: window.pageMainTabWidgetW1,
+			        events: {
+			            click: function () { w1.hide(); }
+			        }
+			    }),
+			    w2 = new Widget({
+			        $node: window.pageMainTabWidgetW2,
+			        events: {
+			            click: function () { w2.hide(); }
+			        }
+			    }),
+			    w3 = new Widget({
+			        $node: window.pageMainTabWidgetW3,
+			        events: {
+			            click: function () { w3.hide(); }
+			        }
+			    });
 			
 			
 			tabItem.title = 'Widget';
 			
 			
 			tabItem.add(
-				new Button({
-					value: 'show local tab widget',
-					events: {
-						click: function () {
-							w1.show();
-						}
-					}
-				}),
-				new Button({
-					value: 'show local page widget',
-					events: {
-						click: function () {
-							w2.show();
-						}
-					}
-				}),
-				new Button({
-					value: 'show global app widget',
-					events: {
-						click: function () {
-							w3.show();
-						}
-					}
-				})
+			    new Button({
+			        value: 'show local tab widget',
+			        events: {
+			            click: function () {
+			                w1.show();
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'show local page widget',
+			        events: {
+			            click: function () {
+			                w2.show();
+			            }
+			        }
+			    }),
+			    new Button({
+			        value: 'show global app widget',
+			        events: {
+			            click: function () {
+			                w3.show();
+			            }
+			        }
+			    })
 			);
 			
 			
@@ -10821,11 +10963,11 @@
 			
 			// public
 			module.exports = {
-				// turn on/off server
-				active: false,
+			    // turn on/off server
+			    active: false,
 			
-				// listening port
-				port: 8010
+			    // listening port
+			    port: 8010
 			};
 
 
@@ -10847,29 +10989,29 @@
 			
 			// public
 			module.exports = {
-				// turn on/off server
-				active: true,
+			    // turn on/off server
+			    active: true,
 			
-				// listening HTTP port to serve proxy files
-				portHttp: 8800,
+			    // listening HTTP port to serve proxy files
+			    portHttp: 8800,
 			
-				// listening WebSocket port to serve requests
-				portWs: 8900,
+			    // listening WebSocket port to serve requests
+			    portWs: 8900,
 			
-				// time between connection/sending attempts (in ms)
-				retryDelay: 100,
+			    // time between connection/sending attempts (in ms)
+			    retryDelay: 100,
 			
-				// amount of connection/sending attempts before give up
-				retryLimit: 30,
+			    // amount of connection/sending attempts before give up
+			    retryLimit: 30,
 			
-				// full logging
-				logging: false,
+			    // full logging
+			    logging: false,
 			
-				// session name
-				name: 'anonymous',
+			    // session name
+			    name: 'anonymous',
 			
-				// use localStorage to get/save requests data
-				cache: true
+			    // use localStorage to get/save requests data
+			    cache: true
 			};
 
 
@@ -10891,21 +11033,21 @@
 			
 			// public
 			module.exports = {
-				// turn on/off server
-				active: true,
+			    // turn on/off server
+			    active: true,
 			
-				// listening HTTP port to serve project files
-				port: 8000,
+			    // listening HTTP port to serve project files
+			    port: 8000,
 			
-				// static file server cache activation
-				// false to disable of amount of seconds to cache
-				cache: false,
+			    // static file server cache activation
+			    // false to disable of amount of seconds to cache
+			    cache: false,
 			
-				// full logging
-				logging: true,
+			    // full logging
+			    logging: true,
 			
-				// enable automatic reload on file changes mode
-				livereload: true
+			    // enable automatic reload on file changes mode
+			    livereload: true
 			};
 
 
@@ -10927,20 +11069,20 @@
 			
 			// public
 			module.exports = {
-				// turn on/off server
-				active: true,
+			    // turn on/off server
+			    active: true,
 			
-				// listening HTTP port to provide client interface
-				port: 8080,
+			    // listening HTTP port to provide client interface
+			    port: 8080,
 			
-				// address to listen
-				host: '-all-',
+			    // address to listen
+			    host: '-all-',
 			
-				// full logging
-				logging: false,
+			    // full logging
+			    logging: false,
 			
-				// debug servers session id
-				name: 'anonymous'
+			    // debug servers session id
+			    name: 'anonymous'
 			};
 
 

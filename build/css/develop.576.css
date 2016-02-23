@@ -302,6 +302,34 @@ a {
 .component.layerList {
   position: relative;
 }
+.component.layout {
+  display: table;
+  width: 100%;
+}
+.component.layout > div {
+  display: table-cell;
+}
+.component.list.checkList > .item .checkBoxWrapper > .component.checkBox {
+  display: block;
+}
+.component.list.radioList > .item .checkBoxWrapper > .component.checkBox {
+  display: block;
+}
+.component.scrollArea {
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+}
+.component.scrollArea > .body {
+  position: absolute;
+}
+.component.valueList {
+  border: 1px solid grey;
+  text-align: center;
+}
+.component.valueList.focus {
+  border-color: orange;
+}
 #pageInit {
   text-align: center;
 }
