@@ -34,10 +34,12 @@ var keys = require('../stb/keys'),
 
 function parseLayerOrder () {
     var order = 'Layers order: <ul>',
-        i;
+        index;
 
-    for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
-        order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
+    for ( index = tabItem.layerList.map.length - 1; index >= 0; index-- ) {
+        order += '<li>' + tabItem.layerList.map[index].$body.innerHTML +
+			' <div>(zIndex: ' + (tabItem.layerList.map[index].$node.style.zIndex) +
+			', visible: ' + (tabItem.layerList.map[index].visible ? 'yes' : 'no') + ')</div></li>';
     }
 
     order += '</ul>';

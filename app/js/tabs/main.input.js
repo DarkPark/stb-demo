@@ -32,7 +32,7 @@ tabItem.add(
                 value: 'some text',
                 events: {
                     click: function () {
-
+						// ...
                     }
                 }
             })
@@ -46,7 +46,7 @@ tabItem.add(
                 type: Input.prototype.TYPE_PASSWORD,
                 events: {
                     click: function () {
-
+						// ...
                     }
                 }
             })
@@ -60,7 +60,7 @@ tabItem.add(
                 placeholder: 'hint text',
                 events: {
                     click: function () {
-
+						// ...
                     }
                 }
             })

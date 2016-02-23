@@ -41,8 +41,8 @@ tabItem.add(
                         preloader.add([
                             'http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png',
                             'https://perishablepress.com/wp/wp-content/themes/wire/img/jeff-starr.jpg',
-                            {url: 'http://www.phpied.com/files/reflow/dyna1.png', group:'qwe'},
-                            {url: 'http://www.phpied.com/files/reflow/dyna3.png', group:'qwe'},
+                            {url: 'http://www.phpied.com/files/reflow/dyna1.png', group: 'qwe'},
+                            {url: 'http://www.phpied.com/files/reflow/dyna3.png', group: 'qwe'},
                             'http://www.phpied.com/files/reflow/render.pn'
                         ]);
                     }

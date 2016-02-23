@@ -43,7 +43,8 @@ tabItem.add(
             new List({
                 $node: window.pageMainTabListSimpleList,
                 scroll: listScrollN,
-                //data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+                //data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0)
+				// .map(function ( value, index ) { return 10000 + value + index; }),
                 data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
                 size: 5,
                 //render: function ( $item, data ) {
@@ -88,7 +89,8 @@ tabItem.add(
             list2 = new List({
                 $node: window.pageMainTabListCustomList,
                 scroll: listScrollV,
-                data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
+                data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0)
+					.map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
                 //data: [1,2,3],
                 viewIndex: 8,
                 size: 5,
@@ -135,7 +137,8 @@ tabItem.add(
         children: [
             new List({
                 $node: window.pageMainTabListHList,
-                data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+                data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0)
+					.map(function ( value, index ) { return 'sequence: ' + index + value; }),
                 scroll: listScrollH,
                 type: List.prototype.TYPE_HORIZONTAL,
                 cycle: true,
