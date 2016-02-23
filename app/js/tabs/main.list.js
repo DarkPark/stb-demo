@@ -154,22 +154,14 @@ tabItem.add(
 
 );
 
-setTimeout(function () {
-    listScrollN.init({
-        viewSize: 5,
-        realSize: 25
-    });
-    listScrollN.init({
-        viewSize: 5,
-        realSize: 4
-    });
-    listScrollH.$node.style.verticalAlign = 'middle';
-    listScrollH.init({
-        type: ScrollBar.prototype.TYPE_HORIZONTAL,
-        viewSize: 5,
-        realSize: 100
-    });
-}, 0);
+
+tabItem.once('show', function () {
+	// TODO: try to fix this hack, we called 'init' because scroll at start has null geometry
+	listScrollV.value = 0;
+	listScrollV.init({
+		value: 8
+	});
+});
 
 
 // public
