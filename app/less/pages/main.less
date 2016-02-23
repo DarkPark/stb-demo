@@ -26,7 +26,7 @@
         //height: 100%;
         //display: inline-block;
         > div {
-            height: unit(@height - @availTop - @availBottom, px);
+			height: unit(@height, px);
             padding: unit(@availTop, px) unit(@availRight, px) unit(@availBottom, px) unit(min(@fontSize, @availLeft), px);
             background-color: black;
 
@@ -95,9 +95,6 @@
             text-align: right;
         }
     }
-}
-#pageMainTabListCustomScrollV {
-    height: unit(@listItemHeight * 5, px);
 }
 
 #pageMainTabProgressBarStyle {

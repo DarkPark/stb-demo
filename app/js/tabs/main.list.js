@@ -156,11 +156,11 @@ tabItem.add(
 
 
 tabItem.once('show', function () {
-	// TODO: try to fix this hack, we called 'init' because scroll at start has null geometry
-	listScrollV.value = 0;
-	listScrollV.init({
-		value: 8
-	});
+    // TODO: try to fix this hack, we called 'init' because scroll at start has null geometry
+    listScrollV.value = 0;
+    listScrollV.init({
+        value: 8
+    });
 });
 
 
