@@ -3578,48 +3578,48 @@
 			
 			// public
 			module.exports = {
-			    480 : {
+			    480: {
 			        // screen base dimension
 			        height: 480,
-			        width : 720,
+			        width: 720,
 			        // safe zone margins
-			        availTop   : 24,
+			        availTop: 24,
 			        availBottom: 24,
-			        availRight : 32,
-			        availLeft  : 48
+			        availRight: 32,
+			        availLeft: 48
 			    },
 			
-			    576 : {
+			    576: {
 			        // screen base dimension
 			        height: 576,
-			        width : 720,
+			        width: 720,
 			        // safe zone margins
-			        availTop   : 24,
+			        availTop: 24,
 			        availBottom: 24,
-			        availRight : 26,
-			        availLeft  : 54
+			        availRight: 26,
+			        availLeft: 54
 			    },
 			
-			    720 : {
+			    720: {
 			        // screen base dimension
 			        height: 720,
-			        width : 1280,
+			        width: 1280,
 			        // safe zone margins
-			        availTop   : 30,
+			        availTop: 30,
 			        availBottom: 30,
-			        availRight : 40,
-			        availLeft  : 40
+			        availRight: 40,
+			        availLeft: 40
 			    },
 			
 			    1080: {
 			        // screen base dimension
 			        height: 1080,
-			        width : 1920,
+			        width: 1920,
 			        // safe zone margins
-			        availTop   : 45,
+			        availTop: 45,
 			        availBottom: 45,
-			        availRight : 60,
-			        availLeft  : 60
+			        availRight: 60,
+			        availLeft: 60
 			    }
 			};
 
@@ -9484,8 +9484,8 @@
 			                        preloader.add([
 			                            'http://pic.uuhy.com/uploads/2011/09/01/Painting-Of-Nature.png',
 			                            'https://perishablepress.com/wp/wp-content/themes/wire/img/jeff-starr.jpg',
-			                            {url: 'http://www.phpied.com/files/reflow/dyna1.png', group:'qwe'},
-			                            {url: 'http://www.phpied.com/files/reflow/dyna3.png', group:'qwe'},
+			                            {url: 'http://www.phpied.com/files/reflow/dyna1.png', group: 'qwe'},
+			                            {url: 'http://www.phpied.com/files/reflow/dyna3.png', group: 'qwe'},
 			                            'http://www.phpied.com/files/reflow/render.pn'
 			                        ]);
 			                    }
@@ -10141,7 +10141,7 @@
 			                value: 'some text',
 			                events: {
 			                    click: function () {
-			
+									// ...
 			                    }
 			                }
 			            })
@@ -10155,7 +10155,7 @@
 			                type: Input.prototype.TYPE_PASSWORD,
 			                events: {
 			                    click: function () {
-			
+									// ...
 			                    }
 			                }
 			            })
@@ -10169,7 +10169,7 @@
 			                placeholder: 'hint text',
 			                events: {
 			                    click: function () {
-			
+									// ...
 			                    }
 			                }
 			            })
@@ -10225,10 +10225,12 @@
 			
 			function parseLayerOrder () {
 			    var order = 'Layers order: <ul>',
-			        i;
+			        index;
 			
-			    for ( i = tabItem.layerList.map.length - 1; i >= 0; i-- ) {
-			        order += '<li>' + tabItem.layerList.map[i].$body.innerHTML + ' <div>(zIndex: ' + (tabItem.layerList.map[i].$node.style.zIndex) + ', visible: ' + (tabItem.layerList.map[i].visible ? 'yes' : 'no') + ')</div></li>';
+			    for ( index = tabItem.layerList.map.length - 1; index >= 0; index-- ) {
+			        order += '<li>' + tabItem.layerList.map[index].$body.innerHTML +
+						' <div>(zIndex: ' + (tabItem.layerList.map[index].$node.style.zIndex) +
+						', visible: ' + (tabItem.layerList.map[index].visible ? 'yes' : 'no') + ')</div></li>';
 			    }
 			
 			    order += '</ul>';
@@ -10449,7 +10451,8 @@
 			            new List({
 			                $node: window.pageMainTabListSimpleList,
 			                scroll: listScrollN,
-			                //data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 10000 + value + index; }),
+			                //data: Array.apply(null, new Array(101)).map(Number.prototype.valueOf, 0)
+							// .map(function ( value, index ) { return 10000 + value + index; }),
 			                data: [1, {value: 2, mark: true}, 3, {value: 44, disable: true}],
 			                size: 5,
 			                //render: function ( $item, data ) {
@@ -10494,7 +10497,8 @@
 			            list2 = new List({
 			                $node: window.pageMainTabListCustomList,
 			                scroll: listScrollV,
-			                data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
+			                data: Array.apply(null, new Array(25)).map(Number.prototype.valueOf, 0)
+								.map(function ( value, index ) { return {value: 10000 + value + index, mark: Math.random() > 0.7}; }),
 			                //data: [1,2,3],
 			                viewIndex: 8,
 			                size: 5,
@@ -10541,7 +10545,8 @@
 			        children: [
 			            new List({
 			                $node: window.pageMainTabListHList,
-			                data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0).map(function ( value, index ) { return 'sequence: ' + index + value; }),
+			                data: Array.apply(null, new Array(100)).map(Number.prototype.valueOf, 0)
+								.map(function ( value, index ) { return 'sequence: ' + index + value; }),
 			                scroll: listScrollH,
 			                type: List.prototype.TYPE_HORIZONTAL,
 			                cycle: true,
@@ -10557,22 +10562,14 @@
 			
 			);
 			
-			setTimeout(function () {
-			    listScrollN.init({
-			        viewSize: 5,
-			        realSize: 25
+			
+			tabItem.once('show', function () {
+			    // TODO: try to fix this hack, we called 'init' because scroll at start has null geometry
+			    listScrollV.value = 0;
+			    listScrollV.init({
+			        value: 8
 			    });
-			    listScrollN.init({
-			        viewSize: 5,
-			        realSize: 4
-			    });
-			    listScrollH.$node.style.verticalAlign = 'middle';
-			    listScrollH.init({
-			        type: ScrollBar.prototype.TYPE_HORIZONTAL,
-			        viewSize: 5,
-			        realSize: 100
-			    });
-			}, 0);
+			});
 			
 			
 			// public

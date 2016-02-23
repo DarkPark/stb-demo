@@ -362,7 +362,7 @@ a {
   width: 80%;
 }
 #pageMain td.body > div {
-  height: 660px;
+  height: 720px;
   padding: 30px 40px 30px 22px;
   background-color: black;
 }
@@ -404,9 +404,6 @@ a {
 #pageMainTabListCustom > table .scroll {
   width: 1%;
   text-align: right;
-}
-#pageMainTabListCustomScrollV {
-  height: 240px;
 }
 #pageMainTabProgressBarStyle .component.progressBar {
   height: 10px;
