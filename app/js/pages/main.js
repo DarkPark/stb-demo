@@ -10,6 +10,7 @@
 var List    = require('../stb/ui/list'),
     TabList = require('../stb/ui/tab.list'),
     Page    = require('../stb/ui/page'),
+    keys    = require('../stb/keys'),
     page    = new Page({$node: window.pageMain});
 
 
@@ -63,6 +64,14 @@ page.addListener('load', function load () {
                 },*/
                 'focus:item': function ( event ) {
                     tabData[event.$curr.index].show();
+                },
+                keydown: function ( event ) {
+                    if ( event.code === keys.right ) {
+                        // send 'focus' to active tab
+                        tabData[this.$focusItem.index].emit('focus');
+                    } else {
+                        this.defaultEvents.keydown.call(this, event);
+                    }
                 }
                 /*'blur:item': function ( data ) {
                     //console.log('blur:item');
@@ -91,6 +100,12 @@ page.addListener('show', function show () {
     debug.time('test', 1);
     debug.time('test', 2);
     debug.timeEnd('test', 'everything is ready');
+});
+
+page.addListener('keydown', function keydown ( event ) {
+    if ( event.code === keys.left ) {
+        page.menu.focus();
+    }
 });
 
 
