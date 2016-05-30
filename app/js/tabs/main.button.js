@@ -11,26 +11,12 @@ var Button    = require('../stb/ui/button'),
     Panel     = require('../stb/ui/panel'),
     TabItem   = require('../stb/ui/tab.item'),
     preloader = require('../stb/preloader'),
+    Navigator = require('../stb/navigator'),
     tabItem   = new TabItem({
         $node: window.pageMainTabButton
-    });
-
-
-tabItem.title = 'Button';
-
-
-preloader.addListener('done', function () {
-    debug.log('ready');
-});
-
-
-Button.prototype.clickDuration = 1000;
-
-
-tabItem.add(
-    new Panel({
-        $node: window.pageMainTabButtonSimple,
-        children: [
+    }),
+    btnData   = [
+        [
             new Button({
                 value: 'preload images',
                 className: 'wide',
@@ -62,11 +48,7 @@ tabItem.add(
                 value: 'a button with a lot of text a button with a lot of text a button with a lot of text',
                 className: 'wide'
             })
-        ]
-    }),
-    new Panel({
-        $node: window.pageMainTabButtonIcon,
-        children: [
+        ], [
             new Button({
                 icon: 'menu',
                 events: {
@@ -80,11 +62,7 @@ tabItem.add(
                     }
                 }
             })
-        ]
-    }),
-    new Panel({
-        $node: window.pageMainTabButtonIconText,
-        children: [
+        ], [
             new Button({
                 icon: 'menu',
                 value: 'press me'
@@ -105,9 +83,37 @@ tabItem.add(
                 className: 'wide'
             })
         ]
+    ],
+    navigator = new Navigator({data: btnData});
+
+tabItem.title = 'Button';
+
+
+preloader.addListener('done', function () {
+    debug.log('ready');
+});
+
+
+Button.prototype.clickDuration = 1000;
+
+tabItem.add(
+    new Panel({
+        $node: window.pageMainTabButtonSimple,
+        children: btnData[0]
+    }),
+    new Panel({
+        $node: window.pageMainTabButtonIcon,
+        children: btnData[1]
+    }),
+    new Panel({
+        $node: window.pageMainTabButtonIconText,
+        children: btnData[2]
     })
 );
 
+tabItem.addListener('focus', function focus () {
+    btnData[navigator.navX][navigator.navY].focus();
+});
 
 // public
 module.exports = tabItem;
